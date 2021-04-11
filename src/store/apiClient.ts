@@ -24,6 +24,11 @@ const setAuthHeaders = (token?: string) => {
   };
 };
 
+const getAuthToken = () => {
+  const token = localStorage.getItem('token');
+  return token && JSON.parse(token);
+};
+
 const handleRequest = (res: AxiosResponse) => {
   try {
     return res && res.data;
@@ -32,4 +37,4 @@ const handleRequest = (res: AxiosResponse) => {
   }
 };
 
-export { apiClient, handleRequest, setAuthHeaders };
+export { apiClient, handleRequest, setAuthHeaders, getAuthToken };

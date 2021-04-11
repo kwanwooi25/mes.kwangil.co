@@ -1,10 +1,13 @@
 import 'lib/wdyr';
+import 'i18n';
 
 import * as serviceWorker from './serviceWorker';
 
+import { QueryClient, QueryClientProvider } from 'react-query';
 import store, { history } from './store';
 
 import App from './App';
+import { AuthProvider } from 'features/auth/authHook';
 import { ConnectedRouter } from 'connected-react-router';
 import { CssBaseline } from '@material-ui/core';
 import { Provider } from 'react-redux';
@@ -13,14 +16,20 @@ import ReactDOM from 'react-dom';
 import { ThemeProvider } from '@material-ui/styles';
 import { theme } from 'lib/muiTheme';
 
+const queryClient = new QueryClient();
+
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <ConnectedRouter history={history}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <App />
-        </ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <App />
+            </ThemeProvider>
+          </AuthProvider>
+        </QueryClientProvider>
       </ConnectedRouter>
     </Provider>
   </React.StrictMode>,

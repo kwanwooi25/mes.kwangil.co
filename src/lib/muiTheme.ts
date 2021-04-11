@@ -7,7 +7,7 @@ export const theme = createMuiTheme({
     fontFamily: ['Noto Sans KR', 'sans-serif'].join(','),
   },
   palette: {
-    primary: { main: '#203f97' },
+    primary: { main: '#213f97' },
     secondary: { main: '#4da167' },
   },
   overrides: {

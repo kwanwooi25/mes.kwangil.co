@@ -1,6 +1,6 @@
 import { apiClient, handleRequest } from 'store/apiClient';
 
-import { LoginDto } from './authSlice';
+import { LoginDto } from './interface';
 
 const api = {
   login: async (loginData: LoginDto) => handleRequest(await apiClient.post('/auth/login', loginData)),
