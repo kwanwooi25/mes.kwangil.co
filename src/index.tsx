@@ -13,6 +13,7 @@ import { CssBaseline } from '@material-ui/core';
 import { Provider } from 'react-redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { SnackbarProvider } from 'notistack';
 import { ThemeProvider } from '@material-ui/styles';
 import { theme } from 'lib/muiTheme';
 
@@ -26,7 +27,9 @@ ReactDOM.render(
           <AuthProvider>
             <ThemeProvider theme={theme}>
               <CssBaseline />
-              <App />
+              <SnackbarProvider>
+                <App />
+              </SnackbarProvider>
             </ThemeProvider>
           </AuthProvider>
         </QueryClientProvider>

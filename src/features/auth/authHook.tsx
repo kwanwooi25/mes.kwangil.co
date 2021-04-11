@@ -1,8 +1,10 @@
 import { LoginDto, UserDto } from './interface';
-import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react';
+import React, { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { getAuthToken, setAuthHeaders } from 'store/apiClient';
 
 import { authApi } from './authApi';
+import { notificationActions } from 'features/notification/notificationSlice';
+import { useAppDispatch } from 'store';
 
 interface AuthContext {
   isRefreshing: boolean;
@@ -34,18 +36,23 @@ export const useAuthProvider = (): AuthContext => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<UserDto | null>(null);
+  const dispatch = useAppDispatch();
 
-  const handleLoginSuccess = ({ user, token }: { user: UserDto; token: string }) => {
+  const handleLoginSuccess = useCallback(({ user, token }: { user: UserDto; token: string }) => {
     setAuthHeaders(token);
     setIsLoggedIn(true);
     setCurrentUser(user);
-  };
+  }, []);
 
-  const handleLoginFail = () => {
-    setAuthHeaders();
-    setIsLoggedIn(false);
-    setCurrentUser(null);
-  };
+  const handleLoginFail = useCallback(
+    (message?: string) => {
+      setAuthHeaders();
+      setIsLoggedIn(false);
+      setCurrentUser(null);
+      message && dispatch(notificationActions.notify({ variant: 'error', message }));
+    },
+    [dispatch]
+  );
 
   const login = async (loginData: LoginDto) => {
     try {
@@ -53,7 +60,7 @@ export const useAuthProvider = (): AuthContext => {
       const { user, token } = await authApi.login(loginData);
       handleLoginSuccess({ user, token });
     } catch (error) {
-      handleLoginFail();
+      handleLoginFail('auth:loginFailed');
     } finally {
       setIsLoading(false);
     }
@@ -80,7 +87,7 @@ export const useAuthProvider = (): AuthContext => {
         setIsRefreshing(false);
       }
     })();
-  }, []);
+  }, [handleLoginSuccess, handleLoginFail]);
 
   return {
     isRefreshing,

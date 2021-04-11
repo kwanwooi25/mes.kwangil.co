@@ -4,6 +4,7 @@ import { Redirect, Switch } from 'react-router';
 import DashboardPage from 'pages/Dashboard';
 import Loading from 'components/Loading';
 import LoginPage from 'pages/Login';
+import Notifier from 'features/notification/Notifier';
 import PrivateLayout from 'layouts/PrivateLayout';
 import PublicLayout from 'layouts/PublicLayout';
 import React from 'react';
@@ -15,11 +16,14 @@ function App() {
   return isRefreshing ? (
     <Loading />
   ) : (
-    <Switch>
-      <PublicLayout path={Path.LOGIN} component={LoginPage} />
-      <PrivateLayout path={Path.DASHBOARD} component={DashboardPage} />
-      <Redirect to={DEFAULT_PAGE} />
-    </Switch>
+    <>
+      <Switch>
+        <PublicLayout path={Path.LOGIN} component={LoginPage} />
+        <PrivateLayout path={Path.DASHBOARD} component={DashboardPage} />
+        <Redirect to={DEFAULT_PAGE} />
+      </Switch>
+      <Notifier />
+    </>
   );
 }
 
