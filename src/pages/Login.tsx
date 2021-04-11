@@ -16,8 +16,8 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
       justifyContent: 'flex-start',
       alignItems: 'center',
-      height: '100%',
-      width: '100%',
+      height: '100vh',
+      width: '100vw',
       [theme.breakpoints.up('md')]: {
         flexDirection: 'row',
       },
