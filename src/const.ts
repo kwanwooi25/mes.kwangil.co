@@ -1,3 +1,10 @@
+import ApartmentIcon from '@material-ui/icons/Apartment';
+import BuildIcon from '@material-ui/icons/Build';
+import CameraRollIcon from '@material-ui/icons/CameraRoll';
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import { ElementType } from 'react';
+import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
+
 export enum Path {
   HOME = '/',
   LOGIN = '/login',
@@ -13,5 +20,12 @@ export const DEFAULT_API_URL = 'http://localhost:5000';
 
 export const NAV_WIDTH = 240;
 export const NAV_PATHS = [Path.DASHBOARD, Path.ACCOUNTS, Path.PRODUCTS, Path.PLATES, Path.WORK_ORDERS];
+export const NAV_ICONS: { [key: string]: ElementType } = {
+  [Path.DASHBOARD]: DashboardIcon,
+  [Path.ACCOUNTS]: ApartmentIcon,
+  [Path.PRODUCTS]: PhotoLibraryIcon,
+  [Path.PLATES]: CameraRollIcon,
+  [Path.WORK_ORDERS]: BuildIcon,
+};
 
 export const SEARCH_PANEL_WIDTH = 360;

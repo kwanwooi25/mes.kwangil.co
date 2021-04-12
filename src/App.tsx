@@ -2,6 +2,7 @@ import { DEFAULT_PAGE, Path } from 'const';
 import React, { ComponentType } from 'react';
 import { Redirect, Route, Switch } from 'react-router';
 
+import AccountsPage from 'pages/Accounts';
 import DashboardPage from 'pages/Dashboard';
 import Loading from 'components/Loading';
 import LoginPage from 'pages/Login';
@@ -44,6 +45,7 @@ function App() {
       <Switch>
         <PublicRoute path={Path.LOGIN} component={LoginPage} />
         <PrivateRoute path={Path.DASHBOARD} component={DashboardPage} />
+        <PrivateRoute path={Path.ACCOUNTS} component={AccountsPage} />
         <Redirect to={DEFAULT_PAGE} />
       </Switch>
       <Notifier />
