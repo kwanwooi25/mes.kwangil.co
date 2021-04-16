@@ -1,13 +1,17 @@
-import { Drawer, Theme, createStyles, makeStyles, useMediaQuery, useTheme } from '@material-ui/core';
+import { Drawer, Theme, createStyles, makeStyles } from '@material-ui/core';
 import React, { ReactNode } from 'react';
 
 import { SEARCH_PANEL_WIDTH } from 'const';
+import { useScreenSize } from 'hooks/useScreenSize';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    searchPanel: {},
+    searchPanel: {
+      width: SEARCH_PANEL_WIDTH,
+    },
     drawerPaper: {
       width: SEARCH_PANEL_WIDTH,
+      flexShrink: 0,
     },
   })
 );
@@ -20,8 +24,7 @@ export interface SearchPanelProps {
 
 const SearchPanel = ({ isOpen, onClose, children }: SearchPanelProps) => {
   const classes = useStyles();
-  const theme = useTheme();
-  const isDesktopLayout = useMediaQuery(theme.breakpoints.up('lg'));
+  const { isDesktopLayout } = useScreenSize();
 
   return !!children ? (
     <Drawer

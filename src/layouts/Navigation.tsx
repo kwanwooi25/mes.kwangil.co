@@ -9,8 +9,6 @@ import {
   Theme,
   createStyles,
   makeStyles,
-  useMediaQuery,
-  useTheme,
 } from '@material-ui/core';
 import React, { ElementType } from 'react';
 import { useAppDispatch, useAppSelector } from 'store';
@@ -19,6 +17,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { Link } from 'react-router-dom';
 import { push } from 'connected-react-router';
 import { useAuth } from 'features/auth/authHook';
+import { useScreenSize } from 'hooks/useScreenSize';
 import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -72,8 +71,7 @@ const NavListItem = ({ isActive, label, Icon, onClick }: NavListItemProps) => {
 const Navigation = ({ isOpen, onClose }: NavigationProps) => {
   const { t } = useTranslation('nav');
   const classes = useStyles();
-  const theme = useTheme();
-  const isPadLayout = useMediaQuery(theme.breakpoints.up('md'));
+  const { isMobileLayout } = useScreenSize();
 
   const { logout } = useAuth();
   const { pathname } = useAppSelector((state) => state.router.location);
@@ -97,7 +95,7 @@ const Navigation = ({ isOpen, onClose }: NavigationProps) => {
       className={classes.navigation}
       open={isOpen}
       onClose={onClose}
-      variant={isPadLayout ? 'permanent' : 'temporary'}
+      variant={isMobileLayout ? 'temporary' : 'permanent'}
       classes={{
         paper: classes.drawerPaper,
       }}

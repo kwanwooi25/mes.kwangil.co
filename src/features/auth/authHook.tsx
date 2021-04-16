@@ -87,7 +87,7 @@ export const useAuthProvider = (): AuthContext => {
         setIsRefreshing(false);
       }
     })();
-  }, [handleLoginSuccess, handleLoginFail]);
+  }, []);
 
   return {
     isRefreshing,

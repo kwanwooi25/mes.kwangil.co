@@ -50,7 +50,7 @@ const Notifier = () => {
 
       storeDisplayed(key);
     });
-  }, [notifications, enqueueSnackbar, closeSnackbar, dispatch, t]);
+  }, [notifications]);
 
   return null;
 };

@@ -18,6 +18,7 @@ export default {
     downloadExcel: '엑셀다운',
     all: '전체',
     select: '선택',
+    selectAll: '전체 선택',
     delete: '삭제',
     edit: '수정',
     copy: '복사',
@@ -33,6 +34,7 @@ export default {
     threeMonths: '3개월',
     sheet: '원단',
     treatment: '처리',
+    loadMore: '더보기',
 
     account: '거래처',
     product: '제품',
