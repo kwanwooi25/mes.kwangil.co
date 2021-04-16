@@ -20,6 +20,21 @@ export enum AccountListItemHeight {
   MD = 54,
 }
 
+export enum AccountInputs {
+  name = 'name',
+  crn = 'crn',
+  memo = 'memo',
+}
+
+export enum ContactInputs {
+  title = 'title',
+  phone = 'phone',
+  fax = 'fax',
+  email = 'email',
+  address = 'address',
+  memo = 'memo',
+}
+
 export const DEFAULT_PAGE = Path.DASHBOARD;
 export const DEFAULT_API_URL = 'http://localhost:5000';
 export const DEFAULT_LIST_LIMIT = 50;

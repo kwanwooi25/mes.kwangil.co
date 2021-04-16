@@ -10,6 +10,7 @@ import App from './App';
 import { AuthProvider } from 'features/auth/authHook';
 import { ConnectedRouter } from 'connected-react-router';
 import { CssBaseline } from '@material-ui/core';
+import { DialogProvider } from 'features/dialog/dialogHook';
 import { Provider } from 'react-redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -28,7 +29,9 @@ ReactDOM.render(
             <ThemeProvider theme={theme}>
               <CssBaseline />
               <SnackbarProvider>
-                <App />
+                <DialogProvider>
+                  <App />
+                </DialogProvider>
               </SnackbarProvider>
             </ThemeProvider>
           </AuthProvider>
