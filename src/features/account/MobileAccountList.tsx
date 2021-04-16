@@ -65,10 +65,9 @@ const MobileAccountList = (props: MobileAccountListProps) => {
   };
 
   useEffect(() => {
-    const getAccountsPromise = dispatch(getAccounts());
+    dispatch(getAccounts({}));
 
     return () => {
-      getAccountsPromise.abort();
       dispatch(resetAccounts());
     };
   }, []);

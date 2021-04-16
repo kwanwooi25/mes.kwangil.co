@@ -73,7 +73,7 @@ const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
   const dialogTitle = t(isEditMode ? 'updateAccount' : 'addAccount');
 
   const dispatch = useAppDispatch();
-  const { isSaving, createAccount } = useAccounts();
+  const { isSaving, createAccount, shouldCloseAccountDialog, setShouldCloseAccountDialog } = useAccounts();
 
   const { values, touched, errors, handleChange, setFieldValue, setValues, submitForm } = useFormik<AccountFormValues>({
     initialValues: {
@@ -111,7 +111,7 @@ const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
         // TODO: update account
       } else {
         const { contactIdsToDelete, ...accountToCreate } = values;
-        dispatch(createAccount({ accountToCreate, onSuccess: onClose }));
+        dispatch(createAccount(accountToCreate));
       }
     },
   });
@@ -169,6 +169,13 @@ const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
       addContact();
     }
   }, []);
+
+  useEffect(() => {
+    if (shouldCloseAccountDialog) {
+      dispatch(setShouldCloseAccountDialog(false));
+      onClose();
+    }
+  }, [shouldCloseAccountDialog]);
 
   return (
     <Dialog open onClose={handleClose} title={dialogTitle}>

@@ -78,10 +78,9 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
   useEffect(() => {
     const containerMaxHeight = windowHeight - (64 * 2 + 56);
     const limit = Math.floor(containerMaxHeight / itemHeight);
-    const getAccountsPromise = dispatch(getAccounts({ offset: 0, limit }));
+    dispatch(getAccounts({ offset: 0, limit }));
 
     return () => {
-      getAccountsPromise.abort();
       dispatch(resetAccounts());
     };
   }, [windowHeight]);

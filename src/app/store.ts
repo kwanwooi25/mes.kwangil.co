@@ -3,8 +3,11 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 
 import accountReducer from 'features/account/accountSlice';
+import { accountSaga } from 'features/account/accountSaga';
+import { all } from 'redux-saga/effects';
 import { createBrowserHistory } from 'history';
 import { createLogger } from 'redux-logger';
+import createSagaMiddleware from 'redux-saga';
 import notificationReducer from 'features/notification/notificationSlice';
 
 export const history = createBrowserHistory();
@@ -15,12 +18,24 @@ const reducer = combineReducers({
   account: accountReducer,
 });
 
-const middleware = [...getDefaultMiddleware(), routerMiddleware(history), createLogger({ collapsed: true })];
+const sagaMiddleware = createSagaMiddleware();
 
 const store = configureStore({
   reducer,
-  middleware,
+  middleware: [
+    ...getDefaultMiddleware({ thunk: false }),
+    routerMiddleware(history),
+    createLogger({ collapsed: true }),
+    sagaMiddleware,
+  ],
+  devTools: process.env.NODE_ENV !== 'production',
 });
+
+function* rootSaga() {
+  yield all([accountSaga()]);
+}
+
+sagaMiddleware.run(rootSaga);
 
 export type RootState = ReturnType<typeof reducer>;
 
