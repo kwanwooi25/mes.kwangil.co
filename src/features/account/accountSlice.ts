@@ -3,7 +3,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { DEFAULT_LIST_LIMIT } from 'const';
 import { GetListResponse } from 'types/api';
-import { RootState } from 'store';
+import { RootState } from 'app/store';
 import { accountApi } from './accountApi';
 import { notificationActions } from 'features/notification/notificationSlice';
 

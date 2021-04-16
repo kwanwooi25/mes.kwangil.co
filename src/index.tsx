@@ -4,7 +4,7 @@ import 'i18n';
 import * as serviceWorker from './serviceWorker';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
-import store, { history } from './store';
+import store, { history } from 'app/store';
 
 import App from './App';
 import { AuthProvider } from 'features/auth/authHook';

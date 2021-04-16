@@ -22,7 +22,7 @@ import PhoneNumber from 'components/PhoneNumber';
 import PrintIcon from '@material-ui/icons/Print';
 import { Skeleton } from '@material-ui/lab';
 import { useAccounts } from 'features/account/accountHook';
-import { useAppDispatch } from 'store';
+import { useAppDispatch } from 'app/store';
 import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme: Theme) =>

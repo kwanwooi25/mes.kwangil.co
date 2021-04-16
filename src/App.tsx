@@ -2,10 +2,10 @@ import { DEFAULT_PAGE, Path } from 'const';
 import React, { ComponentType } from 'react';
 import { Redirect, Route, Switch } from 'react-router';
 
-import AccountsPage from 'pages/Accounts';
-import DashboardPage from 'pages/Dashboard';
+import AccountPage from 'features/account/AccountPage';
+import DashboardPage from 'features/dashboard/DashboardPage';
 import Loading from 'components/Loading';
-import LoginPage from 'pages/Login';
+import LoginPage from 'features/auth/LoginPage';
 import Notifier from 'features/notification/Notifier';
 import { useAuth } from 'features/auth/authHook';
 
@@ -45,7 +45,7 @@ function App() {
       <Switch>
         <PublicRoute path={Path.LOGIN} component={LoginPage} />
         <PrivateRoute path={Path.DASHBOARD} component={DashboardPage} />
-        <PrivateRoute path={Path.ACCOUNTS} component={AccountsPage} />
+        <PrivateRoute path={Path.ACCOUNTS} component={AccountPage} />
         <Redirect to={DEFAULT_PAGE} />
       </Switch>
       <Notifier />

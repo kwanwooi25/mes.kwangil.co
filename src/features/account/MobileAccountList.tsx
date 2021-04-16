@@ -6,8 +6,8 @@ import AccountListItem from './AccountListItem';
 import EndOfListItem from 'components/EndOfListItem';
 import VirtualScroll from 'components/VirtualScroll';
 import { formatDigit } from 'utils/string';
-import { useAccounts } from 'features/account/accountHook';
-import { useAppDispatch } from 'store';
+import { useAccounts } from './accountHook';
+import { useAppDispatch } from 'app/store';
 import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme: Theme) =>

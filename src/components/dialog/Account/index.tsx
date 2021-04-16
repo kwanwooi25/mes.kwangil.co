@@ -13,7 +13,7 @@ import RoundedButton from 'components/RoundedButton';
 import { formatCrn } from 'utils/string';
 import { isEmpty } from 'lodash';
 import { useAccounts } from 'features/account/accountHook';
-import { useAppDispatch } from 'store';
+import { useAppDispatch } from 'app/store';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 

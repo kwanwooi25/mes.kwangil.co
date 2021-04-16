@@ -1,4 +1,4 @@
-import { apiClient, handleRequest } from 'store/apiClient';
+import { apiClient, handleRequest } from 'app/apiClient';
 
 import { LoginDto } from './interface';
 

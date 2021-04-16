@@ -1,5 +1,5 @@
 import { Notification, notificationActions } from './notificationSlice';
-import { useAppDispatch, useAppSelector } from 'store';
+import { useAppDispatch, useAppSelector } from 'app/store';
 
 import { useEffect } from 'react';
 import { useSnackbar } from 'notistack';

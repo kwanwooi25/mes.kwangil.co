@@ -1,5 +1,5 @@
 import { CreateAccountDto, GetAccountsQuery } from './interface';
-import { apiClient, handleRequest } from 'store/apiClient';
+import { apiClient, handleRequest } from 'app/apiClient';
 
 const urlPrefix = '/account';
 

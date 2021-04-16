@@ -3,9 +3,9 @@ import { object, string } from 'yup';
 
 import Input from 'components/form/Input';
 import Loading from 'components/Loading';
-import { LoginDto } from 'features/auth/interface';
+import { LoginDto } from './interface';
 import React from 'react';
-import { useAuth } from 'features/auth/authHook';
+import { useAuth } from './authHook';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 

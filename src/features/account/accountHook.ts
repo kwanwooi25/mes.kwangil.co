@@ -1,6 +1,6 @@
 import { accountActions, accountSelector } from './accountSlice';
 
-import { useAppSelector } from 'store';
+import { useAppSelector } from 'app/store';
 
 export const useAccounts = () => {
   const accountState = useAppSelector(accountSelector);

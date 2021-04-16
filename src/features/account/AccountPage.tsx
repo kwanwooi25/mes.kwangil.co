@@ -8,14 +8,14 @@ import PaginatedAccountList from './PaginatedAccountList';
 import React from 'react';
 import SelectionPanel from 'components/SelectionPanel';
 import { useAccounts } from 'features/account/accountHook';
-import { useAppDispatch } from 'store';
+import { useAppDispatch } from 'app/store';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useTranslation } from 'react-i18next';
 
-export interface AccountsPageProps {}
+export interface AccountPageProps {}
 
-const AccountsPage = (props: AccountsPageProps) => {
+const AccountPage = (props: AccountPageProps) => {
   const { t } = useTranslation('accounts');
   const { isMobileLayout } = useScreenSize();
   const dispatch = useAppDispatch();
@@ -48,4 +48,4 @@ const AccountsPage = (props: AccountsPageProps) => {
   );
 };
 
-export default AccountsPage;
+export default AccountPage;

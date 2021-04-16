@@ -11,7 +11,7 @@ import {
   makeStyles,
 } from '@material-ui/core';
 import React, { ElementType } from 'react';
-import { useAppDispatch, useAppSelector } from 'store';
+import { useAppDispatch, useAppSelector } from 'app/store';
 
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { Link } from 'react-router-dom';

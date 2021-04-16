@@ -1,14 +1,19 @@
-import { Action, ThunkAction, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { Action, ThunkAction, combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import { connectRouter, routerMiddleware } from 'connected-react-router';
 
+import accountReducer from 'features/account/accountSlice';
 import { createBrowserHistory } from 'history';
 import { createLogger } from 'redux-logger';
-import { createRootReducer } from './rootReducer';
-import { routerMiddleware } from 'connected-react-router';
+import notificationReducer from 'features/notification/notificationSlice';
 
 export const history = createBrowserHistory();
 
-const reducer = createRootReducer(history);
+const reducer = combineReducers({
+  router: connectRouter(history),
+  notification: notificationReducer,
+  account: accountReducer,
+});
 
 const middleware = [...getDefaultMiddleware(), routerMiddleware(history), createLogger({ collapsed: true })];
 

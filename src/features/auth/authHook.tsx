@@ -1,10 +1,10 @@
 import { LoginDto, UserDto } from './interface';
 import React, { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { getAuthToken, setAuthHeaders } from 'store/apiClient';
+import { getAuthToken, setAuthHeaders } from 'app/apiClient';
 
 import { authApi } from './authApi';
 import { notificationActions } from 'features/notification/notificationSlice';
-import { useAppDispatch } from 'store';
+import { useAppDispatch } from 'app/store';
 
 interface AuthContext {
   isRefreshing: boolean;
