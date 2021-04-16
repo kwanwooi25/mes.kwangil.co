@@ -1,4 +1,4 @@
-import { AccountDto, GetAccountsQuery } from './interface';
+import { AccountDto, CreateAccountDto, GetAccountsQuery } from './interface';
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { DEFAULT_LIST_LIMIT } from 'const';
@@ -19,6 +19,8 @@ export interface AccountState {
 
   isSelectMode: boolean;
   selectedIds: number[];
+
+  isSaving: boolean;
 }
 
 const initialState: AccountState = {
@@ -37,19 +39,39 @@ const initialState: AccountState = {
 
   isSelectMode: false,
   selectedIds: [],
+
+  isSaving: false,
 };
 
 export const getAccounts: any = createAsyncThunk<GetListResponse<AccountDto>, GetAccountsQuery>(
   'accounts/getAccounts',
-  async (query: GetAccountsQuery) => {
+  async (query: GetAccountsQuery, thunkApi) => {
     try {
+      thunkApi.dispatch(accountSlice.actions.setQuery(query));
       const data = await accountApi.getAccounts(query);
       return data;
     } catch (error) {
-      notificationActions.notify({ variant: 'error', message: 'accounts:getAccountsFailed' });
+      thunkApi.dispatch(notificationActions.notify({ variant: 'error', message: 'accounts:getAccountsFailed' }));
     }
   }
 );
+
+export const createAccount: any = createAsyncThunk<
+  AccountDto,
+  { accountToCreate: CreateAccountDto; onSuccess: () => void }
+>('accounts/createAccount', async ({ accountToCreate, onSuccess }, thunkApi) => {
+  try {
+    const createdAccount = await accountApi.createAccount(accountToCreate);
+    onSuccess();
+    thunkApi.dispatch(notificationActions.notify({ variant: 'success', message: 'accounts:createAccountSuccess' }));
+    const { query } = (thunkApi.getState() as RootState).account;
+    thunkApi.dispatch(accountActions.resetAccounts());
+    thunkApi.dispatch(getAccounts({ ...query, offset: 0 }));
+    return createdAccount;
+  } catch (error) {
+    thunkApi.dispatch(notificationActions.notify({ variant: 'error', message: 'accounts:createAccountFailed' }));
+  }
+});
 
 const accountSlice = createSlice({
   name: 'accounts',
@@ -98,6 +120,10 @@ const accountSlice = createSlice({
       state.currentPage = Math.floor((offset + limit) / limit);
       state.totalPages = Math.ceil(count / limit);
       state.hasMore = hasMore;
+      if (offset === 0) {
+        state.ids = [];
+        state.entities = {};
+      }
       state.ids = [...state.ids, ...rows.map(({ id }) => id)];
       state.entities = rows.reduce((entities, account) => {
         entities[account.id] = account;
@@ -107,11 +133,20 @@ const accountSlice = createSlice({
     [getAccounts.rejected]: (state) => {
       state.isLoading = false;
     },
+    [createAccount.pending]: (state) => {
+      state.isSaving = true;
+    },
+    [createAccount.fulfilled]: (state) => {
+      state.isSaving = false;
+    },
+    [createAccount.rejected]: (state) => {
+      state.isSaving = false;
+    },
   },
 });
 
 export const accountSelector = (state: RootState) => state.account;
 
-export const accountActions = { ...accountSlice.actions, getAccounts };
+export const accountActions = { ...accountSlice.actions, getAccounts, createAccount };
 
 export default accountSlice.reducer;

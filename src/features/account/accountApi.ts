@@ -1,6 +1,5 @@
+import { CreateAccountDto, GetAccountsQuery } from './interface';
 import { apiClient, handleRequest } from 'store/apiClient';
-
-import { GetAccountsQuery } from './interface';
 
 const urlPrefix = '/account';
 
@@ -10,7 +9,7 @@ const api = {
     handleRequest(await apiClient.get(`${urlPrefix}/list`, { params: { ...query } })),
   // getAllAccounts: async (searchText?: string) =>
   //   handleRequest(await apiClient.get(`${urlPrefix}/list/all`, { params: { searchText } })),
-  // createAccount: async (account: CreateAccountDto) => handleRequest(await apiClient.post(`${urlPrefix}`, account)),
+  createAccount: async (account: CreateAccountDto) => handleRequest(await apiClient.post(`${urlPrefix}`, account)),
   // createAccounts: async (accounts: CreateAccountDto[]) =>
   //   handleRequest(await apiClient.post(`${urlPrefix}/bulk`, accounts)),
   // updateAccount: async ({ id, ...account }: UpdateAccountDto) =>

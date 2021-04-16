@@ -14,7 +14,6 @@ import {
 } from '@material-ui/core';
 import React, { ChangeEvent, ReactElement } from 'react';
 
-import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 import IconButtonGroup from './IconButtonGroup';
 import { useTranslation } from 'react-i18next';
@@ -42,7 +41,7 @@ export interface SubToolbarProps {
   onToggleSelectAll?: (checked: boolean) => void;
   onResetSelection?: () => void;
   selectedCount?: number;
-  SelectModeButtons?: ReactElement | ReactElement[];
+  buttons?: ReactElement | ReactElement[];
 }
 
 const SubToolbar = ({
@@ -51,7 +50,7 @@ const SubToolbar = ({
   onToggleSelectAll = () => {},
   onResetSelection = () => {},
   selectedCount = 0,
-  SelectModeButtons,
+  buttons,
 }: SubToolbarProps) => {
   const { t } = useTranslation('common');
   const classes = useStyles();
@@ -93,19 +92,7 @@ const SubToolbar = ({
             </>
           )}
         </div>
-        <div className={classes.buttons}>
-          {isSelectMode ? (
-            <IconButtonGroup>{SelectModeButtons}</IconButtonGroup>
-          ) : (
-            <IconButtonGroup>
-              <Tooltip title={t('accounts:addAccount') as string} placement="top">
-                <IconButton>
-                  <AddIcon />
-                </IconButton>
-              </Tooltip>
-            </IconButtonGroup>
-          )}
-        </div>
+        <IconButtonGroup className={classes.buttons}>{buttons}</IconButtonGroup>
       </Toolbar>
     </AppBar>
   );

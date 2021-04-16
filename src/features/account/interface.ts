@@ -12,6 +12,10 @@ export interface AccountDto {
   contacts?: ContactDto[];
 }
 
+export interface CreateAccountDto extends Omit<AccountDto, 'id' | 'contacts'> {
+  contacts?: CreateContactDto[];
+}
+
 export interface ContactDto {
   id: number;
   title: string;
@@ -21,4 +25,8 @@ export interface ContactDto {
   email?: string;
   address?: string;
   memo?: string;
+}
+
+export interface CreateContactDto extends Omit<ContactDto, 'id'> {
+  id?: number;
 }

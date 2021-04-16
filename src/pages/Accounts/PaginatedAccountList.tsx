@@ -3,10 +3,14 @@ import { AccountListItemHeight, DEFAULT_LIST_LIMIT } from 'const';
 import { IconButton, List, Theme, Tooltip, createStyles, makeStyles } from '@material-ui/core';
 import React, { ChangeEvent, useEffect } from 'react';
 
+import AccountDialog from 'components/dialog/Account';
+import AddIcon from '@material-ui/icons/Add';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import { Pagination } from '@material-ui/lab';
 import SubToolbar from 'components/SubToolbar';
 import { useAccounts } from 'features/account/accountHook';
+import { useAppDispatch } from 'store';
+import { useDialog } from 'features/dialog/dialogHook';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useTranslation } from 'react-i18next';
 
@@ -30,7 +34,8 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const { windowHeight } = useScreenSize();
-
+  const { openDialog, closeDialog } = useDialog();
+  const dispatch = useAppDispatch();
   const {
     isLoading,
     query,
@@ -43,6 +48,7 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
     selectAll,
     unselectAll,
     resetSelection,
+    isSelectMode,
   } = useAccounts();
 
   const itemHeight = AccountListItemHeight.MD;
@@ -52,21 +58,33 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
   const isIndeterminate = !isSelectedAll && accountIds.some((id) => selectedIds.includes(id));
 
   const handleToggleSelectAll = (checked: boolean) => {
-    checked ? selectAll(accountIds) : unselectAll(accountIds);
+    dispatch(checked ? selectAll(accountIds) : unselectAll(accountIds));
+  };
+
+  const handleResetSelection = () => {
+    dispatch(resetSelection());
   };
 
   const handleChangePage = (e: ChangeEvent<unknown>, value: number) => {
     const limit = query?.limit || DEFAULT_LIST_LIMIT;
-    resetAccounts();
-    getAccounts({ limit, offset: limit * value - limit });
+    dispatch(resetAccounts());
+    dispatch(getAccounts({ limit, offset: limit * value - limit }));
+  };
+
+  const handleClickCreate = () => {
+    openDialog(<AccountDialog onClose={closeDialog} />);
   };
 
   useEffect(() => {
-    resetAccounts();
     const containerMaxHeight = windowHeight - (64 * 2 + 56);
     const limit = Math.floor(containerMaxHeight / itemHeight);
-    getAccounts({ limit });
-  }, []);
+    const getAccountsPromise = dispatch(getAccounts({ offset: 0, limit }));
+
+    return () => {
+      getAccountsPromise.abort();
+      dispatch(resetAccounts());
+    };
+  }, [windowHeight]);
 
   return (
     <>
@@ -74,14 +92,22 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
         isSelectedAll={isSelectedAll}
         isIndeterminate={isIndeterminate}
         onToggleSelectAll={handleToggleSelectAll}
-        onResetSelection={resetSelection}
+        onResetSelection={handleResetSelection}
         selectedCount={selectedIds.length}
-        SelectModeButtons={
-          <Tooltip title={t('common:deleteAll') as string} placement="top">
-            <IconButton>
-              <DeleteOutlineIcon />
-            </IconButton>
-          </Tooltip>
+        buttons={
+          isSelectMode ? (
+            <Tooltip title={t('common:deleteAll') as string} placement="top">
+              <IconButton>
+                <DeleteOutlineIcon />
+              </IconButton>
+            </Tooltip>
+          ) : (
+            <Tooltip title={t('accounts:addAccount') as string} placement="top">
+              <IconButton onClick={handleClickCreate}>
+                <AddIcon />
+              </IconButton>
+            </Tooltip>
+          )
         }
       />
       <div className={classes.listContainer} style={{ height: (query.limit || DEFAULT_LIST_LIMIT) * itemHeight }}>

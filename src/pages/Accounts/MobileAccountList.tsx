@@ -7,6 +7,7 @@ import EndOfListItem from 'components/EndOfListItem';
 import VirtualScroll from 'components/VirtualScroll';
 import { formatDigit } from 'utils/string';
 import { useAccounts } from 'features/account/accountHook';
+import { useAppDispatch } from 'store';
 import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -22,6 +23,7 @@ export interface MobileAccountListProps {}
 const MobileAccountList = (props: MobileAccountListProps) => {
   const { t } = useTranslation('common');
   const classes = useStyles();
+  const dispatch = useAppDispatch();
   const { query, isLoading, hasMore, totalCount, accounts, getAccounts, resetAccounts, selectedIds } = useAccounts();
 
   const itemCount = accounts.length + 1;
@@ -31,10 +33,12 @@ const MobileAccountList = (props: MobileAccountListProps) => {
 
   const loadMore = () => {
     if (hasMore) {
-      getAccounts({
-        ...query,
-        offset: (query.offset || 0) + (query.limit || DEFAULT_LIST_LIMIT),
-      });
+      dispatch(
+        getAccounts({
+          ...query,
+          offset: (query.offset || 0) + (query.limit || DEFAULT_LIST_LIMIT),
+        })
+      );
     }
   };
 
@@ -61,8 +65,12 @@ const MobileAccountList = (props: MobileAccountListProps) => {
   };
 
   useEffect(() => {
-    resetAccounts();
-    getAccounts();
+    const getAccountsPromise = dispatch(getAccounts());
+
+    return () => {
+      getAccountsPromise.abort();
+      dispatch(resetAccounts());
+    };
   }, []);
 
   return (

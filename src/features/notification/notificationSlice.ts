@@ -13,14 +13,22 @@ interface NotifyActionPayload {
   message: string;
 }
 
+export interface NotificationState {
+  notifications: Notification[];
+}
+
+const initialState: NotificationState = {
+  notifications: [],
+};
+
 const notificationSlice = createSlice({
   name: 'notifications',
-  initialState: [] as Notification[],
+  initialState,
   reducers: {
     notify: (state, action: PayloadAction<NotifyActionPayload>) => {
       const { variant, message } = action.payload;
 
-      state.push({
+      state.notifications.push({
         key: `${new Date().getTime()}`,
         message,
         options: { variant },
@@ -28,7 +36,7 @@ const notificationSlice = createSlice({
       });
     },
     remove: (state, action: PayloadAction<string>) => {
-      state = state.filter(({ key }) => key !== action.payload);
+      state.notifications = state.notifications.filter(({ key }) => key !== action.payload);
     },
   },
 });

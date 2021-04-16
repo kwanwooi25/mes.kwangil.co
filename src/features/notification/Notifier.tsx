@@ -9,7 +9,7 @@ let displayed: string[] = [];
 
 const Notifier = () => {
   const dispatch = useAppDispatch();
-  const notifications = useAppSelector((state) => state.notification);
+  const { notifications } = useAppSelector((state) => state.notification);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { t } = useTranslation();
 
@@ -50,7 +50,7 @@ const Notifier = () => {
 
       storeDisplayed(key);
     });
-  }, [notifications]);
+  }, [notifications, enqueueSnackbar, closeSnackbar, dispatch]);
 
   return null;
 };

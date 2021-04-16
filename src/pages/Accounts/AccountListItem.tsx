@@ -22,6 +22,7 @@ import PhoneNumber from 'components/PhoneNumber';
 import PrintIcon from '@material-ui/icons/Print';
 import { Skeleton } from '@material-ui/lab';
 import { useAccounts } from 'features/account/accountHook';
+import { useAppDispatch } from 'store';
 import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -61,7 +62,7 @@ const AccountListItem = ({
   const { t } = useTranslation('accounts');
   const classes = useStyles();
 
-  // const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const {
     query: { searchText = '' },
     toggleSelection,
@@ -73,7 +74,7 @@ const AccountListItem = ({
   const baseFaxNumber = account?.contacts?.find(({ isBase }) => isBase)?.fax;
 
   const handleSelectionChange = useCallback(() => {
-    toggleSelection(account.id);
+    dispatch(toggleSelection(account.id));
   }, []);
 
   const openMenu = useCallback((e: MouseEvent<HTMLButtonElement>) => setMenuAnchorEl(e.currentTarget), []);
@@ -151,9 +152,7 @@ const AccountListItemSkeleton = ({ itemHeight }: { itemHeight: number }) => {
         </div>
       </ListItemText>
       <ListItemSecondaryAction>
-        <IconButton edge="end">
-          <Skeleton variant="circle" width={48} height={48} />
-        </IconButton>
+        <Skeleton variant="circle" width={48} height={48} style={{ marginRight: -12 }} />
       </ListItemSecondaryAction>
     </ListItem>
   );

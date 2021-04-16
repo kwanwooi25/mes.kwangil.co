@@ -53,3 +53,5 @@ export const SEARCH_PANEL_WIDTH = 360;
 
 export const PHONE_NUMBER_MAX_LENGTH = 11;
 export const CRN_MAX_LENGTH = 10;
+
+export const PHONE_INPUT_KEYS = [ContactInputs.phone, ContactInputs.fax];
