@@ -20,6 +20,36 @@ export const useAccounts = () => {
   const resetAccounts = useCallback(() => {
     dispatch(accountActions.resetAccounts());
   }, [dispatch]);
+  const toggleSelection = useCallback(
+    (id: number) => {
+      dispatch(accountActions.toggleSelection(id));
+    },
+    [dispatch]
+  );
+  const resetSelection = useCallback(() => {
+    dispatch(accountActions.resetSelection());
+  }, [dispatch]);
+  const selectAll = useCallback(
+    (ids: number[]) => {
+      dispatch(accountActions.selectAll(ids));
+    },
+    [dispatch]
+  );
+  const unselectAll = useCallback(
+    (ids: number[]) => {
+      dispatch(accountActions.unselectAll(ids));
+    },
+    [dispatch]
+  );
 
-  return { ...accountState, accounts, getAccounts, resetAccounts };
+  return {
+    ...accountState,
+    accounts,
+    getAccounts,
+    resetAccounts,
+    toggleSelection,
+    resetSelection,
+    selectAll,
+    unselectAll,
+  };
 };

@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export interface IconButtonGroupProps {
   className?: string;
-  children: ReactElement | ReactElement[];
+  children?: ReactElement | ReactElement[];
 }
 
 const IconButtonGroup = forwardRef(({ children, className }: IconButtonGroupProps, ref: any) => {

@@ -62,8 +62,28 @@ const accountSlice = createSlice({
       state.query = initialState.query;
       state.ids = initialState.ids;
       state.entities = initialState.entities;
+    },
+    toggleSelection: (state, action: PayloadAction<number>) => {
+      if (state.selectedIds.includes(action.payload)) {
+        state.selectedIds = state.selectedIds.filter((id) => id !== action.payload);
+      } else {
+        state.selectedIds.push(action.payload);
+      }
+      state.isSelectMode = !!state.selectedIds.length;
+    },
+    resetSelection: (state) => {
       state.isSelectMode = initialState.isSelectMode;
       state.selectedIds = initialState.selectedIds;
+    },
+    selectAll: (state, action: PayloadAction<number[]>) => {
+      action.payload.forEach((id) => {
+        if (!state.selectedIds.includes(id)) {
+          state.selectedIds.push(id);
+        }
+      });
+    },
+    unselectAll: (state, action: PayloadAction<number[]>) => {
+      state.selectedIds = state.selectedIds.filter((id) => !action.payload.includes(id));
     },
   },
   extraReducers: {

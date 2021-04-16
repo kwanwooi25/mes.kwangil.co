@@ -64,6 +64,7 @@ const AccountListItem = ({
   // const dispatch = useDispatch();
   const {
     query: { searchText = '' },
+    toggleSelection,
   } = useAccounts();
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
@@ -72,7 +73,7 @@ const AccountListItem = ({
   const baseFaxNumber = account?.contacts?.find(({ isBase }) => isBase)?.fax;
 
   const handleSelectionChange = useCallback(() => {
-    // dispatch(actions.account.toggleAccountSelection(account.id));
+    toggleSelection(account.id);
   }, []);
 
   const openMenu = useCallback((e: MouseEvent<HTMLButtonElement>) => setMenuAnchorEl(e.currentTarget), []);

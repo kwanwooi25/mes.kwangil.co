@@ -1,18 +1,21 @@
 import {
   AppBar,
   Checkbox,
+  Divider,
   FormControlLabel,
   IconButton,
   Theme,
   Toolbar,
   Tooltip,
+  Typography,
   createStyles,
   fade,
   makeStyles,
 } from '@material-ui/core';
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, ReactElement } from 'react';
 
 import AddIcon from '@material-ui/icons/Add';
+import CloseIcon from '@material-ui/icons/Close';
 import IconButtonGroup from './IconButtonGroup';
 import { useTranslation } from 'react-i18next';
 
@@ -23,37 +26,86 @@ const useStyles = makeStyles((theme: Theme) =>
       borderBottom: `0.5px solid ${fade(theme.palette.primary.light, 0.15)}`,
       zIndex: theme.zIndex.drawer,
     },
+    selection: {
+      display: 'flex',
+      alignItems: 'center',
+    },
     buttons: {
       marginLeft: 'auto',
     },
   })
 );
 
-export interface SubToolbarProps {}
+export interface SubToolbarProps {
+  isSelectedAll?: boolean;
+  isIndeterminate?: boolean;
+  onToggleSelectAll?: (checked: boolean) => void;
+  onResetSelection?: () => void;
+  selectedCount?: number;
+  SelectModeButtons?: ReactElement | ReactElement[];
+}
 
-const SubToolbar = (props: SubToolbarProps) => {
+const SubToolbar = ({
+  isSelectedAll = false,
+  isIndeterminate = false,
+  onToggleSelectAll = () => {},
+  onResetSelection = () => {},
+  selectedCount = 0,
+  SelectModeButtons,
+}: SubToolbarProps) => {
   const { t } = useTranslation('common');
   const classes = useStyles();
-  const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false);
+
+  const isSelectMode = selectedCount > 0;
 
   const toggleSelectAll = (e: ChangeEvent<HTMLInputElement>) => {
-    setIsSelectedAll(e.target.checked);
+    onToggleSelectAll(e.target.checked);
   };
 
   return (
     <AppBar className={classes.appBar} color="inherit" position="relative" elevation={0}>
       <Toolbar>
-        <FormControlLabel
-          control={<Checkbox color="primary" name="selectAll" checked={isSelectedAll} onChange={toggleSelectAll} />}
-          label={t('selectAll')}
-        />
-        <IconButtonGroup className={classes.buttons}>
-          <Tooltip title={t('accounts:addAccount') as string} placement="top">
-            <IconButton>
-              <AddIcon />
-            </IconButton>
-          </Tooltip>
-        </IconButtonGroup>
+        <div className={classes.selection}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                color="primary"
+                name="selectAll"
+                checked={isSelectedAll}
+                indeterminate={isIndeterminate}
+                onChange={toggleSelectAll}
+              />
+            }
+            label={t('selectAll')}
+          />
+          {isSelectMode && (
+            <>
+              <Divider orientation="vertical" style={{ height: 18 }} />
+              <Typography
+                dangerouslySetInnerHTML={{ __html: t('selectedCount', { count: selectedCount }) }}
+                style={{ margin: '0 12px' }}
+              />
+              <Tooltip title={t('unselectAll') as string} placement="top">
+                <IconButton onClick={onResetSelection}>
+                  <CloseIcon />
+                </IconButton>
+              </Tooltip>
+            </>
+          )}
+        </div>
+        <div className={classes.buttons}>
+          {isSelectMode ? (
+            <IconButtonGroup>{SelectModeButtons}</IconButtonGroup>
+          ) : (
+            <IconButtonGroup>
+              <Tooltip title={t('accounts:addAccount') as string} placement="top">
+                <IconButton>
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>
+            </IconButtonGroup>
+          )}
+        </div>
       </Toolbar>
     </AppBar>
   );
