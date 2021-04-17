@@ -5,6 +5,7 @@ import Input from 'components/form/Input';
 import Loading from 'components/Loading';
 import { LoginDto } from './interface';
 import React from 'react';
+import { useAppDispatch } from 'app/store';
 import { useAuth } from './authHook';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -72,7 +73,8 @@ const LoginPage = (props: LoginPageProps) => {
   const { t } = useTranslation('auth');
   const classes = useStyles();
 
-  const { isLoading, login } = useAuth();
+  const dispatch = useAppDispatch();
+  const { isLoggingIn, login } = useAuth();
 
   const { values, touched, errors, handleChange, handleSubmit } = useFormik<LoginDto>({
     initialValues: {
@@ -84,7 +86,7 @@ const LoginPage = (props: LoginPageProps) => {
       password: string().required(t('passwordRequired')),
     }),
     onSubmit: (values) => {
-      login(values);
+      dispatch(login(values));
     },
   });
 
@@ -97,7 +99,7 @@ const LoginPage = (props: LoginPageProps) => {
         </Typography>
       </div>
       <form className={classes.loginForm} noValidate onSubmit={handleSubmit}>
-        {isLoading && <Loading />}
+        {isLoggingIn && <Loading />}
         <Input
           id="email"
           name="email"
@@ -126,7 +128,7 @@ const LoginPage = (props: LoginPageProps) => {
           size="large"
           color="primary"
           disableElevation
-          disabled={isLoading}
+          disabled={isLoggingIn}
         >
           {t('login')}
         </Button>

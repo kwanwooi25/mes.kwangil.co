@@ -16,9 +16,9 @@ export interface RouteProps {
 }
 
 const PublicRoute = ({ component: Component, ...rest }: RouteProps) => {
-  const { isLoggedIn } = useAuth();
+  const { currentUser } = useAuth();
 
-  return !isLoggedIn ? (
+  return !currentUser ? (
     <Route {...rest} render={(matchProps) => <Component {...matchProps} {...rest} />} />
   ) : (
     <Redirect to={DEFAULT_PAGE} />
@@ -26,9 +26,9 @@ const PublicRoute = ({ component: Component, ...rest }: RouteProps) => {
 };
 
 const PrivateRoute = ({ component: Component, ...rest }: RouteProps) => {
-  const { isLoggedIn } = useAuth();
+  const { currentUser } = useAuth();
 
-  return isLoggedIn ? (
+  return !!currentUser ? (
     <Route {...rest} render={(matchProps) => <Component {...matchProps} {...rest} />} />
   ) : (
     <Redirect to={Path.LOGIN} />

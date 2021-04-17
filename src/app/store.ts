@@ -5,6 +5,8 @@ import { connectRouter, routerMiddleware } from 'connected-react-router';
 import accountReducer from 'features/account/accountSlice';
 import { accountSaga } from 'features/account/accountSaga';
 import { all } from 'redux-saga/effects';
+import authReducer from 'features/auth/authSlice';
+import { authSaga } from 'features/auth/authSaga';
 import { createBrowserHistory } from 'history';
 import { createLogger } from 'redux-logger';
 import createSagaMiddleware from 'redux-saga';
@@ -15,6 +17,7 @@ export const history = createBrowserHistory();
 const reducer = combineReducers({
   router: connectRouter(history),
   notification: notificationReducer,
+  auth: authReducer,
   account: accountReducer,
 });
 
@@ -32,7 +35,7 @@ const store = configureStore({
 });
 
 function* rootSaga() {
-  yield all([accountSaga()]);
+  yield all([authSaga(), accountSaga()]);
 }
 
 sagaMiddleware.run(rootSaga);

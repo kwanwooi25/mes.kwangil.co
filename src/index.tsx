@@ -7,7 +7,6 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import store, { history } from 'app/store';
 
 import App from './App';
-import { AuthProvider } from 'features/auth/authHook';
 import { ConnectedRouter } from 'connected-react-router';
 import { CssBaseline } from '@material-ui/core';
 import { DialogProvider } from 'features/dialog/dialogHook';
@@ -25,16 +24,14 @@ ReactDOM.render(
     <Provider store={store}>
       <ConnectedRouter history={history}>
         <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <ThemeProvider theme={theme}>
-              <CssBaseline />
-              <SnackbarProvider>
-                <DialogProvider>
-                  <App />
-                </DialogProvider>
-              </SnackbarProvider>
-            </ThemeProvider>
-          </AuthProvider>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <SnackbarProvider>
+              <DialogProvider>
+                <App />
+              </DialogProvider>
+            </SnackbarProvider>
+          </ThemeProvider>
         </QueryClientProvider>
       </ConnectedRouter>
     </Provider>

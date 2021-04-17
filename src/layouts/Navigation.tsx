@@ -90,6 +90,8 @@ const Navigation = ({ isOpen, onClose }: NavigationProps) => {
     onClose();
   };
 
+  const logoutUser = () => dispatch(logout());
+
   return (
     <Drawer
       className={classes.navigation}
@@ -113,7 +115,7 @@ const Navigation = ({ isOpen, onClose }: NavigationProps) => {
           ))}
         </List>
         <Divider />
-        <ListItem button onClick={logout}>
+        <ListItem button onClick={logoutUser}>
           <ListItemIcon>
             <ExitToAppIcon />
           </ListItemIcon>
