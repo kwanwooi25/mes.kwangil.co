@@ -16,6 +16,11 @@ export interface CreateAccountDto extends Omit<AccountDto, 'id' | 'contacts'> {
   contacts?: CreateContactDto[];
 }
 
+export interface UpdateAccountDto extends AccountDto {
+  contactsToCreate?: CreateContactDto;
+  contactIdsToDelete?: number[];
+}
+
 export interface ContactDto {
   id: number;
   title: string;

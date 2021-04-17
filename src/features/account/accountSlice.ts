@@ -1,4 +1,4 @@
-import { AccountDto, CreateAccountDto, GetAccountsQuery } from './interface';
+import { AccountDto, CreateAccountDto, GetAccountsQuery, UpdateAccountDto } from './interface';
 import { EntityState, PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
 import { DEFAULT_LIST_LIMIT } from 'const';
@@ -72,6 +72,10 @@ const accountSlice = createSlice({
       state.isSaving = action.payload;
     },
     createAccount: (state, action: PayloadAction<CreateAccountDto>) => {},
+    updateAccount: (state, action: PayloadAction<UpdateAccountDto>) => {},
+    updateAccountSuccess: (state, { payload: { id, ...changes } }: PayloadAction<AccountDto>) => {
+      accountsAdapter.updateOne(state, { id, changes });
+    },
     setShouldCloseAccountDialog: (state, action: PayloadAction<boolean>) => {
       state.shouldCloseAccountDialog = action.payload;
     },

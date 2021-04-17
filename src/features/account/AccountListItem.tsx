@@ -14,6 +14,7 @@ import {
 } from '@material-ui/core';
 import React, { MouseEvent, memo, useCallback, useState } from 'react';
 
+import AccountDialog from 'components/dialog/Account';
 import { AccountDto } from 'features/account/interface';
 import AccountName from 'components/AccountName';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -23,6 +24,7 @@ import PrintIcon from '@material-ui/icons/Print';
 import { Skeleton } from '@material-ui/lab';
 import { useAccounts } from 'features/account/accountHook';
 import { useAppDispatch } from 'app/store';
+import { useDialog } from 'features/dialog/dialogHook';
 import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -49,16 +51,9 @@ export interface AccountListItemProps extends ListItemProps {
   itemHeight: number;
   isSelected?: boolean;
   showFaxNumber?: boolean;
-  isLoading?: boolean;
 }
 
-const AccountListItem = ({
-  account,
-  itemHeight,
-  isSelected = false,
-  showFaxNumber = false,
-  isLoading = false,
-}: AccountListItemProps) => {
+const AccountListItem = ({ account, itemHeight, isSelected = false, showFaxNumber = false }: AccountListItemProps) => {
   const { t } = useTranslation('accounts');
   const classes = useStyles();
 
@@ -67,6 +62,7 @@ const AccountListItem = ({
     query: { searchText = '' },
     toggleSelection,
   } = useAccounts();
+  const { openDialog, closeDialog } = useDialog();
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -86,7 +82,7 @@ const AccountListItem = ({
   };
 
   const handleClickEdit = useCallback(() => {
-    // dispatch(actions.dialog.openDialog(DialogType.ACCOUNT, { account }));
+    openDialog(<AccountDialog onClose={closeDialog} account={account} />);
   }, []);
 
   const handleClickDelete = useCallback(() => {
@@ -136,7 +132,7 @@ const AccountListItem = ({
   );
 };
 
-const AccountListItemSkeleton = ({ itemHeight }: { itemHeight: number }) => {
+const AccountListItemSkeleton = memo(({ itemHeight }: { itemHeight: number }) => {
   const classes = useStyles();
 
   return (
@@ -156,7 +152,7 @@ const AccountListItemSkeleton = ({ itemHeight }: { itemHeight: number }) => {
       </ListItemSecondaryAction>
     </ListItem>
   );
-};
+});
 
 export { AccountListItemSkeleton };
 

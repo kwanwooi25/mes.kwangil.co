@@ -1,7 +1,7 @@
+import { AccountDto, ContactDto, CreateContactDto } from './interface';
 import { AccountState, accountActions, accountSelector } from './accountSlice';
-import { all, call, put, select, takeEvery } from 'redux-saga/effects';
+import { all, call, cancel, put, select, takeEvery } from 'redux-saga/effects';
 
-import { AccountDto } from './interface';
 import { GetListResponse } from 'types/api';
 import { accountApi } from './accountApi';
 import { notificationActions } from 'features/notification/notificationSlice';
@@ -13,6 +13,8 @@ const {
   resetAccounts,
   setSaving,
   createAccount,
+  updateAccount,
+  updateAccountSuccess,
   setShouldCloseAccountDialog,
 } = accountActions;
 
@@ -29,10 +31,9 @@ function* getAccountsSaga({ payload: query }: ReturnType<typeof getAccounts>) {
 }
 
 function* createAccountSaga({ payload: accountToCreate }: ReturnType<typeof createAccount>) {
-  const hasEmptyContactTitle = accountToCreate.contacts?.some(({ title }) => !title);
-  if (hasEmptyContactTitle) {
-    yield put(notificationActions.notify({ variant: 'error', message: 'contacts:titleRequired' }));
-    return;
+  const validated: boolean = yield call(validateContactTitles, accountToCreate.contacts);
+  if (!validated) {
+    cancel();
   }
 
   try {
@@ -50,9 +51,38 @@ function* createAccountSaga({ payload: accountToCreate }: ReturnType<typeof crea
   }
 }
 
+function* updateAccountSaga({ payload: accountToUpdate }: ReturnType<typeof updateAccount>) {
+  const validated: boolean = yield call(validateContactTitles, accountToUpdate.contacts);
+  if (!validated) {
+    cancel();
+  }
+
+  try {
+    yield put(setSaving(true));
+    const updatedAccount: AccountDto = yield call(accountApi.updateAccount, accountToUpdate);
+    yield put(setShouldCloseAccountDialog(true));
+    yield put(notificationActions.notify({ variant: 'success', message: 'accounts:updateAccountSuccess' }));
+    yield put(updateAccountSuccess(updatedAccount));
+  } catch (error) {
+    yield put(notificationActions.notify({ variant: 'error', message: 'accounts:updateAccountFailed' }));
+  } finally {
+    yield put(setSaving(false));
+  }
+}
+
+function* validateContactTitles(contacts?: (CreateContactDto | ContactDto)[]) {
+  const hasEmptyContactTitle = contacts?.some(({ title }) => !title);
+  if (hasEmptyContactTitle) {
+    yield put(notificationActions.notify({ variant: 'error', message: 'contacts:titleRequired' }));
+  }
+
+  return !hasEmptyContactTitle;
+}
+
 export function* accountSaga(): any {
   yield all([
     yield takeEvery(getAccounts.type, getAccountsSaga),
     yield takeEvery(createAccount.type, createAccountSaga),
+    yield takeEvery(updateAccount.type, updateAccountSaga),
   ]);
 }

@@ -1,4 +1,4 @@
-import { AccountDto, CreateContactDto } from 'features/account/interface';
+import { AccountDto, CreateContactDto, UpdateAccountDto } from 'features/account/interface';
 import { DialogActions, DialogContent, Divider, Theme, Typography, createStyles, makeStyles } from '@material-ui/core';
 import React, { ChangeEvent, useEffect } from 'react';
 import { array, boolean, object, string } from 'yup';
@@ -73,7 +73,13 @@ const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
   const dialogTitle = t(isEditMode ? 'updateAccount' : 'addAccount');
 
   const dispatch = useAppDispatch();
-  const { isSaving, createAccount, shouldCloseAccountDialog, setShouldCloseAccountDialog } = useAccounts();
+  const {
+    isSaving,
+    createAccount,
+    updateAccount,
+    shouldCloseAccountDialog,
+    setShouldCloseAccountDialog,
+  } = useAccounts();
 
   const { values, touched, errors, handleChange, setFieldValue, setValues, submitForm } = useFormik<AccountFormValues>({
     initialValues: {
@@ -107,8 +113,7 @@ const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
           contacts: values?.contacts?.filter(({ id }) => id),
           contactsToCreate: values?.contacts?.filter(({ id }) => !id),
         };
-        console.log(accountToUpdate);
-        // TODO: update account
+        dispatch(updateAccount(accountToUpdate as UpdateAccountDto));
       } else {
         const { contactIdsToDelete, ...accountToCreate } = values;
         dispatch(createAccount(accountToCreate));
