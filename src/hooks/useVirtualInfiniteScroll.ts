@@ -1,18 +1,23 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-export const useVirtualScroll = ({
+export const useVirtualInfiniteScroll = ({
   nodePositions,
   itemCount,
+  itemHeight,
   threshold = 10,
 }: {
   nodePositions: number[];
   itemCount: number;
+  itemHeight: number;
   threshold?: number;
 }) => {
+  const thresholdMargin = threshold * 2 * itemHeight;
   const animationFrame = useRef<number>();
   const containerRef = useRef<any>();
+  const contentTotalRef = useRef<any>();
   const [scrollTop, setScrollTop] = useState<number>(0);
   const [containerHeight, setContainerHeight] = useState<number>(0);
+  const [shouldLoadMore, setShouldLoadMore] = useState<boolean>(false);
 
   const firstVisibleNode = useMemo(() => getFirstVisibleNode(nodePositions, itemCount, scrollTop), [
     nodePositions,
@@ -36,7 +41,13 @@ export const useVirtualScroll = ({
       cancelAnimationFrame(animationFrame.current);
     }
     animationFrame.current = requestAnimationFrame(() => {
-      setScrollTop(e.target.scrollTop);
+      const { scrollTop, offsetHeight } = e.target;
+      setScrollTop(scrollTop);
+      const currentPosition = scrollTop + offsetHeight;
+      const totalHeight = contentTotalRef.current.offsetHeight;
+      if (currentPosition + thresholdMargin > totalHeight) {
+        setShouldLoadMore(true);
+      }
     });
   }, []);
 
@@ -51,7 +62,7 @@ export const useVirtualScroll = ({
     }
   }, []);
 
-  return { containerRef, containerHeight, startNode, endNode };
+  return { containerRef, containerHeight, contentTotalRef, startNode, endNode, shouldLoadMore, setShouldLoadMore };
 };
 
 function getFirstVisibleNode(nodePositions: number[], itemCount: number, scrollTop: number): number {

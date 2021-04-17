@@ -17,7 +17,7 @@ export interface AccountPageProps {}
 
 const AccountPage = (props: AccountPageProps) => {
   const { t } = useTranslation('accounts');
-  const { isMobileLayout } = useScreenSize();
+  const { isMobileLayout, isPadLayout, isDesktopLayout } = useScreenSize();
   const dispatch = useAppDispatch();
   const { isSelectMode, selectedIds, resetSelection } = useAccounts();
   const { openDialog, closeDialog } = useDialog();
@@ -32,7 +32,8 @@ const AccountPage = (props: AccountPageProps) => {
 
   return (
     <Layout pageTitle={t('pageTitle')} SearchPanelContent={<div></div>}>
-      {isMobileLayout ? <MobileAccountList /> : <PaginatedAccountList />}
+      {isMobileLayout && <MobileAccountList />}
+      {(isPadLayout || isDesktopLayout) && <PaginatedAccountList />}
 
       <SelectionPanel
         isOpen={isMobileLayout && isSelectMode}

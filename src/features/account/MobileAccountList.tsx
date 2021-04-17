@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 
 import AccountListItem from './AccountListItem';
 import EndOfListItem from 'components/EndOfListItem';
-import VirtualScroll from 'components/VirtualScroll';
+import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
 import { formatDigit } from 'utils/string';
 import { useAccounts } from './accountHook';
 import { useAppDispatch } from 'app/store';
@@ -53,19 +53,12 @@ const MobileAccountList = (props: MobileAccountListProps) => {
         isSelected={selectedIds.includes(account.id)}
       />
     ) : (
-      <EndOfListItem
-        key="end-of-list"
-        height={itemHeight}
-        isLoading={isLoading}
-        hasMore={hasMore}
-        onClickLoadMore={loadMore}
-        message={searchResult}
-      />
+      <EndOfListItem key="end-of-list" height={itemHeight} isLoading={isLoading} message={searchResult} />
     );
   };
 
   useEffect(() => {
-    dispatch(getAccounts({}));
+    dispatch(getAccounts({ limit: DEFAULT_LIST_LIMIT }));
 
     return () => {
       dispatch(resetAccounts());
@@ -74,7 +67,13 @@ const MobileAccountList = (props: MobileAccountListProps) => {
 
   return (
     <List className={classes.mobileAccountList} disablePadding>
-      <VirtualScroll itemCount={itemCount} itemHeight={itemHeight} renderItem={renderItem} />;
+      <VirtualInfiniteScroll
+        itemCount={itemCount}
+        itemHeight={itemHeight}
+        renderItem={renderItem}
+        onLoadMore={loadMore}
+      />
+      ;
     </List>
   );
 };
