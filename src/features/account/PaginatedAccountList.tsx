@@ -5,6 +5,7 @@ import React, { ChangeEvent, useEffect } from 'react';
 
 import AccountDialog from 'components/dialog/Account';
 import AddIcon from '@material-ui/icons/Add';
+import ConfirmDialog from 'components/dialog/Confirm';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import { Pagination } from '@material-ui/lab';
 import SubToolbar from 'components/SubToolbar';
@@ -49,6 +50,7 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
     unselectAll,
     resetSelection,
     isSelectMode,
+    deleteAccounts,
   } = useAccounts();
 
   const itemHeight = AccountListItemHeight.MD;
@@ -75,6 +77,19 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
     openDialog(<AccountDialog onClose={closeDialog} />);
   };
 
+  const handleClickDeleteAll = () => {
+    openDialog(
+      <ConfirmDialog
+        title={t('accounts:deleteAccount')}
+        message={t('accounts:deleteAccountsConfirm', { count: selectedIds.length })}
+        onClose={(isConfirmed: boolean) => {
+          isConfirmed && dispatch(deleteAccounts(selectedIds));
+          closeDialog();
+        }}
+      />
+    );
+  };
+
   useEffect(() => {
     const containerMaxHeight = windowHeight - (64 * 2 + 56);
     const limit = Math.floor(containerMaxHeight / itemHeight);
@@ -96,7 +111,7 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
         buttons={
           isSelectMode ? (
             <Tooltip title={t('common:deleteAll') as string} placement="top">
-              <IconButton>
+              <IconButton onClick={handleClickDeleteAll}>
                 <DeleteOutlineIcon />
               </IconButton>
             </Tooltip>

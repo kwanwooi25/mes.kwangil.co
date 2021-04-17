@@ -1,13 +1,19 @@
 import { AccountListItemHeight, DEFAULT_LIST_LIMIT } from 'const';
-import { List, Theme, createStyles, makeStyles } from '@material-ui/core';
+import { IconButton, List, Theme, createStyles, makeStyles } from '@material-ui/core';
 import React, { useEffect } from 'react';
 
+import AccountDialog from 'components/dialog/Account';
 import AccountListItem from './AccountListItem';
+import ConfirmDialog from 'components/dialog/Confirm';
+import CreationFab from 'components/CreationFab';
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EndOfListItem from 'components/EndOfListItem';
+import SelectionPanel from 'components/SelectionPanel';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
 import { formatDigit } from 'utils/string';
 import { useAccounts } from './accountHook';
 import { useAppDispatch } from 'app/store';
+import { useDialog } from 'features/dialog/dialogHook';
 import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -24,7 +30,20 @@ const MobileAccountList = (props: MobileAccountListProps) => {
   const { t } = useTranslation('common');
   const classes = useStyles();
   const dispatch = useAppDispatch();
-  const { query, isLoading, hasMore, totalCount, accounts, getAccounts, resetAccounts, selectedIds } = useAccounts();
+  const {
+    query,
+    isLoading,
+    hasMore,
+    totalCount,
+    accounts,
+    getAccounts,
+    resetAccounts,
+    isSelectMode,
+    selectedIds,
+    resetSelection,
+    deleteAccounts,
+  } = useAccounts();
+  const { openDialog, closeDialog } = useDialog();
 
   const itemCount = accounts.length + 1;
   const itemHeight = AccountListItemHeight.XS;
@@ -40,6 +59,27 @@ const MobileAccountList = (props: MobileAccountListProps) => {
         })
       );
     }
+  };
+
+  const handleCloseSelectionPanel = () => {
+    dispatch(resetSelection());
+  };
+
+  const handleClickDeleteAll = () => {
+    openDialog(
+      <ConfirmDialog
+        title={t('accounts:deleteAccount')}
+        message={t('accounts:deleteAccountsConfirm', { count: selectedIds.length })}
+        onClose={(isConfirmed: boolean) => {
+          isConfirmed && dispatch(deleteAccounts(selectedIds));
+          closeDialog();
+        }}
+      />
+    );
+  };
+
+  const openAccountDialog = () => {
+    openDialog(<AccountDialog onClose={closeDialog} />);
   };
 
   const renderItem = (index: number) => {
@@ -66,15 +106,23 @@ const MobileAccountList = (props: MobileAccountListProps) => {
   }, []);
 
   return (
-    <List className={classes.mobileAccountList} disablePadding>
-      <VirtualInfiniteScroll
-        itemCount={itemCount}
-        itemHeight={itemHeight}
-        renderItem={renderItem}
-        onLoadMore={loadMore}
-      />
-      ;
-    </List>
+    <>
+      <List className={classes.mobileAccountList} disablePadding>
+        <VirtualInfiniteScroll
+          itemCount={itemCount}
+          itemHeight={itemHeight}
+          renderItem={renderItem}
+          onLoadMore={loadMore}
+        />
+        ;
+      </List>
+      <SelectionPanel isOpen={isSelectMode} selectedCount={selectedIds.length} onClose={handleCloseSelectionPanel}>
+        <IconButton onClick={handleClickDeleteAll}>
+          <DeleteOutlineIcon />
+        </IconButton>
+      </SelectionPanel>
+      <CreationFab show={!isSelectMode} onClick={openAccountDialog} />
+    </>
   );
 };
 

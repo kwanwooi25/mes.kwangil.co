@@ -1,6 +1,6 @@
 import { AccountDto, ContactDto, CreateContactDto } from './interface';
 import { AccountState, accountActions, accountSelector } from './accountSlice';
-import { all, call, cancel, put, select, takeEvery } from 'redux-saga/effects';
+import { all, call, cancel, fork, put, select, takeEvery } from 'redux-saga/effects';
 
 import { GetListResponse } from 'types/api';
 import { accountApi } from './accountApi';
@@ -15,7 +15,9 @@ const {
   createAccount,
   updateAccount,
   updateAccountSuccess,
+  deleteAccounts,
   setShouldCloseAccountDialog,
+  resetSelection,
 } = accountActions;
 
 function* getAccountsSaga({ payload: query }: ReturnType<typeof getAccounts>) {
@@ -41,9 +43,7 @@ function* createAccountSaga({ payload: accountToCreate }: ReturnType<typeof crea
     yield call(accountApi.createAccount, accountToCreate);
     yield put(setShouldCloseAccountDialog(true));
     yield put(notificationActions.notify({ variant: 'success', message: 'accounts:createAccountSuccess' }));
-    yield put(resetAccounts());
-    const { query }: AccountState = yield select(accountSelector);
-    yield put(getAccounts({ ...query, offset: 0 }));
+    yield fork(resetAccountsAndFetch);
   } catch (error) {
     yield put(notificationActions.notify({ variant: 'error', message: 'accounts:createAccountFailed' }));
   } finally {
@@ -70,6 +70,23 @@ function* updateAccountSaga({ payload: accountToUpdate }: ReturnType<typeof upda
   }
 }
 
+function* deleteAccountsSaga({ payload: accountIds }: ReturnType<typeof deleteAccounts>) {
+  try {
+    yield call(accountApi.deleteAccounts, accountIds);
+    yield put(resetSelection());
+    yield put(notificationActions.notify({ variant: 'success', message: 'accounts:deleteAccountSuccess' }));
+    yield fork(resetAccountsAndFetch);
+  } catch (error) {
+    yield put(notificationActions.notify({ variant: 'error', message: 'accounts:deleteAccountFailed' }));
+  }
+}
+
+function* resetAccountsAndFetch() {
+  yield put(resetAccounts());
+  const { query }: AccountState = yield select(accountSelector);
+  yield put(getAccounts({ ...query, offset: 0 }));
+}
+
 function* validateContactTitles(contacts?: (CreateContactDto | ContactDto)[]) {
   const hasEmptyContactTitle = contacts?.some(({ title }) => !title);
   if (hasEmptyContactTitle) {
@@ -84,5 +101,6 @@ export function* accountSaga(): any {
     yield takeEvery(getAccounts.type, getAccountsSaga),
     yield takeEvery(createAccount.type, createAccountSaga),
     yield takeEvery(updateAccount.type, updateAccountSaga),
+    yield takeEvery(deleteAccounts.type, deleteAccountsSaga),
   ]);
 }

@@ -14,8 +14,8 @@ const api = {
   //   handleRequest(await apiClient.post(`${urlPrefix}/bulk`, accounts)),
   updateAccount: async ({ id, ...account }: UpdateAccountDto) =>
     handleRequest(await apiClient.patch(`${urlPrefix}/${id}`, account)),
-  // deleteAccounts: async (accountIds: number[]) =>
-  //   handleRequest(await apiClient.delete(urlPrefix, { params: { ids: accountIds } })),
+  deleteAccounts: async (accountIds: number[]) =>
+    handleRequest(await apiClient.delete(urlPrefix, { params: { ids: accountIds } })),
 };
 
 export { api as accountApi };

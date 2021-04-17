@@ -17,6 +17,7 @@ import React, { MouseEvent, memo, useCallback, useState } from 'react';
 import AccountDialog from 'components/dialog/Account';
 import { AccountDto } from 'features/account/interface';
 import AccountName from 'components/AccountName';
+import ConfirmDialog from 'components/dialog/Confirm';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import PhoneIcon from '@material-ui/icons/Phone';
 import PhoneNumber from 'components/PhoneNumber';
@@ -61,6 +62,7 @@ const AccountListItem = ({ account, itemHeight, isSelected = false, showFaxNumbe
   const {
     query: { searchText = '' },
     toggleSelection,
+    deleteAccounts,
   } = useAccounts();
   const { openDialog, closeDialog } = useDialog();
 
@@ -86,15 +88,16 @@ const AccountListItem = ({ account, itemHeight, isSelected = false, showFaxNumbe
   }, []);
 
   const handleClickDelete = useCallback(() => {
-    // dispatch(
-    //   actions.dialog.openDialog(DialogType.CONFIRM, {
-    //     title: t('deleteAccount'),
-    //     message: t('deleteAccountConfirm', { accountName: account.name }),
-    //     onClose: (result: boolean) => {
-    //       result && dispatch(actions.account.deleteAccountsRequest([account.id]));
-    //     },
-    //   })
-    // );
+    openDialog(
+      <ConfirmDialog
+        title={t('deleteAccount')}
+        message={t('deleteAccountConfirm', { accountName: account.name })}
+        onClose={(isConfirmed: boolean) => {
+          isConfirmed && dispatch(deleteAccounts([account.id]));
+          closeDialog();
+        }}
+      />
+    );
   }, []);
 
   const actionButtons = [
