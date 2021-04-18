@@ -1,7 +1,7 @@
 import AccountListItem, { AccountListItemSkeleton } from './AccountListItem';
-import { AccountListItemHeight, DEFAULT_LIST_LIMIT, ExcelUploadVariant } from 'const';
+import { AccountListItemHeight, DEFAULT_LIST_LIMIT, ExcelVariant } from 'const';
 import { IconButton, List, Theme, Tooltip, createStyles, makeStyles } from '@material-ui/core';
-import React, { ChangeEvent, useEffect } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 
 import AccountDialog from 'components/dialog/Account';
 import AddIcon from '@material-ui/icons/Add';
@@ -9,10 +9,13 @@ import ConfirmDialog from 'components/dialog/Confirm';
 import { CreateAccountDto } from './interface';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import ExcelUploadDialog from 'components/dialog/ExcelUpload';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import Loading from 'components/Loading';
 import { Pagination } from '@material-ui/lab';
 import PublishIcon from '@material-ui/icons/Publish';
 import SubToolbar from 'components/SubToolbar';
 import { accountApi } from './accountApi';
+import { downloadWorkbook } from 'utils/excel';
 import { useAccounts } from './accountHook';
 import { useAppDispatch } from 'app/store';
 import { useDialog } from 'features/dialog/dialogHook';
@@ -36,8 +39,10 @@ const useStyles = makeStyles((theme: Theme) =>
 export interface PaginatedAccountListProps {}
 
 const PaginatedAccountList = (props: PaginatedAccountListProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('accounts');
   const classes = useStyles();
+
+  const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const { windowHeight } = useScreenSize();
   const { openDialog, closeDialog } = useDialog();
   const dispatch = useAppDispatch();
@@ -84,7 +89,7 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
   const handleClickCreateBulk = () => {
     openDialog(
       <ExcelUploadDialog
-        variant={ExcelUploadVariant.ACCOUNT}
+        variant={ExcelVariant.ACCOUNT}
         onSave={async (dataToCreate: CreateAccountDto[]) => {
           try {
             await accountApi.createAccounts(dataToCreate);
@@ -101,11 +106,18 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
     );
   };
 
+  const handleClickDownload = async () => {
+    setIsDownloading(true);
+    const { rows } = await accountApi.getAllAccounts(query.searchText);
+    downloadWorkbook[ExcelVariant.ACCOUNT](rows, t('accountList'));
+    setIsDownloading(false);
+  };
+
   const handleClickDeleteAll = () => {
     openDialog(
       <ConfirmDialog
-        title={t('accounts:deleteAccount')}
-        message={t('accounts:deleteAccountsConfirm', { count: selectedIds.length })}
+        title={t('deleteAccount')}
+        message={t('deleteAccountsConfirm', { count: selectedIds.length })}
         onClose={(isConfirmed: boolean) => {
           isConfirmed && dispatch(deleteAccounts(selectedIds));
           closeDialog();
@@ -141,7 +153,7 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
             </Tooltip>
           ) : (
             [
-              <Tooltip key="add-account" title={t('accounts:addAccount') as string} placement="top">
+              <Tooltip key="add-account" title={t('addAccount') as string} placement="top">
                 <IconButton onClick={handleClickCreate}>
                   <AddIcon />
                 </IconButton>
@@ -149,6 +161,12 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
               <Tooltip key="add-account-bulk" title={t('common:createBulk') as string} placement="top">
                 <IconButton onClick={handleClickCreateBulk}>
                   <PublishIcon />
+                </IconButton>
+              </Tooltip>,
+              <Tooltip key="download-accounts" title={t('common:downloadExcel') as string} placement="top">
+                <IconButton onClick={handleClickDownload} disabled={isDownloading}>
+                  {isDownloading && <Loading />}
+                  <GetAppIcon />
                 </IconButton>
               </Tooltip>,
             ]

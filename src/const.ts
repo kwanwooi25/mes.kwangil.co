@@ -15,7 +15,7 @@ export enum Path {
   WORK_ORDERS = '/workOrders',
 }
 
-export enum ExcelUploadVariant {
+export enum ExcelVariant {
   ACCOUNT = 'accounts',
 }
 

@@ -13,7 +13,7 @@ import React, { ChangeEvent, createRef, useState } from 'react';
 import CloseIcon from '@material-ui/icons/Close';
 import Dialog from 'features/dialog/Dialog';
 import DoneIcon from '@material-ui/icons/Done';
-import { ExcelUploadVariant } from 'const';
+import { ExcelVariant } from 'const';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import Loading from 'components/Loading';
 import RoundedButton from 'components/RoundedButton';
@@ -37,11 +37,11 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const templates = {
-  [ExcelUploadVariant.ACCOUNT]: `${process.env.PUBLIC_URL}/업체대량등록.xlsx`,
+  [ExcelVariant.ACCOUNT]: `${process.env.PUBLIC_URL}/업체대량등록.xlsx`,
 };
 
 export interface ExcelUploadDialogProps {
-  variant: ExcelUploadVariant;
+  variant: ExcelVariant;
   onSave: (dataToCreate: any[]) => Promise<boolean>;
   onClose: () => void;
 }

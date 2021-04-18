@@ -1,24 +1,24 @@
 import { AccountDto, CreateAccountDto, CreateContactDto } from 'features/account/interface';
 import { Dispatch, SetStateAction } from 'react';
 
-import { ExcelUploadVariant } from 'const';
+import { ExcelVariant } from 'const';
 import XLSX from 'xlsx';
 
 export const getExcelFileReader = {
-  [ExcelUploadVariant.ACCOUNT]: (stateSetter: Dispatch<SetStateAction<CreateAccountDto[]>>) =>
-    getFileReader(ExcelUploadVariant.ACCOUNT, stateSetter),
-  // [ExcelUploadVariant.PRODUCT]: (stateSetter: Dispatch<SetStateAction<CreateProductsDto[]>>) =>
-  //   getFileReader(ExcelUploadVariant.PRODUCT, stateSetter),
-  // [ExcelUploadVariant.WORK_ORDER]: (stateSetter: Dispatch<SetStateAction<CreateWorkOrdersDto[]>>) =>
-  //   getFileReader(ExcelUploadVariant.WORK_ORDER, stateSetter),
+  [ExcelVariant.ACCOUNT]: (stateSetter: Dispatch<SetStateAction<CreateAccountDto[]>>) =>
+    getFileReader(ExcelVariant.ACCOUNT, stateSetter),
+  // [ExcelVariant.PRODUCT]: (stateSetter: Dispatch<SetStateAction<CreateProductsDto[]>>) =>
+  //   getFileReader(ExcelVariant.PRODUCT, stateSetter),
+  // [ExcelVariant.WORK_ORDER]: (stateSetter: Dispatch<SetStateAction<CreateWorkOrdersDto[]>>) =>
+  //   getFileReader(ExcelVariant.WORK_ORDER, stateSetter),
 };
 
 export const downloadWorkbook = {
-  [ExcelUploadVariant.ACCOUNT]: (accounts: AccountDto[], workbookTitle: string) => {
+  [ExcelVariant.ACCOUNT]: (accounts: AccountDto[], workbookTitle: string) => {
     const data = processAccountsForDownload(accounts);
     return getWorkbook(data, workbookTitle);
   },
-  // [ExcelUploadVariant.PRODUCT]: (products: ProductDto[], workbookTitle: string) => {
+  // [ExcelVariant.PRODUCT]: (products: ProductDto[], workbookTitle: string) => {
   //   const data = processProductsForDownload(products);
   //   return getWorkbook(data, workbookTitle);
   // },
@@ -158,7 +158,7 @@ const CONTACT_KEY_TO_LABEL: { [key: string]: string } = {
 //   deliveryMethod: '납품방법',
 // };
 
-function getFileReader<T>(variant: ExcelUploadVariant, stateSetter: Dispatch<SetStateAction<T[]>>) {
+function getFileReader<T>(variant: ExcelVariant, stateSetter: Dispatch<SetStateAction<T[]>>) {
   const reader = new FileReader();
   reader.onload = function (e) {
     if (!e.target?.result) {
@@ -184,7 +184,7 @@ export function getWorkbook(data: any, workbookTitle: string = 'noTitle') {
 }
 
 const generateItem = {
-  [ExcelUploadVariant.ACCOUNT]: (row: any) => {
+  [ExcelVariant.ACCOUNT]: (row: any) => {
     return Object.entries(row).reduce(
       (account: CreateAccountDto, [key, value]) => {
         if (key.includes('연락처')) {
@@ -207,7 +207,7 @@ const generateItem = {
       { name: '' }
     );
   },
-  // [ExcelUploadVariant.PRODUCT]: (row: any) => {
+  // [ExcelVariant.PRODUCT]: (row: any) => {
   //   return Object.entries(row).reduce(
   //     (product: CreateProductsDto, [key, value]) => {
   //       const newKey: keyof CreateProductsDto = PRODUCT_LABEL_TO_KEY[key];
@@ -274,7 +274,7 @@ const generateItem = {
   //     }
   //   );
   // },
-  // [ExcelUploadVariant.WORK_ORDER]: (row: any) => {
+  // [ExcelVariant.WORK_ORDER]: (row: any) => {
   //   return Object.entries(row).reduce(
   //     (workOrder: CreateWorkOrdersDto, [key, value]) => {
   //       const newKey: keyof CreateWorkOrdersDto = WORK_ORDER_LABEL_TO_KEY[key];
