@@ -11,11 +11,13 @@ import { createBrowserHistory } from 'history';
 import { createLogger } from 'redux-logger';
 import createSagaMiddleware from 'redux-saga';
 import notificationReducer from 'features/notification/notificationSlice';
+import uiReducer from 'features/ui/uiSlice';
 
 export const history = createBrowserHistory();
 
 const reducer = combineReducers({
   router: connectRouter(history),
+  ui: uiReducer,
   notification: notificationReducer,
   auth: authReducer,
   account: accountReducer,

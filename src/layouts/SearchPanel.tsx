@@ -1,4 +1,4 @@
-import { Drawer, Theme, createStyles, makeStyles } from '@material-ui/core';
+import { Divider, Drawer, List, ListItem, Theme, Typography, createStyles, makeStyles } from '@material-ui/core';
 import React, { ReactNode } from 'react';
 
 import { SEARCH_PANEL_WIDTH } from 'const';
@@ -19,10 +19,11 @@ const useStyles = makeStyles((theme: Theme) =>
 export interface SearchPanelProps {
   isOpen: boolean;
   onClose: () => void;
+  title?: string;
   children?: ReactNode;
 }
 
-const SearchPanel = ({ isOpen, onClose, children }: SearchPanelProps) => {
+const SearchPanel = ({ isOpen, onClose, children, title }: SearchPanelProps) => {
   const classes = useStyles();
   const { isDesktopLayout } = useScreenSize();
 
@@ -37,7 +38,13 @@ const SearchPanel = ({ isOpen, onClose, children }: SearchPanelProps) => {
         paper: classes.drawerPaper,
       }}
     >
-      {children}
+      <List>
+        <ListItem>
+          <Typography variant="h6">{title}</Typography>
+        </ListItem>
+        <Divider />
+        <ListItem>{children}</ListItem>
+      </List>
     </Drawer>
   ) : null;
 };

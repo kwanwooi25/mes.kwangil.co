@@ -1,3 +1,4 @@
+import AccountSearch from './AccountSearch';
 import Layout from 'layouts/Layout';
 import MobileAccountList from './MobileAccountList';
 import PaginatedAccountList from './PaginatedAccountList';
@@ -12,7 +13,11 @@ const AccountPage = (props: AccountPageProps) => {
   const { isMobileLayout, isPadLayout, isDesktopLayout } = useScreenSize();
 
   return (
-    <Layout pageTitle={t('pageTitle')} SearchPanelContent={<div></div>}>
+    <Layout
+      pageTitle={t('pageTitle')}
+      SearchPanelContent={<AccountSearch />}
+      searchPanelTitle={`${t('common:account')} ${t('common:search')}`}
+    >
       {isMobileLayout && <MobileAccountList />}
       {(isPadLayout || isDesktopLayout) && <PaginatedAccountList />}
     </Layout>

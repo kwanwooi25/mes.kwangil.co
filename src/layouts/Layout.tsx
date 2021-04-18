@@ -1,10 +1,12 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode } from 'react';
 import { Theme, createStyles, makeStyles } from '@material-ui/core';
 
 import MainHeader from './MainHeader';
 import Navigation from './Navigation';
 import SearchPanel from './SearchPanel';
+import { useAppDispatch } from 'app/store';
 import { useScreenSize } from 'hooks/useScreenSize';
+import { useUI } from 'features/ui/uiHook';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,31 +32,26 @@ export interface LayoutProps {
   pageTitle: string;
   children: ReactNode;
   SearchPanelContent?: ReactNode;
+  searchPanelTitle?: string;
 }
 
-const Layout = ({ pageTitle, children, SearchPanelContent }: LayoutProps) => {
+const Layout = ({ pageTitle, children, SearchPanelContent, searchPanelTitle = '' }: LayoutProps) => {
   const classes = useStyles();
   const { isMobileLayout, isDesktopLayout } = useScreenSize();
+  const { isNavOpen, openNav, closeNav, isSearchOpen, openSearch, closeSearch } = useUI();
+  const dispatch = useAppDispatch();
 
-  const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
-  const [isSearchPanelOpen, setIsSearchPanelOpen] = useState<boolean>(false);
-
-  const openNav = () => setIsNavOpen(true);
-  const closeNav = () => setIsNavOpen(false);
-  const openSearchPanel = () => setIsSearchPanelOpen(true);
-  const closeSearchPanel = () => setIsSearchPanelOpen(false);
+  const handleClickNavMenu = () => isMobileLayout && dispatch(openNav());
+  const handleClickSearch = () => !isDesktopLayout && SearchPanelContent && dispatch(openSearch());
+  const handleCloseNav = () => dispatch(closeNav());
+  const handleCloseSearch = () => dispatch(closeSearch());
 
   return (
     <div className={classes.root}>
-      <MainHeader
-        pageTitle={pageTitle}
-        onClickNavMenu={isMobileLayout ? openNav : undefined}
-        onClickSearch={!isDesktopLayout && SearchPanelContent ? openSearchPanel : undefined}
-      />
-      <Navigation isOpen={isNavOpen} onClose={closeNav} />
+      <MainHeader pageTitle={pageTitle} onClickNavMenu={handleClickNavMenu} onClickSearch={handleClickSearch} />
+      <Navigation isOpen={isNavOpen} onClose={handleCloseNav} />
       <div className={classes.content}>{children}</div>
-      <SearchPanel isOpen={isSearchPanelOpen} onClose={closeSearchPanel}>
-        <div className={classes.toolbar} />
+      <SearchPanel isOpen={isSearchOpen} onClose={handleCloseSearch} title={searchPanelTitle}>
         {SearchPanelContent}
       </SearchPanel>
     </div>
