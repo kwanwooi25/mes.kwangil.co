@@ -50,6 +50,9 @@ export default {
     searchResult: '총 <strong>{{count}}</strong>건 검색됨',
     hasNoChange: '변경 사항이 없습니다.',
     shouldBeDateFormat: '올바른 날짜 형식으로 입력하세요.',
+
+    bulkCreateSuccess: '대량 등록 성공!',
+    bulkCreateFailed: '대량 등록 실패!',
   },
   nav: {
     dashboard: '대시보드',

@@ -1,14 +1,18 @@
 import AccountListItem, { AccountListItemSkeleton } from './AccountListItem';
-import { AccountListItemHeight, DEFAULT_LIST_LIMIT } from 'const';
+import { AccountListItemHeight, DEFAULT_LIST_LIMIT, ExcelUploadVariant } from 'const';
 import { IconButton, List, Theme, Tooltip, createStyles, makeStyles } from '@material-ui/core';
 import React, { ChangeEvent, useEffect } from 'react';
 
 import AccountDialog from 'components/dialog/Account';
 import AddIcon from '@material-ui/icons/Add';
 import ConfirmDialog from 'components/dialog/Confirm';
+import { CreateAccountDto } from './interface';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import ExcelUploadDialog from 'components/dialog/ExcelUpload';
 import { Pagination } from '@material-ui/lab';
+import PublishIcon from '@material-ui/icons/Publish';
 import SubToolbar from 'components/SubToolbar';
+import { accountApi } from './accountApi';
 import { useAccounts } from './accountHook';
 import { useAppDispatch } from 'app/store';
 import { useDialog } from 'features/dialog/dialogHook';
@@ -77,6 +81,26 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
     openDialog(<AccountDialog onClose={closeDialog} />);
   };
 
+  const handleClickCreateBulk = () => {
+    openDialog(
+      <ExcelUploadDialog
+        variant={ExcelUploadVariant.ACCOUNT}
+        onSave={async (dataToCreate: CreateAccountDto[]) => {
+          try {
+            await accountApi.createAccounts(dataToCreate);
+            const limit = query?.limit || DEFAULT_LIST_LIMIT;
+            dispatch(resetAccounts());
+            dispatch(getAccounts({ limit, offset: 0 }));
+            return true;
+          } catch (error) {
+            return false;
+          }
+        }}
+        onClose={closeDialog}
+      />
+    );
+  };
+
   const handleClickDeleteAll = () => {
     openDialog(
       <ConfirmDialog
@@ -116,11 +140,18 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
               </IconButton>
             </Tooltip>
           ) : (
-            <Tooltip title={t('accounts:addAccount') as string} placement="top">
-              <IconButton onClick={handleClickCreate}>
-                <AddIcon />
-              </IconButton>
-            </Tooltip>
+            [
+              <Tooltip key="add-account" title={t('accounts:addAccount') as string} placement="top">
+                <IconButton onClick={handleClickCreate}>
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>,
+              <Tooltip key="add-account-bulk" title={t('common:createBulk') as string} placement="top">
+                <IconButton onClick={handleClickCreateBulk}>
+                  <PublishIcon />
+                </IconButton>
+              </Tooltip>,
+            ]
           )
         }
       />

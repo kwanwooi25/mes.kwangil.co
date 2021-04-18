@@ -15,6 +15,10 @@ export enum Path {
   WORK_ORDERS = '/workOrders',
 }
 
+export enum ExcelUploadVariant {
+  ACCOUNT = 'accounts',
+}
+
 export enum AccountListItemHeight {
   XS = 72,
   MD = 54,
