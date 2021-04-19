@@ -10,6 +10,7 @@ import { CreateAccountDto } from './interface';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import ExcelUploadDialog from 'components/dialog/ExcelUpload';
 import GetAppIcon from '@material-ui/icons/GetApp';
+import ListEmpty from 'components/ListEmpty';
 import Loading from 'components/Loading';
 import { Pagination } from '@material-ui/lab';
 import PublishIcon from '@material-ui/icons/Publish';
@@ -175,29 +176,35 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
       />
       <div className={classes.listContainer} style={{ height: (query.limit || DEFAULT_LIST_LIMIT) * itemHeight }}>
         <List disablePadding>
-          {isLoading
-            ? Array(query.limit)
-                .fill('')
-                .map((_, index) => <AccountListItemSkeleton key={index} itemHeight={itemHeight} />)
-            : accounts.map((account) => (
-                <AccountListItem
-                  key={account.id}
-                  account={account}
-                  itemHeight={itemHeight}
-                  isSelected={selectedIds.includes(account.id)}
-                />
-              ))}
+          {isLoading ? (
+            Array(query.limit)
+              .fill('')
+              .map((_, index) => <AccountListItemSkeleton key={index} itemHeight={itemHeight} />)
+          ) : !accounts.length ? (
+            <ListEmpty />
+          ) : (
+            accounts.map((account) => (
+              <AccountListItem
+                key={account.id}
+                account={account}
+                itemHeight={itemHeight}
+                isSelected={selectedIds.includes(account.id)}
+              />
+            ))
+          )}
         </List>
       </div>
       <div className={classes.paginationContainer}>
-        <Pagination
-          size="large"
-          count={totalPages}
-          page={currentPage}
-          onChange={handleChangePage}
-          showFirstButton
-          showLastButton
-        />
+        {!!accounts.length && (
+          <Pagination
+            size="large"
+            count={totalPages}
+            page={currentPage}
+            onChange={handleChangePage}
+            showFirstButton
+            showLastButton
+          />
+        )}
       </div>
     </>
   );

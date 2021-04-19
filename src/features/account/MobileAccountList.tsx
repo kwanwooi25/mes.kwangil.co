@@ -8,6 +8,7 @@ import ConfirmDialog from 'components/dialog/Confirm';
 import CreationFab from 'components/CreationFab';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EndOfListItem from 'components/EndOfListItem';
+import ListEmpty from 'components/ListEmpty';
 import SelectionPanel from 'components/SelectionPanel';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
 import { formatDigit } from 'utils/string';
@@ -108,13 +109,16 @@ const MobileAccountList = (props: MobileAccountListProps) => {
   return (
     <>
       <List className={classes.mobileAccountList} disablePadding>
-        <VirtualInfiniteScroll
-          itemCount={itemCount}
-          itemHeight={itemHeight}
-          renderItem={renderItem}
-          onLoadMore={loadMore}
-        />
-        ;
+        {!isLoading && !accounts.length ? (
+          <ListEmpty />
+        ) : (
+          <VirtualInfiniteScroll
+            itemCount={itemCount}
+            itemHeight={itemHeight}
+            renderItem={renderItem}
+            onLoadMore={loadMore}
+          />
+        )}
       </List>
       <SelectionPanel isOpen={isSelectMode} selectedCount={selectedIds.length} onClose={handleCloseSelectionPanel}>
         <IconButton onClick={handleClickDeleteAll}>
