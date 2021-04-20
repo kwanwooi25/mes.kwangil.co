@@ -74,6 +74,8 @@ const productSlice = createSlice({
       productsAdapter.removeAll(state);
     },
 
+    deleteProducts: (state, action: PayloadAction<number[]>) => {},
+
     toggleSelection: (state, { payload }: PayloadAction<number>) => {
       if (state.selectedIds.includes(payload)) {
         state.selectedIds = state.selectedIds.filter((id) => id !== payload);

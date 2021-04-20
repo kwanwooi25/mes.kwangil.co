@@ -40,6 +40,7 @@ const MobileProductList = (props: MobileProductListProps) => {
     isSelectMode,
     selectedIds,
     resetSelection,
+    deleteProducts,
   } = useProducts();
   const dispatch = useAppDispatch();
   const { openDialog, closeDialog } = useDialog();
@@ -66,8 +67,7 @@ const MobileProductList = (props: MobileProductListProps) => {
         title={t('products:deleteAccount')}
         message={t('products:deleteProductsConfirm', { count: selectedIds.length })}
         onClose={(isConfirmed: boolean) => {
-          // TODO
-          // isConfirmed && dispatch(deleteProducts(selectedIds));
+          isConfirmed && dispatch(deleteProducts(selectedIds));
           closeDialog();
         }}
       />

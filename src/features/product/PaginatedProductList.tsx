@@ -56,6 +56,7 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
     resetSelection,
     selectAll,
     unselectAll,
+    deleteProducts,
   } = useProducts();
 
   const itemHeight = isDesktopLayout ? ProductListItemHeight.LG : ProductListItemHeight.SM;
@@ -96,7 +97,7 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
         title={t('deleteProduct')}
         message={t('deleteProductsConfirm', { count: selectedIds.length })}
         onClose={(isConfirmed: boolean) => {
-          // TODO: delete products
+          isConfirmed && dispatch(deleteProducts(selectedIds));
           closeDialog();
         }}
       />

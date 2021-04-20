@@ -91,7 +91,7 @@ const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: Produ
   const classes = useStyles();
 
   const dispatch = useAppDispatch();
-  const { query, toggleSelection } = useProducts();
+  const { query, toggleSelection, deleteProducts } = useProducts();
   const { openDialog, closeDialog } = useDialog();
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
@@ -129,8 +129,7 @@ const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: Produ
         title={t('deleteProduct')}
         message={t('deleteProductConfirm', { productName: `${product.name}` })}
         onClose={(isConfirmed: boolean) => {
-          // TODO
-          // isConfirmed && dispatch(deleteProducts([product.id]));
+          isConfirmed && dispatch(deleteProducts([product.id]));
           closeDialog();
         }}
       />
