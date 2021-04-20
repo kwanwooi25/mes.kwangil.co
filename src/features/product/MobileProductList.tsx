@@ -39,6 +39,7 @@ const MobileProductList = (props: MobileProductListProps) => {
     resetProducts,
     isSelectMode,
     selectedIds,
+    resetSelection,
   } = useProducts();
   const dispatch = useAppDispatch();
   const { openDialog, closeDialog } = useDialog();
@@ -56,8 +57,7 @@ const MobileProductList = (props: MobileProductListProps) => {
   };
 
   const handleCloseSelectionPanel = () => {
-    // TODO
-    // dispatch(resetSelection());
+    dispatch(resetSelection());
   };
 
   const handleClickDeleteAll = () => {

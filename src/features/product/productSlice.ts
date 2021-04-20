@@ -1,6 +1,6 @@
 import { EntityState, PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { GetProductsQuery, ProductDto } from './interface';
-import { ProductLength, ProductThickness, ProductWidth } from './../../const';
+import { ProductLength, ProductThickness, ProductWidth } from 'const';
 
 import { DEFAULT_LIST_LIMIT } from 'const';
 import { GetListResponse } from 'types/api';
@@ -72,6 +72,29 @@ const productSlice = createSlice({
       const { limit = DEFAULT_LIST_LIMIT } = state.query;
       state.query = { ...initialState.query, limit };
       productsAdapter.removeAll(state);
+    },
+
+    toggleSelection: (state, { payload }: PayloadAction<number>) => {
+      if (state.selectedIds.includes(payload)) {
+        state.selectedIds = state.selectedIds.filter((id) => id !== payload);
+      } else {
+        state.selectedIds.push(payload);
+      }
+      state.isSelectMode = !!state.selectedIds.length;
+    },
+    resetSelection: (state) => {
+      state.isSelectMode = initialState.isSelectMode;
+      state.selectedIds = initialState.selectedIds;
+    },
+    selectAll: (state, { payload: ids }: PayloadAction<number[]>) => {
+      ids.forEach((id) => {
+        if (!state.selectedIds.includes(id)) {
+          state.selectedIds.push(id);
+        }
+      });
+    },
+    unselectAll: (state, { payload: ids }: PayloadAction<number[]>) => {
+      state.selectedIds = state.selectedIds.filter((id) => !ids.includes(id));
     },
   },
 });

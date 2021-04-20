@@ -17,11 +17,14 @@ import React, { MouseEvent, memo, useCallback, useState } from 'react';
 import { getPrintSummary, getProductSize } from 'utils/product';
 
 import AccountName from 'components/AccountName';
+import ConfirmDialog from 'components/dialog/Confirm';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { ProductDto } from './interface';
 import ProductName from 'components/ProductName';
 import { Skeleton } from '@material-ui/lab';
 import { highlight } from 'utils/string';
+import { useAppDispatch } from 'app/store';
+import { useDialog } from 'features/dialog/dialogHook';
 import { useProducts } from './productHook';
 import { useTranslation } from 'react-i18next';
 
@@ -87,7 +90,9 @@ const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: Produ
   const { t } = useTranslation('products');
   const classes = useStyles();
 
-  const { query } = useProducts();
+  const dispatch = useAppDispatch();
+  const { query, toggleSelection } = useProducts();
+  const { openDialog, closeDialog } = useDialog();
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -95,7 +100,7 @@ const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: Produ
   const printSummary = getPrintSummary(product);
 
   const handleSelectionChange = useCallback(() => {
-    // TODO: toggle selection
+    dispatch(toggleSelection(product.id));
   }, [product]);
 
   const openMenu = useCallback((e: MouseEvent<HTMLButtonElement>) => setMenuAnchorEl(e.currentTarget), []);
@@ -119,16 +124,17 @@ const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: Produ
   }, [product]);
 
   const handleClickDelete = useCallback(() => {
-    // TODO: confirm and delete
-    // dispatch(
-    //   actions.dialog.openDialog(DialogType.CONFIRM, {
-    //     title: t('deleteProduct'),
-    //     message: t('deleteProductConfirm', { productName: `${product.name} (${productSize})` }),
-    //     onClose: (result: boolean) => {
-    //       result && dispatch(actions.product.deleteProductsRequest([product.id]));
-    //     },
-    //   })
-    // );
+    openDialog(
+      <ConfirmDialog
+        title={t('deleteProduct')}
+        message={t('deleteProductConfirm', { productName: `${product.name}` })}
+        onClose={(isConfirmed: boolean) => {
+          // TODO
+          // isConfirmed && dispatch(deleteProducts([product.id]));
+          closeDialog();
+        }}
+      />
+    );
   }, [product]);
 
   const actionButtons = [

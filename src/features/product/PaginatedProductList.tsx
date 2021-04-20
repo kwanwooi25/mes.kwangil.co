@@ -53,6 +53,9 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
     selectedIds,
     resetProducts,
     getProducts,
+    resetSelection,
+    selectAll,
+    unselectAll,
   } = useProducts();
 
   const itemHeight = isDesktopLayout ? ProductListItemHeight.LG : ProductListItemHeight.SM;
@@ -60,11 +63,11 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
   const isIndeterminate = !isSelectedAll && ids.some((id) => selectedIds.includes(id as number));
 
   const handleToggleSelectAll = (checked: boolean) => {
-    // TODO: select or unselect all
+    dispatch(checked ? selectAll(ids as number[]) : unselectAll(ids as number[]));
   };
 
   const handleResetSelection = () => {
-    // TODO: dispatch(resetSelection());
+    dispatch(resetSelection());
   };
 
   const handleChangePage = (e: ChangeEvent<unknown>, value: number) => {
