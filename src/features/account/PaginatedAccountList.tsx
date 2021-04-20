@@ -135,7 +135,7 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
     return () => {
       dispatch(resetAccounts());
     };
-  }, [windowHeight]);
+  }, [windowHeight, itemHeight]);
 
   return (
     <>

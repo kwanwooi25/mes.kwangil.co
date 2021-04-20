@@ -108,7 +108,7 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
     return () => {
       dispatch(resetProducts());
     };
-  }, [windowHeight]);
+  }, [windowHeight, itemHeight]);
 
   return (
     <>
