@@ -35,3 +35,8 @@ export interface ContactDto {
 export interface CreateContactDto extends Omit<ContactDto, 'id'> {
   id?: number;
 }
+
+export interface AccountOption {
+  id: number;
+  name: string;
+}

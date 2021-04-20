@@ -74,6 +74,30 @@ export enum ProductWidth {
   MAX = 80,
 }
 
+export enum ProductDialogMode {
+  CREATE = 'CREATE',
+  EDIT = 'EDIT',
+  COPY = 'COPY',
+}
+
+export enum PrintColorCount {
+  STEP = 1,
+  MIN = 1,
+  MAX = 3,
+}
+
+export enum PunchCount {
+  STEP = 1,
+  MIN = 0,
+  MAX = 5,
+}
+
+export enum PackUnit {
+  STEP = 500,
+  MIN = 0,
+  MAX = 100000,
+}
+
 export const DEFAULT_PAGE = Path.DASHBOARD;
 export const DEFAULT_API_URL = 'http://localhost:5000';
 export const DEFAULT_LIST_LIMIT = 50;

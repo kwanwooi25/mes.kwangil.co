@@ -1,4 +1,4 @@
-import { DEFAULT_LIST_LIMIT, ProductListItemHeight } from 'const';
+import { DEFAULT_LIST_LIMIT, ProductDialogMode, ProductListItemHeight } from 'const';
 import { IconButton, List, Theme, Tooltip, createStyles, makeStyles } from '@material-ui/core';
 import ProductListItem, { ProductListItemSkeleton } from './ProductListItem';
 import React, { ChangeEvent, useEffect, useState } from 'react';
@@ -10,6 +10,7 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import ListEmpty from 'components/ListEmpty';
 import Loading from 'components/Loading';
 import { Pagination } from '@material-ui/lab';
+import ProductDialog from 'components/dialog/Product';
 import PublishIcon from '@material-ui/icons/Publish';
 import SubToolbar from 'components/SubToolbar';
 import { useAppDispatch } from 'app/store';
@@ -78,7 +79,7 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
   };
 
   const handleClickCreate = () => {
-    // TODO: open create dialog
+    openDialog(<ProductDialog mode={ProductDialogMode.CREATE} onClose={closeDialog} />);
   };
 
   const handleClickCreateBulk = () => {

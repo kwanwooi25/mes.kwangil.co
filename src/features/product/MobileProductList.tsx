@@ -1,4 +1,4 @@
-import { DEFAULT_LIST_LIMIT, ProductListItemHeight } from 'const';
+import { DEFAULT_LIST_LIMIT, ProductDialogMode, ProductListItemHeight } from 'const';
 import { IconButton, List, Theme, createStyles, makeStyles } from '@material-ui/core';
 import React, { useEffect } from 'react';
 
@@ -7,6 +7,7 @@ import CreationFab from 'components/CreationFab';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EndOfListItem from 'components/EndOfListItem';
 import ListEmpty from 'components/ListEmpty';
+import ProductDialog from 'components/dialog/Product';
 import ProductListItem from './ProductListItem';
 import SelectionPanel from 'components/SelectionPanel';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
@@ -75,8 +76,7 @@ const MobileProductList = (props: MobileProductListProps) => {
   };
 
   const openProductDialog = () => {
-    // TODO: open product dialog
-    // openDialog();
+    openDialog(<ProductDialog mode={ProductDialogMode.CREATE} onClose={closeDialog} />);
   };
 
   const renderItem = (index: number) => {

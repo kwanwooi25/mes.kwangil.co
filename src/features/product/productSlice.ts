@@ -1,5 +1,5 @@
+import { CreateProductDto, GetProductsQuery, ProductDto, UpdateProductDto } from './interface';
 import { EntityState, PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
-import { GetProductsQuery, ProductDto } from './interface';
 import { ProductLength, ProductThickness, ProductWidth } from 'const';
 
 import { DEFAULT_LIST_LIMIT } from 'const';
@@ -18,7 +18,7 @@ export interface ProductState extends EntityState<ProductDto> {
   selectedIds: number[];
 
   isSaving: boolean;
-  shouldCloseAccountDialog: boolean;
+  shouldCloseProductDialog: boolean;
 }
 
 const productsAdapter = createEntityAdapter<ProductDto>();
@@ -47,7 +47,7 @@ const initialState: ProductState = {
   selectedIds: [],
 
   isSaving: false,
-  shouldCloseAccountDialog: false,
+  shouldCloseProductDialog: false,
 };
 
 const productSlice = createSlice({
@@ -74,6 +74,17 @@ const productSlice = createSlice({
       productsAdapter.removeAll(state);
     },
 
+    setSaving: (state, { payload: isSaving }: PayloadAction<boolean>) => {
+      state.isSaving = isSaving;
+    },
+    setShouldCloseProductDialog: (state, { payload: shouldCloseProductDialog }: PayloadAction<boolean>) => {
+      state.shouldCloseProductDialog = shouldCloseProductDialog;
+    },
+    createProduct: (state, action: PayloadAction<CreateProductDto>) => {},
+    updateProduct: (state, action: PayloadAction<UpdateProductDto>) => {},
+    updateProductSuccess: (state, { payload: { id, ...changes } }: PayloadAction<ProductDto>) => {
+      productsAdapter.updateOne(state, { id, changes });
+    },
     deleteProducts: (state, action: PayloadAction<number[]>) => {},
 
     toggleSelection: (state, { payload }: PayloadAction<number>) => {

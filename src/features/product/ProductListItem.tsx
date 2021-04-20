@@ -19,6 +19,8 @@ import { getPrintSummary, getProductSize } from 'utils/product';
 import AccountName from 'components/AccountName';
 import ConfirmDialog from 'components/dialog/Confirm';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import ProductDialog from 'components/dialog/Product';
+import { ProductDialogMode } from 'const';
 import { ProductDto } from './interface';
 import ProductName from 'components/ProductName';
 import { Skeleton } from '@material-ui/lab';
@@ -116,11 +118,11 @@ const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: Produ
   }, [product]);
 
   const handleClickCopy = useCallback(() => {
-    // TODO: open product dialog as copy mode
+    openDialog(<ProductDialog mode={ProductDialogMode.COPY} product={product} onClose={closeDialog} />);
   }, [product]);
 
   const handleClickEdit = useCallback(() => {
-    // TODO: open product dialog as edit mode
+    openDialog(<ProductDialog mode={ProductDialogMode.EDIT} product={product} onClose={closeDialog} />);
   }, [product]);
 
   const handleClickDelete = useCallback(() => {
