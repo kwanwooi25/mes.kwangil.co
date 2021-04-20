@@ -24,6 +24,12 @@ export enum AccountListItemHeight {
   MD = 54,
 }
 
+export enum ProductListItemHeight {
+  XS = 104,
+  SM = 72,
+  LG = 54,
+}
+
 export enum AccountInputs {
   name = 'name',
   crn = 'crn',
@@ -37,6 +43,35 @@ export enum ContactInputs {
   email = 'email',
   address = 'address',
   memo = 'memo',
+}
+
+export enum PrintSide {
+  NONE = 'NONE',
+  SINGLE = 'SINGLE',
+  DOUBLE = 'DOUBLE',
+}
+
+export enum PlateMaterial {
+  BRASS = 'BRASS',
+  STEEL = 'STEEL',
+}
+
+export enum ProductThickness {
+  STEP = 0.005,
+  MIN = 0.05,
+  MAX = 0.13,
+}
+
+export enum ProductLength {
+  STEP = 0.5,
+  MIN = 6,
+  MAX = 100,
+}
+
+export enum ProductWidth {
+  STEP = 0.5,
+  MIN = 5,
+  MAX = 80,
 }
 
 export const DEFAULT_PAGE = Path.DASHBOARD;

@@ -41,8 +41,8 @@ const Layout = ({ pageTitle, children, SearchPanelContent, searchPanelTitle = ''
   const { isNavOpen, openNav, closeNav, isSearchOpen, openSearch, closeSearch } = useUI();
   const dispatch = useAppDispatch();
 
-  const handleClickNavMenu = () => isMobileLayout && dispatch(openNav());
-  const handleClickSearch = () => !isDesktopLayout && SearchPanelContent && dispatch(openSearch());
+  const handleClickNavMenu = isMobileLayout ? () => dispatch(openNav()) : undefined;
+  const handleClickSearch = !isDesktopLayout && SearchPanelContent ? () => dispatch(openSearch()) : undefined;
   const handleCloseNav = () => dispatch(closeNav());
   const handleCloseSearch = () => dispatch(closeSearch());
 

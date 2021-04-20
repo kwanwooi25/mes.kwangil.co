@@ -11,6 +11,8 @@ import { createBrowserHistory } from 'history';
 import { createLogger } from 'redux-logger';
 import createSagaMiddleware from 'redux-saga';
 import notificationReducer from 'features/notification/notificationSlice';
+import productReducer from 'features/product/productSlice';
+import { productSaga } from 'features/product/productSaga';
 import uiReducer from 'features/ui/uiSlice';
 
 export const history = createBrowserHistory();
@@ -21,6 +23,7 @@ const reducer = combineReducers({
   notification: notificationReducer,
   auth: authReducer,
   account: accountReducer,
+  product: productReducer,
 });
 
 const sagaMiddleware = createSagaMiddleware();
@@ -37,7 +40,7 @@ const store = configureStore({
 });
 
 function* rootSaga() {
-  yield all([authSaga(), accountSaga()]);
+  yield all([authSaga(), accountSaga(), productSaga()]);
 }
 
 sagaMiddleware.run(rootSaga);

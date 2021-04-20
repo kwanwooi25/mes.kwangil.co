@@ -58,11 +58,11 @@ export function formatCrn(input: string): string {
  * @example 가나다라마 -> 가나<span class="highlight">다라</span>마
  */
 export function highlight(input: string, keyword: string = ''): string {
-  if (!keyword || input.toLowerCase().indexOf(keyword) < 0) {
+  if (!keyword || input.toLowerCase().indexOf(keyword.toLowerCase()) < 0) {
     return input;
   }
 
-  const index = input.toLowerCase().indexOf(keyword);
+  const index = input.toLowerCase().indexOf(keyword.toLowerCase());
   const matching = input.substring(index, index + keyword.length);
   return input.replace(matching, `<span class="highlight">${matching}</span>`);
 }

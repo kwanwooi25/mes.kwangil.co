@@ -7,6 +7,7 @@ import DashboardPage from 'features/dashboard/DashboardPage';
 import Loading from 'components/Loading';
 import LoginPage from 'features/auth/LoginPage';
 import Notifier from 'features/notification/Notifier';
+import ProductPage from 'features/product/ProductPage';
 import { useAuth } from 'features/auth/authHook';
 
 export interface RouteProps {
@@ -46,6 +47,7 @@ function App() {
         <PublicRoute path={Path.LOGIN} component={LoginPage} />
         <PrivateRoute path={Path.DASHBOARD} component={DashboardPage} />
         <PrivateRoute path={Path.ACCOUNTS} component={AccountPage} />
+        <PrivateRoute path={Path.PRODUCTS} component={ProductPage} />
         <Redirect to={DEFAULT_PAGE} />
       </Switch>
       <Notifier />

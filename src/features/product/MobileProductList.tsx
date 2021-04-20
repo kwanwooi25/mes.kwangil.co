@@ -1,93 +1,94 @@
-import { AccountListItemHeight, DEFAULT_LIST_LIMIT } from 'const';
+import { DEFAULT_LIST_LIMIT, ProductListItemHeight } from 'const';
 import { IconButton, List, Theme, createStyles, makeStyles } from '@material-ui/core';
 import React, { useEffect } from 'react';
 
-import AccountDialog from 'components/dialog/Account';
-import AccountListItem from './AccountListItem';
 import ConfirmDialog from 'components/dialog/Confirm';
 import CreationFab from 'components/CreationFab';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EndOfListItem from 'components/EndOfListItem';
 import ListEmpty from 'components/ListEmpty';
+import ProductListItem from './ProductListItem';
 import SelectionPanel from 'components/SelectionPanel';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
 import { formatDigit } from 'utils/string';
-import { useAccounts } from './accountHook';
 import { useAppDispatch } from 'app/store';
 import { useDialog } from 'features/dialog/dialogHook';
+import { useProducts } from './productHook';
 import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    mobileAccountList: {
+    mobileProductList: {
       height: '100%',
     },
   })
 );
 
-export interface MobileAccountListProps {}
+export interface MobileProductListProps {}
 
-const MobileAccountList = (props: MobileAccountListProps) => {
-  const { t } = useTranslation('common');
+const MobileProductList = (props: MobileProductListProps) => {
+  const { t } = useTranslation();
   const classes = useStyles();
-  const dispatch = useAppDispatch();
   const {
     query,
     isLoading,
     hasMore,
     totalCount,
-    accounts,
-    getAccounts,
-    resetAccounts,
+    products,
+    getProducts,
+    resetProducts,
     isSelectMode,
     selectedIds,
-    resetSelection,
-    deleteAccounts,
-  } = useAccounts();
+  } = useProducts();
+  const dispatch = useAppDispatch();
   const { openDialog, closeDialog } = useDialog();
 
-  const itemCount = accounts.length + 1;
-  const itemHeight = AccountListItemHeight.XS;
+  const itemCount = products.length + 1;
+  const itemHeight = ProductListItemHeight.XS;
 
-  const searchResult = t('searchResult', { count: formatDigit(totalCount) } as any);
+  const searchResult = t('common:searchResult', { count: formatDigit(totalCount) } as any);
 
   const loadMore = () => {
     if (hasMore) {
       const offset = (query.offset || 0) + (query.limit || DEFAULT_LIST_LIMIT);
-      dispatch(getAccounts({ ...query, offset }));
+      dispatch(getProducts({ ...query, offset }));
     }
   };
 
   const handleCloseSelectionPanel = () => {
-    dispatch(resetSelection());
+    // TODO
+    // dispatch(resetSelection());
   };
 
   const handleClickDeleteAll = () => {
     openDialog(
       <ConfirmDialog
-        title={t('accounts:deleteAccount')}
-        message={t('accounts:deleteAccountsConfirm', { count: selectedIds.length })}
+        title={t('products:deleteAccount')}
+        message={t('products:deleteProductsConfirm', { count: selectedIds.length })}
         onClose={(isConfirmed: boolean) => {
-          isConfirmed && dispatch(deleteAccounts(selectedIds));
+          // TODO
+          // isConfirmed && dispatch(deleteProducts(selectedIds));
           closeDialog();
         }}
       />
     );
   };
 
-  const openAccountDialog = () => {
-    openDialog(<AccountDialog onClose={closeDialog} />);
+  const openProductDialog = () => {
+    // TODO: open product dialog
+    // openDialog();
   };
 
   const renderItem = (index: number) => {
-    const account = accounts[index];
+    const product = products[index];
 
-    return account ? (
-      <AccountListItem
-        key={account.id}
-        account={account}
+    return product ? (
+      <ProductListItem
+        key={product.id}
+        product={product}
         itemHeight={itemHeight}
-        isSelected={selectedIds.includes(account.id)}
+        isSelected={selectedIds.includes(product.id)}
+        showDetails={false}
       />
     ) : (
       <EndOfListItem key="end-of-list" height={itemHeight} isLoading={isLoading} message={searchResult} />
@@ -95,17 +96,17 @@ const MobileAccountList = (props: MobileAccountListProps) => {
   };
 
   useEffect(() => {
-    dispatch(getAccounts({ limit: DEFAULT_LIST_LIMIT }));
+    dispatch(getProducts({ limit: DEFAULT_LIST_LIMIT }));
 
     return () => {
-      dispatch(resetAccounts());
+      dispatch(resetProducts());
     };
   }, []);
 
   return (
     <>
-      <List className={classes.mobileAccountList} disablePadding>
-        {!isLoading && !accounts.length ? (
+      <List className={classes.mobileProductList} disablePadding>
+        {!isLoading && !products.length ? (
           <ListEmpty />
         ) : (
           <VirtualInfiniteScroll
@@ -121,9 +122,9 @@ const MobileAccountList = (props: MobileAccountListProps) => {
           <DeleteOutlineIcon />
         </IconButton>
       </SelectionPanel>
-      <CreationFab show={!isSelectMode} onClick={openAccountDialog} />
+      <CreationFab show={!isSelectMode} onClick={openProductDialog} />
     </>
   );
 };
 
-export default MobileAccountList;
+export default MobileProductList;

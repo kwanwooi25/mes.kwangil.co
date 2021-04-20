@@ -7,10 +7,12 @@ import { useScreenSize } from 'hooks/useScreenSize';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     searchPanel: {
-      width: SEARCH_PANEL_WIDTH,
+      width: '75vw',
+      maxWidth: SEARCH_PANEL_WIDTH,
     },
     drawerPaper: {
-      width: SEARCH_PANEL_WIDTH,
+      width: '75vw',
+      maxWidth: SEARCH_PANEL_WIDTH,
       flexShrink: 0,
     },
   })
