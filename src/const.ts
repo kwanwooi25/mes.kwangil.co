@@ -94,3 +94,9 @@ export const PHONE_NUMBER_MAX_LENGTH = 11;
 export const CRN_MAX_LENGTH = 10;
 
 export const PHONE_INPUT_KEYS = [ContactInputs.phone, ContactInputs.fax];
+
+export const PRINT_SIDE_TEXT = {
+  [PrintSide.NONE]: '없음 (무지)',
+  [PrintSide.SINGLE]: '단면',
+  [PrintSide.DOUBLE]: '양면',
+};

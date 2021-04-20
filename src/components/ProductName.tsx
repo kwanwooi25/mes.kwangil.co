@@ -1,9 +1,12 @@
 import { Link, Theme, createStyles, makeStyles } from '@material-ui/core';
 import React, { memo } from 'react';
 
+import ProductDetailDialog from './dialog/ProductDetail';
 import { ProductDto } from 'features/product/interface';
 import classnames from 'classnames';
 import { highlight } from 'utils/string';
+import { productApi } from 'features/product/productApi';
+import { useDialog } from 'features/dialog/dialogHook';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -27,9 +30,11 @@ export interface ProductNameProps {
 
 const ProductName = ({ product, className, linkClassName, searchText = '', maxWidth = 200 }: ProductNameProps) => {
   const classes = useStyles();
+  const { openDialog, closeDialog } = useDialog();
 
   const openDetailDialog = async () => {
-    // TODO: open product detail dialog
+    const data = await productApi.getProduct(product.id);
+    openDialog(<ProductDetailDialog product={data} onClose={closeDialog} />);
   };
 
   return (
