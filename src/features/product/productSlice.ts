@@ -19,7 +19,7 @@ export interface ProductState extends EntityState<ProductDto> {
 
 const productsAdapter = createEntityAdapter<ProductDto>();
 
-const initialState: ProductState = {
+export const initialState: ProductState = {
   ...productsAdapter.getInitialState(),
 
   query: {

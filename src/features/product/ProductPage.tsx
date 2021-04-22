@@ -4,6 +4,7 @@ import PaginatedProductList from './PaginatedProductList';
 import React from 'react';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useTranslation } from 'react-i18next';
+import ProductSearch from './ProductSearch';
 
 export interface ProductPageProps {}
 
@@ -14,7 +15,7 @@ const ProductPage = (props: ProductPageProps) => {
   return (
     <Layout
       pageTitle={t('pageTitle')}
-      SearchPanelContent={<div></div>}
+      SearchPanelContent={<ProductSearch />}
       searchPanelTitle={`${t('common:product')} ${t('common:search')}`}
     >
       {isMobileLayout && <MobileProductList />}

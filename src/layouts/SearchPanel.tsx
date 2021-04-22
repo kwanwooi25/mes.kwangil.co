@@ -1,4 +1,17 @@
-import { Divider, Drawer, List, ListItem, Theme, Typography, createStyles, makeStyles } from '@material-ui/core';
+import {
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  Theme,
+  Typography,
+  createStyles,
+  makeStyles,
+  ListItemIcon,
+  IconButton,
+} from '@material-ui/core';
+import SearchIcon from '@material-ui/icons/Search';
+import CloseIcon from '@material-ui/icons/Close';
 import React, { ReactNode } from 'react';
 
 import { SEARCH_PANEL_WIDTH } from 'const';
@@ -6,6 +19,7 @@ import { useScreenSize } from 'hooks/useScreenSize';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    toolbar: theme.mixins.toolbar,
     searchPanel: {
       width: '75vw',
       maxWidth: SEARCH_PANEL_WIDTH,
@@ -40,8 +54,18 @@ const SearchPanel = ({ isOpen, onClose, children, title }: SearchPanelProps) => 
         paper: classes.drawerPaper,
       }}
     >
+      {isDesktopLayout && <div className={classes.toolbar}></div>}
       <List>
         <ListItem>
+          <ListItemIcon>
+            {isDesktopLayout ? (
+              <SearchIcon />
+            ) : (
+              <IconButton onClick={onClose}>
+                <CloseIcon />
+              </IconButton>
+            )}
+          </ListItemIcon>
           <Typography variant="h6">{title}</Typography>
         </ListItem>
         <Divider />
