@@ -1,4 +1,4 @@
-import { CreateProductDto, GetProductsQuery, ProductDto, UpdateProductDto } from './interface';
+import { CreateProductDto, CreateProductsDto, GetProductsQuery, ProductDto, UpdateProductDto } from './interface';
 import { EntityState, PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { ProductLength, ProductThickness, ProductWidth } from 'const';
 
@@ -64,6 +64,7 @@ const productSlice = createSlice({
     },
 
     createProduct: (state, action: PayloadAction<CreateProductDto>) => {},
+    createProducts: (state, action: PayloadAction<CreateProductsDto[]>) => {},
     updateProduct: (state, action: PayloadAction<UpdateProductDto>) => {},
     updateProductSuccess: (state, { payload: { id, ...changes } }: PayloadAction<ProductDto>) => {
       productsAdapter.updateOne(state, { id, changes });

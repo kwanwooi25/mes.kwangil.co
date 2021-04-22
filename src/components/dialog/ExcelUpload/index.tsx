@@ -13,14 +13,13 @@ import React, { ChangeEvent, createRef, useState } from 'react';
 import CloseIcon from '@material-ui/icons/Close';
 import Dialog from 'features/dialog/Dialog';
 import DoneIcon from '@material-ui/icons/Done';
-import { ExcelVariant } from 'const';
+import { ExcelVariant, LoadingKeys } from 'const';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import Loading from 'components/Loading';
 import RoundedButton from 'components/RoundedButton';
 import { getExcelFileReader } from 'utils/excel';
-import { notificationActions } from 'features/notification/notificationSlice';
-import { useAppDispatch } from 'app/store';
 import { useTranslation } from 'react-i18next';
+import { useLoading } from 'features/loading/loadingHook';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -42,7 +41,7 @@ const templates = {
 
 export interface ExcelUploadDialogProps {
   variant: ExcelVariant;
-  onSave: (dataToCreate: any[]) => Promise<boolean>;
+  onSave: (dataToCreate: any[]) => void;
   onClose: () => void;
 }
 
@@ -52,9 +51,10 @@ const ExcelUploadDialog = ({ variant, onSave, onClose }: ExcelUploadDialogProps)
 
   const [fileName, setFileName] = useState<string>('');
   const [dataToCreate, setDataToCreate] = useState<any[]>([]);
-  const [isUploading, setIsUploading] = useState<boolean>(false);
+
   const fileUploadRef = createRef<HTMLInputElement>();
-  const dispatch = useAppDispatch();
+
+  const { [LoadingKeys.UPLOADING]: isUploading } = useLoading();
 
   const template = templates[variant];
 
@@ -82,18 +82,7 @@ const ExcelUploadDialog = ({ variant, onSave, onClose }: ExcelUploadDialogProps)
     onClose && onClose();
   };
 
-  const handleSave = async () => {
-    setIsUploading(true);
-    const isSaved = await onSave(dataToCreate);
-    setIsUploading(false);
-
-    if (isSaved) {
-      dispatch(notificationActions.notify({ variant: 'success', message: 'common:bulkCreateSuccess' }));
-      handleClose();
-    } else {
-      dispatch(notificationActions.notify({ variant: 'error', message: 'common:bulkCreateFailed' }));
-    }
-  };
+  const handleSave = () => onSave(dataToCreate);
 
   return (
     <Dialog title={t('createBulk')} open onClose={handleClose}>

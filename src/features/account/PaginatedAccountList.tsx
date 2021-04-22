@@ -61,6 +61,7 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
     unselectAll,
     resetSelection,
     isSelectMode,
+    createAccounts,
     deleteAccounts,
   } = useAccounts();
 
@@ -92,17 +93,7 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
     openDialog(
       <ExcelUploadDialog
         variant={ExcelVariant.ACCOUNT}
-        onSave={async (dataToCreate: CreateAccountDto[]) => {
-          try {
-            await accountApi.createAccounts(dataToCreate);
-            const limit = query?.limit || DEFAULT_LIST_LIMIT;
-            dispatch(resetAccounts());
-            dispatch(getAccounts({ limit, offset: 0 }));
-            return true;
-          } catch (error) {
-            return false;
-          }
-        }}
+        onSave={(accounts: CreateAccountDto[]) => dispatch(createAccounts(accounts))}
         onClose={closeDialog}
       />
     );

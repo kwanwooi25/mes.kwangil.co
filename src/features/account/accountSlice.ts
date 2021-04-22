@@ -58,6 +58,7 @@ const accountSlice = createSlice({
     },
 
     createAccount: (state, action: PayloadAction<CreateAccountDto>) => {},
+    createAccounts: (state, action: PayloadAction<CreateAccountDto[]>) => {},
     updateAccount: (state, action: PayloadAction<UpdateAccountDto>) => {},
     deleteAccounts: (state, action: PayloadAction<number[]>) => {},
     updateAccountSuccess: (state, { payload: { id, ...changes } }: PayloadAction<AccountDto>) => {
