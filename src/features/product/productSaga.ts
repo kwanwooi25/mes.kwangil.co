@@ -7,6 +7,7 @@ import { notificationActions } from 'features/notification/notificationSlice';
 import { productApi } from './productApi';
 import { loadingActions } from 'features/loading/loadingSlice';
 import { LoadingKeys } from 'const';
+import { dialogActions } from 'features/dialog/dialogSlice';
 
 const {
   getProducts,
@@ -17,9 +18,9 @@ const {
   createProduct,
   updateProduct,
   updateProductSuccess,
-  setShouldCloseProductDialog,
 } = productActions;
 const { startLoading, finishLoading } = loadingActions;
+const { close: closeDialog } = dialogActions;
 
 function* getProductsSaga({ payload: query }: ReturnType<typeof getProducts>) {
   try {
@@ -37,7 +38,7 @@ function* createProductSaga({ payload: productToCreate }: ReturnType<typeof crea
   try {
     yield put(startLoading(LoadingKeys.SAVING_PRODUCT));
     yield call(productApi.createProduct, productToCreate);
-    yield put(setShouldCloseProductDialog(true));
+    yield put(closeDialog());
     yield put(notificationActions.notify({ variant: 'success', message: 'products:createProductSuccess' }));
     yield fork(resetProductsAndFetch);
   } catch (error) {
@@ -51,7 +52,7 @@ function* updateProductSaga({ payload: productToUpdate }: ReturnType<typeof upda
   try {
     yield put(startLoading(LoadingKeys.SAVING_PRODUCT));
     const updatedProduct: ProductDto = yield call(productApi.updateProduct, productToUpdate);
-    yield put(setShouldCloseProductDialog(true));
+    yield put(closeDialog());
     yield put(notificationActions.notify({ variant: 'success', message: 'products:updateProductSuccess' }));
     yield put(updateProductSuccess(updatedProduct));
   } catch (error) {

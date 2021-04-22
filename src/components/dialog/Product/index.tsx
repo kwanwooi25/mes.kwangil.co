@@ -3,7 +3,7 @@ import * as yup from 'yup';
 import FormikStepper, { FormikStep } from 'components/form/FormikStepper';
 import { ImageDto, ProductDto } from 'features/product/interface';
 import { LoadingKeys, PrintSide, ProductDialogMode, ProductLength, ProductThickness, ProductWidth } from 'const';
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   getCreateProductDto,
   getInitialProductToCopy,
@@ -72,7 +72,7 @@ export interface ProductFormValues {
 const ProductDialog = ({ mode, product, onClose }: ProductDialogProps) => {
   const { t } = useTranslation('products');
   const dispatch = useAppDispatch();
-  const { createProduct, updateProduct, shouldCloseProductDialog, setShouldCloseProductDialog } = useProducts();
+  const { createProduct, updateProduct } = useProducts();
   const { [LoadingKeys.SAVING_PRODUCT]: isSaving } = useLoading();
 
   const dialogTitle = t(mode === ProductDialogMode.EDIT ? 'updateProduct' : 'addProduct');
@@ -183,13 +183,6 @@ const ProductDialog = ({ mode, product, onClose }: ProductDialogProps) => {
         break;
     }
   };
-
-  useEffect(() => {
-    if (shouldCloseProductDialog) {
-      dispatch(setShouldCloseProductDialog(false));
-      onClose();
-    }
-  }, [shouldCloseProductDialog]);
 
   return (
     <Dialog open onClose={onClose} title={dialogTitle} fullHeight>

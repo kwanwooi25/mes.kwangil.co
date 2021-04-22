@@ -15,6 +15,7 @@ import productReducer from 'features/product/productSlice';
 import { productSaga } from 'features/product/productSaga';
 import uiReducer from 'features/ui/uiSlice';
 import loadingReducer from 'features/loading/loadingSlice';
+import dialogReducer from 'features/dialog/dialogSlice';
 
 export const history = createBrowserHistory();
 
@@ -22,6 +23,7 @@ const reducer = combineReducers({
   router: connectRouter(history),
   ui: uiReducer,
   loading: loadingReducer,
+  dialog: dialogReducer,
   notification: notificationReducer,
   auth: authReducer,
   account: accountReducer,
@@ -33,7 +35,7 @@ const sagaMiddleware = createSagaMiddleware();
 const store = configureStore({
   reducer,
   middleware: [
-    ...getDefaultMiddleware({ thunk: false }),
+    ...getDefaultMiddleware({ thunk: false, serializableCheck: false }),
     routerMiddleware(history),
     createLogger({ collapsed: true }),
     sagaMiddleware,

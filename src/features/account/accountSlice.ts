@@ -14,8 +14,6 @@ export interface AccountState extends EntityState<AccountDto> {
 
   isSelectMode: boolean;
   selectedIds: number[];
-
-  shouldCloseAccountDialog: boolean;
 }
 
 const accountsAdapter = createEntityAdapter<AccountDto>();
@@ -35,8 +33,6 @@ const initialState: AccountState = {
 
   isSelectMode: false,
   selectedIds: [],
-
-  shouldCloseAccountDialog: false,
 };
 
 const accountSlice = createSlice({
@@ -66,9 +62,6 @@ const accountSlice = createSlice({
     deleteAccounts: (state, action: PayloadAction<number[]>) => {},
     updateAccountSuccess: (state, { payload: { id, ...changes } }: PayloadAction<AccountDto>) => {
       accountsAdapter.updateOne(state, { id, changes });
-    },
-    setShouldCloseAccountDialog: (state, action: PayloadAction<boolean>) => {
-      state.shouldCloseAccountDialog = action.payload;
     },
 
     toggleSelection: (state, action: PayloadAction<number>) => {

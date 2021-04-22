@@ -1,6 +1,8 @@
-import { ReactElement, ReactNode, createContext, useContext, useState } from 'react';
+import { useAppDispatch, useAppSelector } from 'app/store';
+import { ReactElement, ReactNode, createContext, useContext } from 'react';
 
 import { createPortal } from 'react-dom';
+import { dialogActions, dialogSelector } from './dialogSlice';
 
 interface DialogContext {
   isOpen: boolean;
@@ -29,13 +31,15 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
 export const useDialog = () => useContext(dialogContext);
 
 const useDialogProvider = (): DialogContext => {
-  const [dialog, setDialog] = useState<ReactElement | undefined | null>(undefined);
+  const { dialog } = useAppSelector(dialogSelector);
+  const dispatch = useAppDispatch();
+  const { open, close } = dialogActions;
 
   const openDialog = (dialog: ReactElement) => {
-    setDialog(dialog);
+    dispatch(open(dialog));
   };
   const closeDialog = () => {
-    setDialog(null);
+    dispatch(close());
   };
 
   return { isOpen: !!dialog, openDialog, closeDialog, dialog };

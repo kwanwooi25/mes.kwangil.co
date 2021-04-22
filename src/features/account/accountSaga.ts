@@ -7,6 +7,7 @@ import { accountApi } from './accountApi';
 import { notificationActions } from 'features/notification/notificationSlice';
 import { loadingActions } from 'features/loading/loadingSlice';
 import { LoadingKeys } from 'const';
+import { dialogActions } from 'features/dialog/dialogSlice';
 
 const {
   getAccounts,
@@ -16,10 +17,10 @@ const {
   updateAccount,
   updateAccountSuccess,
   deleteAccounts,
-  setShouldCloseAccountDialog,
   resetSelection,
 } = accountActions;
 const { startLoading, finishLoading } = loadingActions;
+const { close: closeDialog } = dialogActions;
 
 function* getAccountsSaga({ payload: query }: ReturnType<typeof getAccounts>) {
   try {
@@ -42,7 +43,7 @@ function* createAccountSaga({ payload: accountToCreate }: ReturnType<typeof crea
   try {
     yield put(startLoading(LoadingKeys.SAVING_ACCOUNT));
     yield call(accountApi.createAccount, accountToCreate);
-    yield put(setShouldCloseAccountDialog(true));
+    yield put(closeDialog());
     yield put(notificationActions.notify({ variant: 'success', message: 'accounts:createAccountSuccess' }));
     yield fork(resetAccountsAndFetch);
   } catch (error) {
@@ -61,7 +62,7 @@ function* updateAccountSaga({ payload: accountToUpdate }: ReturnType<typeof upda
   try {
     yield put(startLoading(LoadingKeys.SAVING_ACCOUNT));
     const updatedAccount: AccountDto = yield call(accountApi.updateAccount, accountToUpdate);
-    yield put(setShouldCloseAccountDialog(true));
+    yield put(closeDialog());
     yield put(notificationActions.notify({ variant: 'success', message: 'accounts:updateAccountSuccess' }));
     yield put(updateAccountSuccess(updatedAccount));
   } catch (error) {
