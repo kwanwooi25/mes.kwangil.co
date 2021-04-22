@@ -1,4 +1,4 @@
-import { DEFAULT_LIST_LIMIT, ProductDialogMode, ProductListItemHeight } from 'const';
+import { DEFAULT_LIST_LIMIT, LoadingKeys, ProductDialogMode, ProductListItemHeight } from 'const';
 import { IconButton, List, Theme, Tooltip, createStyles, makeStyles } from '@material-ui/core';
 import ProductListItem, { ProductListItemSkeleton } from './ProductListItem';
 import React, { ChangeEvent, useEffect, useState } from 'react';
@@ -18,6 +18,7 @@ import { useDialog } from 'features/dialog/dialogHook';
 import { useProducts } from './productHook';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useTranslation } from 'react-i18next';
+import { useLoading } from 'features/loading/loadingHook';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -45,7 +46,6 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
   const dispatch = useAppDispatch();
   const {
     query,
-    isLoading,
     currentPage,
     totalPages,
     products,
@@ -59,6 +59,7 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
     unselectAll,
     deleteProducts,
   } = useProducts();
+  const { [LoadingKeys.GET_PRODUCTS]: isLoading } = useLoading();
 
   const itemHeight = isDesktopLayout ? ProductListItemHeight.LG : ProductListItemHeight.SM;
   const isSelectedAll = !!ids.length && !!selectedIds.length && ids.every((id) => selectedIds.includes(id as number));

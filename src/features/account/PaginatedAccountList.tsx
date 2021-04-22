@@ -1,5 +1,5 @@
 import AccountListItem, { AccountListItemSkeleton } from './AccountListItem';
-import { AccountListItemHeight, DEFAULT_LIST_LIMIT, ExcelVariant } from 'const';
+import { AccountListItemHeight, DEFAULT_LIST_LIMIT, ExcelVariant, LoadingKeys } from 'const';
 import { IconButton, List, Theme, Tooltip, createStyles, makeStyles } from '@material-ui/core';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 
@@ -22,6 +22,7 @@ import { useAppDispatch } from 'app/store';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useTranslation } from 'react-i18next';
+import { useLoading } from 'features/loading/loadingHook';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -47,8 +48,8 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
   const { windowHeight } = useScreenSize();
   const { openDialog, closeDialog } = useDialog();
   const dispatch = useAppDispatch();
+  const { [LoadingKeys.GET_ACCOUNTS]: isLoading } = useLoading();
   const {
-    isLoading,
     query,
     currentPage,
     totalPages,

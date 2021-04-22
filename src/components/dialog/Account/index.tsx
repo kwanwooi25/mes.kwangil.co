@@ -16,6 +16,8 @@ import { useAccounts } from 'features/account/accountHook';
 import { useAppDispatch } from 'app/store';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { useLoading } from 'features/loading/loadingHook';
+import { LoadingKeys } from 'const';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -73,13 +75,8 @@ const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
   const dialogTitle = t(isEditMode ? 'updateAccount' : 'addAccount');
 
   const dispatch = useAppDispatch();
-  const {
-    isSaving,
-    createAccount,
-    updateAccount,
-    shouldCloseAccountDialog,
-    setShouldCloseAccountDialog,
-  } = useAccounts();
+  const { [LoadingKeys.SAVING_ACCOUNT]: isSaving } = useLoading();
+  const { createAccount, updateAccount, shouldCloseAccountDialog, setShouldCloseAccountDialog } = useAccounts();
 
   const { values, touched, errors, handleChange, setFieldValue, setValues, submitForm } = useFormik<AccountFormValues>({
     initialValues: {

@@ -14,12 +14,14 @@ import notificationReducer from 'features/notification/notificationSlice';
 import productReducer from 'features/product/productSlice';
 import { productSaga } from 'features/product/productSaga';
 import uiReducer from 'features/ui/uiSlice';
+import loadingReducer from 'features/loading/loadingSlice';
 
 export const history = createBrowserHistory();
 
 const reducer = combineReducers({
   router: connectRouter(history),
   ui: uiReducer,
+  loading: loadingReducer,
   notification: notificationReducer,
   auth: authReducer,
   account: accountReducer,

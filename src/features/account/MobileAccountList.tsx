@@ -1,4 +1,4 @@
-import { AccountListItemHeight, DEFAULT_LIST_LIMIT } from 'const';
+import { AccountListItemHeight, DEFAULT_LIST_LIMIT, LoadingKeys } from 'const';
 import { IconButton, List, Theme, createStyles, makeStyles } from '@material-ui/core';
 import React, { useEffect } from 'react';
 
@@ -16,6 +16,7 @@ import { useAccounts } from './accountHook';
 import { useAppDispatch } from 'app/store';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useTranslation } from 'react-i18next';
+import { useLoading } from 'features/loading/loadingHook';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,9 +32,9 @@ const MobileAccountList = (props: MobileAccountListProps) => {
   const { t } = useTranslation('common');
   const classes = useStyles();
   const dispatch = useAppDispatch();
+  const { [LoadingKeys.GET_ACCOUNTS]: isLoading } = useLoading();
   const {
     query,
-    isLoading,
     hasMore,
     totalCount,
     accounts,

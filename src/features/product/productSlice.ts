@@ -8,7 +8,6 @@ import { RootState } from 'app/store';
 
 export interface ProductState extends EntityState<ProductDto> {
   query: GetProductsQuery;
-  isLoading: boolean;
   totalCount: number;
   currentPage: number;
   totalPages: number;
@@ -17,7 +16,6 @@ export interface ProductState extends EntityState<ProductDto> {
   isSelectMode: boolean;
   selectedIds: number[];
 
-  isSaving: boolean;
   shouldCloseProductDialog: boolean;
 }
 
@@ -37,7 +35,6 @@ const initialState: ProductState = {
     extColor: '',
     printColor: '',
   },
-  isLoading: false,
   totalCount: 0,
   currentPage: 1,
   totalPages: 1,
@@ -46,7 +43,6 @@ const initialState: ProductState = {
   isSelectMode: false,
   selectedIds: [],
 
-  isSaving: false,
   shouldCloseProductDialog: false,
 };
 
@@ -54,9 +50,6 @@ const productSlice = createSlice({
   name: 'products',
   initialState,
   reducers: {
-    setLoading: (state, { payload: isLoading }: PayloadAction<boolean>) => {
-      state.isLoading = isLoading;
-    },
     getProducts: (state, { payload: query }: PayloadAction<GetProductsQuery>) => {
       state.query = { ...state.query, ...query };
     },
@@ -74,9 +67,6 @@ const productSlice = createSlice({
       productsAdapter.removeAll(state);
     },
 
-    setSaving: (state, { payload: isSaving }: PayloadAction<boolean>) => {
-      state.isSaving = isSaving;
-    },
     setShouldCloseProductDialog: (state, { payload: shouldCloseProductDialog }: PayloadAction<boolean>) => {
       state.shouldCloseProductDialog = shouldCloseProductDialog;
     },

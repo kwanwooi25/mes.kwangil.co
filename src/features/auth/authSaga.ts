@@ -1,25 +1,27 @@
 import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 import { getAuthToken, setAuthHeaders } from 'app/apiClient';
 
-import { Path } from 'const';
+import { LoadingKeys, Path } from 'const';
 import { UserDto } from './interface';
 import { authActions } from './authSlice';
 import { authApi } from './authApi';
 import { notificationActions } from 'features/notification/notificationSlice';
 import { routerActions } from 'connected-react-router';
+import { loadingActions } from 'features/loading/loadingSlice';
 
-const { setIsRefreshing, setIsLoggingIn, login, loginSuccess, loginFailed, logout } = authActions;
+const { login, loginSuccess, loginFailed, logout } = authActions;
+const { startLoading, finishLoading } = loadingActions;
 
 function* loginSaga({ payload: loginData }: ReturnType<typeof login>) {
   try {
-    yield put(setIsLoggingIn(true));
+    yield put(startLoading(LoadingKeys.LOGIN));
     const { user, token } = yield call(authApi.login, loginData);
     yield put(loginSuccess({ user, token }));
   } catch (error) {
     yield put(notificationActions.notify({ variant: 'error', message: 'auth:loginFailed' }));
     yield put(loginFailed());
   } finally {
-    yield put(setIsLoggingIn(false));
+    yield put(finishLoading(LoadingKeys.LOGIN));
   }
 }
 
@@ -30,7 +32,7 @@ function* logoutSaga() {
 
 function* refreshLoginSaga() {
   try {
-    yield put(setIsRefreshing(true));
+    yield put(startLoading(LoadingKeys.REFRESH_LOGIN));
     const token = getAuthToken();
     yield call(setAuthHeaders, token);
     const user: UserDto = yield call(authApi.whoAmI);
@@ -42,7 +44,7 @@ function* refreshLoginSaga() {
   } catch (error) {
     yield put(loginFailed());
   } finally {
-    yield put(setIsRefreshing(false));
+    yield put(finishLoading(LoadingKeys.REFRESH_LOGIN));
   }
 }
 

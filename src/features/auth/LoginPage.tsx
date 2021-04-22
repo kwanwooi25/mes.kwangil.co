@@ -9,6 +9,8 @@ import { useAppDispatch } from 'app/store';
 import { useAuth } from './authHook';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { LoadingKeys } from 'const';
+import { useLoading } from 'features/loading/loadingHook';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -74,7 +76,8 @@ const LoginPage = (props: LoginPageProps) => {
   const classes = useStyles();
 
   const dispatch = useAppDispatch();
-  const { isLoggingIn, login } = useAuth();
+  const { login } = useAuth();
+  const { [LoadingKeys.LOGIN]: isLoggingIn } = useLoading();
 
   const { values, touched, errors, handleChange, handleSubmit } = useFormik<LoginDto>({
     initialValues: {

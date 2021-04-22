@@ -1,4 +1,4 @@
-import { DEFAULT_PAGE, Path } from 'const';
+import { DEFAULT_PAGE, LoadingKeys, Path } from 'const';
 import React, { ComponentType } from 'react';
 import { Redirect, Route, Switch } from 'react-router';
 
@@ -9,6 +9,7 @@ import LoginPage from 'features/auth/LoginPage';
 import Notifier from 'features/notification/Notifier';
 import ProductPage from 'features/product/ProductPage';
 import { useAuth } from 'features/auth/authHook';
+import { useLoading } from 'features/loading/loadingHook';
 
 export interface RouteProps {
   path: string;
@@ -37,7 +38,7 @@ const PrivateRoute = ({ component: Component, ...rest }: RouteProps) => {
 };
 
 function App() {
-  const { isRefreshing } = useAuth();
+  const { [LoadingKeys.REFRESH_LOGIN]: isRefreshing } = useLoading();
 
   return isRefreshing ? (
     <Loading />

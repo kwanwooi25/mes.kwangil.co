@@ -5,13 +5,13 @@ import { all, call, cancel, fork, put, select, takeEvery } from 'redux-saga/effe
 import { GetListResponse } from 'types/api';
 import { accountApi } from './accountApi';
 import { notificationActions } from 'features/notification/notificationSlice';
+import { loadingActions } from 'features/loading/loadingSlice';
+import { LoadingKeys } from 'const';
 
 const {
-  setLoading,
   getAccounts,
   setAccounts,
   resetAccounts,
-  setSaving,
   createAccount,
   updateAccount,
   updateAccountSuccess,
@@ -19,16 +19,17 @@ const {
   setShouldCloseAccountDialog,
   resetSelection,
 } = accountActions;
+const { startLoading, finishLoading } = loadingActions;
 
 function* getAccountsSaga({ payload: query }: ReturnType<typeof getAccounts>) {
   try {
-    yield put(setLoading(true));
+    yield put(startLoading(LoadingKeys.GET_ACCOUNTS));
     const data: GetListResponse<AccountDto> = yield call(accountApi.getAccounts, query);
     yield put(setAccounts(data));
   } catch (error) {
     yield put(notificationActions.notify({ variant: 'error', message: 'accounts:getAccountsFailed' }));
   } finally {
-    yield put(setLoading(false));
+    yield put(finishLoading(LoadingKeys.GET_ACCOUNTS));
   }
 }
 
@@ -39,7 +40,7 @@ function* createAccountSaga({ payload: accountToCreate }: ReturnType<typeof crea
   }
 
   try {
-    yield put(setSaving(true));
+    yield put(startLoading(LoadingKeys.SAVING_ACCOUNT));
     yield call(accountApi.createAccount, accountToCreate);
     yield put(setShouldCloseAccountDialog(true));
     yield put(notificationActions.notify({ variant: 'success', message: 'accounts:createAccountSuccess' }));
@@ -47,7 +48,7 @@ function* createAccountSaga({ payload: accountToCreate }: ReturnType<typeof crea
   } catch (error) {
     yield put(notificationActions.notify({ variant: 'error', message: 'accounts:createAccountFailed' }));
   } finally {
-    yield put(setSaving(false));
+    yield put(finishLoading(LoadingKeys.SAVING_ACCOUNT));
   }
 }
 
@@ -58,7 +59,7 @@ function* updateAccountSaga({ payload: accountToUpdate }: ReturnType<typeof upda
   }
 
   try {
-    yield put(setSaving(true));
+    yield put(startLoading(LoadingKeys.SAVING_ACCOUNT));
     const updatedAccount: AccountDto = yield call(accountApi.updateAccount, accountToUpdate);
     yield put(setShouldCloseAccountDialog(true));
     yield put(notificationActions.notify({ variant: 'success', message: 'accounts:updateAccountSuccess' }));
@@ -66,7 +67,7 @@ function* updateAccountSaga({ payload: accountToUpdate }: ReturnType<typeof upda
   } catch (error) {
     yield put(notificationActions.notify({ variant: 'error', message: 'accounts:updateAccountFailed' }));
   } finally {
-    yield put(setSaving(false));
+    yield put(finishLoading(LoadingKeys.SAVING_ACCOUNT));
   }
 }
 

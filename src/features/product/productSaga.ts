@@ -5,9 +5,10 @@ import { GetListResponse } from 'types/api';
 import { ProductDto } from './interface';
 import { notificationActions } from 'features/notification/notificationSlice';
 import { productApi } from './productApi';
+import { loadingActions } from 'features/loading/loadingSlice';
+import { LoadingKeys } from 'const';
 
 const {
-  setLoading,
   getProducts,
   setProducts,
   resetProducts,
@@ -16,25 +17,25 @@ const {
   createProduct,
   updateProduct,
   updateProductSuccess,
-  setSaving,
   setShouldCloseProductDialog,
 } = productActions;
+const { startLoading, finishLoading } = loadingActions;
 
 function* getProductsSaga({ payload: query }: ReturnType<typeof getProducts>) {
   try {
-    yield put(setLoading(true));
+    yield put(startLoading(LoadingKeys.GET_PRODUCTS));
     const data: GetListResponse<ProductDto> = yield call(productApi.getProducts, query);
     yield put(setProducts(data));
   } catch (error) {
     yield put(notificationActions.notify({ variant: 'error', message: 'products:getProductsFailed' }));
   } finally {
-    yield put(setLoading(false));
+    yield put(finishLoading(LoadingKeys.GET_PRODUCTS));
   }
 }
 
 function* createProductSaga({ payload: productToCreate }: ReturnType<typeof createProduct>) {
   try {
-    yield put(setSaving(true));
+    yield put(startLoading(LoadingKeys.SAVING_PRODUCT));
     yield call(productApi.createProduct, productToCreate);
     yield put(setShouldCloseProductDialog(true));
     yield put(notificationActions.notify({ variant: 'success', message: 'products:createProductSuccess' }));
@@ -42,13 +43,13 @@ function* createProductSaga({ payload: productToCreate }: ReturnType<typeof crea
   } catch (error) {
     yield put(notificationActions.notify({ variant: 'error', message: 'products:createProductFailed' }));
   } finally {
-    yield put(setSaving(false));
+    yield put(finishLoading(LoadingKeys.SAVING_PRODUCT));
   }
 }
 
 function* updateProductSaga({ payload: productToUpdate }: ReturnType<typeof updateProduct>) {
   try {
-    yield put(setSaving(true));
+    yield put(startLoading(LoadingKeys.SAVING_PRODUCT));
     const updatedProduct: ProductDto = yield call(productApi.updateProduct, productToUpdate);
     yield put(setShouldCloseProductDialog(true));
     yield put(notificationActions.notify({ variant: 'success', message: 'products:updateProductSuccess' }));
@@ -56,7 +57,7 @@ function* updateProductSaga({ payload: productToUpdate }: ReturnType<typeof upda
   } catch (error) {
     yield put(notificationActions.notify({ variant: 'error', message: 'products:updateProductFailed' }));
   } finally {
-    yield put(setSaving(false));
+    yield put(finishLoading(LoadingKeys.SAVING_PRODUCT));
   }
 }
 

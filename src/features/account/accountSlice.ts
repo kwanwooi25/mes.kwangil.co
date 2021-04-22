@@ -7,7 +7,6 @@ import { RootState } from 'app/store';
 
 export interface AccountState extends EntityState<AccountDto> {
   query: GetAccountsQuery;
-  isLoading: boolean;
   totalCount: number;
   currentPage: number;
   totalPages: number;
@@ -16,7 +15,6 @@ export interface AccountState extends EntityState<AccountDto> {
   isSelectMode: boolean;
   selectedIds: number[];
 
-  isSaving: boolean;
   shouldCloseAccountDialog: boolean;
 }
 
@@ -30,7 +28,6 @@ const initialState: AccountState = {
     limit: DEFAULT_LIST_LIMIT,
     searchText: '',
   },
-  isLoading: false,
   totalCount: 0,
   currentPage: 1,
   totalPages: 1,
@@ -39,7 +36,6 @@ const initialState: AccountState = {
   isSelectMode: false,
   selectedIds: [],
 
-  isSaving: false,
   shouldCloseAccountDialog: false,
 };
 
@@ -47,9 +43,6 @@ const accountSlice = createSlice({
   name: 'accounts',
   initialState,
   reducers: {
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload;
-    },
     getAccounts: (state, action: PayloadAction<GetAccountsQuery>) => {
       state.query = { ...state.query, ...action.payload };
     },
@@ -68,9 +61,6 @@ const accountSlice = createSlice({
       accountsAdapter.removeAll(state);
     },
 
-    setSaving: (state, action: PayloadAction<boolean>) => {
-      state.isSaving = action.payload;
-    },
     createAccount: (state, action: PayloadAction<CreateAccountDto>) => {},
     updateAccount: (state, action: PayloadAction<UpdateAccountDto>) => {},
     deleteAccounts: (state, action: PayloadAction<number[]>) => {},

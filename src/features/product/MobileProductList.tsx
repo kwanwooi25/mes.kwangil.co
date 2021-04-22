@@ -1,4 +1,4 @@
-import { DEFAULT_LIST_LIMIT, ProductDialogMode, ProductListItemHeight } from 'const';
+import { DEFAULT_LIST_LIMIT, LoadingKeys, ProductDialogMode, ProductListItemHeight } from 'const';
 import { IconButton, List, Theme, createStyles, makeStyles } from '@material-ui/core';
 import React, { useEffect } from 'react';
 
@@ -16,6 +16,7 @@ import { useAppDispatch } from 'app/store';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useProducts } from './productHook';
 import { useTranslation } from 'react-i18next';
+import { useLoading } from 'features/loading/loadingHook';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -32,7 +33,6 @@ const MobileProductList = (props: MobileProductListProps) => {
   const classes = useStyles();
   const {
     query,
-    isLoading,
     hasMore,
     totalCount,
     products,
@@ -45,6 +45,7 @@ const MobileProductList = (props: MobileProductListProps) => {
   } = useProducts();
   const dispatch = useAppDispatch();
   const { openDialog, closeDialog } = useDialog();
+  const { [LoadingKeys.GET_PRODUCTS]: isLoading } = useLoading();
 
   const itemCount = products.length + 1;
   const itemHeight = ProductListItemHeight.XS;
