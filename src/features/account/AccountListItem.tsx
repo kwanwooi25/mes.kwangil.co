@@ -13,6 +13,8 @@ import {
   makeStyles,
 } from '@material-ui/core';
 import React, { MouseEvent, memo, useCallback, useState } from 'react';
+import { accountActions, accountSelectors } from './accountSlice';
+import { useAppDispatch, useAppSelector } from 'app/store';
 
 import AccountDialog from 'components/dialog/Account';
 import { AccountDto } from 'features/account/interface';
@@ -23,8 +25,6 @@ import PhoneIcon from '@material-ui/icons/Phone';
 import PhoneNumber from 'components/PhoneNumber';
 import PrintIcon from '@material-ui/icons/Print';
 import { Skeleton } from '@material-ui/lab';
-import { useAccounts } from 'features/account/accountHook';
-import { useAppDispatch } from 'app/store';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useTranslation } from 'react-i18next';
 
@@ -59,11 +59,8 @@ const AccountListItem = ({ account, itemHeight, isSelected = false, showFaxNumbe
   const classes = useStyles();
 
   const dispatch = useAppDispatch();
-  const {
-    query: { searchText = '' },
-    toggleSelection,
-    deleteAccounts,
-  } = useAccounts();
+  const { searchText = '' } = useAppSelector(accountSelectors.query);
+  const { toggleSelection, deleteAccounts } = accountActions;
   const { openDialog, closeDialog } = useDialog();
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);

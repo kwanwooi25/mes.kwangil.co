@@ -9,15 +9,15 @@ import Dialog from 'features/dialog/Dialog';
 import DoneIcon from '@material-ui/icons/Done';
 import Input from 'components/form/Input';
 import Loading from 'components/Loading';
+import { LoadingKeys } from 'const';
 import RoundedButton from 'components/RoundedButton';
+import { accountActions } from 'features/account/accountSlice';
 import { formatCrn } from 'utils/string';
 import { isEmpty } from 'lodash';
-import { useAccounts } from 'features/account/accountHook';
 import { useAppDispatch } from 'app/store';
 import { useFormik } from 'formik';
-import { useTranslation } from 'react-i18next';
 import { useLoading } from 'features/loading/loadingHook';
-import { LoadingKeys } from 'const';
+import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -76,7 +76,7 @@ const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
 
   const dispatch = useAppDispatch();
   const { [LoadingKeys.SAVING_ACCOUNT]: isSaving } = useLoading();
-  const { createAccount, updateAccount } = useAccounts();
+  const { createAccount, updateAccount } = accountActions;
 
   const { values, touched, errors, handleChange, setFieldValue, setValues, submitForm } = useFormik<AccountFormValues>({
     initialValues: {

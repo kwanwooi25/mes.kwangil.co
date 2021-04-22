@@ -1,11 +1,12 @@
 import { Divider, Theme, createStyles, makeStyles } from '@material-ui/core';
 import React, { useEffect } from 'react';
+import { accountActions, accountSelectors } from './accountSlice';
+import { useAppDispatch, useAppSelector } from 'app/store';
 
+import { BaseQuery } from 'types/api';
 import { GetAccountsQuery } from './interface';
 import Input from 'components/form/Input';
 import RoundedButton from 'components/RoundedButton';
-import { useAccounts } from './accountHook';
-import { useAppDispatch } from 'app/store';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useUI } from 'features/ui/uiHook';
@@ -36,16 +37,15 @@ const AccountSearch = (props: AccountSearchProps) => {
   const classes = useStyles();
 
   const dispatch = useAppDispatch();
-  const {
-    query: { offset, limit, ...restQuery },
-    resetAccounts,
-    getAccounts,
-  } = useAccounts();
+  const { offset, limit, ...restQuery } = useAppSelector(accountSelectors.query);
+  const { resetList: resetAccounts, getList: getAccounts } = accountActions;
   const { closeSearch } = useUI();
 
   const initialValues = { searchText: '' };
 
-  const { values, setValues, handleSubmit, handleChange, handleReset } = useFormik<GetAccountsQuery>({
+  const { values, setValues, handleSubmit, handleChange, handleReset } = useFormik<
+    Omit<GetAccountsQuery, keyof BaseQuery>
+  >({
     initialValues,
     onReset: () => {
       dispatch(resetAccounts());

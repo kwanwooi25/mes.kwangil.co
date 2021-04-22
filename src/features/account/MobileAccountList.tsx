@@ -1,6 +1,8 @@
 import { AccountListItemHeight, DEFAULT_LIST_LIMIT, LoadingKeys } from 'const';
 import { IconButton, List, Theme, createStyles, makeStyles } from '@material-ui/core';
 import React, { useEffect } from 'react';
+import { accountActions, accountSelectors } from './accountSlice';
+import { useAppDispatch, useAppSelector } from 'app/store';
 
 import AccountDialog from 'components/dialog/Account';
 import AccountListItem from './AccountListItem';
@@ -8,15 +10,14 @@ import ConfirmDialog from 'components/dialog/Confirm';
 import CreationFab from 'components/CreationFab';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EndOfListItem from 'components/EndOfListItem';
+import { GetAccountsQuery } from './interface';
 import ListEmpty from 'components/ListEmpty';
 import SelectionPanel from 'components/SelectionPanel';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
 import { formatDigit } from 'utils/string';
-import { useAccounts } from './accountHook';
-import { useAppDispatch } from 'app/store';
 import { useDialog } from 'features/dialog/dialogHook';
-import { useTranslation } from 'react-i18next';
 import { useLoading } from 'features/loading/loadingHook';
+import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,21 +32,17 @@ export interface MobileAccountListProps {}
 const MobileAccountList = (props: MobileAccountListProps) => {
   const { t } = useTranslation('common');
   const classes = useStyles();
+
   const dispatch = useAppDispatch();
   const { [LoadingKeys.GET_ACCOUNTS]: isLoading } = useLoading();
-  const {
-    query,
-    hasMore,
-    totalCount,
-    accounts,
-    getAccounts,
-    resetAccounts,
-    isSelectMode,
-    selectedIds,
-    resetSelection,
-    deleteAccounts,
-  } = useAccounts();
   const { openDialog, closeDialog } = useDialog();
+  const query = useAppSelector(accountSelectors.query);
+  const hasMore = useAppSelector(accountSelectors.hasMore);
+  const totalCount = useAppSelector(accountSelectors.totalCount);
+  const accounts = useAppSelector(accountSelectors.accounts);
+  const isSelectMode = useAppSelector(accountSelectors.isSelectMode);
+  const selectedIds = useAppSelector(accountSelectors.selectedIds);
+  const { getList: getAccounts, resetList: resetAccounts, resetSelection, deleteAccounts } = accountActions;
 
   const itemCount = accounts.length + 1;
   const itemHeight = AccountListItemHeight.XS;
@@ -96,7 +93,7 @@ const MobileAccountList = (props: MobileAccountListProps) => {
   };
 
   useEffect(() => {
-    dispatch(getAccounts({ limit: DEFAULT_LIST_LIMIT }));
+    dispatch(getAccounts({ limit: DEFAULT_LIST_LIMIT } as GetAccountsQuery));
 
     return () => {
       dispatch(resetAccounts());

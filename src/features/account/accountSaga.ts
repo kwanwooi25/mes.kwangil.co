@@ -1,22 +1,22 @@
-import { AccountDto, ContactDto, CreateContactDto, CreateAccountDto } from './interface';
-import { AccountState, accountActions, accountSelector } from './accountSlice';
+import { AccountDto, ContactDto, CreateAccountDto, CreateContactDto, GetAccountsQuery } from './interface';
+import { accountActions, accountSelectors } from './accountSlice';
 import { all, call, cancel, fork, put, select, takeEvery } from 'redux-saga/effects';
 
 import { GetListResponse } from 'types/api';
-import { accountApi } from './accountApi';
-import { notificationActions } from 'features/notification/notificationSlice';
-import { loadingActions } from 'features/loading/loadingSlice';
 import { LoadingKeys } from 'const';
+import { accountApi } from './accountApi';
 import { dialogActions } from 'features/dialog/dialogSlice';
+import { loadingActions } from 'features/loading/loadingSlice';
+import { notificationActions } from 'features/notification/notificationSlice';
 
 const {
-  getAccounts,
-  setAccounts,
-  resetAccounts,
+  getList,
+  setList,
+  resetList,
   createAccount,
   createAccounts,
   updateAccount,
-  updateAccountSuccess,
+  updateSuccess,
   deleteAccounts,
   resetSelection,
 } = accountActions;
@@ -24,11 +24,11 @@ const { startLoading, finishLoading } = loadingActions;
 const { close: closeDialog } = dialogActions;
 const { notify } = notificationActions;
 
-function* getAccountsSaga({ payload: query }: ReturnType<typeof getAccounts>) {
+function* getAccountsSaga({ payload: query }: ReturnType<typeof getList>) {
   try {
     yield put(startLoading(LoadingKeys.GET_ACCOUNTS));
     const data: GetListResponse<AccountDto> = yield call(accountApi.getAccounts, query);
-    yield put(setAccounts(data));
+    yield put(setList(data));
   } catch (error) {
     yield put(notify({ variant: 'error', message: 'accounts:getAccountsFailed' }));
   } finally {
@@ -87,7 +87,7 @@ function* updateAccountSaga({ payload: accountToUpdate }: ReturnType<typeof upda
     const updatedAccount: AccountDto = yield call(accountApi.updateAccount, accountToUpdate);
     yield put(closeDialog());
     yield put(notify({ variant: 'success', message: 'accounts:updateAccountSuccess' }));
-    yield put(updateAccountSuccess(updatedAccount));
+    yield put(updateSuccess(updatedAccount));
   } catch (error) {
     yield put(notify({ variant: 'error', message: 'accounts:updateAccountFailed' }));
   } finally {
@@ -107,9 +107,9 @@ function* deleteAccountsSaga({ payload: accountIds }: ReturnType<typeof deleteAc
 }
 
 function* resetAccountsAndFetch() {
-  yield put(resetAccounts());
-  const { query }: AccountState = yield select(accountSelector);
-  yield put(getAccounts({ ...query, offset: 0 }));
+  yield put(resetList());
+  const query: GetAccountsQuery = yield select(accountSelectors.query);
+  yield put(getList({ ...query, offset: 0 }));
 }
 
 function* validateContactTitles(contacts?: (CreateContactDto | ContactDto)[]) {
@@ -123,7 +123,7 @@ function* validateContactTitles(contacts?: (CreateContactDto | ContactDto)[]) {
 
 export function* accountSaga(): any {
   yield all([
-    yield takeEvery(getAccounts.type, getAccountsSaga),
+    yield takeEvery(getList.type, getAccountsSaga),
     yield takeEvery(createAccount.type, createAccountSaga),
     yield takeEvery(createAccounts.type, createAccountsSaga),
     yield takeEvery(updateAccount.type, updateAccountSaga),

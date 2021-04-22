@@ -2,6 +2,8 @@ import AccountListItem, { AccountListItemSkeleton } from './AccountListItem';
 import { AccountListItemHeight, DEFAULT_LIST_LIMIT, ExcelVariant, LoadingKeys } from 'const';
 import { IconButton, List, Theme, Tooltip, createStyles, makeStyles } from '@material-ui/core';
 import React, { ChangeEvent, useEffect, useState } from 'react';
+import { accountActions, accountSelectors } from './accountSlice';
+import { useAppDispatch, useAppSelector } from 'app/store';
 
 import AccountDialog from 'components/dialog/Account';
 import AddIcon from '@material-ui/icons/Add';
@@ -17,12 +19,10 @@ import PublishIcon from '@material-ui/icons/Publish';
 import SubToolbar from 'components/SubToolbar';
 import { accountApi } from './accountApi';
 import { downloadWorkbook } from 'utils/excel';
-import { useAccounts } from './accountHook';
-import { useAppDispatch } from 'app/store';
 import { useDialog } from 'features/dialog/dialogHook';
+import { useLoading } from 'features/loading/loadingHook';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useTranslation } from 'react-i18next';
-import { useLoading } from 'features/loading/loadingHook';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -47,32 +47,32 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const { windowHeight } = useScreenSize();
   const { openDialog, closeDialog } = useDialog();
-  const dispatch = useAppDispatch();
   const { [LoadingKeys.GET_ACCOUNTS]: isLoading } = useLoading();
+
+  const dispatch = useAppDispatch();
+  const query = useAppSelector(accountSelectors.query);
+  const ids = useAppSelector(accountSelectors.ids);
+  const accounts = useAppSelector(accountSelectors.accounts);
+  const currentPage = useAppSelector(accountSelectors.currentPage);
+  const totalPages = useAppSelector(accountSelectors.totalPages);
+  const isSelectMode = useAppSelector(accountSelectors.isSelectMode);
+  const selectedIds = useAppSelector(accountSelectors.selectedIds);
   const {
-    query,
-    currentPage,
-    totalPages,
-    accounts,
-    resetAccounts,
-    getAccounts,
-    selectedIds,
+    getList: getAccounts,
+    resetList: resetAccounts,
+    resetSelection,
+    deleteAccounts,
     selectAll,
     unselectAll,
-    resetSelection,
-    isSelectMode,
     createAccounts,
-    deleteAccounts,
-  } = useAccounts();
+  } = accountActions;
 
   const itemHeight = AccountListItemHeight.MD;
-  const accountIds = accounts.map(({ id }) => id);
-  const isSelectedAll =
-    !!accountIds.length && !!selectedIds.length && accountIds.every((id) => selectedIds.includes(id));
-  const isIndeterminate = !isSelectedAll && accountIds.some((id) => selectedIds.includes(id));
+  const isSelectedAll = !!ids.length && !!selectedIds.length && ids.every((id) => selectedIds.includes(id));
+  const isIndeterminate = !isSelectedAll && ids.some((id) => selectedIds.includes(id));
 
   const handleToggleSelectAll = (checked: boolean) => {
-    dispatch(checked ? selectAll(accountIds) : unselectAll(accountIds));
+    dispatch(checked ? selectAll(ids) : unselectAll(ids));
   };
 
   const handleResetSelection = () => {

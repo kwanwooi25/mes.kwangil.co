@@ -1,6 +1,6 @@
-export interface GetAccountsQuery {
-  offset?: number;
-  limit?: number;
+import { BaseQuery } from 'types/api';
+
+export interface GetAccountsQuery extends BaseQuery {
   searchText?: string;
 }
 
