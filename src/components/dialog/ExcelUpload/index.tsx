@@ -37,6 +37,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const templates = {
   [ExcelVariant.ACCOUNT]: `${process.env.PUBLIC_URL}/업체대량등록.xlsx`,
+  [ExcelVariant.PRODUCT]: `${process.env.PUBLIC_URL}/제품대량등록.xlsx`,
 };
 
 export interface ExcelUploadDialogProps {

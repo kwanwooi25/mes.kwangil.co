@@ -17,6 +17,7 @@ export enum Path {
 
 export enum ExcelVariant {
   ACCOUNT = 'accounts',
+  PRODUCT = 'products',
 }
 
 export enum LoadingKeys {
@@ -133,7 +134,7 @@ export const CRN_MAX_LENGTH = 10;
 
 export const PHONE_INPUT_KEYS = [ContactInputs.phone, ContactInputs.fax];
 
-export const PRINT_SIDE_TEXT = {
+export const PRINT_SIDE_TEXT: { [key: string]: string } = {
   [PrintSide.NONE]: '없음 (무지)',
   [PrintSide.SINGLE]: '단면',
   [PrintSide.DOUBLE]: '양면',

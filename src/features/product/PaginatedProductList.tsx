@@ -1,4 +1,4 @@
-import { DEFAULT_LIST_LIMIT, LoadingKeys, ProductDialogMode, ProductListItemHeight } from 'const';
+import { DEFAULT_LIST_LIMIT, ExcelVariant, LoadingKeys, ProductDialogMode, ProductListItemHeight } from 'const';
 import { IconButton, List, Theme, Tooltip, createStyles, makeStyles } from '@material-ui/core';
 import ProductListItem, { ProductListItemSkeleton } from './ProductListItem';
 import React, { ChangeEvent, useEffect, useState } from 'react';
@@ -19,6 +19,10 @@ import { useProducts } from './productHook';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useTranslation } from 'react-i18next';
 import { useLoading } from 'features/loading/loadingHook';
+import ExcelUploadDialog from 'components/dialog/ExcelUpload';
+import { CreateProductsDto } from './interface';
+import { productApi } from './productApi';
+import { downloadWorkbook } from 'utils/excel';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -57,6 +61,7 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
     resetSelection,
     selectAll,
     unselectAll,
+    createProducts,
     deleteProducts,
   } = useProducts();
   const { [LoadingKeys.GET_PRODUCTS]: isLoading } = useLoading();
@@ -84,12 +89,19 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
   };
 
   const handleClickCreateBulk = () => {
-    // TODO: open bulk create dialog
+    openDialog(
+      <ExcelUploadDialog
+        variant={ExcelVariant.PRODUCT}
+        onSave={(products: CreateProductsDto[]) => dispatch(createProducts(products))}
+        onClose={closeDialog}
+      />
+    );
   };
 
   const handleClickDownload = async () => {
     setIsDownloading(true);
-    // TODO: download excel file
+    const { rows } = await productApi.getAllProducts(query);
+    downloadWorkbook[ExcelVariant.PRODUCT](rows, t('productList'));
     setIsDownloading(false);
   };
 

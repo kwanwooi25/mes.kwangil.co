@@ -1,14 +1,16 @@
 import { AccountDto, CreateAccountDto, CreateContactDto } from 'features/account/interface';
 import { Dispatch, SetStateAction } from 'react';
 
-import { ExcelVariant } from 'const';
+import { ExcelVariant, PrintSide, PRINT_SIDE_TEXT } from 'const';
 import XLSX from 'xlsx';
+import { CreateProductsDto, ProductDto } from 'features/product/interface';
+import { getFileNameFromUrl } from './string';
 
 export const getExcelFileReader = {
   [ExcelVariant.ACCOUNT]: (stateSetter: Dispatch<SetStateAction<CreateAccountDto[]>>) =>
     getFileReader(ExcelVariant.ACCOUNT, stateSetter),
-  // [ExcelVariant.PRODUCT]: (stateSetter: Dispatch<SetStateAction<CreateProductsDto[]>>) =>
-  //   getFileReader(ExcelVariant.PRODUCT, stateSetter),
+  [ExcelVariant.PRODUCT]: (stateSetter: Dispatch<SetStateAction<CreateProductsDto[]>>) =>
+    getFileReader(ExcelVariant.PRODUCT, stateSetter),
   // [ExcelVariant.WORK_ORDER]: (stateSetter: Dispatch<SetStateAction<CreateWorkOrdersDto[]>>) =>
   //   getFileReader(ExcelVariant.WORK_ORDER, stateSetter),
 };
@@ -18,10 +20,10 @@ export const downloadWorkbook = {
     const data = processAccountsForDownload(accounts);
     return getWorkbook(data, workbookTitle);
   },
-  // [ExcelVariant.PRODUCT]: (products: ProductDto[], workbookTitle: string) => {
-  //   const data = processProductsForDownload(products);
-  //   return getWorkbook(data, workbookTitle);
-  // },
+  [ExcelVariant.PRODUCT]: (products: ProductDto[], workbookTitle: string) => {
+    const data = processProductsForDownload(products);
+    return getWorkbook(data, workbookTitle);
+  },
 };
 
 const ACCOUNT_LABEL_TO_KEY: { [key: string]: keyof CreateAccountDto } = {
@@ -52,67 +54,67 @@ const CONTACT_KEY_TO_LABEL: { [key: string]: string } = {
   address: '주소',
 };
 
-// const PRODUCT_LABEL_TO_KEY: { [key: string]: keyof CreateProductsDto } = {
-//   업체명: 'accountName',
-//   제품명: 'name',
-//   두께: 'thickness',
-//   길이: 'length',
-//   너비: 'width',
-//   원단색상: 'extColor',
-//   대전방지: 'extIsAntistatic',
-//   처리: 'printSide',
-//   압출메모: 'extMemo',
-//   전면도수: 'printFrontColorCount',
-//   전면색상: 'printFrontColor',
-//   전면인쇄위치: 'printFrontPosition',
-//   후면도수: 'printBackColorCount',
-//   후면색상: 'printBackColor',
-//   후면인쇄위치: 'printBackPosition',
-//   인쇄메모: 'printMemo',
-//   가공위치: 'cutPosition',
-//   초음파가공: 'cutIsUltrasonic',
-//   가루포장: 'cutIsForPowder',
-//   펀치개수: 'cutPunchCount',
-//   펀치크기: 'cutPunchSize',
-//   펀치위치: 'cutPunchPosition',
-//   가공메모: 'cutMemo',
-//   포장방법: 'packMaterial',
-//   포장단위: 'packUnit',
-//   전량납품: 'packCanDeliverAll',
-//   포장메모: 'packMemo',
-//   이미지: 'images',
-// };
+const PRODUCT_LABEL_TO_KEY: { [key: string]: keyof CreateProductsDto } = {
+  업체명: 'accountName',
+  제품명: 'name',
+  두께: 'thickness',
+  길이: 'length',
+  너비: 'width',
+  원단색상: 'extColor',
+  대전방지: 'extIsAntistatic',
+  처리: 'printSide',
+  압출메모: 'extMemo',
+  전면도수: 'printFrontColorCount',
+  전면색상: 'printFrontColor',
+  전면인쇄위치: 'printFrontPosition',
+  후면도수: 'printBackColorCount',
+  후면색상: 'printBackColor',
+  후면인쇄위치: 'printBackPosition',
+  인쇄메모: 'printMemo',
+  가공위치: 'cutPosition',
+  초음파가공: 'cutIsUltrasonic',
+  가루포장: 'cutIsForPowder',
+  펀치개수: 'cutPunchCount',
+  펀치크기: 'cutPunchSize',
+  펀치위치: 'cutPunchPosition',
+  가공메모: 'cutMemo',
+  포장방법: 'packMaterial',
+  포장단위: 'packUnit',
+  전량납품: 'packCanDeliverAll',
+  포장메모: 'packMemo',
+  이미지: 'images',
+};
 
-// const PRODUCT_KEY_TO_LABEL: { [key: string]: string } = {
-//   accountName: '업체명',
-//   name: '제품명',
-//   thickness: '두께',
-//   length: '길이',
-//   width: '너비',
-//   extColor: '원단색상',
-//   extIsAntistatic: '대전방지',
-//   printSide: '처리',
-//   extMemo: '압출메모',
-//   printFrontColorCount: '전면도수',
-//   printFrontColor: '전면색상',
-//   printFrontPosition: '전면인쇄위치',
-//   printBackColorCount: '후면도수',
-//   printBackColor: '후면색상',
-//   printBackPosition: '후면인쇄위치',
-//   printMemo: '인쇄메모',
-//   cutPosition: '가공위치',
-//   cutIsUltrasonic: '초음파가공',
-//   cutIsForPowder: '가루포장',
-//   cutPunchCount: '펀치개수',
-//   cutPunchSize: '펀치크기',
-//   cutPunchPosition: '펀치위치',
-//   cutMemo: '가공메모',
-//   packMaterial: '포장방법',
-//   packUnit: '포장단위',
-//   packCanDeliverAll: '전량납품',
-//   packMemo: '포장메모',
-//   images: '이미지',
-// };
+const PRODUCT_KEY_TO_LABEL: { [key: string]: string } = {
+  accountName: '업체명',
+  name: '제품명',
+  thickness: '두께',
+  length: '길이',
+  width: '너비',
+  extColor: '원단색상',
+  extIsAntistatic: '대전방지',
+  printSide: '처리',
+  extMemo: '압출메모',
+  printFrontColorCount: '전면도수',
+  printFrontColor: '전면색상',
+  printFrontPosition: '전면인쇄위치',
+  printBackColorCount: '후면도수',
+  printBackColor: '후면색상',
+  printBackPosition: '후면인쇄위치',
+  printMemo: '인쇄메모',
+  cutPosition: '가공위치',
+  cutIsUltrasonic: '초음파가공',
+  cutIsForPowder: '가루포장',
+  cutPunchCount: '펀치개수',
+  cutPunchSize: '펀치크기',
+  cutPunchPosition: '펀치위치',
+  cutMemo: '가공메모',
+  packMaterial: '포장방법',
+  packUnit: '포장단위',
+  packCanDeliverAll: '전량납품',
+  packMemo: '포장메모',
+  images: '이미지',
+};
 
 // const WORK_ORDER_LABEL_TO_KEY: { [key: string]: keyof CreateWorkOrdersDto } = {
 //   아이디: 'id',
@@ -207,73 +209,73 @@ const generateItem = {
       { name: '' }
     );
   },
-  // [ExcelVariant.PRODUCT]: (row: any) => {
-  //   return Object.entries(row).reduce(
-  //     (product: CreateProductsDto, [key, value]) => {
-  //       const newKey: keyof CreateProductsDto = PRODUCT_LABEL_TO_KEY[key];
-  //       let newValue;
+  [ExcelVariant.PRODUCT]: (row: any) => {
+    return Object.entries(row).reduce(
+      (product: CreateProductsDto, [key, value]) => {
+        const newKey: keyof CreateProductsDto = PRODUCT_LABEL_TO_KEY[key];
+        let newValue;
 
-  //       switch (newKey) {
-  //         case 'images':
-  //           // const imageBucketUrl = `https://${process.env.REACT_APP_S3_IMAGE_BUCKET_NAME}.s3.amazonaws.com/`;
-  //           const imageBucketUrl = `https://kwangilmes-product-images.s3.amazonaws.com/`;
-  //           const fileName = getFileNameFromUrl(value as string);
-  //           const imageUrl = `${imageBucketUrl}${fileName}`;
-  //           newValue = [{ fileName, imageUrl }];
-  //           break;
-  //         case 'printSide':
-  //           if (value === '단면') {
-  //             newValue = PrintSide.SINGLE;
-  //           } else if (value === '양면') {
-  //             newValue = PrintSide.DOUBLE;
-  //           } else {
-  //             newValue = PrintSide.NONE;
-  //           }
-  //           break;
-  //         case 'extIsAntistatic':
-  //         case 'cutIsUltrasonic':
-  //         case 'cutIsForPowder':
-  //         case 'packCanDeliverAll':
-  //           newValue = value === 'Y';
-  //           break;
-  //         default:
-  //           newValue = value;
-  //       }
+        switch (newKey) {
+          case 'images':
+            // const imageBucketUrl = `https://${process.env.REACT_APP_S3_IMAGE_BUCKET_NAME}.s3.amazonaws.com/`;
+            const imageBucketUrl = `https://kwangilmes-product-images.s3.amazonaws.com/`;
+            const fileName = getFileNameFromUrl(value as string);
+            const imageUrl = `${imageBucketUrl}${fileName}`;
+            newValue = [{ fileName, imageUrl }];
+            break;
+          case 'printSide':
+            if (value === '단면') {
+              newValue = PrintSide.SINGLE;
+            } else if (value === '양면') {
+              newValue = PrintSide.DOUBLE;
+            } else {
+              newValue = PrintSide.NONE;
+            }
+            break;
+          case 'extIsAntistatic':
+          case 'cutIsUltrasonic':
+          case 'cutIsForPowder':
+          case 'packCanDeliverAll':
+            newValue = value === 'Y';
+            break;
+          default:
+            newValue = value;
+        }
 
-  //       return { ...product, [newKey]: newValue };
-  //     },
-  //     {
-  //       accountName: '',
-  //       name: '',
-  //       thickness: 0.05,
-  //       length: 0,
-  //       width: 0,
-  //       extColor: '',
-  //       extIsAntistatic: false,
-  //       extMemo: '',
-  //       printSide: PrintSide.NONE,
-  //       printFrontColorCount: 0,
-  //       printFrontColor: '',
-  //       printFrontPosition: '',
-  //       printBackColorCount: 0,
-  //       printBackColor: '',
-  //       printBackPosition: '',
-  //       printMemo: '',
-  //       cutPosition: '',
-  //       cutIsUltrasonic: false,
-  //       cutIsForPowder: false,
-  //       cutPunchCount: 0,
-  //       cutPunchSize: '',
-  //       cutPunchPosition: '',
-  //       cutMemo: '',
-  //       packMaterial: '',
-  //       packUnit: 0,
-  //       packCanDeliverAll: false,
-  //       packMemo: '',
-  //       images: [],
-  //     }
-  //   );
-  // },
+        return { ...product, [newKey]: newValue };
+      },
+      {
+        accountName: '',
+        name: '',
+        thickness: 0.05,
+        length: 0,
+        width: 0,
+        extColor: '',
+        extIsAntistatic: false,
+        extMemo: '',
+        printSide: PrintSide.NONE,
+        printFrontColorCount: 0,
+        printFrontColor: '',
+        printFrontPosition: '',
+        printBackColorCount: 0,
+        printBackColor: '',
+        printBackPosition: '',
+        printMemo: '',
+        cutPosition: '',
+        cutIsUltrasonic: false,
+        cutIsForPowder: false,
+        cutPunchCount: 0,
+        cutPunchSize: '',
+        cutPunchPosition: '',
+        cutMemo: '',
+        packMaterial: '',
+        packUnit: 0,
+        packCanDeliverAll: false,
+        packMemo: '',
+        images: [],
+      }
+    );
+  },
   // [ExcelVariant.WORK_ORDER]: (row: any) => {
   //   return Object.entries(row).reduce(
   //     (workOrder: CreateWorkOrdersDto, [key, value]) => {
@@ -371,34 +373,36 @@ function processAccountsForDownload(accounts: AccountDto[]) {
   });
 }
 
-// function processProductsForDownload(products: ProductDto[]) {
-//   const productDataKeys = Object.keys(PRODUCT_KEY_TO_LABEL);
+function processProductsForDownload(products: ProductDto[]) {
+  const productDataKeys = Object.keys(PRODUCT_KEY_TO_LABEL);
 
-//   return products.map((product) => {
-//     return productDataKeys.reduce((processedProduct, key) => {
-//       const label = PRODUCT_KEY_TO_LABEL[key];
-//       // @ts-ignore
-//       let value = product[key];
+  return products.map((product) => {
+    return productDataKeys.reduce((processedProduct, key) => {
+      const label = PRODUCT_KEY_TO_LABEL[key];
+      // @ts-ignore
+      let value = product[key];
 
-//       switch (key) {
-//         case 'accountName':
-//           value = product.account.name;
-//           break;
-//         case 'extIsAntistatic':
-//         case 'cutIsUltrasonic':
-//         case 'cutIsForPowder':
-//         case 'packCanDeliverAll':
-//           value = value ? 'Y' : 'N';
-//         case 'printSide':
-//           // @ts-ignore
-//           value = PRINT_SIDE_TEXT[value];
-//         case 'images':
-//           if (value && value.length) {
-//             value = value[0].imageUrl;
-//           }
-//       }
+      switch (key) {
+        case 'accountName':
+          value = product.account.name;
+          break;
+        case 'extIsAntistatic':
+        case 'cutIsUltrasonic':
+        case 'cutIsForPowder':
+        case 'packCanDeliverAll':
+          value = value ? 'Y' : 'N';
+          break;
+        case 'printSide':
+          value = PRINT_SIDE_TEXT[value];
+          break;
+        case 'images':
+          if (value && value.length) {
+            value = value[0].imageUrl;
+          }
+          break;
+      }
 
-//       return { ...processedProduct, [label]: value };
-//     }, {});
-//   });
-// }
+      return { ...processedProduct, [label]: value };
+    }, {});
+  });
+}
