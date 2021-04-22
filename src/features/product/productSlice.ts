@@ -8,12 +8,12 @@ import { RootState } from 'app/store';
 
 export interface ProductState extends EntityState<ProductDto> {
   query: GetProductsQuery;
+  hasMore: boolean;
   totalCount: number;
+
   currentPage: number;
   totalPages: number;
-  hasMore: boolean;
 
-  isSelectMode: boolean;
   selectedIds: number[];
 }
 
@@ -33,12 +33,12 @@ const initialState: ProductState = {
     extColor: '',
     printColor: '',
   },
+  hasMore: true,
   totalCount: 0,
+
   currentPage: 1,
   totalPages: 1,
-  hasMore: true,
 
-  isSelectMode: false,
   selectedIds: [],
 };
 
@@ -76,10 +76,8 @@ const productSlice = createSlice({
       } else {
         state.selectedIds.push(payload);
       }
-      state.isSelectMode = !!state.selectedIds.length;
     },
     resetSelection: (state) => {
-      state.isSelectMode = initialState.isSelectMode;
       state.selectedIds = initialState.selectedIds;
     },
     selectAll: (state, { payload: ids }: PayloadAction<number[]>) => {

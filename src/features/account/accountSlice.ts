@@ -8,11 +8,11 @@ import { RootState } from 'app/store';
 export interface AccountState extends EntityState<AccountDto> {
   query: GetAccountsQuery;
   totalCount: number;
-  currentPage: number;
-  totalPages: number;
   hasMore: boolean;
 
-  isSelectMode: boolean;
+  currentPage: number;
+  totalPages: number;
+
   selectedIds: number[];
 }
 
@@ -26,12 +26,12 @@ const initialState: AccountState = {
     limit: DEFAULT_LIST_LIMIT,
     searchText: '',
   },
+  hasMore: true,
   totalCount: 0,
+
   currentPage: 1,
   totalPages: 1,
-  hasMore: true,
 
-  isSelectMode: false,
   selectedIds: [],
 };
 
@@ -70,10 +70,8 @@ const accountSlice = createSlice({
       } else {
         state.selectedIds.push(action.payload);
       }
-      state.isSelectMode = !!state.selectedIds.length;
     },
     resetSelection: (state) => {
-      state.isSelectMode = initialState.isSelectMode;
       state.selectedIds = initialState.selectedIds;
     },
     selectAll: (state, action: PayloadAction<number[]>) => {

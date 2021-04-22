@@ -5,11 +5,14 @@ import { useAppSelector } from 'app/store';
 
 export const useAccounts = () => {
   const accountState = useAppSelector(accountSelector);
-  const accounts = accountState.ids.map((id) => accountState.entities[id] as AccountDto);
+  const { ids, entities, selectedIds } = accountState;
+  const accounts = ids.map((id) => entities[id] as AccountDto);
+  const isSelectMode = !!selectedIds.length;
 
   return {
     ...accountState,
     accounts,
+    isSelectMode,
     ...accountActions,
   };
 };
