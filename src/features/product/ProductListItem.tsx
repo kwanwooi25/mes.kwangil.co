@@ -15,6 +15,8 @@ import {
 } from '@material-ui/core';
 import React, { MouseEvent, memo, useCallback, useState } from 'react';
 import { getPrintSummary, getProductSize } from 'utils/product';
+import { productActions, productSelectors } from './productSlice';
+import { useAppDispatch, useAppSelector } from 'app/store';
 
 import AccountName from 'components/AccountName';
 import ConfirmDialog from 'components/dialog/Confirm';
@@ -25,9 +27,7 @@ import { ProductDto } from './interface';
 import ProductName from 'components/ProductName';
 import { Skeleton } from '@material-ui/lab';
 import { highlight } from 'utils/string';
-import { useAppDispatch } from 'app/store';
 import { useDialog } from 'features/dialog/dialogHook';
-import { useProducts } from './productHook';
 import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -93,7 +93,8 @@ const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: Produ
   const classes = useStyles();
 
   const dispatch = useAppDispatch();
-  const { query, toggleSelection, deleteProducts } = useProducts();
+  const query = useAppSelector(productSelectors.query);
+  const { toggleSelection, deleteProducts } = productActions;
   const { openDialog, closeDialog } = useDialog();
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);

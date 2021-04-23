@@ -1,16 +1,17 @@
 import { Divider, Theme, createStyles, makeStyles } from '@material-ui/core';
+import { ProductLength, ProductThickness, ProductWidth } from 'const';
 import React, { useEffect } from 'react';
+import { productActions, productSelectors } from './productSlice';
+import { useAppDispatch, useAppSelector } from 'app/store';
 
+import { BaseQuery } from 'types/api';
 import { GetProductsQuery } from './interface';
 import Input from 'components/form/Input';
+import RangeSlider from 'components/form/RangeSlider';
 import RoundedButton from 'components/RoundedButton';
-import { useAppDispatch } from 'app/store';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useUI } from 'features/ui/uiHook';
-import { useProducts } from './productHook';
-import { ProductLength, ProductThickness, ProductWidth } from 'const';
-import RangeSlider from 'components/form/RangeSlider';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -72,11 +73,8 @@ const ProductSearch = (props: ProductSearchProps) => {
   const classes = useStyles();
 
   const dispatch = useAppDispatch();
-  const {
-    query: { offset, limit, ...restQuery },
-    resetProducts,
-    getProducts,
-  } = useProducts();
+  const { offset, limit, ...restQuery } = useAppSelector(productSelectors.query);
+  const { getList: getProducts, resetList: resetProducts } = productActions;
   const { closeSearch } = useUI();
 
   const initialValues = {
@@ -89,7 +87,9 @@ const ProductSearch = (props: ProductSearchProps) => {
     printColor: '',
   };
 
-  const { values, setFieldValue, setValues, handleSubmit, handleChange, handleReset } = useFormik<GetProductsQuery>({
+  const { values, setFieldValue, setValues, handleSubmit, handleChange, handleReset } = useFormik<
+    Omit<GetProductsQuery, keyof BaseQuery>
+  >({
     initialValues,
     onReset: () => {
       dispatch(resetProducts());

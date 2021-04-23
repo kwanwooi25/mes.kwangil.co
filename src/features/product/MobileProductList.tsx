@@ -1,6 +1,8 @@
 import { DEFAULT_LIST_LIMIT, LoadingKeys, ProductDialogMode, ProductListItemHeight } from 'const';
 import { IconButton, List, Theme, createStyles, makeStyles } from '@material-ui/core';
 import React, { useEffect } from 'react';
+import { productActions, productSelectors } from './productSlice';
+import { useAppDispatch, useAppSelector } from 'app/store';
 
 import ConfirmDialog from 'components/dialog/Confirm';
 import CreationFab from 'components/CreationFab';
@@ -12,11 +14,9 @@ import ProductListItem from './ProductListItem';
 import SelectionPanel from 'components/SelectionPanel';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
 import { formatDigit } from 'utils/string';
-import { useAppDispatch } from 'app/store';
 import { useDialog } from 'features/dialog/dialogHook';
-import { useProducts } from './productHook';
-import { useTranslation } from 'react-i18next';
 import { useLoading } from 'features/loading/loadingHook';
+import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,18 +31,13 @@ export interface MobileProductListProps {}
 const MobileProductList = (props: MobileProductListProps) => {
   const { t } = useTranslation();
   const classes = useStyles();
-  const {
-    query,
-    hasMore,
-    totalCount,
-    products,
-    getProducts,
-    resetProducts,
-    isSelectMode,
-    selectedIds,
-    resetSelection,
-    deleteProducts,
-  } = useProducts();
+  const query = useAppSelector(productSelectors.query);
+  const hasMore = useAppSelector(productSelectors.hasMore);
+  const totalCount = useAppSelector(productSelectors.totalCount);
+  const products = useAppSelector(productSelectors.products);
+  const isSelectMode = useAppSelector(productSelectors.isSelectMode);
+  const selectedIds = useAppSelector(productSelectors.selectedIds);
+  const { getList: getProducts, resetList: resetProducts, resetSelection, deleteProducts } = productActions;
   const dispatch = useAppDispatch();
   const { openDialog, closeDialog } = useDialog();
   const { [LoadingKeys.GET_PRODUCTS]: isLoading } = useLoading();
@@ -97,7 +92,7 @@ const MobileProductList = (props: MobileProductListProps) => {
   };
 
   useEffect(() => {
-    dispatch(getProducts({ limit: DEFAULT_LIST_LIMIT }));
+    dispatch(getProducts({ offset: 0, limit: DEFAULT_LIST_LIMIT }));
 
     return () => {
       dispatch(resetProducts());

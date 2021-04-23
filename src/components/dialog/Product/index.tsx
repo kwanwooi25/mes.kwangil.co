@@ -3,7 +3,6 @@ import * as yup from 'yup';
 import FormikStepper, { FormikStep } from 'components/form/FormikStepper';
 import { ImageDto, ProductDto } from 'features/product/interface';
 import { LoadingKeys, PrintSide, ProductDialogMode, ProductLength, ProductThickness, ProductWidth } from 'const';
-import React from 'react';
 import {
   getCreateProductDto,
   getInitialProductToCopy,
@@ -22,12 +21,13 @@ import Loading from 'components/Loading';
 import PackagingForm from './PackagingForm';
 import PrintForm from './PrintForm';
 import ProductReview from './ProductReview';
+import React from 'react';
 import { isEqual } from 'lodash';
 import { notificationActions } from 'features/notification/notificationSlice';
+import { productActions } from 'features/product/productSlice';
 import { useAppDispatch } from 'app/store';
-import { useProducts } from 'features/product/productHook';
-import { useTranslation } from 'react-i18next';
 import { useLoading } from 'features/loading/loadingHook';
+import { useTranslation } from 'react-i18next';
 
 export interface ProductDialogProps {
   mode: ProductDialogMode;
@@ -72,7 +72,7 @@ export interface ProductFormValues {
 const ProductDialog = ({ mode, product, onClose }: ProductDialogProps) => {
   const { t } = useTranslation('products');
   const dispatch = useAppDispatch();
-  const { createProduct, updateProduct } = useProducts();
+  const { createProduct, updateProduct } = productActions;
   const { [LoadingKeys.SAVING_PRODUCT]: isSaving } = useLoading();
 
   const dialogTitle = t(mode === ProductDialogMode.EDIT ? 'updateProduct' : 'addProduct');

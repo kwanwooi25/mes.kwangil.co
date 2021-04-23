@@ -1,4 +1,5 @@
 import { AccountDto } from 'features/account/interface';
+import { BaseQuery } from 'types/api';
 import { PlateDto } from 'features/plate/interface';
 import { PrintSide } from 'const';
 
@@ -62,9 +63,7 @@ export interface UpdateProductDto extends Omit<ProductDto, 'account'> {
   imageIdsToDelete?: number[];
 }
 
-export interface GetProductsQuery {
-  offset?: number;
-  limit?: number;
+export interface GetProductsQuery extends BaseQuery {
   accountName?: string;
   name?: string;
   thickness?: number[];
