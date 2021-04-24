@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from 'react';
+import { Slider, SliderProps, Theme, Typography, createStyles, makeStyles } from '@material-ui/core';
+
 import classnames from 'classnames';
-import { makeStyles, Theme, createStyles, SliderProps, Typography, Slider } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

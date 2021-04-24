@@ -112,7 +112,7 @@ const ProductSearch = (props: ProductSearchProps) => {
   }, []);
 
   return (
-    <form onSubmit={handleSubmit} className={classes.productSearch}>
+    <form onSubmit={handleSubmit} className={classes.productSearch} noValidate>
       <Input
         className={classes.accountName}
         name="accountName"

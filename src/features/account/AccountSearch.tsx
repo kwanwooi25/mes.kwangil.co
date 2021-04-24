@@ -64,7 +64,7 @@ const AccountSearch = (props: AccountSearchProps) => {
   }, []);
 
   return (
-    <form onSubmit={handleSubmit} className={classes.accountSearch}>
+    <form onSubmit={handleSubmit} className={classes.accountSearch} noValidate>
       <Input name="searchText" label={t('name')} value={values.searchText} onChange={handleChange} autoFocus />
       <Divider className={classes.divider} />
       <div className={classes.buttons}>
