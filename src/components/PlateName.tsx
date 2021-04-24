@@ -1,11 +1,13 @@
 import { Link, Theme, createStyles, makeStyles } from '@material-ui/core';
 import React, { memo } from 'react';
 
+import PlateDetailDialog from './dialog/PlateDetail';
 import { PlateDto } from 'features/plate/interface';
 import classnames from 'classnames';
 import { getPlateTitle } from 'utils/plate';
 import { highlight } from 'utils/string';
 import { plateApi } from 'features/plate/plateApi';
+import { useDialog } from 'features/dialog/dialogHook';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -29,11 +31,11 @@ export interface PlateNameProps {
 
 const PlateName = ({ plate, className, linkClassName, searchText = '' }: PlateNameProps) => {
   const classes = useStyles();
+  const { openDialog, closeDialog } = useDialog();
 
   const openDetailDialog = async () => {
     const plateDetail = await plateApi.getPlate(plate.id);
-    console.log(plateDetail);
-    // TODO: open detail dialog
+    openDialog(<PlateDetailDialog plate={plateDetail} onClose={closeDialog} />);
   };
 
   return (

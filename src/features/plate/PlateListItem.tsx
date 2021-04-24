@@ -20,6 +20,7 @@ import { useAppDispatch, useAppSelector } from 'app/store';
 
 import ConfirmDialog from 'components/dialog/Confirm';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import PlateDialog from 'components/dialog/Plate';
 import { PlateDto } from './interface';
 import PlateName from 'components/PlateName';
 import { Skeleton } from '@material-ui/lab';
@@ -79,7 +80,7 @@ const PlateListItem = ({ plate, itemHeight, isSelected = false, productCountToDi
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
-  const products = getPlateProductsSummary(plate, productCountToDisplay);
+  const productsSummary = getPlateProductsSummary(plate, productCountToDisplay);
 
   const handleSelectionChange = useCallback(() => {
     dispatch(toggleSelection(plate.id));
@@ -94,7 +95,7 @@ const PlateListItem = ({ plate, itemHeight, isSelected = false, productCountToDi
   };
 
   const handleClickEdit = useCallback(() => {
-    // TODO: openDialog();
+    openDialog(<PlateDialog plate={plate} onClose={closeDialog} />);
   }, []);
 
   const handleClickDelete = useCallback(() => {
@@ -124,7 +125,7 @@ const PlateListItem = ({ plate, itemHeight, isSelected = false, productCountToDi
         <div className={classes.plateDetail}>
           <PlateName className={classes.title} plate={plate} searchText={name} />
           <div className={classes.products}>
-            {products.map((product) => (
+            {productsSummary.map((product) => (
               <Typography
                 key={product}
                 variant="caption"

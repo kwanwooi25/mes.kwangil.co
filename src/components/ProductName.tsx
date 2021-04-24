@@ -25,10 +25,18 @@ export interface ProductNameProps {
   linkClassName?: string;
   product: ProductDto;
   searchText?: string;
-  maxWidth?: number;
+  maxWidth?: number | string;
+  productName?: string;
 }
 
-const ProductName = ({ product, className, linkClassName, searchText = '', maxWidth = 200 }: ProductNameProps) => {
+const ProductName = ({
+  product,
+  className,
+  linkClassName,
+  searchText = '',
+  maxWidth = 200,
+  productName,
+}: ProductNameProps) => {
   const classes = useStyles();
   const { openDialog, closeDialog } = useDialog();
 
@@ -50,7 +58,7 @@ const ProductName = ({ product, className, linkClassName, searchText = '', maxWi
       >
         <span
           className={classes.productName}
-          dangerouslySetInnerHTML={{ __html: highlight(product.name, searchText) }}
+          dangerouslySetInnerHTML={{ __html: highlight(productName || product.name, searchText) }}
         />
       </Link>
     </div>

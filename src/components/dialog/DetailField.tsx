@@ -1,7 +1,7 @@
 import { ListItem, Theme, Typography, createStyles, makeStyles } from '@material-ui/core';
+import React, { ReactElement } from 'react';
 
 import BooleanIcon from 'components/BooleanIcon';
-import React from 'react';
 import { isBoolean } from 'lodash';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export interface DetailFieldProps {
   label: string;
-  value?: string | number | boolean;
+  value?: string | number | boolean | ReactElement;
 }
 
 const DetailField = ({ label, value }: DetailFieldProps) => {

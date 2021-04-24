@@ -1,13 +1,14 @@
-import { RootState } from 'app/store';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+
 import { ReactElement } from 'react';
+import { RootState } from 'app/store';
 
 interface DialogState {
-  dialog?: ReactElement | null;
+  dialogs: ReactElement[];
 }
 
 const initialState: DialogState = {
-  dialog: null,
+  dialogs: [],
 };
 
 const dialogSlice = createSlice({
@@ -15,10 +16,10 @@ const dialogSlice = createSlice({
   initialState,
   reducers: {
     open: (state, { payload: dialog }: PayloadAction<ReactElement>) => {
-      state.dialog = dialog;
+      state.dialogs.unshift(dialog);
     },
     close: (state) => {
-      state.dialog = null;
+      state.dialogs.shift();
     },
   },
 });
