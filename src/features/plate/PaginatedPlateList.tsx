@@ -1,17 +1,15 @@
 import { DEFAULT_LIST_LIMIT, LoadingKeys, PlateListItemHeight } from 'const';
-import { IconButton, List, Theme, Tooltip, createStyles, makeStyles } from '@material-ui/core';
+import { IconButton, Tooltip } from '@material-ui/core';
 import PlateListItem, { PlateListItemSkeleton } from './PlateListItem';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect } from 'react';
 import { plateActions, plateSelectors } from './plateSlice';
 import { useAppDispatch, useAppSelector } from 'app/store';
 
 import AddIcon from '@material-ui/icons/Add';
 import ConfirmDialog from 'components/dialog/Confirm';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import GetAppIcon from '@material-ui/icons/GetApp';
 import ListEmpty from 'components/ListEmpty';
-import Loading from 'components/Loading';
-import { Pagination } from '@material-ui/lab';
+import PaginatedList from 'layouts/PaginatedList';
 import PlateDialog from 'components/dialog/Plate';
 import SubToolbar from 'components/SubToolbar';
 import { useDialog } from 'features/dialog/dialogHook';
@@ -19,27 +17,11 @@ import { useLoading } from 'features/loading/loadingHook';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useTranslation } from 'react-i18next';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    listContainer: {
-      height: `calc(100vh - ${64 * 2 + 56}px)`,
-      marginBottom: 8,
-      position: 'relative',
-    },
-    paginationContainer: {
-      display: 'flex',
-      justifyContent: 'center',
-    },
-  })
-);
-
 export interface PaginatedPlateListProps {}
 
 const PaginatedPlateList = (props: PaginatedPlateListProps) => {
   const { t } = useTranslation('plates');
-  const classes = useStyles();
 
-  const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const { [LoadingKeys.GET_PLATES]: isLoading } = useLoading();
   const { windowHeight, isDesktopLayout } = useScreenSize();
   const { openDialog, closeDialog } = useDialog();
@@ -80,13 +62,6 @@ const PaginatedPlateList = (props: PaginatedPlateListProps) => {
 
   const handleClickCreate = () => {
     openDialog(<PlateDialog onClose={closeDialog} />);
-  };
-
-  const handleClickDownload = async () => {
-    setIsDownloading(true);
-    // const { rows } = await plateApi.getAllPlates(query);
-    // downloadWorkbook[ExcelVariant.PLATE](rows, t('plateList'));
-    setIsDownloading(false);
   };
 
   const handleClickDeleteAll = () => {
@@ -134,49 +109,35 @@ const PaginatedPlateList = (props: PaginatedPlateListProps) => {
                   <AddIcon />
                 </IconButton>
               </Tooltip>,
-              <Tooltip key="download-plates" title={t('common:downloadExcel') as string} placement="top">
-                <IconButton onClick={handleClickDownload} disabled={isDownloading}>
-                  {isDownloading && <Loading />}
-                  <GetAppIcon />
-                </IconButton>
-              </Tooltip>,
             ]
           )
         }
       />
-      <div className={classes.listContainer} style={{ height: (query.limit || DEFAULT_LIST_LIMIT) * itemHeight }}>
-        <List disablePadding>
-          {isLoading ? (
-            Array(query.limit)
-              .fill('')
-              .map((_, index) => <PlateListItemSkeleton key={index} itemHeight={itemHeight} />)
-          ) : !plates.length ? (
-            <ListEmpty />
-          ) : (
-            plates.map((plate) => (
-              <PlateListItem
-                key={plate.id}
-                plate={plate}
-                itemHeight={itemHeight}
-                isSelected={selectedIds.includes(plate.id)}
-                productCountToDisplay={2}
-              />
-            ))
-          )}
-        </List>
-      </div>
-      <div className={classes.paginationContainer}>
-        {!!plates.length && (
-          <Pagination
-            size="large"
-            count={totalPages}
-            page={currentPage}
-            onChange={handleChangePage}
-            showFirstButton
-            showLastButton
-          />
+      <PaginatedList
+        height={(query.limit || DEFAULT_LIST_LIMIT) * itemHeight}
+        showPagination={!!plates.length}
+        totalPages={totalPages}
+        currentPage={currentPage}
+        onPageChange={handleChangePage}
+      >
+        {isLoading ? (
+          Array(query.limit)
+            .fill('')
+            .map((_, index) => <PlateListItemSkeleton key={index} itemHeight={itemHeight} />)
+        ) : !plates.length ? (
+          <ListEmpty />
+        ) : (
+          plates.map((plate) => (
+            <PlateListItem
+              key={plate.id}
+              plate={plate}
+              itemHeight={itemHeight}
+              isSelected={selectedIds.includes(plate.id)}
+              productCountToDisplay={2}
+            />
+          ))
         )}
-      </div>
+      </PaginatedList>
     </>
   );
 };

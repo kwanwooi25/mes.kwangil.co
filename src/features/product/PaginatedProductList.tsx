@@ -1,5 +1,5 @@
 import { DEFAULT_LIST_LIMIT, ExcelVariant, LoadingKeys, ProductDialogMode, ProductListItemHeight } from 'const';
-import { IconButton, List, Theme, Tooltip, createStyles, makeStyles } from '@material-ui/core';
+import { IconButton, Tooltip } from '@material-ui/core';
 import ProductListItem, { ProductListItemSkeleton } from './ProductListItem';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { productActions, productSelectors } from './productSlice';
@@ -13,7 +13,7 @@ import ExcelUploadDialog from 'components/dialog/ExcelUpload';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import ListEmpty from 'components/ListEmpty';
 import Loading from 'components/Loading';
-import { Pagination } from '@material-ui/lab';
+import PaginatedList from 'layouts/PaginatedList';
 import ProductDialog from 'components/dialog/Product';
 import PublishIcon from '@material-ui/icons/Publish';
 import SubToolbar from 'components/SubToolbar';
@@ -24,25 +24,10 @@ import { useLoading } from 'features/loading/loadingHook';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useTranslation } from 'react-i18next';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    listContainer: {
-      height: `calc(100vh - ${64 * 2 + 56}px)`,
-      marginBottom: 8,
-      position: 'relative',
-    },
-    paginationContainer: {
-      display: 'flex',
-      justifyContent: 'center',
-    },
-  })
-);
-
 export interface PaginatedProductListProps {}
 
 const PaginatedProductList = (props: PaginatedProductListProps) => {
   const { t } = useTranslation('products');
-  const classes = useStyles();
 
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const { [LoadingKeys.GET_PRODUCTS]: isLoading } = useLoading();
@@ -165,41 +150,33 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
           )
         }
       />
-      <div className={classes.listContainer} style={{ height: (query.limit || DEFAULT_LIST_LIMIT) * itemHeight }}>
-        <List disablePadding>
-          {isLoading ? (
-            Array(query.limit)
-              .fill('')
-              .map((_, index) => (
-                <ProductListItemSkeleton key={index} itemHeight={itemHeight} showDetails={isDesktopLayout} />
-              ))
-          ) : !products.length ? (
-            <ListEmpty />
-          ) : (
-            products.map((product) => (
-              <ProductListItem
-                key={product.id}
-                product={product}
-                itemHeight={itemHeight}
-                isSelected={selectedIds.includes(product.id)}
-                showDetails={isDesktopLayout}
-              />
+      <PaginatedList
+        height={(query.limit || DEFAULT_LIST_LIMIT) * itemHeight}
+        showPagination={!!products.length}
+        totalPages={totalPages}
+        currentPage={currentPage}
+        onPageChange={handleChangePage}
+      >
+        {isLoading ? (
+          Array(query.limit)
+            .fill('')
+            .map((_, index) => (
+              <ProductListItemSkeleton key={index} itemHeight={itemHeight} showDetails={isDesktopLayout} />
             ))
-          )}
-        </List>
-      </div>
-      <div className={classes.paginationContainer}>
-        {!!products.length && (
-          <Pagination
-            size="large"
-            count={totalPages}
-            page={currentPage}
-            onChange={handleChangePage}
-            showFirstButton
-            showLastButton
-          />
+        ) : !products.length ? (
+          <ListEmpty />
+        ) : (
+          products.map((product) => (
+            <ProductListItem
+              key={product.id}
+              product={product}
+              itemHeight={itemHeight}
+              isSelected={selectedIds.includes(product.id)}
+              showDetails={isDesktopLayout}
+            />
+          ))
         )}
-      </div>
+      </PaginatedList>
     </>
   );
 };
