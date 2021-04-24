@@ -12,6 +12,7 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import ListEmpty from 'components/ListEmpty';
 import Loading from 'components/Loading';
 import { Pagination } from '@material-ui/lab';
+import PlateDialog from 'components/dialog/Plate';
 import SubToolbar from 'components/SubToolbar';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useLoading } from 'features/loading/loadingHook';
@@ -78,8 +79,7 @@ const PaginatedPlateList = (props: PaginatedPlateListProps) => {
   };
 
   const handleClickCreate = () => {
-    // TODO: open create dialog
-    // openDialog();
+    openDialog(<PlateDialog onClose={closeDialog} />);
   };
 
   const handleClickDownload = async () => {

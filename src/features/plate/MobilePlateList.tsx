@@ -9,6 +9,7 @@ import CreationFab from 'components/CreationFab';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EndOfListItem from 'components/EndOfListItem';
 import ListEmpty from 'components/ListEmpty';
+import PlateDialog from 'components/dialog/Plate';
 import PlateListItem from './PlateListItem';
 import SelectionPanel from 'components/SelectionPanel';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
@@ -72,7 +73,7 @@ const MobilePlateList = (props: MobilePlateListProps) => {
   };
 
   const openPlateDialog = () => {
-    // TODO: openDialog();
+    openDialog(<PlateDialog onClose={closeDialog} />);
   };
 
   const renderItem = (index: number) => {
