@@ -10,7 +10,7 @@ export interface AccountPageProps {}
 
 const AccountPage = (props: AccountPageProps) => {
   const { t } = useTranslation('accounts');
-  const { isMobileLayout, isPadLayout, isDesktopLayout } = useScreenSize();
+  const { isMobileLayout, isTabletLayout, isDesktopLayout } = useScreenSize();
 
   return (
     <Layout
@@ -19,7 +19,7 @@ const AccountPage = (props: AccountPageProps) => {
       searchPanelTitle={`${t('common:account')} ${t('common:search')}`}
     >
       {isMobileLayout && <MobileAccountList />}
-      {(isPadLayout || isDesktopLayout) && <PaginatedAccountList />}
+      {(isTabletLayout || isDesktopLayout) && <PaginatedAccountList />}
     </Layout>
   );
 };

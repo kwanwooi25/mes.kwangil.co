@@ -1,7 +1,7 @@
-import { DEFAULT_LIST_LIMIT, LoadingKeys, ProductDialogMode, ProductListItemHeight } from 'const';
+import { DEFAULT_LIST_LIMIT, LoadingKeys, PlateListItemHeight } from 'const';
 import { IconButton, List, Theme, createStyles, makeStyles } from '@material-ui/core';
 import React, { useEffect } from 'react';
-import { productActions, productSelectors } from './productSlice';
+import { plateActions, plateSelectors } from './plateSlice';
 import { useAppDispatch, useAppSelector } from 'app/store';
 
 import ConfirmDialog from 'components/dialog/Confirm';
@@ -9,8 +9,7 @@ import CreationFab from 'components/CreationFab';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EndOfListItem from 'components/EndOfListItem';
 import ListEmpty from 'components/ListEmpty';
-import ProductDialog from 'components/dialog/Product';
-import ProductListItem from './ProductListItem';
+import PlateListItem from './PlateListItem';
 import SelectionPanel from 'components/SelectionPanel';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
 import { formatDigit } from 'utils/string';
@@ -20,37 +19,38 @@ import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    mobileProductList: {
+    mobilePlateList: {
       height: '100%',
     },
   })
 );
 
-export interface MobileProductListProps {}
+export interface MobilePlateListProps {}
 
-const MobileProductList = (props: MobileProductListProps) => {
-  const { t } = useTranslation();
+const MobilePlateList = (props: MobilePlateListProps) => {
+  const { t } = useTranslation('common');
   const classes = useStyles();
-  const query = useAppSelector(productSelectors.query);
-  const hasMore = useAppSelector(productSelectors.hasMore);
-  const totalCount = useAppSelector(productSelectors.totalCount);
-  const products = useAppSelector(productSelectors.products);
-  const isSelectMode = useAppSelector(productSelectors.isSelectMode);
-  const selectedIds = useAppSelector(productSelectors.selectedIds);
-  const { getList: getProducts, resetList: resetProducts, resetSelection, deleteProducts } = productActions;
+
   const dispatch = useAppDispatch();
+  const { [LoadingKeys.GET_PLATES]: isLoading } = useLoading();
   const { openDialog, closeDialog } = useDialog();
-  const { [LoadingKeys.GET_PRODUCTS]: isLoading } = useLoading();
+  const query = useAppSelector(plateSelectors.query);
+  const hasMore = useAppSelector(plateSelectors.hasMore);
+  const totalCount = useAppSelector(plateSelectors.totalCount);
+  const plates = useAppSelector(plateSelectors.plates);
+  const isSelectMode = useAppSelector(plateSelectors.isSelectMode);
+  const selectedIds = useAppSelector(plateSelectors.selectedIds);
+  const { getList: getPlates, resetList: resetPlates, resetSelection, deletePlates } = plateActions;
 
-  const itemCount = products.length + 1;
-  const itemHeight = ProductListItemHeight.MOBILE;
+  const itemCount = plates.length + 1;
+  const itemHeight = PlateListItemHeight.MOBILE;
 
-  const searchResult = t('common:searchResult', { count: formatDigit(totalCount) } as any);
+  const searchResult = t('searchResult', { count: formatDigit(totalCount) } as any);
 
   const loadMore = () => {
     if (hasMore) {
       const offset = (query.offset || 0) + (query.limit || DEFAULT_LIST_LIMIT);
-      dispatch(getProducts({ ...query, offset }));
+      dispatch(getPlates({ ...query, offset }));
     }
   };
 
@@ -61,30 +61,30 @@ const MobileProductList = (props: MobileProductListProps) => {
   const handleClickDeleteAll = () => {
     openDialog(
       <ConfirmDialog
-        title={t('products:deleteAccount')}
-        message={t('products:deleteProductsConfirm', { count: selectedIds.length })}
+        title={t('plates:deletePlate')}
+        message={t('plates:deletePlatesConfirm', { count: selectedIds.length })}
         onClose={(isConfirmed: boolean) => {
-          isConfirmed && dispatch(deleteProducts(selectedIds));
+          isConfirmed && dispatch(deletePlates(selectedIds));
           closeDialog();
         }}
       />
     );
   };
 
-  const openProductDialog = () => {
-    openDialog(<ProductDialog mode={ProductDialogMode.CREATE} onClose={closeDialog} />);
+  const openPlateDialog = () => {
+    // TODO: openDialog();
   };
 
   const renderItem = (index: number) => {
-    const product = products[index];
+    const plate = plates[index];
 
-    return product ? (
-      <ProductListItem
-        key={product.id}
-        product={product}
+    return plate ? (
+      <PlateListItem
+        key={plate.id}
+        plate={plate}
         itemHeight={itemHeight}
-        isSelected={selectedIds.includes(product.id)}
-        showDetails={false}
+        isSelected={selectedIds.includes(plate.id)}
+        productCountToDisplay={1}
       />
     ) : (
       <EndOfListItem key="end-of-list" height={itemHeight} isLoading={isLoading} message={searchResult} />
@@ -92,17 +92,17 @@ const MobileProductList = (props: MobileProductListProps) => {
   };
 
   useEffect(() => {
-    dispatch(getProducts({ offset: 0, limit: DEFAULT_LIST_LIMIT }));
+    dispatch(getPlates({ offset: 0, limit: DEFAULT_LIST_LIMIT }));
 
     return () => {
-      dispatch(resetProducts());
+      dispatch(resetPlates());
     };
   }, []);
 
   return (
     <>
-      <List className={classes.mobileProductList} disablePadding>
-        {!isLoading && !products.length ? (
+      <List className={classes.mobilePlateList} disablePadding>
+        {!isLoading && !plates.length ? (
           <ListEmpty />
         ) : (
           <VirtualInfiniteScroll
@@ -118,9 +118,9 @@ const MobileProductList = (props: MobileProductListProps) => {
           <DeleteOutlineIcon />
         </IconButton>
       </SelectionPanel>
-      <CreationFab show={!isSelectMode} onClick={openProductDialog} />
+      <CreationFab show={!isSelectMode} onClick={openPlateDialog} />
     </>
   );
 };
 
-export default MobileProductList;
+export default MobilePlateList;

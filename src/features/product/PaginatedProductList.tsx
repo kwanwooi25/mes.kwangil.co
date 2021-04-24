@@ -66,7 +66,7 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
     createProducts,
   } = productActions;
 
-  const itemHeight = isDesktopLayout ? ProductListItemHeight.LG : ProductListItemHeight.SM;
+  const itemHeight = isDesktopLayout ? ProductListItemHeight.DESKTOP : ProductListItemHeight.TABLET;
   const isSelectedAll = !!ids.length && !!selectedIds.length && ids.every((id) => selectedIds.includes(id as number));
   const isIndeterminate = !isSelectedAll && ids.some((id) => selectedIds.includes(id as number));
 

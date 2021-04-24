@@ -44,7 +44,7 @@ export function getPlateTitle(plate: PlateDto) {
  * @example ['가나다약국 (0.07 x 20 x 13)', '... + 1']
  */
 export function getPlateProductsSummary({ products }: PlateDto, displayCount: number = 1): string[] {
-  if (!products.length) {
+  if (!products || !products.length) {
     return [];
   }
 

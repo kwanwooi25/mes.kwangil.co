@@ -1,24 +1,18 @@
-import AccountListItem, { AccountListItemSkeleton } from './AccountListItem';
-import { AccountListItemHeight, DEFAULT_LIST_LIMIT, ExcelVariant, LoadingKeys } from 'const';
+import { DEFAULT_LIST_LIMIT, LoadingKeys, PlateListItemHeight } from 'const';
 import { IconButton, List, Theme, Tooltip, createStyles, makeStyles } from '@material-ui/core';
+import PlateListItem, { PlateListItemSkeleton } from './PlateListItem';
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import { accountActions, accountSelectors } from './accountSlice';
+import { plateActions, plateSelectors } from './plateSlice';
 import { useAppDispatch, useAppSelector } from 'app/store';
 
-import AccountDialog from 'components/dialog/Account';
 import AddIcon from '@material-ui/icons/Add';
 import ConfirmDialog from 'components/dialog/Confirm';
-import { CreateAccountDto } from './interface';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import ExcelUploadDialog from 'components/dialog/ExcelUpload';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import ListEmpty from 'components/ListEmpty';
 import Loading from 'components/Loading';
 import { Pagination } from '@material-ui/lab';
-import PublishIcon from '@material-ui/icons/Publish';
 import SubToolbar from 'components/SubToolbar';
-import { accountApi } from './accountApi';
-import { downloadWorkbook } from 'utils/excel';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useLoading } from 'features/loading/loadingHook';
 import { useScreenSize } from 'hooks/useScreenSize';
@@ -38,41 +32,39 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export interface PaginatedAccountListProps {}
+export interface PaginatedPlateListProps {}
 
-const PaginatedAccountList = (props: PaginatedAccountListProps) => {
-  const { t } = useTranslation('accounts');
+const PaginatedPlateList = (props: PaginatedPlateListProps) => {
+  const { t } = useTranslation('plates');
   const classes = useStyles();
 
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
-  const { windowHeight } = useScreenSize();
+  const { [LoadingKeys.GET_PLATES]: isLoading } = useLoading();
+  const { windowHeight, isDesktopLayout } = useScreenSize();
   const { openDialog, closeDialog } = useDialog();
-  const { [LoadingKeys.GET_ACCOUNTS]: isLoading } = useLoading();
-
   const dispatch = useAppDispatch();
-  const query = useAppSelector(accountSelectors.query);
-  const ids = useAppSelector(accountSelectors.ids);
-  const accounts = useAppSelector(accountSelectors.accounts);
-  const currentPage = useAppSelector(accountSelectors.currentPage);
-  const totalPages = useAppSelector(accountSelectors.totalPages);
-  const isSelectMode = useAppSelector(accountSelectors.isSelectMode);
-  const selectedIds = useAppSelector(accountSelectors.selectedIds);
+  const query = useAppSelector(plateSelectors.query);
+  const currentPage = useAppSelector(plateSelectors.currentPage);
+  const totalPages = useAppSelector(plateSelectors.totalPages);
+  const ids = useAppSelector(plateSelectors.ids);
+  const plates = useAppSelector(plateSelectors.plates);
+  const isSelectMode = useAppSelector(plateSelectors.isSelectMode);
+  const selectedIds = useAppSelector(plateSelectors.selectedIds);
   const {
-    getList: getAccounts,
-    resetList: resetAccounts,
+    getList: getPlates,
+    resetList: resetPlates,
     resetSelection,
-    deleteAccounts,
+    deletePlates,
     selectAll,
     unselectAll,
-    createAccounts,
-  } = accountActions;
+  } = plateActions;
 
-  const itemHeight = AccountListItemHeight.TABLET;
-  const isSelectedAll = !!ids.length && !!selectedIds.length && ids.every((id) => selectedIds.includes(id));
-  const isIndeterminate = !isSelectedAll && ids.some((id) => selectedIds.includes(id));
+  const itemHeight = isDesktopLayout ? PlateListItemHeight.DESKTOP : PlateListItemHeight.TABLET;
+  const isSelectedAll = !!ids.length && !!selectedIds.length && ids.every((id) => selectedIds.includes(id as number));
+  const isIndeterminate = !isSelectedAll && ids.some((id) => selectedIds.includes(id as number));
 
   const handleToggleSelectAll = (checked: boolean) => {
-    dispatch(checked ? selectAll(ids) : unselectAll(ids));
+    dispatch(checked ? selectAll(ids as number[]) : unselectAll(ids as number[]));
   };
 
   const handleResetSelection = () => {
@@ -81,38 +73,29 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
 
   const handleChangePage = (e: ChangeEvent<unknown>, value: number) => {
     const limit = query?.limit || DEFAULT_LIST_LIMIT;
-    dispatch(resetAccounts());
-    dispatch(getAccounts({ limit, offset: limit * value - limit }));
+    dispatch(resetPlates());
+    dispatch(getPlates({ limit, offset: limit * value - limit }));
   };
 
   const handleClickCreate = () => {
-    openDialog(<AccountDialog onClose={closeDialog} />);
-  };
-
-  const handleClickCreateBulk = () => {
-    openDialog(
-      <ExcelUploadDialog
-        variant={ExcelVariant.ACCOUNT}
-        onSave={(accounts: CreateAccountDto[]) => dispatch(createAccounts(accounts))}
-        onClose={closeDialog}
-      />
-    );
+    // TODO: open create dialog
+    // openDialog();
   };
 
   const handleClickDownload = async () => {
     setIsDownloading(true);
-    const { rows } = await accountApi.getAllAccounts(query.searchText);
-    downloadWorkbook[ExcelVariant.ACCOUNT](rows, t('accountList'));
+    // const { rows } = await plateApi.getAllPlates(query);
+    // downloadWorkbook[ExcelVariant.PLATE](rows, t('plateList'));
     setIsDownloading(false);
   };
 
   const handleClickDeleteAll = () => {
     openDialog(
       <ConfirmDialog
-        title={t('deleteAccount')}
-        message={t('deleteAccountsConfirm', { count: selectedIds.length })}
+        title={t('deletePlate')}
+        message={t('deletePlatesConfirm', { count: selectedIds.length })}
         onClose={(isConfirmed: boolean) => {
-          isConfirmed && dispatch(deleteAccounts(selectedIds));
+          isConfirmed && dispatch(deletePlates(selectedIds));
           closeDialog();
         }}
       />
@@ -122,10 +105,10 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
   useEffect(() => {
     const containerMaxHeight = windowHeight - (64 * 2 + 56);
     const limit = Math.floor(containerMaxHeight / itemHeight);
-    dispatch(getAccounts({ offset: 0, limit }));
+    dispatch(getPlates({ offset: 0, limit }));
 
     return () => {
-      dispatch(resetAccounts());
+      dispatch(resetPlates());
     };
   }, [windowHeight, itemHeight]);
 
@@ -146,17 +129,12 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
             </Tooltip>
           ) : (
             [
-              <Tooltip key="add-account" title={t('addAccount') as string} placement="top">
+              <Tooltip key="add-plate" title={t('addPlate') as string} placement="top">
                 <IconButton onClick={handleClickCreate}>
                   <AddIcon />
                 </IconButton>
               </Tooltip>,
-              <Tooltip key="add-account-bulk" title={t('common:createBulk') as string} placement="top">
-                <IconButton onClick={handleClickCreateBulk}>
-                  <PublishIcon />
-                </IconButton>
-              </Tooltip>,
-              <Tooltip key="download-accounts" title={t('common:downloadExcel') as string} placement="top">
+              <Tooltip key="download-plates" title={t('common:downloadExcel') as string} placement="top">
                 <IconButton onClick={handleClickDownload} disabled={isDownloading}>
                   {isDownloading && <Loading />}
                   <GetAppIcon />
@@ -171,23 +149,24 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
           {isLoading ? (
             Array(query.limit)
               .fill('')
-              .map((_, index) => <AccountListItemSkeleton key={index} itemHeight={itemHeight} />)
-          ) : !accounts.length ? (
+              .map((_, index) => <PlateListItemSkeleton key={index} itemHeight={itemHeight} />)
+          ) : !plates.length ? (
             <ListEmpty />
           ) : (
-            accounts.map((account) => (
-              <AccountListItem
-                key={account.id}
-                account={account}
+            plates.map((plate) => (
+              <PlateListItem
+                key={plate.id}
+                plate={plate}
                 itemHeight={itemHeight}
-                isSelected={selectedIds.includes(account.id)}
+                isSelected={selectedIds.includes(plate.id)}
+                productCountToDisplay={2}
               />
             ))
           )}
         </List>
       </div>
       <div className={classes.paginationContainer}>
-        {!!accounts.length && (
+        {!!plates.length && (
           <Pagination
             size="large"
             count={totalPages}
@@ -202,4 +181,4 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
   );
 };
 
-export default PaginatedAccountList;
+export default PaginatedPlateList;

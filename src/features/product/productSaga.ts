@@ -1,34 +1,34 @@
-import { ProductState, productActions, productSelector } from './productSlice';
+import { CreateProductsDto, GetProductsQuery, ProductDto } from './interface';
 import { all, call, fork, put, select, takeEvery } from 'redux-saga/effects';
+import { productActions, productSelectors } from './productSlice';
 
 import { GetListResponse } from 'types/api';
-import { CreateProductsDto, ProductDto } from './interface';
-import { notificationActions } from 'features/notification/notificationSlice';
-import { productApi } from './productApi';
-import { loadingActions } from 'features/loading/loadingSlice';
 import { LoadingKeys } from 'const';
 import { dialogActions } from 'features/dialog/dialogSlice';
+import { loadingActions } from 'features/loading/loadingSlice';
+import { notificationActions } from 'features/notification/notificationSlice';
+import { productApi } from './productApi';
 
 const {
-  getProducts,
-  setProducts,
-  resetProducts,
+  getList,
+  setList,
+  resetList,
   deleteProducts,
   resetSelection,
   createProduct,
   createProducts,
   updateProduct,
-  updateProductSuccess,
+  updateSuccess,
 } = productActions;
 const { startLoading, finishLoading } = loadingActions;
 const { close: closeDialog } = dialogActions;
 const { notify } = notificationActions;
 
-function* getProductsSaga({ payload: query }: ReturnType<typeof getProducts>) {
+function* getProductsSaga({ payload: query }: ReturnType<typeof getList>) {
   try {
     yield put(startLoading(LoadingKeys.GET_PRODUCTS));
     const data: GetListResponse<ProductDto> = yield call(productApi.getProducts, query);
-    yield put(setProducts(data));
+    yield put(setList(data));
   } catch (error) {
     yield put(notify({ variant: 'error', message: 'products:getProductsFailed' }));
   } finally {
@@ -77,7 +77,7 @@ function* updateProductSaga({ payload: productToUpdate }: ReturnType<typeof upda
     const updatedProduct: ProductDto = yield call(productApi.updateProduct, productToUpdate);
     yield put(closeDialog());
     yield put(notify({ variant: 'success', message: 'products:updateProductSuccess' }));
-    yield put(updateProductSuccess(updatedProduct));
+    yield put(updateSuccess(updatedProduct));
   } catch (error) {
     yield put(notify({ variant: 'error', message: 'products:updateProductFailed' }));
   } finally {
@@ -97,14 +97,14 @@ function* deleteProductsSaga({ payload: productIds }: ReturnType<typeof deletePr
 }
 
 function* resetProductsAndFetch() {
-  yield put(resetProducts());
-  const { query }: ProductState = yield select(productSelector);
-  yield put(getProducts({ ...query, offset: 0 }));
+  yield put(resetList());
+  const query: GetProductsQuery = yield select(productSelectors.query);
+  yield put(getList({ ...query, offset: 0 }));
 }
 
 export function* productSaga(): any {
   yield all([
-    yield takeEvery(getProducts.type, getProductsSaga),
+    yield takeEvery(getList.type, getProductsSaga),
     yield takeEvery(createProduct.type, createProductSaga),
     yield takeEvery(createProducts.type, createProductsSaga),
     yield takeEvery(updateProduct.type, updateProductSaga),

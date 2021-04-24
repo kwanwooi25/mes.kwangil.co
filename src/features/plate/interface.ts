@@ -1,3 +1,4 @@
+import { BaseQuery } from 'types/api';
 import { PlateMaterial } from 'const';
 import { ProductDto } from 'features/product/interface';
 
@@ -21,9 +22,7 @@ export interface UpdatePlateDto extends PlateDto {
   productsToDisconnect?: ProductDto[];
 }
 
-export interface GetPlatesQuery {
-  offset?: number;
-  limit?: number;
+export interface GetPlatesQuery extends BaseQuery {
   accountName?: string;
   productName?: string;
   name?: string;

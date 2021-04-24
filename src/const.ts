@@ -35,14 +35,20 @@ export enum LoadingKeys {
 }
 
 export enum AccountListItemHeight {
-  XS = 72,
-  MD = 54,
+  MOBILE = 72,
+  TABLET = 54,
 }
 
 export enum ProductListItemHeight {
-  XS = 104,
-  SM = 72,
-  LG = 54,
+  MOBILE = 104,
+  TABLET = 72,
+  DESKTOP = 54,
+}
+
+export enum PlateListItemHeight {
+  MOBILE = 64,
+  TABLET = 73,
+  DESKTOP = 54,
 }
 
 export enum AccountInputs {
@@ -64,11 +70,6 @@ export enum PrintSide {
   NONE = 'NONE',
   SINGLE = 'SINGLE',
   DOUBLE = 'DOUBLE',
-}
-
-export enum PlateMaterial {
-  BRASS = 'BRASS',
-  STEEL = 'STEEL',
 }
 
 export enum ProductThickness {
@@ -111,6 +112,23 @@ export enum PackUnit {
   STEP = 500,
   MIN = 0,
   MAX = 100000,
+}
+
+export enum PlateMaterial {
+  BRASS = 'BRASS',
+  STEEL = 'STEEL',
+}
+
+export enum PlateRound {
+  STEP = 0.5,
+  MIN = 300,
+  MAX = 600,
+}
+
+export enum PlateLength {
+  STEP = 50,
+  MIN = 300,
+  MAX = 800,
 }
 
 export const DEFAULT_PAGE = Path.DASHBOARD;

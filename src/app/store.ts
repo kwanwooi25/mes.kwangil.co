@@ -10,12 +10,14 @@ import { authSaga } from 'features/auth/authSaga';
 import { createBrowserHistory } from 'history';
 import { createLogger } from 'redux-logger';
 import createSagaMiddleware from 'redux-saga';
+import dialogReducer from 'features/dialog/dialogSlice';
+import loadingReducer from 'features/loading/loadingSlice';
 import notificationReducer from 'features/notification/notificationSlice';
+import plateReducer from 'features/plate/plateSlice';
+import { plateSaga } from 'features/plate/plateSaga';
 import productReducer from 'features/product/productSlice';
 import { productSaga } from 'features/product/productSaga';
 import uiReducer from 'features/ui/uiSlice';
-import loadingReducer from 'features/loading/loadingSlice';
-import dialogReducer from 'features/dialog/dialogSlice';
 
 export const history = createBrowserHistory();
 
@@ -28,6 +30,7 @@ const reducer = combineReducers({
   auth: authReducer,
   account: accountReducer,
   product: productReducer,
+  plate: plateReducer,
 });
 
 const sagaMiddleware = createSagaMiddleware();
@@ -44,7 +47,7 @@ const store = configureStore({
 });
 
 function* rootSaga() {
-  yield all([authSaga(), accountSaga(), productSaga()]);
+  yield all([authSaga(), accountSaga(), productSaga(), plateSaga()]);
 }
 
 sagaMiddleware.run(rootSaga);

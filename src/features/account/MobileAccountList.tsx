@@ -45,7 +45,7 @@ const MobileAccountList = (props: MobileAccountListProps) => {
   const { getList: getAccounts, resetList: resetAccounts, resetSelection, deleteAccounts } = accountActions;
 
   const itemCount = accounts.length + 1;
-  const itemHeight = AccountListItemHeight.XS;
+  const itemHeight = AccountListItemHeight.MOBILE;
 
   const searchResult = t('searchResult', { count: formatDigit(totalCount) } as any);
 
