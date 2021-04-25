@@ -9,6 +9,7 @@ import LoginPage from 'features/auth/LoginPage';
 import Notifier from 'features/notification/Notifier';
 import PlatePage from 'features/plate/PlatePage';
 import ProductPage from 'features/product/ProductPage';
+import WorkOrderPage from 'features/workOrder/WorkOrderPage';
 import { useAuth } from 'features/auth/authHook';
 import { useLoading } from 'features/loading/loadingHook';
 
@@ -51,6 +52,7 @@ function App() {
         <PrivateRoute path={Path.ACCOUNTS} component={AccountPage} />
         <PrivateRoute path={Path.PRODUCTS} component={ProductPage} />
         <PrivateRoute path={Path.PLATES} component={PlatePage} />
+        <PrivateRoute path={Path.WORK_ORDERS} component={WorkOrderPage} />
         <Redirect to={DEFAULT_PAGE} />
       </Switch>
       <Notifier />

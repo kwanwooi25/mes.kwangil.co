@@ -65,7 +65,7 @@ const MobilePlateList = (props: MobilePlateListProps) => {
         title={t('plates:deletePlate')}
         message={t('plates:deletePlatesConfirm', { count: selectedIds.length })}
         onClose={(isConfirmed: boolean) => {
-          isConfirmed && dispatch(deletePlates(selectedIds));
+          isConfirmed && dispatch(deletePlates(selectedIds as number[]));
           closeDialog();
         }}
       />

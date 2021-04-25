@@ -61,10 +61,10 @@ const MobileProductList = (props: MobileProductListProps) => {
   const handleClickDeleteAll = () => {
     openDialog(
       <ConfirmDialog
-        title={t('products:deleteAccount')}
+        title={t('products:deleteProduct')}
         message={t('products:deleteProductsConfirm', { count: selectedIds.length })}
         onClose={(isConfirmed: boolean) => {
-          isConfirmed && dispatch(deleteProducts(selectedIds));
+          isConfirmed && dispatch(deleteProducts(selectedIds as number[]));
           closeDialog();
         }}
       />

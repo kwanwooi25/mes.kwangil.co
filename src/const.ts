@@ -51,6 +51,13 @@ export enum PlateListItemHeight {
   DESKTOP = 54,
 }
 
+export enum WorkOrderListItemHeight {
+  MOBILE = 293 + 8 + 16,
+  TABLET = 202 + 8 + 16,
+  MD = 138 + 8 + 16,
+  DESKTOP = 72 + 8 + 16,
+}
+
 export enum AccountInputs {
   name = 'name',
   crn = 'crn',
@@ -131,6 +138,27 @@ export enum PlateLength {
   MAX = 800,
 }
 
+export enum PlateStatus {
+  NEW = 'NEW',
+  UPDATE = 'UPDATE',
+  CONFIRM = 'CONFIRM',
+}
+
+export enum DeliveryMethod {
+  TBD = 'TBD',
+  COURIER = 'COURIER',
+  DIRECT = 'DIRECT',
+  EXPRESS = 'EXPRESS',
+}
+
+export enum WorkOrderStatus {
+  NOT_STARTED = 'NOT_STARTED',
+  EXTRUDING = 'EXTRUDING',
+  PRINTING = 'PRINTING',
+  CUTTING = 'CUTTING',
+  COMPLETED = 'COMPLETED',
+}
+
 export const DEFAULT_PAGE = Path.DASHBOARD;
 export const DEFAULT_API_URL = 'http://localhost:5000';
 export const DEFAULT_LIST_LIMIT = 50;
@@ -157,3 +185,6 @@ export const PRINT_SIDE_TEXT: { [key: string]: string } = {
   [PrintSide.SINGLE]: '단면',
   [PrintSide.DOUBLE]: '양면',
 };
+
+export const DATE_FORMAT = 'yyyy-MM-dd';
+export const DATE_FORMAT_WITH_WEEKDAY = 'yyyy-MM-dd (eee)';

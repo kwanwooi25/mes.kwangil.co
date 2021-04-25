@@ -18,6 +18,8 @@ import { plateSaga } from 'features/plate/plateSaga';
 import productReducer from 'features/product/productSlice';
 import { productSaga } from 'features/product/productSaga';
 import uiReducer from 'features/ui/uiSlice';
+import workOrderReducer from 'features/workOrder/workOrderSlice';
+import { workOrderSaga } from 'features/workOrder/workOrderSaga';
 
 export const history = createBrowserHistory();
 
@@ -31,6 +33,7 @@ const reducer = combineReducers({
   account: accountReducer,
   product: productReducer,
   plate: plateReducer,
+  workOrder: workOrderReducer,
 });
 
 const sagaMiddleware = createSagaMiddleware();
@@ -47,7 +50,7 @@ const store = configureStore({
 });
 
 function* rootSaga() {
-  yield all([authSaga(), accountSaga(), productSaga(), plateSaga()]);
+  yield all([authSaga(), accountSaga(), productSaga(), plateSaga(), workOrderSaga()]);
 }
 
 sagaMiddleware.run(rootSaga);

@@ -1,19 +1,17 @@
-import { AccountListItemHeight, DEFAULT_LIST_LIMIT, LoadingKeys } from 'const';
+import { DEFAULT_LIST_LIMIT, LoadingKeys, WorkOrderListItemHeight } from 'const';
 import { IconButton, List, Theme, createStyles, makeStyles } from '@material-ui/core';
 import React, { useEffect } from 'react';
-import { accountActions, accountSelectors } from './accountSlice';
 import { useAppDispatch, useAppSelector } from 'app/store';
+import { workOrderActions, workOrderSelectors } from './workOrderSlice';
 
-import AccountDialog from 'components/dialog/Account';
-import AccountListItem from './AccountListItem';
 import ConfirmDialog from 'components/dialog/Confirm';
 import CreationFab from 'components/CreationFab';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EndOfListItem from 'components/EndOfListItem';
-import { GetAccountsQuery } from './interface';
 import ListEmpty from 'components/ListEmpty';
 import SelectionPanel from 'components/SelectionPanel';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
+import WorkOrderListItem from './WorkOrderListItem';
 import { formatDigit } from 'utils/string';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useLoading } from 'features/loading/loadingHook';
@@ -21,38 +19,37 @@ import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    mobileAccountList: {
+    mobileWorkOrderList: {
       height: '100%',
     },
   })
 );
 
-export interface MobileAccountListProps {}
+export interface MobileWorkOrderListProps {}
 
-const MobileAccountList = (props: MobileAccountListProps) => {
-  const { t } = useTranslation('common');
+const MobileWorkOrderList = (props: MobileWorkOrderListProps) => {
+  const { t } = useTranslation();
   const classes = useStyles();
-
+  const query = useAppSelector(workOrderSelectors.query);
+  const hasMore = useAppSelector(workOrderSelectors.hasMore);
+  const totalCount = useAppSelector(workOrderSelectors.totalCount);
+  const workOrders = useAppSelector(workOrderSelectors.workOrders);
+  const isSelectMode = useAppSelector(workOrderSelectors.isSelectMode);
+  const selectedIds = useAppSelector(workOrderSelectors.selectedIds);
+  const { getList, resetList, resetSelection, deleteWorkOrders } = workOrderActions;
   const dispatch = useAppDispatch();
-  const { [LoadingKeys.GET_ACCOUNTS]: isLoading } = useLoading();
   const { openDialog, closeDialog } = useDialog();
-  const query = useAppSelector(accountSelectors.query);
-  const hasMore = useAppSelector(accountSelectors.hasMore);
-  const totalCount = useAppSelector(accountSelectors.totalCount);
-  const accounts = useAppSelector(accountSelectors.accounts);
-  const isSelectMode = useAppSelector(accountSelectors.isSelectMode);
-  const selectedIds = useAppSelector(accountSelectors.selectedIds);
-  const { getList: getAccounts, resetList: resetAccounts, resetSelection, deleteAccounts } = accountActions;
+  const { [LoadingKeys.GET_WORK_ORDERS]: isLoading } = useLoading();
 
-  const itemCount = accounts.length + 1;
-  const itemHeight = AccountListItemHeight.MOBILE;
+  const itemCount = workOrders.length + 1;
+  const itemHeight = WorkOrderListItemHeight.MOBILE;
 
-  const searchResult = t('searchResult', { count: formatDigit(totalCount) } as any);
+  const searchResult = t('common:searchResult', { count: formatDigit(totalCount) } as any);
 
   const loadMore = () => {
     if (hasMore) {
       const offset = (query.offset || 0) + (query.limit || DEFAULT_LIST_LIMIT);
-      dispatch(getAccounts({ ...query, offset }));
+      dispatch(getList({ ...query, offset }));
     }
   };
 
@@ -63,29 +60,30 @@ const MobileAccountList = (props: MobileAccountListProps) => {
   const handleClickDeleteAll = () => {
     openDialog(
       <ConfirmDialog
-        title={t('accounts:deleteAccount')}
-        message={t('accounts:deleteAccountsConfirm', { count: selectedIds.length })}
+        title={t('workOrders:deleteWorkOrder')}
+        message={t('workOrders:deleteWorkOrdersConfirm', { count: selectedIds.length })}
         onClose={(isConfirmed: boolean) => {
-          isConfirmed && dispatch(deleteAccounts(selectedIds as number[]));
+          isConfirmed && dispatch(deleteWorkOrders(selectedIds as string[]));
           closeDialog();
         }}
       />
     );
   };
 
-  const openAccountDialog = () => {
-    openDialog(<AccountDialog onClose={closeDialog} />);
+  const openWorkOrderDialog = () => {
+    // TODO: open create workOrder
+    // openDialog();
   };
 
   const renderItem = (index: number) => {
-    const account = accounts[index];
+    const workOrder = workOrders[index];
 
-    return account ? (
-      <AccountListItem
-        key={account.id}
-        account={account}
+    return workOrder ? (
+      <WorkOrderListItem
+        key={workOrder.id}
+        workOrder={workOrder}
         itemHeight={itemHeight}
-        isSelected={selectedIds.includes(account.id)}
+        isSelected={selectedIds.includes(workOrder.id)}
       />
     ) : (
       <EndOfListItem key="end-of-list" height={itemHeight} isLoading={isLoading} message={searchResult} />
@@ -93,17 +91,17 @@ const MobileAccountList = (props: MobileAccountListProps) => {
   };
 
   useEffect(() => {
-    dispatch(getAccounts({ limit: DEFAULT_LIST_LIMIT } as GetAccountsQuery));
+    dispatch(getList({ ...query, offset: 0, limit: DEFAULT_LIST_LIMIT }));
 
     return () => {
-      dispatch(resetAccounts());
+      dispatch(resetList());
     };
   }, []);
 
   return (
     <>
-      <List className={classes.mobileAccountList} disablePadding>
-        {!isLoading && !accounts.length ? (
+      <List className={classes.mobileWorkOrderList} disablePadding>
+        {!isLoading && !workOrders.length ? (
           <ListEmpty />
         ) : (
           <VirtualInfiniteScroll
@@ -119,9 +117,9 @@ const MobileAccountList = (props: MobileAccountListProps) => {
           <DeleteOutlineIcon />
         </IconButton>
       </SelectionPanel>
-      <CreationFab show={!isSelectMode} onClick={openAccountDialog} />
+      <CreationFab show={!isSelectMode} onClick={openWorkOrderDialog} />
     </>
   );
 };
 
-export default MobileAccountList;
+export default MobileWorkOrderList;

@@ -97,7 +97,7 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
         title={t('deleteAccount')}
         message={t('deleteAccountsConfirm', { count: selectedIds.length })}
         onClose={(isConfirmed: boolean) => {
-          isConfirmed && dispatch(deleteAccounts(selectedIds));
+          isConfirmed && dispatch(deleteAccounts(selectedIds as number[]));
           closeDialog();
         }}
       />

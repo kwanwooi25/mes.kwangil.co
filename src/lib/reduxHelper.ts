@@ -19,7 +19,7 @@ export interface GenericState<Dto, QueryInterface> extends EntityState<Dto> {
   currentPage: number;
   totalPages: number;
 
-  selectedIds: number[];
+  selectedIds: (number | string)[];
 }
 
 export const createGenericSlice = <
@@ -61,7 +61,7 @@ export const createGenericSlice = <
         entityAdapter.updateOne(state as EntityState<Dto>, { id, changes: changes as Partial<Dto> });
       },
 
-      toggleSelection: (state, { payload: ids }: PayloadAction<number>) => {
+      toggleSelection: (state, { payload: ids }: PayloadAction<number | string>) => {
         if (state.selectedIds.includes(ids)) {
           state.selectedIds = state.selectedIds.filter((id) => id !== ids);
         } else {
@@ -71,14 +71,14 @@ export const createGenericSlice = <
       resetSelection: (state) => {
         state.selectedIds = initialState.selectedIds;
       },
-      selectAll: (state, { payload: ids }: PayloadAction<number[]>) => {
+      selectAll: (state, { payload: ids }: PayloadAction<(number | string)[]>) => {
         ids.forEach((id) => {
           if (!state.selectedIds.includes(id)) {
             state.selectedIds.push(id);
           }
         });
       },
-      unselectAll: (state, { payload: ids }: PayloadAction<number[]>) => {
+      unselectAll: (state, { payload: ids }: PayloadAction<(number | string)[]>) => {
         state.selectedIds = state.selectedIds.filter((id) => !ids.includes(id));
       },
 
