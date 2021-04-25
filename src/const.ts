@@ -188,3 +188,16 @@ export const PRINT_SIDE_TEXT: { [key: string]: string } = {
 
 export const DATE_FORMAT = 'yyyy-MM-dd';
 export const DATE_FORMAT_WITH_WEEKDAY = 'yyyy-MM-dd (eee)';
+
+export const PLATE_STATUS_TEXT: { [key: string]: string } = {
+  [PlateStatus.NEW]: '신규',
+  [PlateStatus.UPDATE]: '수정',
+  [PlateStatus.CONFIRM]: '확인',
+};
+
+export const DELIVERY_METHOD_TEXT: { [key: string]: string } = {
+  [DeliveryMethod.TBD]: '미정',
+  [DeliveryMethod.DIRECT]: '직납',
+  [DeliveryMethod.COURIER]: '택배',
+  [DeliveryMethod.EXPRESS]: '퀵/화물',
+};

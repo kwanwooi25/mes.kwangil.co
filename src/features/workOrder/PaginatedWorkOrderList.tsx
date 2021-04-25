@@ -19,10 +19,12 @@ import PublishIcon from '@material-ui/icons/Publish';
 import SubToolbar from 'components/SubToolbar';
 import WorkOrderDialog from 'components/dialog/WorkOrder';
 import WorkOrdersCompleteDialog from 'components/dialog/WorkOrdersComplete';
+import { downloadWorkbook } from 'utils/excel';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useLoading } from 'features/loading/loadingHook';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useTranslation } from 'react-i18next';
+import { workOrderApi } from './workOrderApi';
 
 export interface PaginatedWorkOrderListProps {}
 
@@ -87,9 +89,8 @@ const PaginatedWorkOrderList = (props: PaginatedWorkOrderListProps) => {
 
   const handleClickDownload = async () => {
     setIsDownloading(true);
-    // TODO: download excel
-    // const { rows } = await productApi.getAllProducts(query);
-    // downloadWorkbook[ExcelVariant.PRODUCT](rows, t('productList'));
+    const { rows } = await workOrderApi.getAllWorkOrders(query);
+    downloadWorkbook[ExcelVariant.WORK_ORDER](rows, t('workOrderList'));
     setIsDownloading(false);
   };
 

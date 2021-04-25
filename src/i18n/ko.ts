@@ -275,6 +275,7 @@ export default {
     searchEndDate: '검색종료일',
     includeCompleted: '완료 품목 포함',
     workOrder: '작업지시서',
+    workOrderList: '작업지시목록',
 
     searchPlaceholder: '제품명으로 검색',
     productRequired: '제품을 선택하세요.',

@@ -1,10 +1,20 @@
 import { AccountDto, CreateAccountDto, CreateContactDto } from 'features/account/interface';
 import { CreateProductsDto, ProductDto } from 'features/product/interface';
-import { DeliveryMethod, ExcelVariant, PRINT_SIDE_TEXT, PlateStatus, PrintSide, WorkOrderStatus } from 'const';
+import { CreateWorkOrdersDto, WorkOrderDto } from 'features/workOrder/interface';
+import {
+  DELIVERY_METHOD_TEXT,
+  DeliveryMethod,
+  ExcelVariant,
+  PLATE_STATUS_TEXT,
+  PRINT_SIDE_TEXT,
+  PlateStatus,
+  PrintSide,
+  WorkOrderStatus,
+} from 'const';
 import { Dispatch, SetStateAction } from 'react';
 
-import { CreateWorkOrdersDto } from 'features/workOrder/interface';
 import XLSX from 'xlsx';
+import { formatDate } from './date';
 import { getFileNameFromUrl } from './string';
 
 export const getExcelFileReader = {
@@ -23,6 +33,10 @@ export const downloadWorkbook = {
   },
   [ExcelVariant.PRODUCT]: (products: ProductDto[], workbookTitle: string) => {
     const data = processProductsForDownload(products);
+    return getWorkbook(data, workbookTitle);
+  },
+  [ExcelVariant.WORK_ORDER]: (workOrders: WorkOrderDto[], workbookTitle: string) => {
+    const data = processWorkOrdersForDownload(workOrders);
     return getWorkbook(data, workbookTitle);
   },
 };
@@ -138,28 +152,27 @@ const WORK_ORDER_LABEL_TO_KEY: { [key: string]: keyof CreateWorkOrdersDto } = {
   납품수량: 'deliveredQuantity',
 };
 
-// const WORK_ORDER_KEY_TO_LABEL: { [key: string]: string } = {
-//   id: '아이디',
-//   orderedAt: '주문일',
-//   accountName: '업체명',
-//   productName: '제품명',
-//   thickness: '두께',
-//   length: '길이',
-//   width: '너비',
-//   orderQuantity: '주문수량',
-//   plateStatus: '동판상태',
-//   deliverBy: '납기일',
-//   shouldBePunctual: '납기엄수',
-//   isUrgent: '지급',
-//   workMemo: '작업메모',
-//   deliveryMemo: '납품메모',
-//   workOrderStatus: '작업상태',
-//   completedAt: '완료일',
-//   completedQuantity: '완료수량',
-//   deliveredAt: '납품일',
-//   deliveredQuantity: '납품수량',
-//   deliveryMethod: '납품방법',
-// };
+const WORK_ORDER_KEY_TO_LABEL: { [key: string]: string } = {
+  id: '작업지시번호',
+  orderedAt: '주문일',
+  accountName: '업체명',
+  productName: '제품명',
+  thickness: '두께',
+  length: '길이',
+  width: '너비',
+  orderQuantity: '주문수량',
+  plateStatus: '동판상태',
+  deliverBy: '납기일',
+  shouldBePunctual: '납기엄수',
+  isUrgent: '지급',
+  workMemo: '작업메모',
+  deliveryMemo: '납품메모',
+  completedAt: '완료일',
+  completedQuantity: '완료수량',
+  deliveredAt: '납품일',
+  deliveredQuantity: '납품수량',
+  deliveryMethod: '납품방법',
+};
 
 function getFileReader<T>(variant: ExcelVariant, stateSetter: Dispatch<SetStateAction<T[]>>) {
   const reader = new FileReader();
@@ -404,6 +417,50 @@ function processProductsForDownload(products: ProductDto[]) {
       }
 
       return { ...processedProduct, [label]: value };
+    }, {});
+  });
+}
+
+function processWorkOrdersForDownload(workOrders: WorkOrderDto[]) {
+  const workOrderDataKeys = Object.keys(WORK_ORDER_KEY_TO_LABEL);
+
+  return workOrders.map((workOrder) => {
+    return workOrderDataKeys.reduce((processedWorkOrder, key) => {
+      const label = WORK_ORDER_KEY_TO_LABEL[key];
+      // @ts-ignore
+      let value = workOrder[key];
+
+      switch (key) {
+        case 'orderedAt':
+        case 'deliverBy':
+        case 'completedAt':
+        case 'deliveredAt':
+          value = formatDate(value);
+          break;
+        case 'accountName':
+          value = workOrder.product.account.name;
+          break;
+        case 'productName':
+          value = workOrder.product.name;
+          break;
+        case 'thickness':
+        case 'length':
+        case 'width':
+          value = workOrder.product[key];
+          break;
+        case 'plateStatus':
+          value = PLATE_STATUS_TEXT[key];
+          break;
+        case 'shouldBePunctual':
+        case 'isUrgent':
+          value = value ? 'Y' : '';
+          break;
+        case 'deliveryMethod':
+          value = DELIVERY_METHOD_TEXT[key];
+          break;
+      }
+
+      return { ...processedWorkOrder, [label]: value };
     }, {});
   });
 }
