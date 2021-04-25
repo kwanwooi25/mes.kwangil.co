@@ -43,7 +43,7 @@ export function getWeight({
  *
  * @param workOrder 수정하려는 작업지시
  */
-export function getInitialWorkOrderFormValues(workOrder?: WorkOrderDto): WorkOrderFormValues {
+export function getInitialWorkOrderFormValues(workOrder?: WorkOrderDto, product?: ProductDto): WorkOrderFormValues {
   if (!workOrder) {
     return {
       orderedAt: format(new Date(), DATE_FORMAT),
@@ -57,7 +57,7 @@ export function getInitialWorkOrderFormValues(workOrder?: WorkOrderDto): WorkOrd
       workMemo: '',
       deliveryMemo: '',
       workOrderStatus: WorkOrderStatus.NOT_STARTED,
-      product: null,
+      product: product || null,
     };
   }
 

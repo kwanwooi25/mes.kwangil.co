@@ -17,6 +17,7 @@ import { workOrderActions } from 'features/workOrder/workOrderSlice';
 
 export interface WorkOrderDialogProps {
   workOrder?: WorkOrderDto;
+  product?: ProductDto;
   onClose: () => void;
 }
 
@@ -24,7 +25,7 @@ export interface WorkOrderFormValues extends Omit<CreateWorkOrderDto, 'accountId
   product?: ProductDto | null;
 }
 
-const WorkOrderDialog = ({ workOrder, onClose }: WorkOrderDialogProps) => {
+const WorkOrderDialog = ({ workOrder, product, onClose }: WorkOrderDialogProps) => {
   const { t } = useTranslation('workOrders');
 
   const { [LoadingKeys.SAVING_WORK_ORDER]: isSaving } = useLoading();
@@ -32,10 +33,11 @@ const WorkOrderDialog = ({ workOrder, onClose }: WorkOrderDialogProps) => {
   const { createWorkOrder, updateWorkOrder } = workOrderActions;
 
   const isEditMode = !!workOrder;
+  const isProductSelected = !!workOrder || !!product;
 
   const dialogTitle = t(isEditMode ? 'editWorkOrder' : 'addWorkOrder');
 
-  const initialValues: WorkOrderFormValues = getInitialWorkOrderFormValues(workOrder);
+  const initialValues: WorkOrderFormValues = getInitialWorkOrderFormValues(workOrder, product);
 
   const validationSchema = {
     selectProduct: object({
@@ -81,10 +83,10 @@ const WorkOrderDialog = ({ workOrder, onClose }: WorkOrderDialogProps) => {
   return (
     <Dialog open onClose={handleClose} title={dialogTitle} fullHeight>
       {isSaving && <Loading />}
-      <FormikStepper initialValues={initialValues} onSubmit={onSubmit} initialStep={isEditMode ? 1 : 0}>
+      <FormikStepper initialValues={initialValues} onSubmit={onSubmit} initialStep={isProductSelected ? 1 : 0}>
         {forms.map(({ label, Component, validationSchema }) => (
           <FormikStep key={label} label={label} validationSchema={validationSchema}>
-            <Component isEditMode={isEditMode} />
+            <Component disabled={isProductSelected} />
           </FormikStep>
         ))}
       </FormikStepper>

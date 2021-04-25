@@ -27,10 +27,10 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export interface SelectProductFormProps {
-  isEditMode?: boolean;
+  disabled?: boolean;
 }
 
-const SelectProductForm = ({ isEditMode = false }: SelectProductFormProps) => {
+const SelectProductForm = ({ disabled = false }: SelectProductFormProps) => {
   const { t } = useTranslation('workOrders');
   const classes = useStyles();
 
@@ -73,7 +73,7 @@ const SelectProductForm = ({ isEditMode = false }: SelectProductFormProps) => {
           <CustomListSubHeader className={classes.selectedProductHeader}>
             <span>{t('selectedProduct')}</span>
           </CustomListSubHeader>
-          <ProductListItem product={values.product} onDelete={isEditMode ? undefined : removeProduct} />
+          <ProductListItem product={values.product} onDelete={disabled ? undefined : removeProduct} />
         </>
       ) : (
         <>

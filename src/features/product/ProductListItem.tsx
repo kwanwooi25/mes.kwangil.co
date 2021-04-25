@@ -26,6 +26,7 @@ import { ProductDialogMode } from 'const';
 import { ProductDto } from './interface';
 import ProductName from 'components/ProductName';
 import { Skeleton } from '@material-ui/lab';
+import WorkOrderDialog from 'components/dialog/WorkOrder';
 import { highlight } from 'utils/string';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useTranslation } from 'react-i18next';
@@ -115,7 +116,7 @@ const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: Produ
   };
 
   const handleClickWorkOrder = useCallback(() => {
-    // TODO: open workOrder dialog
+    openDialog(<WorkOrderDialog product={product} onClose={closeDialog} />);
   }, [product]);
 
   const handleClickCopy = useCallback(() => {
