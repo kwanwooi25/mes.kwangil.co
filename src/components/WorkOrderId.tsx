@@ -1,8 +1,10 @@
 import { Link, Theme, createStyles, makeStyles } from '@material-ui/core';
 import React, { memo } from 'react';
 
+import WorkOrderDetailDialog from './dialog/WorkOrderDetail';
 import { WorkOrderDto } from 'features/workOrder/interface';
 import classnames from 'classnames';
+import { useDialog } from 'features/dialog/dialogHook';
 import { workOrderApi } from 'features/workOrder/workOrderApi';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -27,11 +29,11 @@ export interface WorkOrderIdProps {
 
 const WorkOrderId = ({ workOrder, className, linkClassName }: WorkOrderIdProps) => {
   const classes = useStyles();
+  const { openDialog, closeDialog } = useDialog();
 
   const openDetailDialog = async () => {
     const workOrderDetail = await workOrderApi.getWorkOrder(workOrder.id);
-    console.log(workOrderDetail);
-    // TODO: open detail dialog
+    openDialog(<WorkOrderDetailDialog workOrder={workOrderDetail} onClose={closeDialog} />);
   };
 
   return (
