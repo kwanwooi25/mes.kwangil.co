@@ -60,6 +60,12 @@ export const createGenericSlice = <
       updateSuccess: (state, { payload: { id, ...changes } }: PayloadAction<Dto>) => {
         entityAdapter.updateOne(state as EntityState<Dto>, { id, changes: changes as Partial<Dto> });
       },
+      updateManySuccess: (state, { payload }: PayloadAction<Dto[]>) => {
+        entityAdapter.updateMany(
+          state as EntityState<Dto>,
+          payload.map(({ id, ...changes }) => ({ id, changes: changes as Partial<Dto> }))
+        );
+      },
 
       toggleSelection: (state, { payload: ids }: PayloadAction<number | string>) => {
         if (state.selectedIds.includes(ids)) {

@@ -19,6 +19,8 @@ const {
   createWorkOrders,
   updateWorkOrder,
   updateSuccess,
+  updateWorkOrders,
+  updateManySuccess,
 } = workOrderActions;
 const { startLoading, finishLoading } = loadingActions;
 const { close: closeDialog } = dialogActions;
@@ -85,6 +87,23 @@ function* updateWorkOrderSaga({ payload: workOrderToUpdate }: ReturnType<typeof 
   }
 }
 
+function* updateWorkOrdersSaga({ payload: workOrdersToUpdate }: ReturnType<typeof updateWorkOrders>) {
+  try {
+    yield put(startLoading(LoadingKeys.SAVING_WORK_ORDER));
+    const updatedWorkOrders: WorkOrderDto[] = yield call(workOrderApi.updateWorkOrders, workOrdersToUpdate);
+    if (!!updatedWorkOrders.length) {
+      yield put(closeDialog());
+      yield put(notify({ variant: 'success', message: 'workOrders:updateWorkOrderSuccess' }));
+      yield put(updateManySuccess(updatedWorkOrders));
+      yield put(resetSelection());
+    }
+  } catch (error) {
+    yield put(notify({ variant: 'error', message: 'workOrders:updateWorkOrderFailed' }));
+  } finally {
+    yield put(finishLoading(LoadingKeys.SAVING_WORK_ORDER));
+  }
+}
+
 function* deleteWorkOrdersSaga({ payload: workOrderIds }: ReturnType<typeof deleteWorkOrders>) {
   try {
     yield call(workOrderApi.deleteWorkOrders, workOrderIds);
@@ -108,6 +127,7 @@ export function* workOrderSaga(): any {
     yield takeEvery(createWorkOrder.type, createWorkOrderSaga),
     yield takeEvery(createWorkOrders.type, createWorkOrdersSaga),
     yield takeEvery(updateWorkOrder.type, updateWorkOrderSaga),
+    yield takeEvery(updateWorkOrders.type, updateWorkOrdersSaga),
     yield takeEvery(deleteWorkOrders.type, deleteWorkOrdersSaga),
   ]);
 }

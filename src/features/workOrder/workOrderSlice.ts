@@ -53,6 +53,7 @@ const slice = createGenericSlice({
     createWorkOrder: (state, action: PayloadAction<CreateWorkOrderDto>) => {},
     createWorkOrders: (state, action: PayloadAction<CreateWorkOrdersDto[]>) => {},
     updateWorkOrder: (state, action: PayloadAction<UpdateWorkOrderDto>) => {},
+    updateWorkOrders: (state, action: PayloadAction<UpdateWorkOrderDto[]>) => {},
     deleteWorkOrders: (state, action: PayloadAction<string[]>) => {},
   },
 });
@@ -70,6 +71,9 @@ const selectors = {
   totalPages: createSelector(workOrderSelector, ({ totalPages }) => totalPages),
   isSelectMode: createSelector(workOrderSelector, ({ selectedIds }) => !!selectedIds.length),
   selectedIds: createSelector(workOrderSelector, ({ selectedIds }) => selectedIds),
+  selectedWorkOrders: createSelector(workOrderSelector, ({ selectedIds, entities }) =>
+    selectedIds.map((id) => entities[id] as WorkOrderDto)
+  ),
 };
 
 const { actions } = slice;

@@ -37,6 +37,7 @@ export default {
     sheet: '원단',
     treatment: '처리',
     loadMore: '더보기',
+    complete: '완료',
 
     account: '거래처',
     product: '제품',

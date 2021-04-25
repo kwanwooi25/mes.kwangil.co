@@ -32,6 +32,7 @@ import WorkOrderDialog from 'components/dialog/WorkOrder';
 import { WorkOrderDto } from './interface';
 import WorkOrderId from 'components/WorkOrderId';
 import { WorkOrderStatus } from 'const';
+import WorkOrdersCompleteDialog from 'components/dialog/WorkOrdersComplete';
 import { differenceInBusinessDays } from 'date-fns';
 import { getWorkOrderToUpdate } from 'utils/workOrder';
 import { useDialog } from 'features/dialog/dialogHook';
@@ -199,7 +200,7 @@ const WorkOrderListItem = ({ workOrder, itemHeight, isSelected }: WorkOrderListI
   // }, [workOrder]);
 
   const handleClickComplete = useCallback(() => {
-    // TODO: open workOrderComplete dialog
+    openDialog(<WorkOrdersCompleteDialog workOrders={[workOrder]} onClose={closeDialog} />);
   }, [workOrder]);
 
   const handleClickEdit = useCallback(() => {
@@ -343,7 +344,7 @@ const WorkOrderListItem = ({ workOrder, itemHeight, isSelected }: WorkOrderListI
             </Typography>
             <Typography>
               <span className={classes.label}>{t('completedQuantity')}: </span>
-              {isCompleted && (
+              {!!workOrder?.completedQuantity && workOrder.completedQuantity > 0 && (
                 <>
                   <span className={classes.value}>{completedQuantity}</span>
                   <span className={classes.label}> ({completedWeight})</span>
