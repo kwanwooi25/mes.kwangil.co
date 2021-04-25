@@ -1,4 +1,9 @@
+import { DATE_FORMAT, DeliveryMethod, PlateStatus, WorkOrderStatus } from 'const';
+import { UpdateWorkOrderDto, WorkOrderDto } from 'features/workOrder/interface';
+import { add, format } from 'date-fns';
+
 import { ProductDto } from 'features/product/interface';
+import { WorkOrderFormValues } from 'components/dialog/WorkOrder';
 import { formatDigit } from './string';
 
 /**
@@ -33,65 +38,65 @@ export function getWeight({
   return `${formatDigit(int)}.${decimal}`;
 }
 
-// /**
-//  * 작업지시 생성/수정시 초기값 반환
-//  *
-//  * @param workOrder 수정하려는 작업지시
-//  */
-// export function getInitialWorkOrderFormValues(workOrder?: WorkOrderDto): WorkOrderFormValues {
-//   if (!workOrder) {
-//     return {
-//       orderedAt: format(new Date(), DATE_FORMAT),
-//       deliverBy: format(add(new Date(), { days: 10 }), DATE_FORMAT),
-//       orderQuantity: 10000,
-//       isUrgent: false,
-//       shouldBePunctual: false,
-//       plateStatus: PlateStatus.CONFIRM,
-//       isPlateReady: true,
-//       deliveryMethod: DeliveryMethod.TBD,
-//       workMemo: '',
-//       deliveryMemo: '',
-//       workOrderStatus: WorkOrderStatus.NOT_STARTED,
-//       product: null,
-//     };
-//   }
+/**
+ * 작업지시 생성/수정시 초기값 반환
+ *
+ * @param workOrder 수정하려는 작업지시
+ */
+export function getInitialWorkOrderFormValues(workOrder?: WorkOrderDto): WorkOrderFormValues {
+  if (!workOrder) {
+    return {
+      orderedAt: format(new Date(), DATE_FORMAT),
+      deliverBy: format(add(new Date(), { days: 10 }), DATE_FORMAT),
+      orderQuantity: 10000,
+      isUrgent: false,
+      shouldBePunctual: false,
+      plateStatus: PlateStatus.CONFIRM,
+      isPlateReady: true,
+      deliveryMethod: DeliveryMethod.TBD,
+      workMemo: '',
+      deliveryMemo: '',
+      workOrderStatus: WorkOrderStatus.NOT_STARTED,
+      product: null,
+    };
+  }
 
-//   return { ...workOrder };
-// }
+  return { ...workOrder };
+}
 
-// /**
-//  * 작업지시 수정사항 반환
-//  *
-//  * @param workOrder 수정하려는 작업지시
-//  */
-// export function getWorkOrderToUpdate(workOrder: WorkOrderDto | WorkOrderFormValues): UpdateWorkOrderDto {
-//   const {
-//     deliverBy,
-//     orderQuantity,
-//     isUrgent,
-//     shouldBePunctual,
-//     plateStatus,
-//     isPlateReady,
-//     deliveryMethod,
-//     completedAt,
-//     completedQuantity,
-//     workMemo,
-//     deliveryMemo,
-//     workOrderStatus,
-//   } = workOrder;
+/**
+ * 작업지시 수정사항 반환
+ *
+ * @param workOrder 수정하려는 작업지시
+ */
+export function getWorkOrderToUpdate(workOrder: WorkOrderDto | WorkOrderFormValues): UpdateWorkOrderDto {
+  const {
+    deliverBy,
+    orderQuantity,
+    isUrgent,
+    shouldBePunctual,
+    plateStatus,
+    isPlateReady,
+    deliveryMethod,
+    completedAt,
+    completedQuantity,
+    workMemo,
+    deliveryMemo,
+    workOrderStatus,
+  } = workOrder;
 
-//   return {
-//     deliverBy,
-//     orderQuantity,
-//     isUrgent,
-//     shouldBePunctual,
-//     plateStatus,
-//     isPlateReady,
-//     deliveryMethod,
-//     completedAt,
-//     completedQuantity,
-//     workMemo,
-//     deliveryMemo,
-//     workOrderStatus,
-//   };
-// }
+  return {
+    deliverBy,
+    orderQuantity,
+    isUrgent,
+    shouldBePunctual,
+    plateStatus,
+    isPlateReady,
+    deliveryMethod,
+    completedAt,
+    completedQuantity,
+    workMemo,
+    deliveryMemo,
+    workOrderStatus,
+  };
+}

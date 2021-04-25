@@ -28,10 +28,12 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ProductName from 'components/ProductName';
 import SelectWorkOrderStatus from 'components/SelectWorkOrderStatus';
 import { Skeleton } from '@material-ui/lab';
+import WorkOrderDialog from 'components/dialog/WorkOrder';
 import { WorkOrderDto } from './interface';
 import WorkOrderId from 'components/WorkOrderId';
 import { WorkOrderStatus } from 'const';
 import { differenceInBusinessDays } from 'date-fns';
+import { getWorkOrderToUpdate } from 'utils/workOrder';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useTranslation } from 'react-i18next';
@@ -169,7 +171,7 @@ const WorkOrderListItem = ({ workOrder, itemHeight, isSelected }: WorkOrderListI
 
   const dispatch = useAppDispatch();
   const query = useAppSelector(workOrderSelectors.query);
-  const { toggleSelection, deleteWorkOrders } = workOrderActions;
+  const { toggleSelection, deleteWorkOrders, updateWorkOrder } = workOrderActions;
   const { openDialog, closeDialog } = useDialog();
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
@@ -182,10 +184,9 @@ const WorkOrderListItem = ({ workOrder, itemHeight, isSelected }: WorkOrderListI
   const closeMenu = useCallback(() => setMenuAnchorEl(null), []);
 
   const handleChangeWorkOrderStatus = (value: WorkOrderStatus) => {
-    // TODO: update work order
-    // const { id } = workOrder;
-    // const workOrderToUpdate = getWorkOrderToUpdate(workOrder);
-    // dispatch(actions.workOrder.updateWorkOrderRequest({ ...workOrderToUpdate, id, workOrderStatus: value }));
+    const { id } = workOrder;
+    const workOrderToUpdate = getWorkOrderToUpdate(workOrder);
+    dispatch(updateWorkOrder({ ...workOrderToUpdate, id, workOrderStatus: value }));
   };
 
   const handleClickMenuItem = (onClick = () => {}) => () => {
@@ -202,8 +203,7 @@ const WorkOrderListItem = ({ workOrder, itemHeight, isSelected }: WorkOrderListI
   }, [workOrder]);
 
   const handleClickEdit = useCallback(() => {
-    // TODO: open edit dialog
-    // openDialog();
+    openDialog(<WorkOrderDialog workOrder={workOrder} onClose={closeDialog} />);
   }, [workOrder]);
 
   const handleClickDelete = useCallback(() => {

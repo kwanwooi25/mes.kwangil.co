@@ -11,6 +11,7 @@ import EndOfListItem from 'components/EndOfListItem';
 import ListEmpty from 'components/ListEmpty';
 import SelectionPanel from 'components/SelectionPanel';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
+import WorkOrderDialog from 'components/dialog/WorkOrder';
 import WorkOrderListItem from './WorkOrderListItem';
 import { formatDigit } from 'utils/string';
 import { useDialog } from 'features/dialog/dialogHook';
@@ -71,8 +72,7 @@ const MobileWorkOrderList = (props: MobileWorkOrderListProps) => {
   };
 
   const openWorkOrderDialog = () => {
-    // TODO: open create workOrder
-    // openDialog();
+    openDialog(<WorkOrderDialog onClose={closeDialog} />);
   };
 
   const renderItem = (index: number) => {

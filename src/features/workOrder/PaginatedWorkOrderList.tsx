@@ -16,6 +16,7 @@ import Loading from 'components/Loading';
 import PaginatedList from 'layouts/PaginatedList';
 import PublishIcon from '@material-ui/icons/Publish';
 import SubToolbar from 'components/SubToolbar';
+import WorkOrderDialog from 'components/dialog/WorkOrder';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useLoading } from 'features/loading/loadingHook';
 import { useScreenSize } from 'hooks/useScreenSize';
@@ -67,8 +68,7 @@ const PaginatedWorkOrderList = (props: PaginatedWorkOrderListProps) => {
   };
 
   const handleClickCreate = () => {
-    // TODO: open create dialog
-    // openDialog();
+    openDialog(<WorkOrderDialog onClose={closeDialog} />);
   };
 
   const handleClickCreateBulk = () => {
