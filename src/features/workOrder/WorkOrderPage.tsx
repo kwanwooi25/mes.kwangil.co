@@ -2,6 +2,7 @@ import Layout from 'layouts/Layout';
 import MobileWorkOrderList from './MobileWorkOrderList';
 import PaginatedWorkOrderList from './PaginatedWorkOrderList';
 import React from 'react';
+import WorkOrderSearch from './WorkOrderSearch';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useTranslation } from 'react-i18next';
 
@@ -14,7 +15,7 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
   return (
     <Layout
       pageTitle={t('pageTitle')}
-      SearchPanelContent={<div></div>}
+      SearchPanelContent={<WorkOrderSearch />}
       searchPanelTitle={`${t('common:workOrder')} ${t('common:search')}`}
     >
       {isMobileLayout && <MobileWorkOrderList />}
