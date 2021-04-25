@@ -18,6 +18,7 @@ export enum Path {
 export enum ExcelVariant {
   ACCOUNT = 'accounts',
   PRODUCT = 'products',
+  WORK_ORDER = 'workOrders',
 }
 
 export enum LoadingKeys {
@@ -53,8 +54,7 @@ export enum PlateListItemHeight {
 
 export enum WorkOrderListItemHeight {
   MOBILE = 293 + 8 + 16,
-  TABLET = 202 + 8 + 16,
-  MD = 138 + 8 + 16,
+  TABLET = 138 + 8 + 16,
   DESKTOP = 72 + 8 + 16,
 }
 

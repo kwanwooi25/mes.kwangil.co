@@ -81,7 +81,7 @@ const useStyles = makeStyles((theme: Theme) =>
           "productNames productDetail quantities quantities"
         `,
       },
-      [theme.breakpoints.up('lg')]: {
+      [theme.breakpoints.up('xl')]: {
         gridTemplateColumns: '105px 130px 3fr 2fr 200px 100px',
         gridTemplateAreas: `
           "workOrderId dates productNames productDetail quantities workOrderStatus"

@@ -1,9 +1,10 @@
 import { AccountDto, CreateAccountDto, CreateContactDto } from 'features/account/interface';
+import { CreateProductsDto, ProductDto } from 'features/product/interface';
+import { DeliveryMethod, ExcelVariant, PRINT_SIDE_TEXT, PlateStatus, PrintSide, WorkOrderStatus } from 'const';
 import { Dispatch, SetStateAction } from 'react';
 
-import { ExcelVariant, PrintSide, PRINT_SIDE_TEXT } from 'const';
+import { CreateWorkOrdersDto } from 'features/workOrder/interface';
 import XLSX from 'xlsx';
-import { CreateProductsDto, ProductDto } from 'features/product/interface';
 import { getFileNameFromUrl } from './string';
 
 export const getExcelFileReader = {
@@ -11,8 +12,8 @@ export const getExcelFileReader = {
     getFileReader(ExcelVariant.ACCOUNT, stateSetter),
   [ExcelVariant.PRODUCT]: (stateSetter: Dispatch<SetStateAction<CreateProductsDto[]>>) =>
     getFileReader(ExcelVariant.PRODUCT, stateSetter),
-  // [ExcelVariant.WORK_ORDER]: (stateSetter: Dispatch<SetStateAction<CreateWorkOrdersDto[]>>) =>
-  //   getFileReader(ExcelVariant.WORK_ORDER, stateSetter),
+  [ExcelVariant.WORK_ORDER]: (stateSetter: Dispatch<SetStateAction<CreateWorkOrdersDto[]>>) =>
+    getFileReader(ExcelVariant.WORK_ORDER, stateSetter),
 };
 
 export const downloadWorkbook = {
@@ -116,26 +117,26 @@ const PRODUCT_KEY_TO_LABEL: { [key: string]: string } = {
   images: '이미지',
 };
 
-// const WORK_ORDER_LABEL_TO_KEY: { [key: string]: keyof CreateWorkOrdersDto } = {
-//   아이디: 'id',
-//   주문일: 'orderedAt',
-//   업체명: 'accountName',
-//   제품명: 'productName',
-//   두께: 'thickness',
-//   길이: 'length',
-//   너비: 'width',
-//   주문수량: 'orderQuantity',
-//   동판상태: 'plateStatus',
-//   납기일: 'deliverBy',
-//   납기엄수: 'shouldBePunctual',
-//   지급: 'isUrgent',
-//   작업메모: 'workMemo',
-//   납품메모: 'deliveryMemo',
-//   완료일: 'completedAt',
-//   완료수량: 'completedQuantity',
-//   납품일: 'deliveredAt',
-//   납품수량: 'deliveredQuantity',
-// };
+const WORK_ORDER_LABEL_TO_KEY: { [key: string]: keyof CreateWorkOrdersDto } = {
+  아이디: 'id',
+  주문일: 'orderedAt',
+  업체명: 'accountName',
+  제품명: 'productName',
+  두께: 'thickness',
+  길이: 'length',
+  너비: 'width',
+  주문수량: 'orderQuantity',
+  동판상태: 'plateStatus',
+  납기일: 'deliverBy',
+  납기엄수: 'shouldBePunctual',
+  지급: 'isUrgent',
+  작업메모: 'workMemo',
+  납품메모: 'deliveryMemo',
+  완료일: 'completedAt',
+  완료수량: 'completedQuantity',
+  납품일: 'deliveredAt',
+  납품수량: 'deliveredQuantity',
+};
 
 // const WORK_ORDER_KEY_TO_LABEL: { [key: string]: string } = {
 //   id: '아이디',
@@ -276,65 +277,65 @@ const generateItem = {
       }
     );
   },
-  // [ExcelVariant.WORK_ORDER]: (row: any) => {
-  //   return Object.entries(row).reduce(
-  //     (workOrder: CreateWorkOrdersDto, [key, value]) => {
-  //       const newKey: keyof CreateWorkOrdersDto = WORK_ORDER_LABEL_TO_KEY[key];
-  //       let newValue;
+  [ExcelVariant.WORK_ORDER]: (row: any) => {
+    return Object.entries(row).reduce(
+      (workOrder: CreateWorkOrdersDto, [key, value]) => {
+        const newKey: keyof CreateWorkOrdersDto = WORK_ORDER_LABEL_TO_KEY[key];
+        let newValue;
 
-  //       switch (newKey) {
-  //         case 'plateStatus':
-  //           if (value === '신규') {
-  //             newValue = PlateStatus.NEW;
-  //           } else if (value === '수정') {
-  //             newValue = PlateStatus.UPDATE;
-  //           } else {
-  //             newValue = PlateStatus.CONFIRM;
-  //           }
-  //           break;
-  //         case 'shouldBePunctual':
-  //         case 'isUrgent':
-  //           newValue = value === 'Y';
-  //           break;
-  //         case 'deliveredAt':
-  //           newValue = value;
-  //           break;
-  //         case 'completedAt':
-  //           newValue = value;
-  //           workOrder.workOrderStatus = WorkOrderStatus.COMPLETED;
-  //           break;
+        switch (newKey) {
+          case 'plateStatus':
+            if (value === '신규') {
+              newValue = PlateStatus.NEW;
+            } else if (value === '수정') {
+              newValue = PlateStatus.UPDATE;
+            } else {
+              newValue = PlateStatus.CONFIRM;
+            }
+            break;
+          case 'shouldBePunctual':
+          case 'isUrgent':
+            newValue = value === 'Y';
+            break;
+          case 'deliveredAt':
+            newValue = value;
+            break;
+          case 'completedAt':
+            newValue = value;
+            workOrder.workOrderStatus = WorkOrderStatus.COMPLETED;
+            break;
 
-  //         default:
-  //           newValue = value;
-  //       }
+          default:
+            newValue = value;
+        }
 
-  //       return { ...workOrder, [newKey]: newValue };
-  //     },
-  //     {
-  //       id: '',
-  //       orderedAt: '',
-  //       deliverBy: '',
-  //       orderQuantity: 0,
-  //       isUrgent: false,
-  //       shouldBePunctual: false,
-  //       plateStatus: PlateStatus.CONFIRM,
-  //       isPlateReady: true,
-  //       deliveryMethod: DeliveryMethod.TBD,
-  //       workMemo: '',
-  //       deliveryMemo: '',
-  //       workOrderStatus: WorkOrderStatus.NOT_STARTED,
-  //       completedAt: null,
-  //       completedQuantity: 0,
-  //       deliveredAt: null,
-  //       deliveredQuantity: 0,
-  //       accountName: '',
-  //       productName: '',
-  //       thickness: 0.05,
-  //       length: 0,
-  //       width: 0,
-  //     }
-  //   );
-  // },
+        return { ...workOrder, [newKey]: newValue };
+      },
+      {
+        id: '',
+        orderedAt: '',
+        deliverBy: '',
+        orderQuantity: 0,
+        isUrgent: false,
+        shouldBePunctual: false,
+        plateStatus: PlateStatus.CONFIRM,
+        isPlateReady: true,
+        deliveryMethod: DeliveryMethod.TBD,
+        workMemo: '',
+        deliveryMemo: '',
+        workOrderStatus: WorkOrderStatus.NOT_STARTED,
+        completedAt: null,
+        completedQuantity: 0,
+        deliveredAt: null,
+        deliveredQuantity: 0,
+        accountName: '',
+        productName: '',
+        thickness: 0.05,
+        length: 0,
+        width: 0,
+      }
+    );
+  },
 };
 
 function processAccountsForDownload(accounts: AccountDto[]) {

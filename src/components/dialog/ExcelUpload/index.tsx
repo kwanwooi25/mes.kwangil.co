@@ -8,18 +8,18 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core';
+import { ExcelVariant, LoadingKeys } from 'const';
 import React, { ChangeEvent, createRef, useState } from 'react';
 
 import CloseIcon from '@material-ui/icons/Close';
 import Dialog from 'features/dialog/Dialog';
 import DoneIcon from '@material-ui/icons/Done';
-import { ExcelVariant, LoadingKeys } from 'const';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import Loading from 'components/Loading';
 import RoundedButton from 'components/RoundedButton';
 import { getExcelFileReader } from 'utils/excel';
-import { useTranslation } from 'react-i18next';
 import { useLoading } from 'features/loading/loadingHook';
+import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,6 +38,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const templates = {
   [ExcelVariant.ACCOUNT]: `${process.env.PUBLIC_URL}/업체대량등록.xlsx`,
   [ExcelVariant.PRODUCT]: `${process.env.PUBLIC_URL}/제품대량등록.xlsx`,
+  [ExcelVariant.WORK_ORDER]: `${process.env.PUBLIC_URL}/작업지시대량등록.xlsx`,
 };
 
 export interface ExcelUploadDialogProps {

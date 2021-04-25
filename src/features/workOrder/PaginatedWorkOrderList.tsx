@@ -1,4 +1,4 @@
-import { DEFAULT_LIST_LIMIT, LoadingKeys, WorkOrderListItemHeight } from 'const';
+import { DEFAULT_LIST_LIMIT, ExcelVariant, LoadingKeys, WorkOrderListItemHeight } from 'const';
 import { IconButton, Tooltip } from '@material-ui/core';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import WorkOrderListItem, { WorkOrderListItemSkeleton } from './WorkOrderListItem';
@@ -7,7 +7,9 @@ import { workOrderActions, workOrderSelectors } from './workOrderSlice';
 
 import AddIcon from '@material-ui/icons/Add';
 import ConfirmDialog from 'components/dialog/Confirm';
+import { CreateWorkOrdersDto } from './interface';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import ExcelUploadDialog from 'components/dialog/ExcelUpload';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import ListEmpty from 'components/ListEmpty';
 import Loading from 'components/Loading';
@@ -36,7 +38,15 @@ const PaginatedWorkOrderList = (props: PaginatedWorkOrderListProps) => {
   const workOrders = useAppSelector(workOrderSelectors.workOrders);
   const isSelectMode = useAppSelector(workOrderSelectors.isSelectMode);
   const selectedIds = useAppSelector(workOrderSelectors.selectedIds);
-  const { getList, resetList, resetSelection, deleteWorkOrders, selectAll, unselectAll } = workOrderActions;
+  const {
+    getList,
+    resetList,
+    resetSelection,
+    deleteWorkOrders,
+    selectAll,
+    unselectAll,
+    createWorkOrders,
+  } = workOrderActions;
 
   const itemHeight = isDesktopLayout ? WorkOrderListItemHeight.DESKTOP : WorkOrderListItemHeight.TABLET;
   const isSelectedAll = !!ids.length && !!selectedIds.length && ids.every((id) => selectedIds.includes(id as string));
@@ -62,14 +72,13 @@ const PaginatedWorkOrderList = (props: PaginatedWorkOrderListProps) => {
   };
 
   const handleClickCreateBulk = () => {
-    // TODO: open bulk create dialog
-    // openDialog(
-    //   <ExcelUploadDialog
-    //     variant={ExcelVariant.PRODUCT}
-    //     onSave={(products: createWorkOrdersDto[]) => dispatch(createWorkOrders(products))}
-    //     onClose={closeDialog}
-    //   />
-    // );
+    openDialog(
+      <ExcelUploadDialog
+        variant={ExcelVariant.WORK_ORDER}
+        onSave={(workOrders: CreateWorkOrdersDto[]) => dispatch(createWorkOrders(workOrders))}
+        onClose={closeDialog}
+      />
+    );
   };
 
   const handleClickDownload = async () => {
