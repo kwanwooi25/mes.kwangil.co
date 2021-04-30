@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 
 import { DEFAULT_API_URL } from 'const';
 
-const baseURL = process.env.API_URL || DEFAULT_API_URL;
+const baseURL = process.env.REACT_APP_API_URL || DEFAULT_API_URL;
 
 const apiClient = axios.create({ baseURL });
 
