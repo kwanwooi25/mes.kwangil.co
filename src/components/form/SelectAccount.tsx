@@ -28,7 +28,7 @@ const SelectAccount = ({ className, value, onChange, onBlur, errorMessage }: Sel
   const closeAccountOptions = () => setIsAccountOptionsOpen(false);
 
   useEffect(() => {
-    if (!accountOptions.length) {
+    if (isAccountOptionsOpen) {
       (async () => {
         setIsAccountsLoading(true);
         const { rows }: { rows: AccountDto[] } = await accountApi.getAllAccounts();
@@ -37,7 +37,7 @@ const SelectAccount = ({ className, value, onChange, onBlur, errorMessage }: Sel
         setIsAccountsLoading(false);
       })();
     }
-  }, [accountOptions]);
+  }, [isAccountOptionsOpen]);
 
   return (
     <Autocomplete
