@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from 'app/store';
 import { workOrderActions, workOrderSelectors } from './workOrderSlice';
 
 import AddIcon from '@material-ui/icons/Add';
+import { BlobProvider } from '@react-pdf/renderer';
 import ConfirmDialog from 'components/dialog/Confirm';
 import { CreateWorkOrdersDto } from './interface';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
@@ -15,9 +16,11 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import ListEmpty from 'components/ListEmpty';
 import Loading from 'components/Loading';
 import PaginatedList from 'layouts/PaginatedList';
+import PrintIcon from '@material-ui/icons/Print';
 import PublishIcon from '@material-ui/icons/Publish';
 import SubToolbar from 'components/SubToolbar';
 import WorkOrderDialog from 'components/dialog/WorkOrder';
+import WorkOrderPDF from 'components/WorkOrderPDF';
 import WorkOrdersCompleteDialog from 'components/dialog/WorkOrdersComplete';
 import { downloadWorkbook } from 'utils/excel';
 import { useDialog } from 'features/dialog/dialogHook';
@@ -98,6 +101,8 @@ const PaginatedWorkOrderList = (props: PaginatedWorkOrderListProps) => {
     openDialog(<WorkOrdersCompleteDialog workOrders={selectedWorkOrders} onClose={closeDialog} />);
   };
 
+  const handleClickPrint = (url: string) => () => window.open(url);
+
   const handleClickDeleteAll = () => {
     openDialog(
       <ConfirmDialog
@@ -121,13 +126,30 @@ const PaginatedWorkOrderList = (props: PaginatedWorkOrderListProps) => {
       </Tooltip>
     );
   }
-  selectModeButtons.push(
+  selectModeButtons = [
+    ...selectModeButtons,
+    <BlobProvider key="print-all" document={<WorkOrderPDF workOrders={selectedWorkOrders} />}>
+      {({ url, loading }) =>
+        loading ? (
+          <IconButton disabled>
+            <Loading />
+            <PrintIcon />
+          </IconButton>
+        ) : (
+          <Tooltip key="print-all" title={t('common:print') as string} placement="top">
+            <IconButton onClick={handleClickPrint(url as string)}>
+              <PrintIcon />
+            </IconButton>
+          </Tooltip>
+        )
+      }
+    </BlobProvider>,
     <Tooltip key="delete-all" title={t('common:deleteAll') as string} placement="top">
       <IconButton onClick={handleClickDeleteAll}>
         <DeleteOutlineIcon />
       </IconButton>
-    </Tooltip>
-  );
+    </Tooltip>,
+  ];
 
   const toolbarButtons = [
     <Tooltip key="add-work-order" title={t('addWorkOrder') as string} placement="top">

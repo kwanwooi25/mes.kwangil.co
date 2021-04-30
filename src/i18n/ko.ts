@@ -156,7 +156,7 @@ export default {
     packaging: '포장',
     packMaterial: '포장 방법',
     packUnit: '포장 단위',
-    packCanDeliverAll: '수량 +/- 가능',
+    packCanDeliverAll: '전량 납품',
     packMemo: '포장 메모',
     images: '이미지',
     plates: '동판',

@@ -1,4 +1,4 @@
-import { Backdrop, CircularProgress, Theme, createStyles, makeStyles } from '@material-ui/core';
+import { Backdrop, CircularProgress, CircularProgressProps, Theme, createStyles, makeStyles } from '@material-ui/core';
 
 import React from 'react';
 
@@ -13,14 +13,14 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export interface LoadingProps {}
+export interface LoadingProps extends CircularProgressProps {}
 
 const Loading = (props: LoadingProps) => {
   const classes = useStyles();
 
   return (
     <Backdrop className={classes.backdrop} open>
-      <CircularProgress color="inherit" />
+      <CircularProgress color="inherit" {...props} />
     </Backdrop>
   );
 };

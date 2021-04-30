@@ -2,6 +2,7 @@ import {
   Checkbox,
   Chip,
   IconButton,
+  Link,
   ListItem,
   ListItemIcon,
   ListItemProps,
@@ -22,8 +23,10 @@ import { useAppDispatch, useAppSelector } from 'app/store';
 import { workOrderActions, workOrderSelectors } from './workOrderSlice';
 
 import AccountName from 'components/AccountName';
+import { BlobProvider } from '@react-pdf/renderer';
 import ConfirmDialog from 'components/dialog/Confirm';
 import DoneIcon from '@material-ui/icons/Done';
+import Loading from 'components/Loading';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ProductName from 'components/ProductName';
 import SelectWorkOrderStatus from 'components/SelectWorkOrderStatus';
@@ -31,6 +34,7 @@ import { Skeleton } from '@material-ui/lab';
 import WorkOrderDialog from 'components/dialog/WorkOrder';
 import { WorkOrderDto } from './interface';
 import WorkOrderId from 'components/WorkOrderId';
+import WorkOrderPDF from 'components/WorkOrderPDF';
 import { WorkOrderStatus } from 'const';
 import WorkOrdersCompleteDialog from 'components/dialog/WorkOrdersComplete';
 import { differenceInBusinessDays } from 'date-fns';
@@ -144,6 +148,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     printButton: {
+      fontFamily: theme.typography.fontFamily,
+      fontSize: '16px',
       padding: theme.spacing(0.75, 2),
       '&:hover': {
         textDecoration: 'none',
@@ -195,9 +201,10 @@ const WorkOrderListItem = ({ workOrder, itemHeight, isSelected }: WorkOrderListI
     onClick();
   };
 
-  // const handleClickPrint = useCallback(() => {
-  //   // TODO: open pdf
-  // }, [workOrder]);
+  const handleClickPrint = (url: string) => () => {
+    closeMenu();
+    window.open(url);
+  };
 
   const handleClickComplete = useCallback(() => {
     openDialog(<WorkOrdersCompleteDialog workOrders={[workOrder]} onClose={closeDialog} />);
@@ -360,13 +367,20 @@ const WorkOrderListItem = ({ workOrder, itemHeight, isSelected }: WorkOrderListI
         </IconButton>
         <Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={closeMenu}>
           <MenuItem style={{ padding: 0 }}>
-            {/* <BlobProvider document={<WorkOrderPDF workOrder={workOrder} />}>
-              {({ url }) => (
-                <Link className={classes.printButton} color="textPrimary" onClick={handleClickPrint(url as string)}>
+            <BlobProvider document={<WorkOrderPDF workOrders={[workOrder]} />}>
+              {({ url, loading }) => (
+                <Link
+                  component="button"
+                  className={classes.printButton}
+                  color="textPrimary"
+                  onClick={handleClickPrint(url as string)}
+                  disabled={loading}
+                >
+                  {loading && <Loading size="small" />}
                   {t('common:print')}
                 </Link>
               )}
-            </BlobProvider> */}
+            </BlobProvider>
           </MenuItem>
           {actionButtons.map(({ label, onClick }) => (
             <MenuItem key={label} onClick={handleClickMenuItem(onClick)}>
