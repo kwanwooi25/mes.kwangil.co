@@ -37,16 +37,24 @@ const reducer = combineReducers({
 });
 
 const sagaMiddleware = createSagaMiddleware();
+const logger = createLogger({ collapsed: true });
+
+const middleware = [
+  ...getDefaultMiddleware({ thunk: false, serializableCheck: false }),
+  routerMiddleware(history),
+  sagaMiddleware,
+];
+
+const isProduction = process.env.NODE_ENV === 'production';
+
+if (!isProduction) {
+  middleware.push(logger);
+}
 
 const store = configureStore({
   reducer,
-  middleware: [
-    ...getDefaultMiddleware({ thunk: false, serializableCheck: false }),
-    routerMiddleware(history),
-    createLogger({ collapsed: true }),
-    sagaMiddleware,
-  ],
-  devTools: process.env.NODE_ENV !== 'production',
+  middleware,
+  devTools: !isProduction,
 });
 
 function* rootSaga() {
