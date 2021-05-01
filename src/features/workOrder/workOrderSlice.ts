@@ -64,12 +64,18 @@ const selectors = {
   workOrderSelector,
   query: createSelector(workOrderSelector, ({ query }) => query),
   ids: createSelector(workOrderSelector, ({ ids }) => ids as string[]),
+  selectableIds: createSelector(workOrderSelector, ({ ids, entities }) =>
+    ids.filter((id) => !entities[id]?.completedAt)
+  ),
   workOrders: createSelector(workOrderSelector, ({ ids, entities }) => ids.map((id) => entities[id] as WorkOrderDto)),
   hasMore: createSelector(workOrderSelector, ({ hasMore }) => hasMore),
   totalCount: createSelector(workOrderSelector, ({ totalCount }) => totalCount),
   currentPage: createSelector(workOrderSelector, ({ currentPage }) => currentPage),
   totalPages: createSelector(workOrderSelector, ({ totalPages }) => totalPages),
   isSelectMode: createSelector(workOrderSelector, ({ selectedIds }) => !!selectedIds.length),
+  isSelectAllDisabled: createSelector(workOrderSelector, ({ ids, entities }) =>
+    ids.every((id) => !!entities[id]?.completedAt)
+  ),
   selectedIds: createSelector(workOrderSelector, ({ selectedIds }) => selectedIds),
   selectedWorkOrders: createSelector(workOrderSelector, ({ selectedIds, entities }) =>
     selectedIds.map((id) => entities[id] as WorkOrderDto)

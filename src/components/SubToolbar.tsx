@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export interface SubToolbarProps {
+  isSelectAllDisabled?: boolean;
   isSelectedAll?: boolean;
   isIndeterminate?: boolean;
   onToggleSelectAll?: (checked: boolean) => void;
@@ -45,6 +46,7 @@ export interface SubToolbarProps {
 }
 
 const SubToolbar = ({
+  isSelectAllDisabled = false,
   isSelectedAll = false,
   isIndeterminate = false,
   onToggleSelectAll = () => {},
@@ -73,6 +75,7 @@ const SubToolbar = ({
                 checked={isSelectedAll}
                 indeterminate={isIndeterminate}
                 onChange={toggleSelectAll}
+                disabled={isSelectAllDisabled}
               />
             }
             label={t('selectAll')}

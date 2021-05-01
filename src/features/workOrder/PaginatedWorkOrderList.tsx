@@ -42,9 +42,10 @@ const PaginatedWorkOrderList = (props: PaginatedWorkOrderListProps) => {
   const query = useAppSelector(workOrderSelectors.query);
   const currentPage = useAppSelector(workOrderSelectors.currentPage);
   const totalPages = useAppSelector(workOrderSelectors.totalPages);
-  const ids = useAppSelector(workOrderSelectors.ids);
   const workOrders = useAppSelector(workOrderSelectors.workOrders);
   const isSelectMode = useAppSelector(workOrderSelectors.isSelectMode);
+  const isSelectAllDisabled = useAppSelector(workOrderSelectors.isSelectAllDisabled);
+  const selectableIds = useAppSelector(workOrderSelectors.selectableIds);
   const selectedIds = useAppSelector(workOrderSelectors.selectedIds);
   const selectedWorkOrders = useAppSelector(workOrderSelectors.selectedWorkOrders);
   const {
@@ -58,12 +59,13 @@ const PaginatedWorkOrderList = (props: PaginatedWorkOrderListProps) => {
   } = workOrderActions;
 
   const itemHeight = isDesktopLayout ? WorkOrderListItemHeight.DESKTOP : WorkOrderListItemHeight.TABLET;
-  const isSelectedAll = !!ids.length && !!selectedIds.length && ids.every((id) => selectedIds.includes(id as string));
-  const isIndeterminate = !isSelectedAll && ids.some((id) => selectedIds.includes(id as string));
+  const isSelectedAll =
+    !!selectableIds.length && !!selectedIds.length && selectableIds.every((id) => selectedIds.includes(id as string));
+  const isIndeterminate = !isSelectedAll && selectableIds.some((id) => selectedIds.includes(id as string));
   const isAllCutting = selectedWorkOrders.every(({ workOrderStatus }) => workOrderStatus === WorkOrderStatus.CUTTING);
 
   const handleToggleSelectAll = (checked: boolean) => {
-    dispatch(checked ? selectAll(ids as string[]) : unselectAll(ids as string[]));
+    dispatch(checked ? selectAll(selectableIds as string[]) : unselectAll(selectableIds as string[]));
   };
 
   const handleResetSelection = () => {
@@ -183,6 +185,7 @@ const PaginatedWorkOrderList = (props: PaginatedWorkOrderListProps) => {
   return (
     <>
       <SubToolbar
+        isSelectAllDisabled={isSelectAllDisabled}
         isSelectedAll={isSelectedAll}
         isIndeterminate={isIndeterminate}
         onToggleSelectAll={handleToggleSelectAll}
