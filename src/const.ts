@@ -159,12 +159,22 @@ export enum WorkOrderStatus {
   COMPLETED = 'COMPLETED',
 }
 
+export enum UserRole {
+  USER = 'USER',
+  MANAGER = 'MANAGER',
+  ADMIN = 'ADMIN',
+}
+
 export const DEFAULT_PAGE = Path.DASHBOARD;
 export const DEFAULT_API_URL = 'http://localhost:5000';
 export const DEFAULT_LIST_LIMIT = 50;
 
 export const NAV_WIDTH = 240;
-export const NAV_PATHS = [Path.DASHBOARD, Path.ACCOUNTS, Path.PRODUCTS, Path.PLATES, Path.WORK_ORDERS];
+export const NAV_PATHS = {
+  [UserRole.USER]: [Path.DASHBOARD, Path.PRODUCTS, Path.PLATES, Path.WORK_ORDERS],
+  [UserRole.MANAGER]: [Path.DASHBOARD, Path.ACCOUNTS, Path.PRODUCTS, Path.PLATES, Path.WORK_ORDERS],
+  [UserRole.ADMIN]: [Path.DASHBOARD, Path.ACCOUNTS, Path.PRODUCTS, Path.PLATES, Path.WORK_ORDERS],
+};
 export const NAV_ICONS: { [key: string]: ElementType } = {
   [Path.DASHBOARD]: DashboardIcon,
   [Path.ACCOUNTS]: ApartmentIcon,

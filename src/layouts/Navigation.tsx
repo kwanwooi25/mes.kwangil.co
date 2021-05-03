@@ -73,11 +73,11 @@ const Navigation = ({ isOpen, onClose }: NavigationProps) => {
   const classes = useStyles();
   const { isMobileLayout } = useScreenSize();
 
-  const { logout } = useAuth();
+  const { logout, userRole } = useAuth();
   const { pathname } = useAppSelector((state) => state.router.location);
   const dispatch = useAppDispatch();
 
-  const navListItems: NavListItemProps[] = NAV_PATHS.map((path) => ({
+  const navListItems: NavListItemProps[] = NAV_PATHS[userRole].map((path) => ({
     isActive: path === pathname,
     path,
     label: t(path.replace(/\//, '')),

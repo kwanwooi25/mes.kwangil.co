@@ -160,9 +160,7 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
         {isLoading ? (
           Array(query.limit)
             .fill('')
-            .map((_, index) => (
-              <ProductListItemSkeleton key={index} itemHeight={itemHeight} showDetails={isDesktopLayout} />
-            ))
+            .map((_, index) => <ProductListItemSkeleton key={index} itemHeight={itemHeight} showDetails />)
         ) : !products.length ? (
           <ListEmpty />
         ) : (
@@ -172,7 +170,7 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
               product={product}
               itemHeight={itemHeight}
               isSelected={selectedIds.includes(product.id)}
-              showDetails={isDesktopLayout}
+              showDetails
             />
           ))
         )}

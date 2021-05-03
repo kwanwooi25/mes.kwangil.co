@@ -1,3 +1,5 @@
+import { UserRole } from 'const';
+
 export interface LoginDto {
   email: string;
   password: string;
@@ -11,6 +13,7 @@ export interface UserDto {
   department?: string;
   position?: string;
   profileImageUrl?: string;
+  role: UserRole;
   createdAt: Date;
   updatedAt: Date;
   deletedAt?: Date;

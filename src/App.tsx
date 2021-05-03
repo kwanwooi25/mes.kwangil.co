@@ -1,4 +1,4 @@
-import { DEFAULT_PAGE, LoadingKeys, Path } from 'const';
+import { DEFAULT_PAGE, LoadingKeys, NAV_PATHS, Path } from 'const';
 import React, { ComponentType } from 'react';
 import { Redirect, Route, Switch } from 'react-router';
 
@@ -30,12 +30,14 @@ const PublicRoute = ({ component: Component, ...rest }: RouteProps) => {
 };
 
 const PrivateRoute = ({ component: Component, ...rest }: RouteProps) => {
-  const { currentUser } = useAuth();
+  const { isLoggedIn, userRole } = useAuth();
+  const navPaths = NAV_PATHS[userRole];
+  const isPermitted = navPaths.includes(rest.path as Path);
 
-  return !!currentUser ? (
+  return isLoggedIn && isPermitted ? (
     <Route {...rest} render={(matchProps) => <Component {...matchProps} {...rest} />} />
   ) : (
-    <Redirect to={Path.LOGIN} />
+    <Redirect to={!isLoggedIn ? Path.LOGIN : DEFAULT_PAGE} />
   );
 };
 
