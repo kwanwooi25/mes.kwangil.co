@@ -147,6 +147,8 @@ const DatePicker = ({
       dayClassName={getDayClassName}
       weekDayClassName={getDayClassName}
       customInput={<CustomInput label={label} />}
+      popperProps={{ positionFixed: true }}
+      popperModifiers={{ flip: { behavior: ['right'] } }}
       calendarContainer={({ children }) => {
         return (
           <Paper className={classes.root} elevation={2}>

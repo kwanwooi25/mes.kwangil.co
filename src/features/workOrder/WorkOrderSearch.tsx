@@ -1,6 +1,6 @@
 import { Checkbox, Divider, FormControlLabel, Theme, createStyles, makeStyles } from '@material-ui/core';
 import React, { useEffect } from 'react';
-import { format, subDays, subMonths, subWeeks } from 'date-fns';
+import { addDays, format, subDays, subMonths, subWeeks } from 'date-fns';
 import { initialState, workOrderActions, workOrderSelectors } from './workOrderSlice';
 import { useAppDispatch, useAppSelector } from 'app/store';
 
@@ -26,8 +26,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     searchDatesPresets: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(5, 1fr)',
-      gridColumnGap: theme.spacing(1),
+      gridTemplateColumns: 'repeat(4, 1fr)',
+      gridGap: theme.spacing(1),
       padding: theme.spacing(1, 0),
     },
     divider: {
@@ -95,23 +95,18 @@ const WorkOrderSearch = ({ onSubmit, onReset }: WorkOrderSearchProps) => {
     const targetDate = format(date, DATE_FORMAT);
     setFieldValue('orderedAt', [targetDate, targetDate]);
   };
+  const searchForWeeks = (weeks: number) => () => {
+    const today = format(new Date(), DATE_FORMAT);
+    const start = format(addDays(subWeeks(new Date(), weeks), 1), DATE_FORMAT);
+    setFieldValue('orderedAt', [start, today]);
+  };
+  const searchForMonths = (months: number) => () => {
+    const today = format(new Date(), DATE_FORMAT);
+    const start = format(addDays(subMonths(new Date(), months), 1), DATE_FORMAT);
+    setFieldValue('orderedAt', [start, today]);
+  };
   const searchForYesterday = () => searchForADay(subDays(new Date(), 1));
   const searchForToday = () => searchForADay(new Date());
-  const searchForTwoWeeks = () => {
-    const today = format(new Date(), DATE_FORMAT);
-    const twoWeeksBefore = format(subWeeks(new Date(), 2), DATE_FORMAT);
-    setFieldValue('orderedAt', [twoWeeksBefore, today]);
-  };
-  const searchForOneMonth = () => {
-    const today = format(new Date(), DATE_FORMAT);
-    const oneMonthBefore = format(subMonths(new Date(), 1), DATE_FORMAT);
-    setFieldValue('orderedAt', [oneMonthBefore, today]);
-  };
-  const searchForThreeMonths = () => {
-    const today = format(new Date(), DATE_FORMAT);
-    const threeMonthsBefore = format(subMonths(new Date(), 3), DATE_FORMAT);
-    setFieldValue('orderedAt', [threeMonthsBefore, today]);
-  };
 
   useEffect(() => {
     setValues({ ...initialValues, ...restQuery });
@@ -135,20 +130,29 @@ const WorkOrderSearch = ({ onSubmit, onReset }: WorkOrderSearchProps) => {
         />
       </div>
       <div className={classes.searchDatesPresets}>
-        <RoundedButton variant="outlined" size="small" onClick={searchForYesterday}>
+        <RoundedButton variant="outlined" onClick={searchForYesterday}>
           {t('common:yesterday')}
         </RoundedButton>
-        <RoundedButton variant="outlined" size="small" onClick={searchForToday}>
+        <RoundedButton variant="outlined" onClick={searchForToday}>
           {t('common:today')}
         </RoundedButton>
-        <RoundedButton variant="outlined" size="small" onClick={searchForTwoWeeks}>
-          {t('common:twoWeeks')}
+        <RoundedButton variant="outlined" onClick={searchForWeeks(1)}>
+          {t('common:weeksCount', { weeks: 1 })}
         </RoundedButton>
-        <RoundedButton variant="outlined" size="small" onClick={searchForOneMonth}>
-          {t('common:oneMonth')}
+        <RoundedButton variant="outlined" onClick={searchForWeeks(2)}>
+          {t('common:weeksCount', { weeks: 2 })}
         </RoundedButton>
-        <RoundedButton variant="outlined" size="small" onClick={searchForThreeMonths}>
-          {t('common:threeMonths')}
+        <RoundedButton variant="outlined" onClick={searchForMonths(1)}>
+          {t('common:monthsCount', { months: 1 })}
+        </RoundedButton>
+        <RoundedButton variant="outlined" onClick={searchForMonths(3)}>
+          {t('common:monthsCount', { months: 3 })}
+        </RoundedButton>
+        <RoundedButton variant="outlined" onClick={searchForMonths(6)}>
+          {t('common:monthsCount', { months: 6 })}
+        </RoundedButton>
+        <RoundedButton variant="outlined" onClick={searchForMonths(12)}>
+          {t('common:monthsCount', { months: 12 })}
         </RoundedButton>
       </div>
       <Divider className={classes.divider} />
