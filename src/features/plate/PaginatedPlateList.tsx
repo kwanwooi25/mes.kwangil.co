@@ -12,6 +12,7 @@ import ListEmpty from 'components/ListEmpty';
 import PaginatedList from 'layouts/PaginatedList';
 import PlateDialog from 'components/dialog/Plate';
 import SubToolbar from 'components/SubToolbar';
+import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useLoading } from 'features/loading/loadingHook';
 import { useScreenSize } from 'hooks/useScreenSize';
@@ -25,6 +26,7 @@ const PaginatedPlateList = (props: PaginatedPlateListProps) => {
   const { [LoadingKeys.GET_PLATES]: isLoading } = useLoading();
   const { windowHeight, isDesktopLayout } = useScreenSize();
   const { openDialog, closeDialog } = useDialog();
+  const { isUser } = useAuth();
   const dispatch = useAppDispatch();
   const query = useAppSelector(plateSelectors.query);
   const currentPage = useAppSelector(plateSelectors.currentPage);
@@ -77,42 +79,45 @@ const PaginatedPlateList = (props: PaginatedPlateListProps) => {
     );
   };
 
+  const selectModeButtons = [
+    <Tooltip key="delete-all" title={t('common:deleteAll') as string} placement="top">
+      <IconButton onClick={handleClickDeleteAll}>
+        <DeleteOutlineIcon />
+      </IconButton>
+    </Tooltip>,
+  ];
+
+  const toolBarButtons = [
+    <Tooltip key="add-plate" title={t('addPlate') as string} placement="top">
+      <IconButton onClick={handleClickCreate}>
+        <AddIcon />
+      </IconButton>
+    </Tooltip>,
+  ];
+
   useEffect(() => {
-    const containerMaxHeight = windowHeight - (64 * 2 + 56);
+    const toolBarCount = isUser ? 1 : 2;
+    const containerMaxHeight = windowHeight - (64 * toolBarCount + 56);
     const limit = Math.floor(containerMaxHeight / itemHeight);
     dispatch(getPlates({ offset: 0, limit }));
 
     return () => {
       dispatch(resetPlates());
     };
-  }, [windowHeight, itemHeight]);
+  }, [windowHeight, itemHeight, isUser]);
 
   return (
     <>
-      <SubToolbar
-        isSelectedAll={isSelectedAll}
-        isIndeterminate={isIndeterminate}
-        onToggleSelectAll={handleToggleSelectAll}
-        onResetSelection={handleResetSelection}
-        selectedCount={selectedIds.length}
-        buttons={
-          isSelectMode ? (
-            <Tooltip title={t('common:deleteAll') as string} placement="top">
-              <IconButton onClick={handleClickDeleteAll}>
-                <DeleteOutlineIcon />
-              </IconButton>
-            </Tooltip>
-          ) : (
-            [
-              <Tooltip key="add-plate" title={t('addPlate') as string} placement="top">
-                <IconButton onClick={handleClickCreate}>
-                  <AddIcon />
-                </IconButton>
-              </Tooltip>,
-            ]
-          )
-        }
-      />
+      {!isUser && (
+        <SubToolbar
+          isSelectedAll={isSelectedAll}
+          isIndeterminate={isIndeterminate}
+          onToggleSelectAll={handleToggleSelectAll}
+          onResetSelection={handleResetSelection}
+          selectedCount={selectedIds.length}
+          buttons={isSelectMode ? selectModeButtons : toolBarButtons}
+        />
+      )}
       <PaginatedList
         height={(query.limit || DEFAULT_LIST_LIMIT) * itemHeight}
         showPagination={!!plates.length}

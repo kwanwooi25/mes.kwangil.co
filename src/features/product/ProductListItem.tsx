@@ -28,6 +28,7 @@ import ProductName from 'components/ProductName';
 import { Skeleton } from '@material-ui/lab';
 import WorkOrderDialog from 'components/dialog/WorkOrder';
 import { highlight } from 'utils/string';
+import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useTranslation } from 'react-i18next';
 
@@ -97,6 +98,7 @@ const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: Produ
   const query = useAppSelector(productSelectors.query);
   const { toggleSelection, deleteProducts } = productActions;
   const { openDialog, closeDialog } = useDialog();
+  const { isUser } = useAuth();
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -149,9 +151,11 @@ const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: Produ
 
   return (
     <ListItem divider style={{ height: itemHeight }} selected={isSelected}>
-      <ListItemIcon>
-        <Checkbox edge="start" color="primary" checked={isSelected} onChange={handleSelectionChange} />
-      </ListItemIcon>
+      {!isUser && (
+        <ListItemIcon>
+          <Checkbox edge="start" color="primary" checked={isSelected} onChange={handleSelectionChange} />
+        </ListItemIcon>
+      )}
       <ListItemText>
         <div className={classes.productDetail}>
           <AccountName
@@ -176,18 +180,20 @@ const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: Produ
           )}
         </div>
       </ListItemText>
-      <ListItemSecondaryAction>
-        <IconButton edge="end" onClick={openMenu}>
-          <MoreVertIcon />
-        </IconButton>
-        <Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={closeMenu}>
-          {actionButtons.map(({ label, onClick }) => (
-            <MenuItem key={label} onClick={handleClickMenuItem(onClick)}>
-              {label}
-            </MenuItem>
-          ))}
-        </Menu>
-      </ListItemSecondaryAction>
+      {!isUser && (
+        <ListItemSecondaryAction>
+          <IconButton edge="end" onClick={openMenu}>
+            <MoreVertIcon />
+          </IconButton>
+          <Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={closeMenu}>
+            {actionButtons.map(({ label, onClick }) => (
+              <MenuItem key={label} onClick={handleClickMenuItem(onClick)}>
+                {label}
+              </MenuItem>
+            ))}
+          </Menu>
+        </ListItemSecondaryAction>
+      )}
     </ListItem>
   );
 };
@@ -195,12 +201,15 @@ const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: Produ
 const ProductListItemSkeleton = memo(
   ({ itemHeight, showDetails = false }: { itemHeight: number; showDetails?: boolean }) => {
     const classes = useStyles();
+    const { isUser } = useAuth();
 
     return (
       <ListItem divider style={{ height: itemHeight }}>
-        <ListItemIcon>
-          <Skeleton variant="rect" width={24} height={24} />
-        </ListItemIcon>
+        {!isUser && (
+          <ListItemIcon>
+            <Skeleton variant="rect" width={24} height={24} />
+          </ListItemIcon>
+        )}
         <ListItemText>
           <div className={classes.productDetail}>
             <Skeleton className={classes.accountName} variant="rect" width="80%" height={24} />
@@ -214,9 +223,11 @@ const ProductListItemSkeleton = memo(
             )}
           </div>
         </ListItemText>
-        <ListItemSecondaryAction>
-          <Skeleton variant="circle" width={48} height={48} style={{ marginRight: -12 }} />
-        </ListItemSecondaryAction>
+        {!isUser && (
+          <ListItemSecondaryAction>
+            <Skeleton variant="circle" width={48} height={48} style={{ marginRight: -12 }} />
+          </ListItemSecondaryAction>
+        )}
       </ListItem>
     );
   }

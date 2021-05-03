@@ -14,6 +14,7 @@ import ProductListItem from './ProductListItem';
 import SelectionPanel from 'components/SelectionPanel';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
 import { formatDigit } from 'utils/string';
+import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useLoading } from 'features/loading/loadingHook';
 import { useTranslation } from 'react-i18next';
@@ -41,6 +42,7 @@ const MobileProductList = (props: MobileProductListProps) => {
   const dispatch = useAppDispatch();
   const { openDialog, closeDialog } = useDialog();
   const { [LoadingKeys.GET_PRODUCTS]: isLoading } = useLoading();
+  const { isUser } = useAuth();
 
   const itemCount = products.length + 1;
   const itemHeight = ProductListItemHeight.MOBILE;
@@ -113,12 +115,17 @@ const MobileProductList = (props: MobileProductListProps) => {
           />
         )}
       </List>
-      <SelectionPanel isOpen={isSelectMode} selectedCount={selectedIds.length} onClose={handleCloseSelectionPanel}>
-        <IconButton onClick={handleClickDeleteAll}>
-          <DeleteOutlineIcon />
-        </IconButton>
-      </SelectionPanel>
-      <CreationFab show={!isSelectMode} onClick={openProductDialog} />
+
+      {!isUser && (
+        <>
+          <SelectionPanel isOpen={isSelectMode} selectedCount={selectedIds.length} onClose={handleCloseSelectionPanel}>
+            <IconButton onClick={handleClickDeleteAll}>
+              <DeleteOutlineIcon />
+            </IconButton>
+          </SelectionPanel>
+          <CreationFab show={!isSelectMode} onClick={openProductDialog} />
+        </>
+      )}
     </>
   );
 };

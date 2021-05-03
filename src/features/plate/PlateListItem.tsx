@@ -25,6 +25,7 @@ import { PlateDto } from './interface';
 import PlateName from 'components/PlateName';
 import { Skeleton } from '@material-ui/lab';
 import { highlight } from 'utils/string';
+import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useTranslation } from 'react-i18next';
 
@@ -77,6 +78,7 @@ const PlateListItem = ({ plate, itemHeight, isSelected = false, productCountToDi
   const { name, productName } = useAppSelector(plateSelectors.query);
   const { toggleSelection, deletePlates } = plateActions;
   const { openDialog, closeDialog } = useDialog();
+  const { isUser } = useAuth();
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -118,9 +120,11 @@ const PlateListItem = ({ plate, itemHeight, isSelected = false, productCountToDi
 
   return (
     <ListItem divider style={{ height: itemHeight }} selected={isSelected}>
-      <ListItemIcon>
-        <Checkbox edge="start" color="primary" checked={isSelected} onChange={handleSelectionChange} />
-      </ListItemIcon>
+      {!isUser && (
+        <ListItemIcon>
+          <Checkbox edge="start" color="primary" checked={isSelected} onChange={handleSelectionChange} />
+        </ListItemIcon>
+      )}
       <ListItemText>
         <div className={classes.plateDetail}>
           <PlateName className={classes.title} plate={plate} searchText={name} />
@@ -135,30 +139,35 @@ const PlateListItem = ({ plate, itemHeight, isSelected = false, productCountToDi
           </div>
         </div>
       </ListItemText>
-      <ListItemSecondaryAction>
-        <IconButton edge="end" onClick={openMenu}>
-          <MoreVertIcon />
-        </IconButton>
-        <Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={closeMenu}>
-          {actionButtons.map(({ label, onClick }) => (
-            <MenuItem key={label} onClick={handleClickMenuItem(onClick)}>
-              {label}
-            </MenuItem>
-          ))}
-        </Menu>
-      </ListItemSecondaryAction>
+      {!isUser && (
+        <ListItemSecondaryAction>
+          <IconButton edge="end" onClick={openMenu}>
+            <MoreVertIcon />
+          </IconButton>
+          <Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={closeMenu}>
+            {actionButtons.map(({ label, onClick }) => (
+              <MenuItem key={label} onClick={handleClickMenuItem(onClick)}>
+                {label}
+              </MenuItem>
+            ))}
+          </Menu>
+        </ListItemSecondaryAction>
+      )}
     </ListItem>
   );
 };
 
 const PlateListItemSkeleton = memo(({ itemHeight }: { itemHeight: number }) => {
   const classes = useStyles();
+  const { isUser } = useAuth();
 
   return (
     <ListItem divider style={{ height: itemHeight }}>
-      <ListItemIcon>
-        <Skeleton variant="rect" width={24} height={24} />
-      </ListItemIcon>
+      {!isUser && (
+        <ListItemIcon>
+          <Skeleton variant="rect" width={24} height={24} />
+        </ListItemIcon>
+      )}
       <ListItemText>
         <div className={classes.plateDetail}>
           <Skeleton className={classes.title} variant="rect" width="80%" height={30} />
@@ -167,9 +176,11 @@ const PlateListItemSkeleton = memo(({ itemHeight }: { itemHeight: number }) => {
           </div>
         </div>
       </ListItemText>
-      <ListItemSecondaryAction>
-        <Skeleton variant="circle" width={48} height={48} style={{ marginRight: -12 }} />
-      </ListItemSecondaryAction>
+      {!isUser && (
+        <ListItemSecondaryAction>
+          <Skeleton variant="circle" width={48} height={48} style={{ marginRight: -12 }} />
+        </ListItemSecondaryAction>
+      )}
     </ListItem>
   );
 });

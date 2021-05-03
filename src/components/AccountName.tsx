@@ -6,6 +6,7 @@ import { AccountDto } from 'features/account/interface';
 import { accountApi } from 'features/account/accountApi';
 import classNames from 'classnames';
 import { highlight } from 'utils/string';
+import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -16,6 +17,12 @@ const useStyles = makeStyles((theme: Theme) =>
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       textAlign: 'left',
+    },
+    linkDisabled: {
+      cursor: 'default',
+      '&:hover': {
+        textDecoration: 'none',
+      },
     },
     accountName: {},
   })
@@ -31,8 +38,12 @@ export interface AccountNameProps {
 const AccountName = ({ account, className, linkClassName, searchText = '' }: AccountNameProps) => {
   const classes = useStyles();
   const { openDialog, closeDialog } = useDialog();
+  const { isUser } = useAuth();
 
   const openAccountDetailDialog = async () => {
+    if (isUser) {
+      return;
+    }
     const data = await accountApi.getAccount(account.id);
     openDialog(<AccountDetailDialog account={data} onClose={closeDialog} />);
   };
@@ -40,7 +51,7 @@ const AccountName = ({ account, className, linkClassName, searchText = '' }: Acc
   return (
     <div className={className}>
       <Link
-        className={classNames(classes.accountNameLink, linkClassName)}
+        className={classNames([classes.accountNameLink, linkClassName, isUser && classes.linkDisabled])}
         component="button"
         variant="h6"
         color="initial"

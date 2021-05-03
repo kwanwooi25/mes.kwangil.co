@@ -39,6 +39,7 @@ import { WorkOrderStatus } from 'const';
 import WorkOrdersCompleteDialog from 'components/dialog/WorkOrdersComplete';
 import { differenceInBusinessDays } from 'date-fns';
 import { getWorkOrderToUpdate } from 'utils/workOrder';
+import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useTranslation } from 'react-i18next';
@@ -180,6 +181,7 @@ const WorkOrderListItem = ({ workOrder, itemHeight, isSelected }: WorkOrderListI
   const query = useAppSelector(workOrderSelectors.query);
   const { toggleSelection, deleteWorkOrders, updateWorkOrder } = workOrderActions;
   const { openDialog, closeDialog } = useDialog();
+  const { isUser } = useAuth();
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -278,15 +280,17 @@ const WorkOrderListItem = ({ workOrder, itemHeight, isSelected }: WorkOrderListI
       selected={isSelected}
       className={classes[workOrder.workOrderStatus]}
     >
-      <ListItemIcon>
-        <Checkbox
-          edge="start"
-          color="primary"
-          checked={isSelected}
-          onChange={handleSelectionChange}
-          disabled={isCompleted}
-        />
-      </ListItemIcon>
+      {!isUser && (
+        <ListItemIcon>
+          <Checkbox
+            edge="start"
+            color="primary"
+            checked={isSelected}
+            onChange={handleSelectionChange}
+            disabled={isCompleted}
+          />
+        </ListItemIcon>
+      )}
       <ListItemText>
         <div className={classes.workOrderDetail}>
           <div className={classes.workOrderId}>
@@ -330,6 +334,7 @@ const WorkOrderListItem = ({ workOrder, itemHeight, isSelected }: WorkOrderListI
                 options={workOrderStatusOptions}
                 onChange={handleChangeWorkOrderStatus}
                 isNative={isMobileLayout}
+                disabled={isUser}
               />
             ) : (
               <DoneIcon fontSize="large" />
@@ -361,46 +366,51 @@ const WorkOrderListItem = ({ workOrder, itemHeight, isSelected }: WorkOrderListI
           </div>
         </div>
       </ListItemText>
-      <ListItemSecondaryAction>
-        <IconButton edge="end" onClick={openMenu}>
-          <MoreVertIcon />
-        </IconButton>
-        <Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={closeMenu}>
-          <MenuItem style={{ padding: 0 }}>
-            <BlobProvider document={<WorkOrderPDF workOrders={[workOrder]} />}>
-              {({ url, loading }) => (
-                <Link
-                  component="button"
-                  className={classes.printButton}
-                  color="textPrimary"
-                  onClick={handleClickPrint(url as string)}
-                  disabled={loading}
-                >
-                  {loading && <Loading size="small" />}
-                  {t('common:print')}
-                </Link>
-              )}
-            </BlobProvider>
-          </MenuItem>
-          {actionButtons.map(({ label, onClick }) => (
-            <MenuItem key={label} onClick={handleClickMenuItem(onClick)}>
-              {label}
+      {!isUser && (
+        <ListItemSecondaryAction>
+          <IconButton edge="end" onClick={openMenu}>
+            <MoreVertIcon />
+          </IconButton>
+          <Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={closeMenu}>
+            <MenuItem style={{ padding: 0 }}>
+              <BlobProvider document={<WorkOrderPDF workOrders={[workOrder]} />}>
+                {({ url, loading }) => (
+                  <Link
+                    component="button"
+                    className={classes.printButton}
+                    color="textPrimary"
+                    onClick={handleClickPrint(url as string)}
+                    disabled={loading}
+                  >
+                    {loading && <Loading size="small" />}
+                    {t('common:print')}
+                  </Link>
+                )}
+              </BlobProvider>
             </MenuItem>
-          ))}
-        </Menu>
-      </ListItemSecondaryAction>
+            {actionButtons.map(({ label, onClick }) => (
+              <MenuItem key={label} onClick={handleClickMenuItem(onClick)}>
+                {label}
+              </MenuItem>
+            ))}
+          </Menu>
+        </ListItemSecondaryAction>
+      )}
     </ListItem>
   );
 };
 
 const WorkOrderListItemSkeleton = memo(({ itemHeight }: { itemHeight: number }) => {
   const classes = useStyles();
+  const { isUser } = useAuth();
 
   return (
     <ListItem divider style={{ height: itemHeight }}>
-      <ListItemIcon>
-        <Skeleton variant="rect" width={24} height={24} />
-      </ListItemIcon>
+      {!isUser && (
+        <ListItemIcon>
+          <Skeleton variant="rect" width={24} height={24} />
+        </ListItemIcon>
+      )}
       <ListItemText>
         <div className={classes.workOrderDetail}>
           <Skeleton className={classes.workOrderId} variant="rect" width="80%" height={24} />
@@ -424,9 +434,11 @@ const WorkOrderListItemSkeleton = memo(({ itemHeight }: { itemHeight: number }) 
           </div>
         </div>
       </ListItemText>
-      <ListItemSecondaryAction>
-        <Skeleton variant="circle" width={48} height={48} style={{ marginRight: -12 }} />
-      </ListItemSecondaryAction>
+      {!isUser && (
+        <ListItemSecondaryAction>
+          <Skeleton variant="circle" width={48} height={48} style={{ marginRight: -12 }} />
+        </ListItemSecondaryAction>
+      )}
     </ListItem>
   );
 });

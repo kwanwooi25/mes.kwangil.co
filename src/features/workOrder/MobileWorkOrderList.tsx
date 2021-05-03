@@ -14,6 +14,7 @@ import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
 import WorkOrderDialog from 'components/dialog/WorkOrder';
 import WorkOrderListItem from './WorkOrderListItem';
 import { formatDigit } from 'utils/string';
+import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useLoading } from 'features/loading/loadingHook';
 import { useTranslation } from 'react-i18next';
@@ -41,6 +42,7 @@ const MobileWorkOrderList = (props: MobileWorkOrderListProps) => {
   const dispatch = useAppDispatch();
   const { openDialog, closeDialog } = useDialog();
   const { [LoadingKeys.GET_WORK_ORDERS]: isLoading } = useLoading();
+  const { isUser } = useAuth();
 
   const itemCount = workOrders.length + 1;
   const itemHeight = WorkOrderListItemHeight.MOBILE;
@@ -112,12 +114,16 @@ const MobileWorkOrderList = (props: MobileWorkOrderListProps) => {
           />
         )}
       </List>
-      <SelectionPanel isOpen={isSelectMode} selectedCount={selectedIds.length} onClose={handleCloseSelectionPanel}>
-        <IconButton onClick={handleClickDeleteAll}>
-          <DeleteOutlineIcon />
-        </IconButton>
-      </SelectionPanel>
-      <CreationFab show={!isSelectMode} onClick={openWorkOrderDialog} />
+      {!isUser && (
+        <>
+          <SelectionPanel isOpen={isSelectMode} selectedCount={selectedIds.length} onClose={handleCloseSelectionPanel}>
+            <IconButton onClick={handleClickDeleteAll}>
+              <DeleteOutlineIcon />
+            </IconButton>
+          </SelectionPanel>
+          <CreationFab show={!isSelectMode} onClick={openWorkOrderDialog} />
+        </>
+      )}
     </>
   );
 };

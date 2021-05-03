@@ -14,6 +14,7 @@ import PlateListItem from './PlateListItem';
 import SelectionPanel from 'components/SelectionPanel';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
 import { formatDigit } from 'utils/string';
+import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useLoading } from 'features/loading/loadingHook';
 import { useTranslation } from 'react-i18next';
@@ -35,6 +36,7 @@ const MobilePlateList = (props: MobilePlateListProps) => {
   const dispatch = useAppDispatch();
   const { [LoadingKeys.GET_PLATES]: isLoading } = useLoading();
   const { openDialog, closeDialog } = useDialog();
+  const { isUser } = useAuth();
   const query = useAppSelector(plateSelectors.query);
   const hasMore = useAppSelector(plateSelectors.hasMore);
   const totalCount = useAppSelector(plateSelectors.totalCount);
@@ -114,12 +116,16 @@ const MobilePlateList = (props: MobilePlateListProps) => {
           />
         )}
       </List>
-      <SelectionPanel isOpen={isSelectMode} selectedCount={selectedIds.length} onClose={handleCloseSelectionPanel}>
-        <IconButton onClick={handleClickDeleteAll}>
-          <DeleteOutlineIcon />
-        </IconButton>
-      </SelectionPanel>
-      <CreationFab show={!isSelectMode} onClick={openPlateDialog} />
+      {!isUser && (
+        <>
+          <SelectionPanel isOpen={isSelectMode} selectedCount={selectedIds.length} onClose={handleCloseSelectionPanel}>
+            <IconButton onClick={handleClickDeleteAll}>
+              <DeleteOutlineIcon />
+            </IconButton>
+          </SelectionPanel>
+          <CreationFab show={!isSelectMode} onClick={openPlateDialog} />
+        </>
+      )}
     </>
   );
 };

@@ -19,6 +19,7 @@ import PublishIcon from '@material-ui/icons/Publish';
 import SubToolbar from 'components/SubToolbar';
 import { downloadWorkbook } from 'utils/excel';
 import { productApi } from './productApi';
+import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useLoading } from 'features/loading/loadingHook';
 import { useScreenSize } from 'hooks/useScreenSize';
@@ -33,6 +34,7 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
   const { [LoadingKeys.GET_PRODUCTS]: isLoading } = useLoading();
   const { windowHeight, isDesktopLayout } = useScreenSize();
   const { openDialog, closeDialog } = useDialog();
+  const { isUser } = useAuth();
   const dispatch = useAppDispatch();
   const query = useAppSelector(productSelectors.query);
   const currentPage = useAppSelector(productSelectors.currentPage);
@@ -103,53 +105,56 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
     );
   };
 
+  const selectModeButtons = [
+    <Tooltip key="delete-all" title={t('common:deleteAll') as string} placement="top">
+      <IconButton onClick={handleClickDeleteAll}>
+        <DeleteOutlineIcon />
+      </IconButton>
+    </Tooltip>,
+  ];
+
+  const toolBarButtons = [
+    <Tooltip key="add-product" title={t('addProduct') as string} placement="top">
+      <IconButton onClick={handleClickCreate}>
+        <AddIcon />
+      </IconButton>
+    </Tooltip>,
+    <Tooltip key="add-product-bulk" title={t('common:createBulk') as string} placement="top">
+      <IconButton onClick={handleClickCreateBulk}>
+        <PublishIcon />
+      </IconButton>
+    </Tooltip>,
+    <Tooltip key="download-products" title={t('common:downloadExcel') as string} placement="top">
+      <IconButton onClick={handleClickDownload} disabled={isDownloading}>
+        {isDownloading && <Loading />}
+        <GetAppIcon />
+      </IconButton>
+    </Tooltip>,
+  ];
+
   useEffect(() => {
-    const containerMaxHeight = windowHeight - (64 * 2 + 56);
+    const toolBarCount = isUser ? 1 : 2;
+    const containerMaxHeight = windowHeight - (64 * toolBarCount + 56);
     const limit = Math.floor(containerMaxHeight / itemHeight);
     dispatch(getProducts({ offset: 0, limit }));
 
     return () => {
       dispatch(resetProducts());
     };
-  }, [windowHeight, itemHeight]);
+  }, [windowHeight, itemHeight, isUser]);
 
   return (
     <>
-      <SubToolbar
-        isSelectedAll={isSelectedAll}
-        isIndeterminate={isIndeterminate}
-        onToggleSelectAll={handleToggleSelectAll}
-        onResetSelection={handleResetSelection}
-        selectedCount={selectedIds.length}
-        buttons={
-          isSelectMode ? (
-            <Tooltip title={t('common:deleteAll') as string} placement="top">
-              <IconButton onClick={handleClickDeleteAll}>
-                <DeleteOutlineIcon />
-              </IconButton>
-            </Tooltip>
-          ) : (
-            [
-              <Tooltip key="add-product" title={t('addProduct') as string} placement="top">
-                <IconButton onClick={handleClickCreate}>
-                  <AddIcon />
-                </IconButton>
-              </Tooltip>,
-              <Tooltip key="add-product-bulk" title={t('common:createBulk') as string} placement="top">
-                <IconButton onClick={handleClickCreateBulk}>
-                  <PublishIcon />
-                </IconButton>
-              </Tooltip>,
-              <Tooltip key="download-products" title={t('common:downloadExcel') as string} placement="top">
-                <IconButton onClick={handleClickDownload} disabled={isDownloading}>
-                  {isDownloading && <Loading />}
-                  <GetAppIcon />
-                </IconButton>
-              </Tooltip>,
-            ]
-          )
-        }
-      />
+      {!isUser && (
+        <SubToolbar
+          isSelectedAll={isSelectedAll}
+          isIndeterminate={isIndeterminate}
+          onToggleSelectAll={handleToggleSelectAll}
+          onResetSelection={handleResetSelection}
+          selectedCount={selectedIds.length}
+          buttons={isSelectMode ? selectModeButtons : toolBarButtons}
+        />
+      )}
       <PaginatedList
         height={(query.limit || DEFAULT_LIST_LIMIT) * itemHeight}
         showPagination={!!products.length}

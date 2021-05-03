@@ -1,9 +1,9 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
+import { FormControl, InputLabel, MenuItem, Select, SelectProps } from '@material-ui/core';
 import React, { ChangeEvent } from 'react';
 
 import { WorkOrderStatus } from 'const';
 
-export interface SelectWorkOrderStatusProps {
+export interface SelectWorkOrderStatusProps extends Omit<SelectProps, 'onChange'> {
   className?: string;
   label?: string;
   name?: string;
@@ -21,6 +21,7 @@ const SelectWorkOrderStatus = ({
   isNative = false,
   options,
   onChange,
+  ...props
 }: SelectWorkOrderStatusProps) => {
   const handleChange = (e: ChangeEvent<{ name?: string; value: unknown }>) => {
     onChange(e.target.value as WorkOrderStatus);
@@ -31,15 +32,7 @@ const SelectWorkOrderStatus = ({
   return (
     <FormControl variant="outlined" className={className}>
       {label && <InputLabel>{label}</InputLabel>}
-      <Select
-        native={isNative}
-        value={value}
-        onChange={handleChange}
-        label={label}
-        inputProps={{
-          name,
-        }}
-      >
+      <Select {...props} native={isNative} value={value} onChange={handleChange} label={label} inputProps={{ name }}>
         {options.map(({ label, value }) => (
           <MenuItemComponent key={value} value={value}>
             {label}

@@ -23,6 +23,7 @@ import WorkOrderDialog from 'components/dialog/WorkOrder';
 import WorkOrderPDF from 'components/WorkOrderPDF';
 import WorkOrdersCompleteDialog from 'components/dialog/WorkOrdersComplete';
 import { downloadWorkbook } from 'utils/excel';
+import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useLoading } from 'features/loading/loadingHook';
 import { useScreenSize } from 'hooks/useScreenSize';
@@ -38,6 +39,7 @@ const PaginatedWorkOrderList = (props: PaginatedWorkOrderListProps) => {
   const { [LoadingKeys.GET_WORK_ORDERS]: isLoading } = useLoading();
   const { windowHeight, isDesktopLayout } = useScreenSize();
   const { openDialog, closeDialog } = useDialog();
+  const { isUser } = useAuth();
   const dispatch = useAppDispatch();
   const query = useAppSelector(workOrderSelectors.query);
   const currentPage = useAppSelector(workOrderSelectors.currentPage);
@@ -173,26 +175,29 @@ const PaginatedWorkOrderList = (props: PaginatedWorkOrderListProps) => {
   ];
 
   useEffect(() => {
-    const containerMaxHeight = windowHeight - (64 * 2 + 56);
+    const toolBarCount = isUser ? 1 : 2;
+    const containerMaxHeight = windowHeight - (64 * toolBarCount + 56);
     const limit = Math.floor(containerMaxHeight / itemHeight);
     dispatch(getList({ ...query, offset: 0, limit }));
 
     return () => {
       dispatch(resetList());
     };
-  }, [windowHeight, itemHeight]);
+  }, [windowHeight, itemHeight, isUser]);
 
   return (
     <>
-      <SubToolbar
-        isSelectAllDisabled={isSelectAllDisabled}
-        isSelectedAll={isSelectedAll}
-        isIndeterminate={isIndeterminate}
-        onToggleSelectAll={handleToggleSelectAll}
-        onResetSelection={handleResetSelection}
-        selectedCount={selectedIds.length}
-        buttons={isSelectMode ? selectModeButtons : toolbarButtons}
-      />
+      {!isUser && (
+        <SubToolbar
+          isSelectAllDisabled={isSelectAllDisabled}
+          isSelectedAll={isSelectedAll}
+          isIndeterminate={isIndeterminate}
+          onToggleSelectAll={handleToggleSelectAll}
+          onResetSelection={handleResetSelection}
+          selectedCount={selectedIds.length}
+          buttons={isSelectMode ? selectModeButtons : toolbarButtons}
+        />
+      )}
       <PaginatedList
         height={(query.limit || DEFAULT_LIST_LIMIT) * itemHeight}
         showPagination={!!workOrders.length}
