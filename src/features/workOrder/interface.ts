@@ -1,8 +1,7 @@
-import { DeliveryMethod, PlateStatus, WorkOrderStatus } from 'const';
-
+import { DeliveryMethod, PlateStatus, PrintSide, WorkOrderStatus } from 'const';
 import { AccountDto } from 'features/account/interface';
-import { BaseQuery } from 'types/api';
 import { ProductDto } from 'features/product/interface';
+import { BaseQuery } from 'types/api';
 
 export interface WorkOrderDto {
   id: string;
@@ -50,4 +49,13 @@ export interface GetWorkOrdersQuery extends BaseQuery {
   accountName?: string;
   productName?: string;
   includeCompleted?: boolean;
+}
+
+export interface GetWorkOrderCountQuery {
+  orderedAt: string[];
+}
+
+export interface WorkOrderCount {
+  byStatus: { [key in WorkOrderStatus]: number };
+  byPrintSide: { [key in PrintSide]: number };
 }

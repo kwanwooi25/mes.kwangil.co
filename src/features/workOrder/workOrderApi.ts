@@ -1,5 +1,9 @@
-import { CreateWorkOrderDto, CreateWorkOrdersDto, GetWorkOrdersQuery, UpdateWorkOrderDto } from './interface';
 import { apiClient, handleRequest } from 'app/apiClient';
+
+import {
+    CreateWorkOrderDto, CreateWorkOrdersDto, GetWorkOrderCountQuery, GetWorkOrdersQuery,
+    UpdateWorkOrderDto
+} from './interface';
 
 const urlPrefix = '/workOrder';
 
@@ -9,6 +13,8 @@ const api = {
     handleRequest(await apiClient.get(`${urlPrefix}/list`, { params: { ...query } })),
   getAllWorkOrders: async (query: GetWorkOrdersQuery) =>
     handleRequest(await apiClient.get(`${urlPrefix}/list/all`, { params: { ...query } })),
+  getWorkOrderCount: async (query: GetWorkOrderCountQuery) =>
+    handleRequest(await apiClient.get(`${urlPrefix}/count`, { params: { ...query } })),
   createWorkOrder: async (workOrder: CreateWorkOrderDto) =>
     handleRequest(await apiClient.post(`${urlPrefix}`, workOrder)),
   createWorkOrders: async (workOrders: CreateWorkOrdersDto[]) =>

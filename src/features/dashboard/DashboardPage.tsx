@@ -1,10 +1,30 @@
 import Layout from 'layouts/Layout';
-import { Typography } from '@material-ui/core';
+import { useTranslation } from 'react-i18next';
+
+import { createStyles, makeStyles, Theme } from '@material-ui/core';
+
+import WorkOrderSummaryCard from './WorkOrderSummaryCard';
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    dashboardCardContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      padding: theme.spacing(1),
+    },
+  })
+);
 
 const DashboardPage = () => {
+  const { t } = useTranslation('dashboard');
+  const classes = useStyles();
+
   return (
-    <Layout pageTitle="Dashboard">
-      <Typography>Dashboard Page</Typography>
+    <Layout pageTitle={t('pageTitle')}>
+      <div className={classes.dashboardCardContainer}>
+        <WorkOrderSummaryCard />
+      </div>
     </Layout>
   );
 };

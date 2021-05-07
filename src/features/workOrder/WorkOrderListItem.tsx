@@ -1,66 +1,53 @@
-import {
-  Checkbox,
-  Chip,
-  IconButton,
-  Link,
-  ListItem,
-  ListItemIcon,
-  ListItemProps,
-  ListItemSecondaryAction,
-  ListItemText,
-  Menu,
-  MenuItem,
-  Theme,
-  Typography,
-  createStyles,
-  lighten,
-  makeStyles,
-} from '@material-ui/core';
-import React, { MouseEvent, memo, useCallback, useState } from 'react';
-import { camelCase, upperFirst } from 'lodash';
-import { grey, lightGreen, orange, red, yellow } from '@material-ui/core/colors';
 import { useAppDispatch, useAppSelector } from 'app/store';
-import { workOrderActions, workOrderSelectors } from './workOrderSlice';
-
 import AccountName from 'components/AccountName';
-import { BlobProvider } from '@react-pdf/renderer';
 import ConfirmDialog from 'components/dialog/Confirm';
-import DoneIcon from '@material-ui/icons/Done';
+import WorkOrderDialog from 'components/dialog/WorkOrder';
+import WorkOrdersCompleteDialog from 'components/dialog/WorkOrdersComplete';
 import Loading from 'components/Loading';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ProductName from 'components/ProductName';
 import SelectWorkOrderStatus from 'components/SelectWorkOrderStatus';
-import { Skeleton } from '@material-ui/lab';
-import WorkOrderDialog from 'components/dialog/WorkOrder';
-import { WorkOrderDto } from './interface';
 import WorkOrderId from 'components/WorkOrderId';
 import WorkOrderPDF from 'components/WorkOrderPDF';
 import { WorkOrderStatus } from 'const';
-import WorkOrdersCompleteDialog from 'components/dialog/WorkOrdersComplete';
 import { differenceInBusinessDays } from 'date-fns';
-import { getWorkOrderToUpdate } from 'utils/workOrder';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useScreenSize } from 'hooks/useScreenSize';
-import { useTranslation } from 'react-i18next';
 import { useWorkOrderDisplay } from 'hooks/useWorkOrderDisplay';
+import { camelCase, upperFirst } from 'lodash';
+import React, { memo, MouseEvent, useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { getWorkOrderToUpdate } from 'utils/workOrder';
+
+import {
+    Checkbox, Chip, createStyles, IconButton, Link, ListItem, ListItemIcon, ListItemProps,
+    ListItemSecondaryAction, ListItemText, makeStyles, Menu, MenuItem, Theme, Typography
+} from '@material-ui/core';
+import { orange, red, yellow } from '@material-ui/core/colors';
+import DoneIcon from '@material-ui/icons/Done';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { Skeleton } from '@material-ui/lab';
+import { BlobProvider } from '@react-pdf/renderer';
+
+import { WorkOrderDto } from './interface';
+import { workOrderActions, workOrderSelectors } from './workOrderSlice';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     [WorkOrderStatus.NOT_STARTED]: {
-      background: lighten(red[50], 0.3),
+      background: theme.palette.NOT_STARTED.light,
     },
     [WorkOrderStatus.EXTRUDING]: {
-      background: lighten(orange[50], 0.3),
+      background: theme.palette.EXTRUDING.light,
     },
     [WorkOrderStatus.PRINTING]: {
-      background: lighten(yellow[50], 0.3),
+      background: theme.palette.PRINTING.light,
     },
     [WorkOrderStatus.CUTTING]: {
-      background: lighten(lightGreen[50], 0.3),
+      background: theme.palette.CUTTING.light,
     },
     [WorkOrderStatus.COMPLETED]: {
-      background: grey[100],
+      background: theme.palette.COMPLETED.light,
     },
     workOrderDetail: {
       display: 'grid',

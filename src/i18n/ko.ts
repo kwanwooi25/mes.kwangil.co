@@ -37,6 +37,11 @@ export default {
     treatment: '처리',
     loadMore: '더보기',
     complete: '완료',
+    showAll: '전체보기',
+    lastMonth: '지난달',
+    thisMonth: '이번달',
+    lastYear: '지난해',
+    thisYear: '올해',
 
     account: '거래처',
     product: '제품',
@@ -73,7 +78,8 @@ export default {
     loginFailed: '로그인 실패: 이메일 혹은 비밀번호를 확인하세요.',
   },
   dashboard: {
-    pageTitle: 'Dashboard',
+    pageTitle: '대시보드',
+    workOrderCount: '주문내역',
   },
   accounts: {
     pageTitle: '거래처 관리',
