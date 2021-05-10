@@ -10,7 +10,9 @@ import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from 'utils/date';
 
-import { createStyles, List, ListItem, makeStyles, Theme, Typography } from '@material-ui/core';
+import {
+    Chip, createStyles, List, ListItem, makeStyles, Theme, Typography
+} from '@material-ui/core';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import { Pagination, Skeleton } from '@material-ui/lab';
 
@@ -25,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) =>
       gridTemplateColumns: '1fr auto',
       gridTemplateAreas: `
         "accountName deliverBy"
-        "productName orderQuantity"
+        "productName workOrderStatus"
         "productSize orderQuantity"
       `,
       gridGap: theme.spacing(0.5),
@@ -42,6 +44,12 @@ const useStyles = makeStyles((theme: Theme) =>
       '& .deliverBy': {
         gridArea: 'deliverBy',
         justifySelf: 'end',
+        alignSelf: 'start',
+      },
+      '& .workOrderStatus': {
+        gridArea: 'workOrderStatus',
+        justifySelf: 'end',
+        alignSelf: 'center',
       },
       '& .orderQuantity': {
         gridArea: 'orderQuantity',
@@ -73,7 +81,14 @@ const useStyles = makeStyles((theme: Theme) =>
 const WorkOrderListItem = ({ workOrder }: { workOrder: WorkOrderDto }) => {
   const { t } = useTranslation();
   const classes = useStyles();
-  const { productSize, orderQuantity, deliverBy, deliverByStyle } = useWorkOrderDisplay(workOrder, t);
+  const {
+    productSize,
+    orderQuantity,
+    deliverBy,
+    deliverByStyle,
+    workOrderStatus,
+    workOrderStatusStyle,
+  } = useWorkOrderDisplay(workOrder, t);
 
   return (
     <ListItem className={classes.workOrderListItem} divider>
@@ -83,6 +98,7 @@ const WorkOrderListItem = ({ workOrder }: { workOrder: WorkOrderDto }) => {
       <Typography className="deliverBy" style={deliverByStyle}>
         {deliverBy}
       </Typography>
+      <Chip className="workOrderStatus" size="small" label={workOrderStatus} style={workOrderStatusStyle} />
       <Typography className="orderQuantity">{orderQuantity}</Typography>
     </ListItem>
   );
@@ -97,6 +113,7 @@ const WorkOrderListItemSkeleton = () => {
       <Skeleton className="productName" width="80%" height={32} />
       <Skeleton className="productSize" width="50%" height={21} />
       <Skeleton className="deliverBy" width={85} height={24} />
+      <Skeleton className="workOrderStatus" width={50} height={24} />
       <Skeleton className="orderQuantity" width={85} height={30} />
     </ListItem>
   );
@@ -188,7 +205,7 @@ const DeadlineStatusCard = (props: DeadlineStatusCardProps) => {
         options={deadlineStatusOptions}
         onChange={handleChangeDeadlineStatus}
       />
-      <List disablePadding style={{ height: 102 * workOrderCountToDisplay }}>
+      <List disablePadding style={{ height: 111 * workOrderCountToDisplay }}>
         {isLoading ? (
           renderSkeletons()
         ) : !workOrdersToShow.length ? (

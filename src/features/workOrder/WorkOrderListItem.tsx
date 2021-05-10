@@ -13,7 +13,6 @@ import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useWorkOrderDisplay } from 'hooks/useWorkOrderDisplay';
-import { camelCase, upperFirst } from 'lodash';
 import React, { memo, MouseEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getWorkOrderToUpdate } from 'utils/workOrder';
@@ -233,7 +232,7 @@ const WorkOrderListItem = ({ workOrder, itemHeight, isSelected }: WorkOrderListI
   const workOrderStatusOptions = Object.values(WorkOrderStatus)
     .filter((value) => value !== WorkOrderStatus.COMPLETED)
     .map((value) => ({
-      label: t(`workOrderStatus${upperFirst(camelCase(value))}`),
+      label: t(`workOrderStatus:${value}`),
       value,
     }));
   const productNameMaxWidth = isDesktopLayout ? 295 : isTabletLayout ? 280 : isMobileLayout ? 480 : undefined;

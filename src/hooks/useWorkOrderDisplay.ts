@@ -1,7 +1,8 @@
-import { DATE_FORMAT, PrintSide } from 'const';
+import { DATE_FORMAT, PrintSide, WorkOrderStatus } from 'const';
 import { differenceInBusinessDays, format, parseISO } from 'date-fns';
 import { WorkOrderDto } from 'features/workOrder/interface';
 import { TFunction } from 'i18next';
+import { theme } from 'lib/muiTheme';
 import { capitalize } from 'lodash';
 import { CSSProperties } from 'react';
 import { getProductSize, getProductSummary } from 'utils/product';
@@ -9,6 +10,22 @@ import { formatDigit } from 'utils/string';
 import { getWeight } from 'utils/workOrder';
 
 import { orange, red, yellow } from '@material-ui/core/colors';
+
+const BACKGROUND_COLORS = {
+  [WorkOrderStatus.NOT_STARTED]: theme.palette.NOT_STARTED.light,
+  [WorkOrderStatus.EXTRUDING]: theme.palette.EXTRUDING.light,
+  [WorkOrderStatus.PRINTING]: theme.palette.PRINTING.light,
+  [WorkOrderStatus.CUTTING]: theme.palette.CUTTING.light,
+  [WorkOrderStatus.COMPLETED]: theme.palette.COMPLETED.light,
+};
+
+const COLORS = {
+  [WorkOrderStatus.NOT_STARTED]: theme.palette.NOT_STARTED.dark,
+  [WorkOrderStatus.EXTRUDING]: theme.palette.EXTRUDING.dark,
+  [WorkOrderStatus.PRINTING]: theme.palette.PRINTING.dark,
+  [WorkOrderStatus.CUTTING]: theme.palette.CUTTING.dark,
+  [WorkOrderStatus.COMPLETED]: theme.palette.COMPLETED.dark,
+};
 
 export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
   const { product } = workOrder;
@@ -48,6 +65,12 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
     fontWeight: !isCompleted && deliverByRemaining <= 7 ? 'bold' : 'normal',
   };
 
+  const workOrderStatus = t(`workOrders:workOrderStatus:${workOrder.workOrderStatus}`);
+  const workOrderStatusStyle: CSSProperties = {
+    color: COLORS[workOrder.workOrderStatus],
+    backgroundColor: BACKGROUND_COLORS[workOrder.workOrderStatus],
+  };
+
   const plateStatus = t(`workOrders:plateStatus${capitalize(workOrder.plateStatus)}`);
 
   const accountName = product.account.name;
@@ -70,6 +93,8 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
     completedWeight,
     deliveryTags,
     plateStatus,
+    workOrderStatus,
+    workOrderStatusStyle,
 
     accountName,
     productName,

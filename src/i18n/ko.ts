@@ -1,4 +1,4 @@
-import { DeadlineStatus } from 'const';
+import { DeadlineStatus, WorkOrderStatus } from 'const';
 
 /* eslint-disable import/no-anonymous-default-export */
 export default {
@@ -279,11 +279,13 @@ export default {
     completedQuantity: '완료수량',
     deliveredAt: '납품일',
     deliveredQuantity: '납품수량',
-    workOrderStatusNotStarted: '시작전',
-    workOrderStatusExtruding: '압출중',
-    workOrderStatusPrinting: '인쇄중',
-    workOrderStatusCutting: '가공중',
-    workOrderStatusCompleted: '완료',
+    workOrderStatus: {
+      [WorkOrderStatus.NOT_STARTED]: '시작전',
+      [WorkOrderStatus.EXTRUDING]: '압출중',
+      [WorkOrderStatus.PRINTING]: '인쇄중',
+      [WorkOrderStatus.CUTTING]: '가공중',
+      [WorkOrderStatus.COMPLETED]: '완료',
+    },
     accountName: '업체명',
     productName: '품명',
     productSize: '규격',

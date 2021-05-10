@@ -7,7 +7,6 @@ import { Path, PrintSide, WorkOrderStatus } from 'const';
 import { endOfMonth, endOfYear, startOfMonth, startOfYear, subMonths, subYears } from 'date-fns';
 import { WorkOrderCount } from 'features/workOrder/interface';
 import { workOrderApi } from 'features/workOrder/workOrderApi';
-import { camelCase, upperFirst } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from 'utils/date';
@@ -37,6 +36,11 @@ const useStyles = makeStyles((theme: Theme) =>
           backgroundColor: theme.palette.success.main,
           borderTopLeftRadius: theme.spacing(1),
           borderBottomLeftRadius: theme.spacing(1),
+          '& .percent': {
+            fontSize: 12,
+            fontWeight: 'normal',
+            marginLeft: theme.spacing(1),
+          },
         },
       },
       '& .print': {
@@ -49,6 +53,11 @@ const useStyles = makeStyles((theme: Theme) =>
           backgroundColor: theme.palette.warning.main,
           borderTopRightRadius: theme.spacing(1),
           borderBottomRightRadius: theme.spacing(1),
+          '& .percent': {
+            fontSize: 12,
+            fontWeight: 'normal',
+            marginRight: theme.spacing(1),
+          },
         },
       },
     },
@@ -218,19 +227,23 @@ const WorkOrderSummaryCard = (props: WorkOrderSummaryCardProps) => {
       <div className={classes.workOrderCountByPrintSide}>
         <div className="printNone" style={{ width: `${printNoneRatio}%` }}>
           <div>{t('products:printNone')}</div>
-          <div className="bar">{formatDigit(printNoneCount)}</div>
+          <div className="bar">
+            <span>{formatDigit(printNoneCount)}</span>
+            <span className="percent">({printNoneRatio.toFixed(1)}%)</span>
+          </div>
         </div>
         <div className="print" style={{ width: `${printRatio}%` }}>
           <div>{t('products:print')}</div>
-          <div className="bar">{formatDigit(printCount)}</div>
+          <div className="bar">
+            <span className="percent">({printRatio.toFixed(1)}%)</span>
+            <span>{formatDigit(printCount)}</span>
+          </div>
         </div>
       </div>
       <div className={classes.workOrderCountByStatus}>
         {Object.entries(workOrderCount.byStatus).map(([status, count]) => (
           <div key={status} className={classNames(classes.item, classes[status as WorkOrderStatus])}>
-            <div className={classNames(classes.status, 'status')}>
-              {t(`workOrders:workOrderStatus${upperFirst(camelCase(status))}`)}
-            </div>
+            <div className={classNames(classes.status, 'status')}>{t(`workOrders:workOrderStatus:${status}`)}</div>
             <div className={classNames(classes.count, 'count')}>
               {isLoading ? <Skeleton height="100%" width={30} /> : formatDigit(count)}
             </div>
