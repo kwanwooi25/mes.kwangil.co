@@ -8,7 +8,7 @@ import ProductName from 'components/ProductName';
 import SelectWorkOrderStatus from 'components/SelectWorkOrderStatus';
 import WorkOrderId from 'components/WorkOrderId';
 import WorkOrderPDF from 'components/WorkOrderPDF';
-import { WorkOrderStatus } from 'const';
+import { PrintSide, WorkOrderStatus } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useScreenSize } from 'hooks/useScreenSize';
@@ -230,9 +230,14 @@ const WorkOrderListItem = ({ workOrder, itemHeight, isSelected }: WorkOrderListI
   } = useWorkOrderDisplay(workOrder, t);
 
   const workOrderStatusOptions = Object.values(WorkOrderStatus)
-    .filter((value) => value !== WorkOrderStatus.COMPLETED)
+    .filter((value) => {
+      if (value === WorkOrderStatus.PRINTING) {
+        return product.printSide !== PrintSide.NONE;
+      }
+      return value !== WorkOrderStatus.COMPLETED;
+    })
     .map((value) => ({
-      label: t(`workOrderStatus:${value}`),
+      label: t(`workOrders:workOrderStatus:${value}`),
       value,
     }));
   const productNameMaxWidth = isDesktopLayout ? 295 : isTabletLayout ? 280 : isMobileLayout ? 480 : undefined;

@@ -11,7 +11,7 @@ import { getWeight } from 'utils/workOrder';
 
 import { orange, red, yellow } from '@material-ui/core/colors';
 
-const BACKGROUND_COLORS = {
+const COLORS = {
   [WorkOrderStatus.NOT_STARTED]: theme.palette.NOT_STARTED.light,
   [WorkOrderStatus.EXTRUDING]: theme.palette.EXTRUDING.light,
   [WorkOrderStatus.PRINTING]: theme.palette.PRINTING.light,
@@ -19,7 +19,7 @@ const BACKGROUND_COLORS = {
   [WorkOrderStatus.COMPLETED]: theme.palette.COMPLETED.light,
 };
 
-const COLORS = {
+const BACKGROUND_COLORS = {
   [WorkOrderStatus.NOT_STARTED]: theme.palette.NOT_STARTED.dark,
   [WorkOrderStatus.EXTRUDING]: theme.palette.EXTRUDING.dark,
   [WorkOrderStatus.PRINTING]: theme.palette.PRINTING.dark,
