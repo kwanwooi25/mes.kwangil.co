@@ -1,3 +1,5 @@
+import { DeadlineStatus } from 'const';
+
 /* eslint-disable import/no-anonymous-default-export */
 export default {
   common: {
@@ -83,6 +85,13 @@ export default {
     pageTitle: '대시보드',
     workOrderCount: '주문내역',
     deadlineStatus: '납기현황',
+    plateStatus: '동판 제작 필요 품목',
+
+    noPlatesToProduce: '필요한 동판이 모두 제작되었습니다.',
+    noWorkOrders: {
+      [DeadlineStatus.OVERDUE]: '기한이 지난 작업이 없습니다.',
+      [DeadlineStatus.IMMINENT]: '기한이 임박한 작업이 없습니다.',
+    },
   },
   accounts: {
     pageTitle: '거래처 관리',
@@ -284,6 +293,8 @@ export default {
     includeCompleted: '완료 품목 포함',
     workOrder: '작업지시서',
     workOrderList: '작업지시목록',
+    plateIsReady: '동판 제작 완료',
+    plateIsReadyMessage: '<p><strong>{{productName}}</strong></p><p>동판 제작 완료 하시겠습니까?</p>',
 
     searchPlaceholder: '제품명으로 검색',
     productRequired: '제품을 선택하세요.',

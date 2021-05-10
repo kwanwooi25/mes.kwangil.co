@@ -1,4 +1,4 @@
-import { DASHBOARD_CARD_MAX_WIDTH } from 'const';
+import classNames from 'classnames';
 import React, { ReactElement } from 'react';
 
 import {
@@ -12,7 +12,6 @@ const useStyles = makeStyles((theme: Theme) =>
       border: `1px solid ${lighten(theme.palette.primary.dark, 0.85)}`,
       borderRadius: theme.spacing(1),
       width: '100%',
-      maxWidth: DASHBOARD_CARD_MAX_WIDTH,
     },
     cardHeader: {
       display: 'flex',
@@ -38,17 +37,18 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export interface DashboardCardProps {
+  className?: string;
   title: string;
   onRefresh?: () => void;
   headerButton?: ReactElement;
   children?: ReactElement | ReactElement[];
 }
 
-const DashboardCard = ({ title, onRefresh, headerButton, children }: DashboardCardProps) => {
+const DashboardCard = ({ className, title, onRefresh, headerButton, children }: DashboardCardProps) => {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
+    <div className={classNames(className, classes.root)}>
       <div className={classes.cardHeader}>
         <div className={classes.cardTitle}>
           <Typography component="h3" variant="h6">

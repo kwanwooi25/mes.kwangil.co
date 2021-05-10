@@ -1,4 +1,8 @@
+import { PlateFormValues } from 'components/dialog/Plate';
+import { PlateLength, PlateMaterial, PlateRound } from 'const';
 import { PlateDto } from 'features/plate/interface';
+import { ProductDto } from 'features/product/interface';
+
 import { getProductTitle } from './product';
 
 /**
@@ -62,4 +66,62 @@ export function getPlateProductsSummary({ products }: PlateDto, displayCount: nu
   }
 
   return summaryTextArray;
+}
+
+/**
+ * 동판 생성/수정 폼의 초기값 생성하여 반환
+ *
+ * @param plate 동판 정보
+ * @param products 제품 정보
+ */
+export function getInitialPlateFormValues({
+  plate,
+  products = [],
+}: {
+  plate?: PlateDto;
+  products: ProductDto[];
+}): PlateFormValues {
+  const { round, length } = estimatePlateSize(products);
+
+  return {
+    round,
+    length,
+    name: '',
+    material: PlateMaterial.STEEL,
+    location: '',
+    memo: '',
+    ...plate,
+    products: [...(plate?.products || products)],
+    productsToDisconnect: [],
+  };
+}
+
+/**
+ * 사용되는 제품 규격으로 동판 규격을 유추하여 반환
+ *
+ * @param products 제품 목록
+ *
+ * @example { round: 300, length: 300 }
+ */
+export function estimatePlateSize(products: ProductDto[]) {
+  let round = PlateRound.MIN;
+  let length = PlateLength.MIN;
+
+  if (!!products.length) {
+    const productWidths = products.map(({ width }) => width * 10);
+    const productLengths = products.map(({ length }) => length * 10);
+    while (true) {
+      // eslint-disable-next-line
+      if (productWidths.every((width) => round % width === 0)) {
+        break;
+      }
+      round += 10;
+    }
+    length = Math.max(
+      PlateLength.MIN,
+      productLengths.reduce((total, length) => total + length, 0)
+    );
+  }
+
+  return { round, length };
 }

@@ -2,6 +2,7 @@ import { DATE_FORMAT, PrintSide } from 'const';
 import { differenceInBusinessDays, format, parseISO } from 'date-fns';
 import { WorkOrderDto } from 'features/workOrder/interface';
 import { TFunction } from 'i18next';
+import { capitalize } from 'lodash';
 import { CSSProperties } from 'react';
 import { getProductSize, getProductSummary } from 'utils/product';
 import { formatDigit } from 'utils/string';
@@ -47,6 +48,8 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
     fontWeight: !isCompleted && deliverByRemaining <= 7 ? 'bold' : 'normal',
   };
 
+  const plateStatus = t(`workOrders:plateStatus${capitalize(workOrder.plateStatus)}`);
+
   const accountName = product.account.name;
   const productName = product.name;
   const productSize = getProductSize(product);
@@ -66,6 +69,7 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
     completedQuantity,
     completedWeight,
     deliveryTags,
+    plateStatus,
 
     accountName,
     productName,

@@ -1,12 +1,15 @@
-import { PlateLength, PlateMaterial, PlateRound } from 'const';
-import { Theme, createStyles, makeStyles } from '@material-ui/core';
-
 import CustomToggleButton from 'components/form/CustomToggleButton';
 import Input from 'components/form/Input';
-import { PlateFormValues } from '.';
-import React from 'react';
+import { PlateLength, PlateMaterial, PlateRound } from 'const';
 import { useFormikContext } from 'formik';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { estimatePlateSize } from 'utils/plate';
+
+import { createStyles, Divider, List, makeStyles, Theme } from '@material-ui/core';
+
+import { PlateFormValues } from './';
+import ProductListItem from './ProductListItem';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -15,6 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
       gridTemplateColumns: 'repeat(2, 1fr)',
       gridColumnGap: theme.spacing(2),
       gridTemplateAreas: `
+        "selectedProducts selectedProducts"
         "material material"
         "name name"
         "round length"
@@ -24,11 +28,15 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.up('sm')]: {
         gridTemplateColumns: 'repeat(4, 1fr)',
         gridTemplateAreas: `
+          "selectedProducts selectedProducts selectedProducts selectedProducts"
           "material material name name"
           "round length location location"
           "memo memo memo memo"
         `,
       },
+    },
+    selectedProducts: {
+      gridArea: 'selectedProducts',
     },
     material: {
       gridArea: 'material',
@@ -68,8 +76,20 @@ const PlateInfoForm = (props: PlateInfoFormProps) => {
     setFieldValue('material', value);
   };
 
+  useEffect(() => {
+    const { round, length } = estimatePlateSize(values.products);
+    setFieldValue('round', round);
+    setFieldValue('length', length);
+  }, [values.products]);
+
   return (
     <div className={classes.plateInfo}>
+      <List className={classes.selectedProducts}>
+        {values.products.map((product) => (
+          <ProductListItem key={product.id} product={product} />
+        ))}
+        {!!values.products.length && <Divider />}
+      </List>
       <CustomToggleButton
         className={classes.material}
         value={values.material}

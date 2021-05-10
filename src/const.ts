@@ -191,7 +191,7 @@ export const NAV_ICONS: { [key: string]: ElementType } = {
 
 export const SEARCH_PANEL_WIDTH = 360;
 
-export const DASHBOARD_CARD_MAX_WIDTH = 420;
+export const DASHBOARD_CARD_MIN_WIDTH = 380;
 
 export const PHONE_NUMBER_MAX_LENGTH = 11;
 export const CRN_MAX_LENGTH = 10;

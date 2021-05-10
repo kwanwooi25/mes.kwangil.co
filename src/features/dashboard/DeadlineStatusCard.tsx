@@ -11,10 +11,14 @@ import { useTranslation } from 'react-i18next';
 import { formatDate } from 'utils/date';
 
 import { createStyles, List, ListItem, makeStyles, Theme, Typography } from '@material-ui/core';
+import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import { Pagination, Skeleton } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    deadlineStatusCard: {
+      gridRowEnd: 'span 2',
+    },
     deadlineStatusButtons: {},
     workOrderListItem: {
       display: 'grid',
@@ -54,10 +58,19 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       justifyContent: 'center',
     },
+    noWorkOrders: {
+      display: 'flex',
+      flexDirection: 'column',
+      '& .icon': {
+        color: theme.palette.primary.main,
+        fontSize: 64,
+        margin: theme.spacing(2),
+      },
+    },
   })
 );
 
-export const WorkOrderListItem = ({ workOrder }: { workOrder: WorkOrderDto }) => {
+const WorkOrderListItem = ({ workOrder }: { workOrder: WorkOrderDto }) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const { productSize, orderQuantity, deliverBy, deliverByStyle } = useWorkOrderDisplay(workOrder, t);
@@ -89,6 +102,18 @@ const WorkOrderListItemSkeleton = () => {
   );
 };
 
+const NoWorkOrders = ({ deadlineStatus }: { deadlineStatus: DeadlineStatus }) => {
+  const { t } = useTranslation();
+  const classes = useStyles();
+
+  return (
+    <ListItem className={classes.noWorkOrders}>
+      <InsertEmoticonIcon className="icon" />
+      <Typography color="primary">{t(`dashboard:noWorkOrders:${deadlineStatus}`)}</Typography>
+    </ListItem>
+  );
+};
+
 export interface DeadlineStatusCardProps {}
 
 const DeadlineStatusCard = (props: DeadlineStatusCardProps) => {
@@ -115,6 +140,7 @@ const DeadlineStatusCard = (props: DeadlineStatusCardProps) => {
   ];
 
   const handleChangeDeadlineStatus = (deadlineStatus: DeadlineStatus) => setDeadlineStatus(deadlineStatus);
+  const handlePageChange = (e: ChangeEvent<unknown>, page: number) => setPage(page);
 
   const getWorkOrdersByDeadline = async () => {
     setIsLoading(true);
@@ -125,7 +151,13 @@ const DeadlineStatusCard = (props: DeadlineStatusCardProps) => {
     setIsLoading(false);
   };
 
-  const handlePageChange = (e: ChangeEvent<unknown>, page: number) => setPage(page);
+  const renderSkeletons = () =>
+    Array(workOrderCountToDisplay)
+      .fill('')
+      .map((_, index) => <WorkOrderListItemSkeleton key={index} />);
+
+  const renderWorkOrders = () =>
+    workOrdersToShow.map((workOrder) => <WorkOrderListItem key={workOrder.id} workOrder={workOrder} />);
 
   useEffect(() => {
     getWorkOrdersByDeadline();
@@ -145,7 +177,11 @@ const DeadlineStatusCard = (props: DeadlineStatusCardProps) => {
   }, [page]);
 
   return (
-    <DashboardCard title={t('dashboard:deadlineStatus')} onRefresh={getWorkOrdersByDeadline}>
+    <DashboardCard
+      title={t('dashboard:deadlineStatus')}
+      onRefresh={getWorkOrdersByDeadline}
+      className={classes.deadlineStatusCard}
+    >
       <CustomToggleButton
         className={classes.deadlineStatusButtons}
         value={deadlineStatus}
@@ -153,11 +189,13 @@ const DeadlineStatusCard = (props: DeadlineStatusCardProps) => {
         onChange={handleChangeDeadlineStatus}
       />
       <List disablePadding style={{ height: 102 * workOrderCountToDisplay }}>
-        {isLoading
-          ? Array(workOrderCountToDisplay)
-              .fill('')
-              .map((_, index) => <WorkOrderListItemSkeleton key={index} />)
-          : workOrdersToShow.map((workOrder) => <WorkOrderListItem key={workOrder.id} workOrder={workOrder} />)}
+        {isLoading ? (
+          renderSkeletons()
+        ) : !workOrdersToShow.length ? (
+          <NoWorkOrders deadlineStatus={deadlineStatus} />
+        ) : (
+          renderWorkOrders()
+        )}
       </List>
       <Pagination
         className={classes.pagination}

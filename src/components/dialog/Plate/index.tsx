@@ -1,23 +1,25 @@
-import { CreatePlateDto, PlateDto, UpdatePlateDto } from 'features/plate/interface';
-import FormikStepper, { FormikStep } from 'components/form/FormikStepper';
-import { LoadingKeys, PlateLength, PlateMaterial, PlateRound } from 'const';
-import { array, number, object, string } from 'yup';
-import { isEmpty, isEqual } from 'lodash';
-
-import Dialog from 'features/dialog/Dialog';
-import Loading from 'components/Loading';
-import PlateInfoForm from './PlateInfoForm';
-import { ProductDto } from 'features/product/interface';
-import React from 'react';
-import SelectProductsForm from './SelectProductsForm';
-import { plateActions } from 'features/plate/plateSlice';
 import { useAppDispatch } from 'app/store';
+import FormikStepper, { FormikStep } from 'components/form/FormikStepper';
+import Loading from 'components/Loading';
+import { LoadingKeys, PlateLength, PlateMaterial, PlateRound } from 'const';
+import Dialog from 'features/dialog/Dialog';
 import { useLoading } from 'features/loading/loadingHook';
+import { CreatePlateDto, PlateDto, UpdatePlateDto } from 'features/plate/interface';
+import { plateActions } from 'features/plate/plateSlice';
+import { ProductDto } from 'features/product/interface';
+import { isEmpty, isEqual } from 'lodash';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { getInitialPlateFormValues } from 'utils/plate';
+import { array, number, object, string } from 'yup';
+
+import PlateInfoForm from './PlateInfoForm';
+import SelectProductsForm from './SelectProductsForm';
 
 export interface PlateDialogProps {
+  products?: ProductDto[];
   plate?: PlateDto;
-  onClose: () => void;
+  onClose: (result?: boolean) => void;
 }
 
 export interface PlateFormValues extends CreatePlateDto {
@@ -28,7 +30,7 @@ export interface PlateFormValues extends CreatePlateDto {
   productsToDisconnect?: ProductDto[];
 }
 
-const PlateDialog = ({ plate, onClose }: PlateDialogProps) => {
+const PlateDialog = ({ products = [], plate, onClose }: PlateDialogProps) => {
   const { t } = useTranslation('plates');
   const { [LoadingKeys.SAVING_PLATE]: isSaving } = useLoading();
   const dispatch = useAppDispatch();
@@ -37,17 +39,7 @@ const PlateDialog = ({ plate, onClose }: PlateDialogProps) => {
   const isEditMode = !isEmpty(plate);
   const dialogTitle = t(isEditMode ? 'editPlate' : 'addPlate');
 
-  const initialValues: PlateFormValues = {
-    round: PlateRound.MIN,
-    length: PlateLength.MIN,
-    name: '',
-    material: PlateMaterial.STEEL,
-    location: '',
-    memo: '',
-    ...plate,
-    products: [...(plate?.products || [])],
-    productsToDisconnect: [],
-  };
+  const initialValues: PlateFormValues = getInitialPlateFormValues({ plate, products });
 
   const validationSchema = {
     plateInfo: object({
@@ -88,6 +80,7 @@ const PlateDialog = ({ plate, onClose }: PlateDialogProps) => {
     } else {
       const { productsToDisconnect, ...plateToCreate } = values;
       dispatch(createPlate(plateToCreate));
+      onClose(true);
     }
   };
 
