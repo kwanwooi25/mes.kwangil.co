@@ -1,24 +1,24 @@
-import {
-  CreateWorkOrderDto,
-  CreateWorkOrdersDto,
-  GetWorkOrdersQuery,
-  UpdateWorkOrderDto,
-  WorkOrderDto,
-} from './interface';
-import { DATE_FORMAT, DEFAULT_LIST_LIMIT } from 'const';
-import { EntityState, PayloadAction, createEntityAdapter, createSelector } from '@reduxjs/toolkit';
-import { format, subDays } from 'date-fns';
-
 import { RootState } from 'app/store';
+import { DATE_FORMAT, DEFAULT_LIST_LIMIT } from 'const';
+import { format, subDays } from 'date-fns';
 import { createGenericSlice } from 'lib/reduxHelper';
+
+import { createEntityAdapter, createSelector, EntityState, PayloadAction } from '@reduxjs/toolkit';
+
+import {
+    CreateWorkOrderDto, CreateWorkOrdersDto, GetWorkOrdersQuery, UpdateWorkOrderDto, WorkOrderDto
+} from './interface';
 
 export interface WorkOrderState extends EntityState<WorkOrderDto> {
   query: GetWorkOrdersQuery;
   hasMore: boolean;
   totalCount: number;
 
-  currentPage: number;
-  totalPages: number;
+  pagination: {
+    ids: string[];
+    currentPage: number;
+    totalPages: number;
+  };
 
   selectedIds: string[];
 }
@@ -39,8 +39,11 @@ export const initialState: WorkOrderState = {
   hasMore: true,
   totalCount: 0,
 
-  currentPage: 1,
-  totalPages: 1,
+  pagination: {
+    ids: [],
+    currentPage: 1,
+    totalPages: 1,
+  },
 
   selectedIds: [],
 };
@@ -67,11 +70,16 @@ const selectors = {
   selectableIds: createSelector(workOrderSelector, ({ ids, entities }) =>
     ids.filter((id) => !entities[id]?.completedAt)
   ),
+  paginatedSelectableIds: createSelector(workOrderSelector, ({ pagination, entities }) =>
+    pagination.ids.filter((id) => !entities[id]?.completedAt)
+  ),
   workOrders: createSelector(workOrderSelector, ({ ids, entities }) => ids.map((id) => entities[id] as WorkOrderDto)),
+  paginatedWorkOrders: createSelector(workOrderSelector, ({ pagination, entities }) =>
+    pagination.ids.map((id) => entities[id] as WorkOrderDto)
+  ),
   hasMore: createSelector(workOrderSelector, ({ hasMore }) => hasMore),
   totalCount: createSelector(workOrderSelector, ({ totalCount }) => totalCount),
-  currentPage: createSelector(workOrderSelector, ({ currentPage }) => currentPage),
-  totalPages: createSelector(workOrderSelector, ({ totalPages }) => totalPages),
+  pagination: createSelector(workOrderSelector, ({ pagination }) => pagination),
   isSelectMode: createSelector(workOrderSelector, ({ selectedIds }) => !!selectedIds.length),
   isSelectAllDisabled: createSelector(workOrderSelector, ({ ids, entities }) =>
     ids.every((id) => !!entities[id]?.completedAt)

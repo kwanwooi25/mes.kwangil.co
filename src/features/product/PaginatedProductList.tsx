@@ -1,29 +1,32 @@
-import { DEFAULT_LIST_LIMIT, ExcelVariant, LoadingKeys, ProductDialogMode, ProductListItemHeight } from 'const';
-import { IconButton, Tooltip } from '@material-ui/core';
-import ProductListItem, { ProductListItemSkeleton } from './ProductListItem';
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import { productActions, productSelectors } from './productSlice';
 import { useAppDispatch, useAppSelector } from 'app/store';
-
-import AddIcon from '@material-ui/icons/Add';
 import ConfirmDialog from 'components/dialog/Confirm';
-import { CreateProductsDto } from './interface';
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import ExcelUploadDialog from 'components/dialog/ExcelUpload';
-import GetAppIcon from '@material-ui/icons/GetApp';
+import ProductDialog from 'components/dialog/Product';
 import ListEmpty from 'components/ListEmpty';
 import Loading from 'components/Loading';
-import PaginatedList from 'layouts/PaginatedList';
-import ProductDialog from 'components/dialog/Product';
-import PublishIcon from '@material-ui/icons/Publish';
 import SubToolbar from 'components/SubToolbar';
-import { downloadWorkbook } from 'utils/excel';
-import { productApi } from './productApi';
+import {
+    DEFAULT_LIST_LIMIT, ExcelVariant, LoadingKeys, ProductDialogMode, ProductListItemHeight
+} from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useLoading } from 'features/loading/loadingHook';
 import { useScreenSize } from 'hooks/useScreenSize';
+import PaginatedList from 'layouts/PaginatedList';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { downloadWorkbook } from 'utils/excel';
+
+import { IconButton, Tooltip } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import PublishIcon from '@material-ui/icons/Publish';
+
+import { CreateProductsDto } from './interface';
+import { productApi } from './productApi';
+import ProductListItem, { ProductListItemSkeleton } from './ProductListItem';
+import { productActions, productSelectors } from './productSlice';
 
 export interface PaginatedProductListProps {}
 
@@ -37,15 +40,14 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
   const { isUser } = useAuth();
   const dispatch = useAppDispatch();
   const query = useAppSelector(productSelectors.query);
-  const currentPage = useAppSelector(productSelectors.currentPage);
-  const totalPages = useAppSelector(productSelectors.totalPages);
-  const ids = useAppSelector(productSelectors.ids);
-  const products = useAppSelector(productSelectors.products);
+  const { ids, currentPage, totalPages } = useAppSelector(productSelectors.pagination);
+  const products = useAppSelector(productSelectors.paginatedProducts);
   const isSelectMode = useAppSelector(productSelectors.isSelectMode);
   const selectedIds = useAppSelector(productSelectors.selectedIds);
   const {
-    getList: getProducts,
-    resetList: resetProducts,
+    getList,
+    resetList,
+    resetListOnPage,
     resetSelection,
     deleteProducts,
     selectAll,
@@ -67,8 +69,8 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
 
   const handleChangePage = (e: ChangeEvent<unknown>, value: number) => {
     const limit = query?.limit || DEFAULT_LIST_LIMIT;
-    dispatch(resetProducts());
-    dispatch(getProducts({ limit, offset: limit * value - limit }));
+    dispatch(resetListOnPage());
+    dispatch(getList({ limit, offset: limit * value - limit }));
   };
 
   const handleClickCreate = () => {
@@ -136,10 +138,10 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
     const toolBarCount = isUser ? 1 : 2;
     const containerMaxHeight = windowHeight - (64 * toolBarCount + 56);
     const limit = Math.floor(containerMaxHeight / itemHeight);
-    dispatch(getProducts({ offset: 0, limit }));
+    dispatch(getList({ offset: 0, limit }));
 
     return () => {
-      dispatch(resetProducts());
+      dispatch(resetList());
     };
   }, [windowHeight, itemHeight, isUser]);
 

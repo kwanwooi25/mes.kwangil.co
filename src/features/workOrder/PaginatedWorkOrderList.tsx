@@ -1,34 +1,37 @@
-import { DEFAULT_LIST_LIMIT, ExcelVariant, LoadingKeys, WorkOrderListItemHeight, WorkOrderStatus } from 'const';
-import { IconButton, Tooltip } from '@material-ui/core';
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import WorkOrderListItem, { WorkOrderListItemSkeleton } from './WorkOrderListItem';
 import { useAppDispatch, useAppSelector } from 'app/store';
-import { workOrderActions, workOrderSelectors } from './workOrderSlice';
-
-import AddIcon from '@material-ui/icons/Add';
-import { BlobProvider } from '@react-pdf/renderer';
 import ConfirmDialog from 'components/dialog/Confirm';
-import { CreateWorkOrdersDto } from './interface';
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import DoneIcon from '@material-ui/icons/Done';
 import ExcelUploadDialog from 'components/dialog/ExcelUpload';
-import GetAppIcon from '@material-ui/icons/GetApp';
+import WorkOrderDialog from 'components/dialog/WorkOrder';
+import WorkOrdersCompleteDialog from 'components/dialog/WorkOrdersComplete';
 import ListEmpty from 'components/ListEmpty';
 import Loading from 'components/Loading';
-import PaginatedList from 'layouts/PaginatedList';
-import PrintIcon from '@material-ui/icons/Print';
-import PublishIcon from '@material-ui/icons/Publish';
 import SubToolbar from 'components/SubToolbar';
-import WorkOrderDialog from 'components/dialog/WorkOrder';
 import WorkOrderPDF from 'components/WorkOrderPDF';
-import WorkOrdersCompleteDialog from 'components/dialog/WorkOrdersComplete';
-import { downloadWorkbook } from 'utils/excel';
+import {
+    DEFAULT_LIST_LIMIT, ExcelVariant, LoadingKeys, WorkOrderListItemHeight, WorkOrderStatus
+} from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useLoading } from 'features/loading/loadingHook';
 import { useScreenSize } from 'hooks/useScreenSize';
+import PaginatedList from 'layouts/PaginatedList';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { downloadWorkbook } from 'utils/excel';
+
+import { IconButton, Tooltip } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import DoneIcon from '@material-ui/icons/Done';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import PrintIcon from '@material-ui/icons/Print';
+import PublishIcon from '@material-ui/icons/Publish';
+import { BlobProvider } from '@react-pdf/renderer';
+
+import { CreateWorkOrdersDto } from './interface';
 import { workOrderApi } from './workOrderApi';
+import WorkOrderListItem, { WorkOrderListItemSkeleton } from './WorkOrderListItem';
+import { workOrderActions, workOrderSelectors } from './workOrderSlice';
 
 export interface PaginatedWorkOrderListProps {}
 
@@ -42,17 +45,17 @@ const PaginatedWorkOrderList = (props: PaginatedWorkOrderListProps) => {
   const { isUser } = useAuth();
   const dispatch = useAppDispatch();
   const query = useAppSelector(workOrderSelectors.query);
-  const currentPage = useAppSelector(workOrderSelectors.currentPage);
-  const totalPages = useAppSelector(workOrderSelectors.totalPages);
-  const workOrders = useAppSelector(workOrderSelectors.workOrders);
+  const { currentPage, totalPages } = useAppSelector(workOrderSelectors.pagination);
+  const workOrders = useAppSelector(workOrderSelectors.paginatedWorkOrders);
   const isSelectMode = useAppSelector(workOrderSelectors.isSelectMode);
   const isSelectAllDisabled = useAppSelector(workOrderSelectors.isSelectAllDisabled);
-  const selectableIds = useAppSelector(workOrderSelectors.selectableIds);
+  const selectableIds = useAppSelector(workOrderSelectors.paginatedSelectableIds);
   const selectedIds = useAppSelector(workOrderSelectors.selectedIds);
   const selectedWorkOrders = useAppSelector(workOrderSelectors.selectedWorkOrders);
   const {
     getList,
     resetList,
+    resetListOnPage,
     resetSelection,
     deleteWorkOrders,
     selectAll,
@@ -76,7 +79,7 @@ const PaginatedWorkOrderList = (props: PaginatedWorkOrderListProps) => {
 
   const handleChangePage = (e: ChangeEvent<unknown>, value: number) => {
     const limit = query?.limit || DEFAULT_LIST_LIMIT;
-    dispatch(resetList());
+    dispatch(resetListOnPage());
     dispatch(getList({ ...query, limit, offset: limit * value - limit }));
   };
 

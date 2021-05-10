@@ -1,22 +1,23 @@
-import { DEFAULT_LIST_LIMIT, LoadingKeys, PlateListItemHeight } from 'const';
-import { IconButton, Tooltip } from '@material-ui/core';
-import PlateListItem, { PlateListItemSkeleton } from './PlateListItem';
-import React, { ChangeEvent, useEffect } from 'react';
-import { plateActions, plateSelectors } from './plateSlice';
 import { useAppDispatch, useAppSelector } from 'app/store';
-
-import AddIcon from '@material-ui/icons/Add';
 import ConfirmDialog from 'components/dialog/Confirm';
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import ListEmpty from 'components/ListEmpty';
-import PaginatedList from 'layouts/PaginatedList';
 import PlateDialog from 'components/dialog/Plate';
+import ListEmpty from 'components/ListEmpty';
 import SubToolbar from 'components/SubToolbar';
+import { DEFAULT_LIST_LIMIT, LoadingKeys, PlateListItemHeight } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useLoading } from 'features/loading/loadingHook';
 import { useScreenSize } from 'hooks/useScreenSize';
+import PaginatedList from 'layouts/PaginatedList';
+import React, { ChangeEvent, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { IconButton, Tooltip } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+
+import PlateListItem, { PlateListItemSkeleton } from './PlateListItem';
+import { plateActions, plateSelectors } from './plateSlice';
 
 export interface PaginatedPlateListProps {}
 
@@ -29,20 +30,11 @@ const PaginatedPlateList = (props: PaginatedPlateListProps) => {
   const { isUser } = useAuth();
   const dispatch = useAppDispatch();
   const query = useAppSelector(plateSelectors.query);
-  const currentPage = useAppSelector(plateSelectors.currentPage);
-  const totalPages = useAppSelector(plateSelectors.totalPages);
-  const ids = useAppSelector(plateSelectors.ids);
-  const plates = useAppSelector(plateSelectors.plates);
+  const { ids, currentPage, totalPages } = useAppSelector(plateSelectors.pagination);
+  const plates = useAppSelector(plateSelectors.paginatedPlates);
   const isSelectMode = useAppSelector(plateSelectors.isSelectMode);
   const selectedIds = useAppSelector(plateSelectors.selectedIds);
-  const {
-    getList: getPlates,
-    resetList: resetPlates,
-    resetSelection,
-    deletePlates,
-    selectAll,
-    unselectAll,
-  } = plateActions;
+  const { getList, resetList, resetListOnPage, resetSelection, deletePlates, selectAll, unselectAll } = plateActions;
 
   const itemHeight = isDesktopLayout ? PlateListItemHeight.DESKTOP : PlateListItemHeight.TABLET;
   const isSelectedAll = !!ids.length && !!selectedIds.length && ids.every((id) => selectedIds.includes(id as number));
@@ -58,8 +50,8 @@ const PaginatedPlateList = (props: PaginatedPlateListProps) => {
 
   const handleChangePage = (e: ChangeEvent<unknown>, value: number) => {
     const limit = query?.limit || DEFAULT_LIST_LIMIT;
-    dispatch(resetPlates());
-    dispatch(getPlates({ limit, offset: limit * value - limit }));
+    dispatch(resetListOnPage());
+    dispatch(getList({ limit, offset: limit * value - limit }));
   };
 
   const handleClickCreate = () => {
@@ -99,10 +91,10 @@ const PaginatedPlateList = (props: PaginatedPlateListProps) => {
     const toolBarCount = isUser ? 1 : 2;
     const containerMaxHeight = windowHeight - (64 * toolBarCount + 56);
     const limit = Math.floor(containerMaxHeight / itemHeight);
-    dispatch(getPlates({ offset: 0, limit }));
+    dispatch(getList({ offset: 0, limit }));
 
     return () => {
-      dispatch(resetPlates());
+      dispatch(resetList());
     };
   }, [windowHeight, itemHeight, isUser]);
 

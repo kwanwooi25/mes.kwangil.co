@@ -1,17 +1,21 @@
-import { AccountDto, CreateAccountDto, GetAccountsQuery, UpdateAccountDto } from './interface';
-import { EntityState, PayloadAction, createEntityAdapter, createSelector } from '@reduxjs/toolkit';
-
-import { DEFAULT_LIST_LIMIT } from 'const';
 import { RootState } from 'app/store';
+import { DEFAULT_LIST_LIMIT } from 'const';
 import { createGenericSlice } from 'lib/reduxHelper';
+
+import { createEntityAdapter, createSelector, EntityState, PayloadAction } from '@reduxjs/toolkit';
+
+import { AccountDto, CreateAccountDto, GetAccountsQuery, UpdateAccountDto } from './interface';
 
 export interface AccountState extends EntityState<AccountDto> {
   query: GetAccountsQuery;
   totalCount: number;
   hasMore: boolean;
 
-  currentPage: number;
-  totalPages: number;
+  pagination: {
+    ids: number[];
+    currentPage: number;
+    totalPages: number;
+  };
 
   selectedIds: number[];
 }
@@ -29,8 +33,11 @@ const initialState: AccountState = {
   hasMore: true,
   totalCount: 0,
 
-  currentPage: 1,
-  totalPages: 1,
+  pagination: {
+    ids: [],
+    currentPage: 1,
+    totalPages: 1,
+  },
 
   selectedIds: [],
 };
@@ -54,10 +61,12 @@ const selectors = {
   query: createSelector(accountSelector, ({ query }) => query),
   ids: createSelector(accountSelector, ({ ids }) => ids as number[]),
   accounts: createSelector(accountSelector, ({ ids, entities }) => ids.map((id) => entities[id] as AccountDto)),
+  paginatedAccounts: createSelector(accountSelector, ({ pagination, entities }) =>
+    pagination!.ids.map((id) => entities[id] as AccountDto)
+  ),
   hasMore: createSelector(accountSelector, ({ hasMore }) => hasMore),
   totalCount: createSelector(accountSelector, ({ totalCount }) => totalCount),
-  currentPage: createSelector(accountSelector, ({ currentPage }) => currentPage),
-  totalPages: createSelector(accountSelector, ({ totalPages }) => totalPages),
+  pagination: createSelector(accountSelector, ({ pagination }) => pagination),
   isSelectMode: createSelector(accountSelector, ({ selectedIds }) => !!selectedIds.length),
   selectedIds: createSelector(accountSelector, ({ selectedIds }) => selectedIds),
 };

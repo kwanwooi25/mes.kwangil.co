@@ -1,18 +1,21 @@
-import { CreatePlateDto, GetPlatesQuery, PlateDto, UpdatePlateDto } from './interface';
-import { EntityState, PayloadAction, createEntityAdapter, createSelector } from '@reduxjs/toolkit';
-import { PlateLength, PlateRound } from 'const';
-
-import { DEFAULT_LIST_LIMIT } from 'const';
 import { RootState } from 'app/store';
+import { DEFAULT_LIST_LIMIT, PlateLength, PlateRound } from 'const';
 import { createGenericSlice } from 'lib/reduxHelper';
+
+import { createEntityAdapter, createSelector, EntityState, PayloadAction } from '@reduxjs/toolkit';
+
+import { CreatePlateDto, GetPlatesQuery, PlateDto, UpdatePlateDto } from './interface';
 
 export interface PlateState extends EntityState<PlateDto> {
   query: GetPlatesQuery;
   hasMore: boolean;
   totalCount: number;
 
-  currentPage: number;
-  totalPages: number;
+  pagination: {
+    ids: number[];
+    currentPage: number;
+    totalPages: number;
+  };
 
   selectedIds: number[];
 }
@@ -34,8 +37,11 @@ export const initialState: PlateState = {
   hasMore: true,
   totalCount: 0,
 
-  currentPage: 1,
-  totalPages: 1,
+  pagination: {
+    ids: [],
+    currentPage: 1,
+    totalPages: 1,
+  },
 
   selectedIds: [],
 };
@@ -59,10 +65,12 @@ const selectors = {
   query: createSelector(plateState, ({ query }) => query),
   ids: createSelector(plateState, ({ ids }) => ids as number[]),
   plates: createSelector(plateState, ({ ids, entities }) => ids.map((id) => entities[id] as PlateDto)),
+  paginatedPlates: createSelector(plateState, ({ pagination, entities }) =>
+    pagination.ids.map((id) => entities[id] as PlateDto)
+  ),
   hasMore: createSelector(plateState, ({ hasMore }) => hasMore),
   totalCount: createSelector(plateState, ({ totalCount }) => totalCount),
-  currentPage: createSelector(plateState, ({ currentPage }) => currentPage),
-  totalPages: createSelector(plateState, ({ totalPages }) => totalPages),
+  pagination: createSelector(plateState, ({ pagination }) => pagination),
   isSelectMode: createSelector(plateState, ({ selectedIds }) => !!selectedIds.length),
   selectedIds: createSelector(plateState, ({ selectedIds }) => selectedIds),
 };

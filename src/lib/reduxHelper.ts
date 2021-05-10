@@ -1,23 +1,21 @@
-import { BaseQuery, GetListResponse } from 'types/api';
-import {
-  Draft,
-  EntityAdapter,
-  EntityState,
-  PayloadAction,
-  SliceCaseReducers,
-  ValidateSliceCaseReducers,
-  createSlice,
-} from '@reduxjs/toolkit';
-
 import { DEFAULT_LIST_LIMIT } from 'const';
+import { BaseQuery, GetListResponse } from 'types/api';
+
+import {
+    createSlice, Draft, EntityAdapter, EntityState, PayloadAction, SliceCaseReducers,
+    ValidateSliceCaseReducers
+} from '@reduxjs/toolkit';
 
 export interface GenericState<Dto, QueryInterface> extends EntityState<Dto> {
   query: QueryInterface;
   hasMore: boolean;
   totalCount: number;
 
-  currentPage: number;
-  totalPages: number;
+  pagination: {
+    ids: (number | string)[];
+    currentPage: number;
+    totalPages: number;
+  };
 
   selectedIds: (number | string)[];
 }
@@ -47,10 +45,16 @@ export const createGenericSlice = <
       setList: (state, { payload: { rows, hasMore, count } }: PayloadAction<GetListResponse<Dto>>) => {
         const { limit = DEFAULT_LIST_LIMIT, offset = 0 } = state.query;
         state.totalCount = count;
-        state.currentPage = Math.floor((offset + limit) / limit);
-        state.totalPages = Math.ceil(count / limit);
         state.hasMore = hasMore;
+        state.pagination = {
+          ids: rows.map(({ id }) => id),
+          currentPage: Math.floor((offset + limit) / limit),
+          totalPages: Math.ceil(count / limit),
+        };
         entityAdapter.upsertMany(state as EntityState<Dto>, rows);
+      },
+      resetListOnPage: (state) => {
+        state.pagination.ids = [];
       },
       resetList: (state) => {
         const { limit = DEFAULT_LIST_LIMIT } = state.query;

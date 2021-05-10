@@ -1,28 +1,29 @@
-import AccountListItem, { AccountListItemSkeleton } from './AccountListItem';
-import { AccountListItemHeight, DEFAULT_LIST_LIMIT, ExcelVariant, LoadingKeys } from 'const';
-import { IconButton, Tooltip } from '@material-ui/core';
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import { accountActions, accountSelectors } from './accountSlice';
 import { useAppDispatch, useAppSelector } from 'app/store';
-
 import AccountDialog from 'components/dialog/Account';
-import AddIcon from '@material-ui/icons/Add';
 import ConfirmDialog from 'components/dialog/Confirm';
-import { CreateAccountDto } from './interface';
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import ExcelUploadDialog from 'components/dialog/ExcelUpload';
-import GetAppIcon from '@material-ui/icons/GetApp';
 import ListEmpty from 'components/ListEmpty';
 import Loading from 'components/Loading';
-import PaginatedList from 'layouts/PaginatedList';
-import PublishIcon from '@material-ui/icons/Publish';
 import SubToolbar from 'components/SubToolbar';
-import { accountApi } from './accountApi';
-import { downloadWorkbook } from 'utils/excel';
+import { AccountListItemHeight, DEFAULT_LIST_LIMIT, ExcelVariant, LoadingKeys } from 'const';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useLoading } from 'features/loading/loadingHook';
 import { useScreenSize } from 'hooks/useScreenSize';
+import PaginatedList from 'layouts/PaginatedList';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { downloadWorkbook } from 'utils/excel';
+
+import { IconButton, Tooltip } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import PublishIcon from '@material-ui/icons/Publish';
+
+import { accountApi } from './accountApi';
+import AccountListItem, { AccountListItemSkeleton } from './AccountListItem';
+import { accountActions, accountSelectors } from './accountSlice';
+import { CreateAccountDto } from './interface';
 
 export interface PaginatedAccountListProps {}
 
@@ -36,15 +37,14 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
 
   const dispatch = useAppDispatch();
   const query = useAppSelector(accountSelectors.query);
-  const ids = useAppSelector(accountSelectors.ids);
-  const accounts = useAppSelector(accountSelectors.accounts);
-  const currentPage = useAppSelector(accountSelectors.currentPage);
-  const totalPages = useAppSelector(accountSelectors.totalPages);
+  const { ids, currentPage, totalPages } = useAppSelector(accountSelectors.pagination);
+  const accounts = useAppSelector(accountSelectors.paginatedAccounts);
   const isSelectMode = useAppSelector(accountSelectors.isSelectMode);
   const selectedIds = useAppSelector(accountSelectors.selectedIds);
   const {
-    getList: getAccounts,
-    resetList: resetAccounts,
+    getList,
+    resetList,
+    resetListOnPage,
     resetSelection,
     deleteAccounts,
     selectAll,
@@ -66,8 +66,8 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
 
   const handleChangePage = (e: ChangeEvent<unknown>, value: number) => {
     const limit = query?.limit || DEFAULT_LIST_LIMIT;
-    dispatch(resetAccounts());
-    dispatch(getAccounts({ limit, offset: limit * value - limit }));
+    dispatch(resetListOnPage());
+    dispatch(getList({ limit, offset: limit * value - limit }));
   };
 
   const handleClickCreate = () => {
@@ -107,10 +107,10 @@ const PaginatedAccountList = (props: PaginatedAccountListProps) => {
   useEffect(() => {
     const containerMaxHeight = windowHeight - (64 * 2 + 56);
     const limit = Math.floor(containerMaxHeight / itemHeight);
-    dispatch(getAccounts({ offset: 0, limit }));
+    dispatch(getList({ offset: 0, limit }));
 
     return () => {
-      dispatch(resetAccounts());
+      dispatch(resetList());
     };
   }, [windowHeight, itemHeight]);
 
