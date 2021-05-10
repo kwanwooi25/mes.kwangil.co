@@ -1,8 +1,9 @@
+import { ElementType } from 'react';
+
 import ApartmentIcon from '@material-ui/icons/Apartment';
 import BuildIcon from '@material-ui/icons/Build';
 import CameraRollIcon from '@material-ui/icons/CameraRoll';
 import DashboardIcon from '@material-ui/icons/Dashboard';
-import { ElementType } from 'react';
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 
 export enum Path {
@@ -165,6 +166,11 @@ export enum UserRole {
   ADMIN = 'ADMIN',
 }
 
+export enum DeadlineStatus {
+  OVERDUE = 'overdue',
+  IMMINENT = 'imminent',
+}
+
 export const DEFAULT_PAGE = Path.DASHBOARD;
 export const DEFAULT_API_URL = 'http://localhost:5000';
 export const DEFAULT_LIST_LIMIT = 50;
@@ -184,6 +190,8 @@ export const NAV_ICONS: { [key: string]: ElementType } = {
 };
 
 export const SEARCH_PANEL_WIDTH = 360;
+
+export const DASHBOARD_CARD_MAX_WIDTH = 420;
 
 export const PHONE_NUMBER_MAX_LENGTH = 11;
 export const CRN_MAX_LENGTH = 10;

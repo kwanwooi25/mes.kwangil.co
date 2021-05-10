@@ -51,8 +51,17 @@ export interface GetWorkOrdersQuery extends BaseQuery {
   includeCompleted?: boolean;
 }
 
+export interface GetWorkOrdersByDeadlineQuery {
+  deadline: string;
+}
+
 export interface GetWorkOrderCountQuery {
   orderedAt: string[];
+}
+
+export interface WorkOrdersByDeadline {
+  overdue: WorkOrderDto[];
+  imminent: WorkOrderDto[];
 }
 
 export interface WorkOrderCount {

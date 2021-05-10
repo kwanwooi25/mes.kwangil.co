@@ -1,8 +1,8 @@
 import { apiClient, handleRequest } from 'app/apiClient';
 
 import {
-    CreateWorkOrderDto, CreateWorkOrdersDto, GetWorkOrderCountQuery, GetWorkOrdersQuery,
-    UpdateWorkOrderDto
+    CreateWorkOrderDto, CreateWorkOrdersDto, GetWorkOrderCountQuery, GetWorkOrdersByDeadlineQuery,
+    GetWorkOrdersQuery, UpdateWorkOrderDto
 } from './interface';
 
 const urlPrefix = '/workOrder';
@@ -13,6 +13,8 @@ const api = {
     handleRequest(await apiClient.get(`${urlPrefix}/list`, { params: { ...query } })),
   getAllWorkOrders: async (query: GetWorkOrdersQuery) =>
     handleRequest(await apiClient.get(`${urlPrefix}/list/all`, { params: { ...query } })),
+  getWorkOrdersByDeadline: async (query: GetWorkOrdersByDeadlineQuery) =>
+    handleRequest(await apiClient.get(`${urlPrefix}/list/deadline`, { params: { ...query } })),
   getWorkOrderCount: async (query: GetWorkOrderCountQuery) =>
     handleRequest(await apiClient.get(`${urlPrefix}/count`, { params: { ...query } })),
   createWorkOrder: async (workOrder: CreateWorkOrderDto) =>

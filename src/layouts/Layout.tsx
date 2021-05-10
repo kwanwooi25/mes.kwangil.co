@@ -1,12 +1,13 @@
+import { useAppDispatch } from 'app/store';
+import { useUI } from 'features/ui/uiHook';
+import { useScreenSize } from 'hooks/useScreenSize';
 import React, { ReactNode } from 'react';
-import { Theme, createStyles, makeStyles } from '@material-ui/core';
+
+import { createStyles, makeStyles, Theme } from '@material-ui/core';
 
 import MainHeader from './MainHeader';
 import Navigation from './Navigation';
 import SearchPanel from './SearchPanel';
-import { useAppDispatch } from 'app/store';
-import { useScreenSize } from 'hooks/useScreenSize';
-import { useUI } from 'features/ui/uiHook';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -20,6 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       height: 'calc(100vh - 56px)',
       marginTop: 56,
+      overflow: 'auto',
       [theme.breakpoints.up('sm')]: {
         height: 'calc(100vh - 64px)',
         marginTop: 64,

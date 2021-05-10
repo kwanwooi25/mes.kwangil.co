@@ -9,7 +9,6 @@ import SelectWorkOrderStatus from 'components/SelectWorkOrderStatus';
 import WorkOrderId from 'components/WorkOrderId';
 import WorkOrderPDF from 'components/WorkOrderPDF';
 import { WorkOrderStatus } from 'const';
-import { differenceInBusinessDays } from 'date-fns';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useScreenSize } from 'hooks/useScreenSize';
@@ -23,7 +22,7 @@ import {
     Checkbox, Chip, createStyles, IconButton, Link, ListItem, ListItemIcon, ListItemProps,
     ListItemSecondaryAction, ListItemText, makeStyles, Menu, MenuItem, Theme, Typography
 } from '@material-ui/core';
-import { orange, red, yellow } from '@material-ui/core/colors';
+import { red, yellow } from '@material-ui/core/colors';
 import DoneIcon from '@material-ui/icons/Done';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { Skeleton } from '@material-ui/lab';
@@ -220,6 +219,7 @@ const WorkOrderListItem = ({ workOrder, itemHeight, isSelected }: WorkOrderListI
   const {
     orderedAt,
     deliverBy,
+    deliverByStyle,
     isCompleted,
     completedAt,
     orderQuantity,
@@ -237,16 +237,6 @@ const WorkOrderListItem = ({ workOrder, itemHeight, isSelected }: WorkOrderListI
       value,
     }));
   const productNameMaxWidth = isDesktopLayout ? 295 : isTabletLayout ? 280 : isMobileLayout ? 480 : undefined;
-  const deliverByRemaining = differenceInBusinessDays(new Date(deliverBy), new Date());
-  const deliverByColor =
-    deliverByRemaining <= 3
-      ? red[800]
-      : deliverByRemaining <= 5
-      ? orange[800]
-      : deliverByRemaining <= 7
-      ? yellow[800]
-      : 'inherit';
-  const deliverByFontWeight = !isCompleted && deliverByRemaining <= 7 ? 'bold' : 'normal';
 
   let actionButtons: { label: string; onClick: () => void }[] = [];
   if (workOrder.workOrderStatus === WorkOrderStatus.CUTTING) {
@@ -298,13 +288,7 @@ const WorkOrderListItem = ({ workOrder, itemHeight, isSelected }: WorkOrderListI
             </Typography>
             <Typography>
               <span className={classes.label}>{t('deliverBy')}: </span>
-              <span
-                className={classes.value}
-                style={{
-                  color: isCompleted ? 'inherit' : deliverByColor,
-                  fontWeight: deliverByFontWeight,
-                }}
-              >
+              <span className={classes.value} style={deliverByStyle}>
                 {deliverBy}
               </span>
             </Typography>

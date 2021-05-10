@@ -1,11 +1,13 @@
 import { DATE_FORMAT, PrintSide } from 'const';
-import { format, parseISO } from 'date-fns';
-import { getProductSize, getProductSummary } from 'utils/product';
-
-import { TFunction } from 'i18next';
+import { differenceInBusinessDays, format, parseISO } from 'date-fns';
 import { WorkOrderDto } from 'features/workOrder/interface';
+import { TFunction } from 'i18next';
+import { CSSProperties } from 'react';
+import { getProductSize, getProductSummary } from 'utils/product';
 import { formatDigit } from 'utils/string';
 import { getWeight } from 'utils/workOrder';
+
+import { orange, red, yellow } from '@material-ui/core/colors';
 
 export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
   const { product } = workOrder;
@@ -25,11 +27,25 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
   });
   let deliveryTags = [];
   if (workOrder.isUrgent) {
-    deliveryTags.push(t('isUrgent'));
+    deliveryTags.push(t('workOrders:isUrgent'));
   }
   if (workOrder.shouldBePunctual) {
-    deliveryTags.push(t('shouldBePunctual'));
+    deliveryTags.push(t('workOrders:shouldBePunctual'));
   }
+
+  const deliverByRemaining = differenceInBusinessDays(new Date(workOrder.deliverBy), new Date());
+  const deliverByStyle: CSSProperties = {
+    color: isCompleted
+      ? 'inherit'
+      : deliverByRemaining <= 3
+      ? red[800]
+      : deliverByRemaining <= 5
+      ? orange[800]
+      : deliverByRemaining <= 7
+      ? yellow[800]
+      : 'inherit',
+    fontWeight: !isCompleted && deliverByRemaining <= 7 ? 'bold' : 'normal',
+  };
 
   const accountName = product.account.name;
   const productName = product.name;
@@ -42,6 +58,7 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
     workOrderNumber,
     orderedAt,
     deliverBy,
+    deliverByStyle,
     isCompleted,
     completedAt,
     orderQuantity,

@@ -42,6 +42,8 @@ export default {
     thisMonth: '이번달',
     lastYear: '지난해',
     thisYear: '올해',
+    overdue: '기한 지남',
+    imminent: '기한 임박',
 
     account: '거래처',
     product: '제품',
@@ -80,6 +82,7 @@ export default {
   dashboard: {
     pageTitle: '대시보드',
     workOrderCount: '주문내역',
+    deadlineStatus: '납기현황',
   },
   accounts: {
     pageTitle: '거래처 관리',

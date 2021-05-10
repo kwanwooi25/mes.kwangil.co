@@ -1,3 +1,4 @@
+import { DASHBOARD_CARD_MAX_WIDTH } from 'const';
 import React, { ReactElement } from 'react';
 
 import {
@@ -11,7 +12,7 @@ const useStyles = makeStyles((theme: Theme) =>
       border: `1px solid ${lighten(theme.palette.primary.dark, 0.85)}`,
       borderRadius: theme.spacing(1),
       width: '100%',
-      maxWidth: theme.breakpoints.values.sm,
+      maxWidth: DASHBOARD_CARD_MAX_WIDTH,
     },
     cardHeader: {
       display: 'flex',
