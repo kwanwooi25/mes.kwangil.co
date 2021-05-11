@@ -3,6 +3,7 @@ import DashboardCard from 'components/DashboardCard';
 import PlateDialog from 'components/dialog/Plate';
 import ProductName from 'components/ProductName';
 import { PlateStatus } from 'const';
+import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { WorkOrderDto } from 'features/workOrder/interface';
 import { workOrderApi } from 'features/workOrder/workOrderApi';
@@ -82,6 +83,7 @@ const WorkOrderListItem = ({ workOrder, onComplete }: { workOrder: WorkOrderDto;
   const classes = useStyles();
   const { productSize, plateStatus } = useWorkOrderDisplay(workOrder, t);
   const { openDialog, closeDialog } = useDialog();
+  const { isUser } = useAuth();
   const backgroundColor = COLORS[workOrder.plateStatus];
 
   const handleClickComplete = () => {
@@ -106,11 +108,13 @@ const WorkOrderListItem = ({ workOrder, onComplete }: { workOrder: WorkOrderDto;
       <ProductName className="productName" product={workOrder.product} />
       <Typography className="productSize">{productSize}</Typography>
       <Chip className="plateStatus" label={plateStatus} style={{ backgroundColor }} />
-      <Tooltip title={t('common:complete') as string}>
-        <IconButton className="completeButton" color="primary" onClick={handleClickComplete}>
-          <DoneIcon />
-        </IconButton>
-      </Tooltip>
+      {!isUser && (
+        <Tooltip title={t('common:complete') as string}>
+          <IconButton className="completeButton" color="primary" onClick={handleClickComplete}>
+            <DoneIcon />
+          </IconButton>
+        </Tooltip>
+      )}
     </ListItem>
   );
 };

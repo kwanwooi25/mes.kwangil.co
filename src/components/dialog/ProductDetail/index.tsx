@@ -1,13 +1,16 @@
-import { DialogActions, DialogContent, Theme, createStyles, makeStyles } from '@material-ui/core';
-
+import RoundedButton from 'components/RoundedButton';
+import { useAuth } from 'features/auth/authHook';
 import Dialog from 'features/dialog/Dialog';
-import DoneIcon from '@material-ui/icons/Done';
-import ProductDetails from './ProductDetails';
 import { ProductDto } from 'features/product/interface';
 import React from 'react';
-import RoundedButton from 'components/RoundedButton';
-import { getProductTitle } from 'utils/product';
 import { useTranslation } from 'react-i18next';
+import { getProductTitle } from 'utils/product';
+import { hideText } from 'utils/string';
+
+import { createStyles, DialogActions, DialogContent, makeStyles, Theme } from '@material-ui/core';
+import DoneIcon from '@material-ui/icons/Done';
+
+import ProductDetails from './ProductDetails';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -28,10 +31,12 @@ export interface ProductDetailDialogProps {
 const ProductDetailDialog = ({ product, onClose }: ProductDetailDialogProps) => {
   const { t } = useTranslation('products');
   const classes = useStyles();
+  const { isUser } = useAuth();
   const title = getProductTitle(product);
+  const subTitle = isUser ? hideText(product?.account?.name) : product?.account?.name;
 
   return (
-    <Dialog fullWidth open onClose={onClose} title={title} subTitle={product?.account?.name}>
+    <Dialog fullWidth open onClose={onClose} title={title} subTitle={subTitle}>
       <DialogContent className={classes.productDetailContent}>
         {Boolean(product) && <ProductDetails product={product} hideBaseInfo />}
       </DialogContent>

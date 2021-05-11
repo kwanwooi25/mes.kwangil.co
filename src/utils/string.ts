@@ -1,4 +1,5 @@
 import { CRN_MAX_LENGTH, PHONE_NUMBER_MAX_LENGTH } from 'const';
+import { padStart } from 'lodash';
 
 /**
  * 숫자만 추출
@@ -87,4 +88,18 @@ export function removeFileExtension(filename: string): string {
  */
 export function getFileNameFromUrl(url: string): string {
   return url.split('/').pop() || '';
+}
+
+/**
+ * 문자열을 *표로 가려서 반환
+ *
+ * @param text 숨길 문자열
+ * @param hideFirstLetter 첫번째 문자도 숨길지 여부 @default false
+ *
+ * @example abcde -> a****
+ */
+export function hideText(text: string, hideFirstLetter: boolean = false): string {
+  const firstLetter: string = hideFirstLetter ? '*' : text[0];
+  const stars: string = padStart('', text.length - 1, '*');
+  return `${firstLetter}${stars}`;
 }

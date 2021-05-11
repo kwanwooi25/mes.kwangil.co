@@ -1,17 +1,19 @@
-import { Divider, Theme, createStyles, makeStyles } from '@material-ui/core';
-import { ProductLength, ProductThickness, ProductWidth } from 'const';
-import React, { useEffect } from 'react';
-import { productActions, productSelectors } from './productSlice';
 import { useAppDispatch, useAppSelector } from 'app/store';
-
-import { BaseQuery } from 'types/api';
-import { GetProductsQuery } from './interface';
 import Input from 'components/form/Input';
 import RangeSlider from 'components/form/RangeSlider';
 import RoundedButton from 'components/RoundedButton';
-import { useFormik } from 'formik';
-import { useTranslation } from 'react-i18next';
+import { ProductLength, ProductThickness, ProductWidth } from 'const';
+import { useAuth } from 'features/auth/authHook';
 import { useUI } from 'features/ui/uiHook';
+import { useFormik } from 'formik';
+import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { BaseQuery } from 'types/api';
+
+import { createStyles, Divider, makeStyles, Theme } from '@material-ui/core';
+
+import { GetProductsQuery } from './interface';
+import { productActions, productSelectors } from './productSlice';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -76,6 +78,7 @@ const ProductSearch = (props: ProductSearchProps) => {
   const { offset, limit, ...restQuery } = useAppSelector(productSelectors.query);
   const { getList: getProducts, resetList: resetProducts } = productActions;
   const { closeSearch } = useUI();
+  const { isUser } = useAuth();
 
   const initialValues = {
     accountName: '',
@@ -119,6 +122,7 @@ const ProductSearch = (props: ProductSearchProps) => {
         label={t('accountName')}
         value={values.accountName}
         onChange={handleChange}
+        disabled={isUser}
         autoFocus
       />
       <Input
@@ -127,6 +131,7 @@ const ProductSearch = (props: ProductSearchProps) => {
         label={t('name')}
         value={values.name}
         onChange={handleChange}
+        autoFocus={isUser}
       />
       <RangeSlider
         className={classes.thickness}

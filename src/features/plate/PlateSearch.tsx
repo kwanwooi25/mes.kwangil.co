@@ -1,17 +1,19 @@
-import { Divider, Theme, createStyles, makeStyles } from '@material-ui/core';
-import { PlateLength, PlateRound } from 'const';
-import React, { useEffect } from 'react';
-import { plateActions, plateSelectors } from './plateSlice';
 import { useAppDispatch, useAppSelector } from 'app/store';
-
-import { BaseQuery } from 'types/api';
-import { GetPlatesQuery } from './interface';
 import Input from 'components/form/Input';
 import RangeSlider from 'components/form/RangeSlider';
 import RoundedButton from 'components/RoundedButton';
-import { useFormik } from 'formik';
-import { useTranslation } from 'react-i18next';
+import { PlateLength, PlateRound } from 'const';
+import { useAuth } from 'features/auth/authHook';
 import { useUI } from 'features/ui/uiHook';
+import { useFormik } from 'formik';
+import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { BaseQuery } from 'types/api';
+
+import { createStyles, Divider, makeStyles, Theme } from '@material-ui/core';
+
+import { GetPlatesQuery } from './interface';
+import { plateActions, plateSelectors } from './plateSlice';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -71,6 +73,7 @@ const PlateSearch = ({ onSubmit, onReset }: PlateSearchProps) => {
   const { offset, limit, ...restQuery } = useAppSelector(plateSelectors.query);
   const { getList: getPlates, resetList: resetPlates } = plateActions;
   const { closeSearch } = useUI();
+  const { isUser } = useAuth();
 
   const initialValues = {
     accountName: '',
@@ -112,6 +115,7 @@ const PlateSearch = ({ onSubmit, onReset }: PlateSearchProps) => {
         label={t('accountName')}
         value={values.accountName}
         onChange={handleChange}
+        disabled={isUser}
         autoFocus
       />
       <Input
@@ -120,6 +124,7 @@ const PlateSearch = ({ onSubmit, onReset }: PlateSearchProps) => {
         label={t('productName')}
         value={values.productName}
         onChange={handleChange}
+        autoFocus={isUser}
       />
       <Input className={classes.plateName} name="name" label={t('name')} value={values.name} onChange={handleChange} />
       <RangeSlider

@@ -1,13 +1,14 @@
-import { Link, Theme, createStyles, makeStyles } from '@material-ui/core';
-import React, { memo } from 'react';
-
-import AccountDetailDialog from './dialog/AccountDetailDialog';
-import { AccountDto } from 'features/account/interface';
-import { accountApi } from 'features/account/accountApi';
 import classNames from 'classnames';
-import { highlight } from 'utils/string';
+import { accountApi } from 'features/account/accountApi';
+import { AccountDto } from 'features/account/interface';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
+import React, { memo } from 'react';
+import { hideText, highlight } from 'utils/string';
+
+import { createStyles, Link, makeStyles, Theme } from '@material-ui/core';
+
+import AccountDetailDialog from './dialog/AccountDetailDialog';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -40,6 +41,8 @@ const AccountName = ({ account, className, linkClassName, searchText = '' }: Acc
   const { openDialog, closeDialog } = useDialog();
   const { isUser } = useAuth();
 
+  const accountNameHTML = isUser ? hideText(account.name) : highlight(account.name, searchText);
+
   const openAccountDetailDialog = async () => {
     if (isUser) {
       return;
@@ -57,10 +60,7 @@ const AccountName = ({ account, className, linkClassName, searchText = '' }: Acc
         color="initial"
         onClick={openAccountDetailDialog}
       >
-        <span
-          className={classes.accountName}
-          dangerouslySetInnerHTML={{ __html: highlight(account.name, searchText) }}
-        />
+        <span className={classes.accountName} dangerouslySetInnerHTML={{ __html: accountNameHTML }} />
       </Link>
     </div>
   );

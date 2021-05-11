@@ -1,18 +1,22 @@
-import { Checkbox, Divider, FormControlLabel, Theme, createStyles, makeStyles } from '@material-ui/core';
-import React, { useEffect } from 'react';
-import { addDays, format, subDays, subMonths, subWeeks } from 'date-fns';
-import { initialState, workOrderActions, workOrderSelectors } from './workOrderSlice';
 import { useAppDispatch, useAppSelector } from 'app/store';
-
-import { BaseQuery } from 'types/api';
-import { DATE_FORMAT } from 'const';
-import { DatePicker } from 'components/form/Pickers';
-import { GetWorkOrdersQuery } from './interface';
 import Input from 'components/form/Input';
+import { DatePicker } from 'components/form/Pickers';
 import RoundedButton from 'components/RoundedButton';
-import { useFormik } from 'formik';
-import { useTranslation } from 'react-i18next';
+import { DATE_FORMAT } from 'const';
+import { addDays, format, subDays, subMonths, subWeeks } from 'date-fns';
+import { useAuth } from 'features/auth/authHook';
 import { useUI } from 'features/ui/uiHook';
+import { useFormik } from 'formik';
+import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { BaseQuery } from 'types/api';
+
+import {
+    Checkbox, createStyles, Divider, FormControlLabel, makeStyles, Theme
+} from '@material-ui/core';
+
+import { GetWorkOrdersQuery } from './interface';
+import { initialState, workOrderActions, workOrderSelectors } from './workOrderSlice';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -57,6 +61,7 @@ const WorkOrderSearch = ({ onSubmit, onReset }: WorkOrderSearchProps) => {
   const { offset, limit, ...restQuery } = useAppSelector(workOrderSelectors.query);
   const { getList, resetList } = workOrderActions;
   const { closeSearch } = useUI();
+  const { isUser } = useAuth();
 
   const initialValues = {
     orderedAt: [...initialState.query.orderedAt],
@@ -156,7 +161,13 @@ const WorkOrderSearch = ({ onSubmit, onReset }: WorkOrderSearchProps) => {
         </RoundedButton>
       </div>
       <Divider className={classes.divider} />
-      <Input name="accountName" label={t('accountName')} value={values.accountName} onChange={handleChange} />
+      <Input
+        name="accountName"
+        label={t('accountName')}
+        value={values.accountName}
+        onChange={handleChange}
+        disabled={isUser}
+      />
       <Input name="productName" label={t('productName')} value={values.productName} onChange={handleChange} />
       <FormControlLabel
         control={

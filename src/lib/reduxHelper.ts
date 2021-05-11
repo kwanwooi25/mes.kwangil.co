@@ -59,6 +59,11 @@ export const createGenericSlice = <
       resetList: (state) => {
         const { limit = DEFAULT_LIST_LIMIT } = state.query;
         state.query = { ...initialState.query, limit } as Draft<QueryInterface>;
+        state.pagination = {
+          ids: [],
+          currentPage: 1,
+          totalPages: 1,
+        };
         entityAdapter.removeAll(state as EntityState<Dto>);
       },
       updateSuccess: (state, { payload: { id, ...changes } }: PayloadAction<Dto>) => {
