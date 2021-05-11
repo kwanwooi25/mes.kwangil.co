@@ -117,6 +117,7 @@ const PlateInfoForm = (props: PlateInfoFormProps) => {
         error={touched.round && Boolean(errors.round)}
         helperText={touched.round && errors.round}
         inputProps={{ step: PlateRound.STEP, min: PlateRound.MIN, max: PlateRound.MAX }}
+        autoFocus
       />
       <Input
         className={classes.length}

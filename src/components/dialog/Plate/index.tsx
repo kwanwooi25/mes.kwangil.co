@@ -87,7 +87,7 @@ const PlateDialog = ({ products = [], plate, onClose }: PlateDialogProps) => {
   return (
     <Dialog open onClose={onClose} title={dialogTitle} fullHeight>
       {isSaving && <Loading />}
-      <FormikStepper initialValues={initialValues} onSubmit={onSubmit}>
+      <FormikStepper initialValues={initialValues} onSubmit={onSubmit} initialStep={!products.length ? 0 : 1}>
         {forms.map(({ label, Component, validationSchema }) => (
           <FormikStep key={label} label={label} validationSchema={validationSchema}>
             <Component />
