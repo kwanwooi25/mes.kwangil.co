@@ -5,7 +5,8 @@ import { createGenericSlice } from 'lib/reduxHelper';
 import { createEntityAdapter, createSelector, EntityState, PayloadAction } from '@reduxjs/toolkit';
 
 import {
-    CreateProductDto, CreateProductsDto, GetProductsQuery, ProductDto, UpdateProductDto
+    CreateProductDto, CreateProductsDto, CreateStockDto, GetProductsQuery, ProductDto, StockDto,
+    UpdateProductDto
 } from './interface';
 
 export interface ProductState extends EntityState<ProductDto> {
@@ -59,6 +60,16 @@ const slice = createGenericSlice({
     createProducts: (state, action: PayloadAction<CreateProductsDto[]>) => {},
     updateProduct: (state, action: PayloadAction<UpdateProductDto>) => {},
     deleteProducts: (state, action: PayloadAction<number[]>) => {},
+    createOrUpdateStocks: (state, action: PayloadAction<(CreateStockDto | StockDto)[]>) => {},
+    createOrUpdateStocksSuccess: (state, { payload }: PayloadAction<StockDto[]>) => {
+      productsAdapter.updateMany(
+        state,
+        payload.map((stock) => ({
+          id: stock.productId,
+          changes: { stock },
+        }))
+      );
+    },
   },
 });
 
@@ -77,6 +88,9 @@ const selectors = {
   pagination: createSelector(productSelector, ({ pagination }) => pagination),
   isSelectMode: createSelector(productSelector, ({ selectedIds }) => !!selectedIds.length),
   selectedIds: createSelector(productSelector, ({ selectedIds }) => selectedIds),
+  selectedProducts: createSelector(productSelector, ({ selectedIds, entities }) =>
+    selectedIds.map((id) => entities[id] as ProductDto)
+  ),
 };
 
 const { actions } = slice;

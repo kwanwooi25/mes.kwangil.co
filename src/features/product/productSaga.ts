@@ -1,13 +1,14 @@
-import { CreateProductsDto, GetProductsQuery, ProductDto } from './interface';
-import { all, call, fork, put, select, takeEvery } from 'redux-saga/effects';
-import { productActions, productSelectors } from './productSlice';
-
-import { GetListResponse } from 'types/api';
 import { LoadingKeys } from 'const';
 import { dialogActions } from 'features/dialog/dialogSlice';
 import { loadingActions } from 'features/loading/loadingSlice';
 import { notificationActions } from 'features/notification/notificationSlice';
+import { stockApi } from 'features/stock/stockApi';
+import { all, call, fork, put, select, takeEvery } from 'redux-saga/effects';
+import { GetListResponse } from 'types/api';
+
+import { CreateProductsDto, GetProductsQuery, ProductDto, StockDto } from './interface';
 import { productApi } from './productApi';
+import { productActions, productSelectors } from './productSlice';
 
 const {
   getList,
@@ -19,6 +20,8 @@ const {
   createProducts,
   updateProduct,
   updateSuccess,
+  createOrUpdateStocks,
+  createOrUpdateStocksSuccess,
 } = productActions;
 const { startLoading, finishLoading } = loadingActions;
 const { close: closeDialog } = dialogActions;
@@ -71,6 +74,20 @@ function* createProductsSaga({ payload: productsToCreate }: ReturnType<typeof cr
   }
 }
 
+function* createOrUpdateStocksSaga({ payload: stocks }: ReturnType<typeof createOrUpdateStocks>) {
+  try {
+    yield put(startLoading(LoadingKeys.SAVING_STOCK));
+    const updatedStocks: StockDto[] = yield call(stockApi.createOrUpdateStocks, stocks);
+    yield put(createOrUpdateStocksSuccess(updatedStocks));
+    yield put(closeDialog());
+    yield put(notify({ variant: 'success', message: 'products:createOrUpdateStocksSuccess' }));
+  } catch (error) {
+    yield put(notify({ variant: 'error', message: 'products:createOrUpdateStocksFailed' }));
+  } finally {
+    yield put(finishLoading(LoadingKeys.SAVING_STOCK));
+  }
+}
+
 function* updateProductSaga({ payload: productToUpdate }: ReturnType<typeof updateProduct>) {
   try {
     yield put(startLoading(LoadingKeys.SAVING_PRODUCT));
@@ -109,5 +126,6 @@ export function* productSaga(): any {
     yield takeEvery(createProducts.type, createProductsSaga),
     yield takeEvery(updateProduct.type, updateProductSaga),
     yield takeEvery(deleteProducts.type, deleteProductsSaga),
+    yield takeEvery(createOrUpdateStocks.type, createOrUpdateStocksSaga),
   ]);
 }

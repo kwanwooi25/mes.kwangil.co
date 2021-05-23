@@ -135,6 +135,7 @@ export default {
     addProduct: '제품 등록',
     updateProduct: '제품 정보 변경',
     deleteProduct: '제품 삭제',
+    createOrUpdateStock: '재고 수량 변경',
     productList: '제품목록',
     baseInfo: '기본 정보',
     accountName: '거래처명',
@@ -181,6 +182,7 @@ export default {
     dates: '생성/수정일',
     createdAt: '생성일',
     updatedAt: '최종수정일',
+    balance: '재고 수량',
 
     searchPlaceholder: '제품명으로 검색',
     getProductsFailed: '제품 목록 가져오기 실패!',
@@ -207,6 +209,10 @@ export default {
     minWidthError: '최소 너비 ({{value}}) 이상으로 입력하세요.',
     maxWidthError: '최대 너비 ({{value}}) 이하로 입력하세요.',
     extColorRequired: '원단 색상을 입력하세요.',
+
+    balanceRequired: '수량을 입력하세요.',
+    createOrUpdateStocksSuccess: '재고 수량 저장 성공!',
+    createOrUpdateStocksFailed: '재고 수량 저장 실패!',
   },
 
   plates: {

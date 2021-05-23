@@ -2,6 +2,7 @@ import { useAppDispatch, useAppSelector } from 'app/store';
 import ConfirmDialog from 'components/dialog/Confirm';
 import ExcelUploadDialog from 'components/dialog/ExcelUpload';
 import ProductDialog from 'components/dialog/Product';
+import StockDialog from 'components/dialog/Stock';
 import ListEmpty from 'components/ListEmpty';
 import Loading from 'components/Loading';
 import SubToolbar from 'components/SubToolbar';
@@ -18,10 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { downloadWorkbook } from 'utils/excel';
 
 import { IconButton, Tooltip } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import PublishIcon from '@material-ui/icons/Publish';
+import { Add, DeleteOutline, GetApp, PollOutlined, Publish } from '@material-ui/icons';
 
 import { CreateProductsDto } from './interface';
 import { productApi } from './productApi';
@@ -44,6 +42,7 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
   const products = useAppSelector(productSelectors.paginatedProducts);
   const isSelectMode = useAppSelector(productSelectors.isSelectMode);
   const selectedIds = useAppSelector(productSelectors.selectedIds);
+  const selectedProducts = useAppSelector(productSelectors.selectedProducts);
   const {
     getList,
     resetList,
@@ -94,6 +93,10 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
     setIsDownloading(false);
   };
 
+  const handleClickStockTakeAll = () => {
+    openDialog(<StockDialog products={selectedProducts} onClose={closeDialog} />);
+  };
+
   const handleClickDeleteAll = () => {
     openDialog(
       <ConfirmDialog
@@ -108,9 +111,14 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
   };
 
   const selectModeButtons = [
+    <Tooltip key="stock-take-all" title={t('createOrUpdateStock') as string} placement="top">
+      <IconButton onClick={handleClickStockTakeAll}>
+        <PollOutlined />
+      </IconButton>
+    </Tooltip>,
     <Tooltip key="delete-all" title={t('common:deleteAll') as string} placement="top">
       <IconButton onClick={handleClickDeleteAll}>
-        <DeleteOutlineIcon />
+        <DeleteOutline />
       </IconButton>
     </Tooltip>,
   ];
@@ -118,18 +126,18 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
   const toolBarButtons = [
     <Tooltip key="add-product" title={t('addProduct') as string} placement="top">
       <IconButton onClick={handleClickCreate}>
-        <AddIcon />
+        <Add />
       </IconButton>
     </Tooltip>,
     <Tooltip key="add-product-bulk" title={t('common:createBulk') as string} placement="top">
       <IconButton onClick={handleClickCreateBulk}>
-        <PublishIcon />
+        <Publish />
       </IconButton>
     </Tooltip>,
     <Tooltip key="download-products" title={t('common:downloadExcel') as string} placement="top">
       <IconButton onClick={handleClickDownload} disabled={isDownloading}>
         {isDownloading && <Loading />}
-        <GetAppIcon />
+        <GetApp />
       </IconButton>
     </Tooltip>,
   ];

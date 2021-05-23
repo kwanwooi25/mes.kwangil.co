@@ -1,64 +1,58 @@
-import {
-  Checkbox,
-  IconButton,
-  ListItem,
-  ListItemIcon,
-  ListItemProps,
-  ListItemSecondaryAction,
-  ListItemText,
-  Menu,
-  MenuItem,
-  Theme,
-  Typography,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core';
-import React, { MouseEvent, memo, useCallback, useState } from 'react';
-import { getPrintSummary, getProductSize } from 'utils/product';
-import { productActions, productSelectors } from './productSlice';
 import { useAppDispatch, useAppSelector } from 'app/store';
-
 import AccountName from 'components/AccountName';
 import ConfirmDialog from 'components/dialog/Confirm';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ProductDialog from 'components/dialog/Product';
-import { ProductDialogMode } from 'const';
-import { ProductDto } from './interface';
-import ProductName from 'components/ProductName';
-import { Skeleton } from '@material-ui/lab';
+import StockDialog from 'components/dialog/Stock';
 import WorkOrderDialog from 'components/dialog/WorkOrder';
-import { highlight } from 'utils/string';
+import ProductName from 'components/ProductName';
+import { ProductDialogMode } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
+import React, { memo, MouseEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getPrintSummary, getProductSize } from 'utils/product';
+import { formatDigit, highlight } from 'utils/string';
+
+import {
+    Checkbox, createStyles, IconButton, ListItem, ListItemIcon, ListItemProps,
+    ListItemSecondaryAction, ListItemText, makeStyles, Menu, MenuItem, Theme, Typography
+} from '@material-ui/core';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { Skeleton } from '@material-ui/lab';
+
+import { ProductDto } from './interface';
+import { productActions, productSelectors } from './productSlice';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     productDetail: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'flex-start',
+      display: 'grid',
+      gridTemplateColumns: '3fr 2fr',
+      gridTemplateAreas: `
+        "accountName accountName"
+        "productName productName"
+        "productSize stockBalance"
+      `,
+      alignItems: 'center',
+      gridColumnGap: theme.spacing(1),
       [theme.breakpoints.up('sm')]: {
-        display: 'grid',
-        gridTemplateColumns: '2fr 3fr',
+        gridTemplateColumns: '2fr 3fr 90px',
         gridTemplateAreas: `
-          "accountName productName"
-          "accountName productSize"
+          "accountName productName stockBalance"
+          "accountName productSize stockBalance"
         `,
-        alignItems: 'center',
-        gridColumnGap: theme.spacing(1),
       },
       [theme.breakpoints.up('md')]: {
-        gridTemplateColumns: '2fr 2fr 3fr',
+        gridTemplateColumns: '2fr 3fr 3fr 90px',
         gridTemplateAreas: `
-          "accountName productName extColor"
-          "accountName productSize printSummary"
+          "accountName productName extColor stockBalance"
+          "accountName productSize printSummary stockBalance"
         `,
       },
       [theme.breakpoints.up('lg')]: {
-        gridTemplateColumns: '2fr 3fr 2fr 1fr 3fr',
+        gridTemplateColumns: '2fr 3fr 2fr 1fr 3fr 90px',
         gridTemplateAreas: `
-          "accountName productName productSize extColor printSummary"
+          "accountName productName productSize extColor printSummary stockBalance"
         `,
       },
     },
@@ -73,6 +67,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     productSize: {
       gridArea: 'productSize',
+    },
+    stockBalance: {
+      gridArea: 'stockBalance',
+      justifySelf: 'end',
+      paddingRight: theme.spacing(1),
     },
     extColor: {
       gridArea: 'extColor',
@@ -104,6 +103,10 @@ const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: Produ
 
   const productSize = getProductSize(product);
   const printSummary = getPrintSummary(product);
+  const hasStock = !!product.stock;
+  const stockBalance = hasStock
+    ? t('common:sheetCount', { countString: formatDigit(product?.stock?.balance || 0) })
+    : '';
 
   const handleSelectionChange = useCallback(() => {
     dispatch(toggleSelection(product.id));
@@ -116,6 +119,10 @@ const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: Produ
     closeMenu();
     onClick();
   };
+
+  const handleClickStock = useCallback(() => {
+    openDialog(<StockDialog products={[product]} onClose={closeDialog} />);
+  }, [product]);
 
   const handleClickWorkOrder = useCallback(() => {
     openDialog(<WorkOrderDialog product={product} onClose={closeDialog} />);
@@ -143,6 +150,7 @@ const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: Produ
   }, [product]);
 
   const actionButtons = [
+    { label: t('products:createOrUpdateStock'), onClick: handleClickStock },
     { label: t('common:workOrder'), onClick: handleClickWorkOrder },
     { label: t('common:copy'), onClick: handleClickCopy },
     { label: t('common:edit'), onClick: handleClickEdit },
@@ -167,6 +175,9 @@ const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: Produ
           <ProductName product={product} searchText={query.name} className={classes.productName} />
           <Typography variant="body1" className={classes.productSize}>
             {productSize}
+          </Typography>
+          <Typography variant="body1" className={classes.stockBalance}>
+            {stockBalance}
           </Typography>
           {showDetails && (
             <>

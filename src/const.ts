@@ -30,6 +30,7 @@ export enum LoadingKeys {
   SAVING_ACCOUNT = 'SAVING_ACCOUNT',
   GET_PRODUCTS = 'GET_PRODUCTS',
   SAVING_PRODUCT = 'SAVING_PRODUCT',
+  SAVING_STOCK = 'SAVING_STOCK',
   GET_PLATES = 'GET_PLATES',
   SAVING_PLATE = 'SAVING_PLATE',
   GET_WORK_ORDERS = 'GET_WORK_ORDERS',
@@ -169,6 +170,14 @@ export enum UserRole {
 export enum DeadlineStatus {
   OVERDUE = 'overdue',
   IMMINENT = 'imminent',
+}
+
+export enum StockHistoryType {
+  CREATED = 'CREATED',
+  MANUFACTURED = 'MANUFACTURED',
+  DELIVERED = 'DELIVERED',
+  DISPOSAL = 'DISPOSAL',
+  STOCKTAKING = 'STOCKTAKING',
 }
 
 export const DEFAULT_PAGE = Path.DASHBOARD;

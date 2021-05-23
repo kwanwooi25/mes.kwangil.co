@@ -1,23 +1,25 @@
-import { DEFAULT_LIST_LIMIT, LoadingKeys, ProductDialogMode, ProductListItemHeight } from 'const';
-import { IconButton, List, Theme, createStyles, makeStyles } from '@material-ui/core';
-import React, { useEffect } from 'react';
-import { productActions, productSelectors } from './productSlice';
 import { useAppDispatch, useAppSelector } from 'app/store';
-
-import ConfirmDialog from 'components/dialog/Confirm';
 import CreationFab from 'components/CreationFab';
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import ConfirmDialog from 'components/dialog/Confirm';
+import ProductDialog from 'components/dialog/Product';
+import StockDialog from 'components/dialog/Stock';
 import EndOfListItem from 'components/EndOfListItem';
 import ListEmpty from 'components/ListEmpty';
-import ProductDialog from 'components/dialog/Product';
-import ProductListItem from './ProductListItem';
 import SelectionPanel from 'components/SelectionPanel';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
-import { formatDigit } from 'utils/string';
+import { DEFAULT_LIST_LIMIT, LoadingKeys, ProductDialogMode, ProductListItemHeight } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useLoading } from 'features/loading/loadingHook';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatDigit } from 'utils/string';
+
+import { createStyles, IconButton, List, makeStyles, Theme } from '@material-ui/core';
+import { DeleteOutline, PollOutlined } from '@material-ui/icons';
+
+import ProductListItem from './ProductListItem';
+import { productActions, productSelectors } from './productSlice';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,6 +40,7 @@ const MobileProductList = (props: MobileProductListProps) => {
   const products = useAppSelector(productSelectors.products);
   const isSelectMode = useAppSelector(productSelectors.isSelectMode);
   const selectedIds = useAppSelector(productSelectors.selectedIds);
+  const selectedProducts = useAppSelector(productSelectors.selectedProducts);
   const { getList: getProducts, resetList: resetProducts, resetSelection, deleteProducts } = productActions;
   const dispatch = useAppDispatch();
   const { openDialog, closeDialog } = useDialog();
@@ -58,6 +61,10 @@ const MobileProductList = (props: MobileProductListProps) => {
 
   const handleCloseSelectionPanel = () => {
     dispatch(resetSelection());
+  };
+
+  const handleClickStockTakeAll = () => {
+    openDialog(<StockDialog products={selectedProducts} onClose={closeDialog} />);
   };
 
   const handleClickDeleteAll = () => {
@@ -119,8 +126,11 @@ const MobileProductList = (props: MobileProductListProps) => {
       {!isUser && (
         <>
           <SelectionPanel isOpen={isSelectMode} selectedCount={selectedIds.length} onClose={handleCloseSelectionPanel}>
+            <IconButton onClick={handleClickStockTakeAll}>
+              <PollOutlined />
+            </IconButton>
             <IconButton onClick={handleClickDeleteAll}>
-              <DeleteOutlineIcon />
+              <DeleteOutline />
             </IconButton>
           </SelectionPanel>
           <CreationFab show={!isSelectMode} onClick={openProductDialog} />
