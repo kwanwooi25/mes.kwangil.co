@@ -69,7 +69,7 @@ const PaginatedProductList = (props: PaginatedProductListProps) => {
   const handleChangePage = (e: ChangeEvent<unknown>, value: number) => {
     const limit = query?.limit || DEFAULT_LIST_LIMIT;
     dispatch(resetListOnPage());
-    dispatch(getList({ limit, offset: limit * value - limit }));
+    dispatch(getList({ ...query, offset: limit * value - limit }));
   };
 
   const handleClickCreate = () => {

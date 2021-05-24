@@ -1,10 +1,10 @@
-import { Notification, notificationActions } from './notificationSlice';
 import { useAppDispatch, useAppSelector } from 'app/store';
-
-import { useEffect } from 'react';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useSnackbar } from 'notistack';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { Notification, notificationActions } from './notificationSlice';
 
 let displayed: string[] = [];
 
@@ -37,8 +37,8 @@ const Notifier = () => {
         key,
         autoHideDuration: 3000,
         anchorOrigin: {
-          vertical: isMobileLayout ? 'top' : 'bottom',
-          horizontal: isMobileLayout ? 'center' : 'right',
+          vertical: 'bottom',
+          horizontal: isMobileLayout ? 'center' : 'left',
         },
         ...options,
         onClose: (event, reason, myKey) => {

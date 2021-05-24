@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme: Theme) =>
         gridGap: theme.spacing(1, 2),
       },
       [theme.breakpoints.up('md')]: {
-        gridTemplateColumns: '1fr 1fr 130px 100px',
+        gridTemplateColumns: '1fr minmax(150px, 1fr) 130px 100px',
         gridTemplateAreas: `
           "workOrderId workOrderId dates workOrderStatus"
           "productNames productDetail quantities quantities"

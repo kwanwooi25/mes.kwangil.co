@@ -65,10 +65,10 @@ export default {
   },
   nav: {
     dashboard: '대시보드',
-    accounts: '거래처 관리',
-    products: '제품 관리',
-    plates: '동판 관리',
-    workOrders: '작업지시 관리',
+    accounts: '거래처',
+    products: '제품',
+    plates: '동판',
+    workOrders: '작업지시',
   },
   auth: {
     email: '이메일',
@@ -94,7 +94,7 @@ export default {
     },
   },
   accounts: {
-    pageTitle: '거래처 관리',
+    pageTitle: '거래처',
     addAccount: '거래처 등록',
     updateAccount: '거래처 정보 수정',
     addContact: '연락처 추가',
@@ -131,7 +131,7 @@ export default {
     titleRequired: '연락처명을 입력하세요.',
   },
   products: {
-    pageTitle: '제품 관리',
+    pageTitle: '제품',
     addProduct: '제품 등록',
     updateProduct: '제품 정보 변경',
     deleteProduct: '제품 삭제',
@@ -216,7 +216,7 @@ export default {
   },
 
   plates: {
-    pageTitle: '동판 관리',
+    pageTitle: '동판',
     addPlate: '동판 등록',
     editPlate: '동판 수정',
     deletePlate: '동판 삭제',
@@ -256,7 +256,7 @@ export default {
   },
 
   workOrders: {
-    pageTitle: '작업지시 관리',
+    pageTitle: '작업지시',
     addWorkOrder: '작업지시 등록',
     editWorkOrder: '작업지시 수정',
     deleteWorkOrder: '작업지시 삭제',
@@ -316,6 +316,8 @@ export default {
     bulkCreateWorkOrderFailed: '작업지시 대량 등록 실패!',
     updateWorkOrderSuccess: '작업지시 수정 성공!',
     updateWorkOrderFailed: '작업지시 수정 실패!',
+    completeWorkOrdersSuccess: '작업 완료 등록 성공!',
+    completeWorkOrdersFailed: '작업 완료 등록 실패!',
     deleteWorkOrderConfirm: '<strong>{{workOrderId}}</strong>을(를) 정말 삭제하시겠습니까?',
     deleteWorkOrdersConfirm: '선택하신 <strong>{{count}}개</strong> 작업지시를 모두 삭제하시겠습니까?',
     deleteWorkOrdersSuccess: '작업지시 삭제 성공!',
