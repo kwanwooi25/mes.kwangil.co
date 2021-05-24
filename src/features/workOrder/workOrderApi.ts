@@ -1,8 +1,8 @@
 import { apiClient, handleRequest } from 'app/apiClient';
 
 import {
-    CreateWorkOrderDto, CreateWorkOrdersDto, GetWorkOrderCountQuery, GetWorkOrdersByDeadlineQuery,
-    GetWorkOrdersQuery, UpdateWorkOrderDto
+    CompleteWorkOrderDto, CreateWorkOrderDto, CreateWorkOrdersDto, GetWorkOrderCountQuery,
+    GetWorkOrdersByDeadlineQuery, GetWorkOrdersQuery, UpdateWorkOrderDto
 } from './interface';
 
 const urlPrefix = '/workOrder';
@@ -26,6 +26,8 @@ const api = {
     handleRequest(await apiClient.patch(`${urlPrefix}/${id}`, workOrder)),
   updateWorkOrders: async (workOrders: UpdateWorkOrderDto[]) =>
     handleRequest(await apiClient.patch(urlPrefix, workOrders)),
+  completeWorkOrders: async (workOrders: CompleteWorkOrderDto[]) =>
+    handleRequest(await apiClient.patch(`${urlPrefix}/complete`, workOrders)),
   deleteWorkOrders: async (workOrderIds: string[]) =>
     handleRequest(await apiClient.delete(urlPrefix, { params: { ids: workOrderIds } })),
 };

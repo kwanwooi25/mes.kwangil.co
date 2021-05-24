@@ -6,7 +6,8 @@ import { createGenericSlice } from 'lib/reduxHelper';
 import { createEntityAdapter, createSelector, EntityState, PayloadAction } from '@reduxjs/toolkit';
 
 import {
-    CreateWorkOrderDto, CreateWorkOrdersDto, GetWorkOrdersQuery, UpdateWorkOrderDto, WorkOrderDto
+    CompleteWorkOrderDto, CreateWorkOrderDto, CreateWorkOrdersDto, GetWorkOrdersQuery,
+    UpdateWorkOrderDto, WorkOrderDto
 } from './interface';
 
 export interface WorkOrderState extends EntityState<WorkOrderDto> {
@@ -58,6 +59,7 @@ const slice = createGenericSlice({
     updateWorkOrder: (state, action: PayloadAction<UpdateWorkOrderDto>) => {},
     updateWorkOrders: (state, action: PayloadAction<UpdateWorkOrderDto[]>) => {},
     deleteWorkOrders: (state, action: PayloadAction<string[]>) => {},
+    completeWorkOrders: (state, action: PayloadAction<CompleteWorkOrderDto[]>) => {},
   },
 });
 

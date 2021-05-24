@@ -1,18 +1,17 @@
+import { useAppDispatch } from 'app/store';
 import FormikStepper, { FormikStep, StepperType } from 'components/form/FormikStepper';
-import React, { useState } from 'react';
-import { UpdateWorkOrderDto, WorkOrderDto } from 'features/workOrder/interface';
-import { array, date, number, object } from 'yup';
-
-import Dialog from 'features/dialog/Dialog';
 import Loading from 'components/Loading';
 import { LoadingKeys } from 'const';
-import WorkOrderCompleteForm from './WorkOrderCompleteForm';
-import { getProductTitle } from 'utils/product';
-import { getWorkOrderToUpdate } from 'utils/workOrder';
-import { useAppDispatch } from 'app/store';
+import Dialog from 'features/dialog/Dialog';
 import { useLoading } from 'features/loading/loadingHook';
-import { useTranslation } from 'react-i18next';
+import { CompleteWorkOrderDto, WorkOrderDto } from 'features/workOrder/interface';
 import { workOrderActions } from 'features/workOrder/workOrderSlice';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { getProductTitle } from 'utils/product';
+import { array, date, number, object } from 'yup';
+
+import WorkOrderCompleteForm from './WorkOrderCompleteForm';
 
 export interface WorkOrdersCompleteDialogProps {
   workOrders: WorkOrderDto[];
@@ -24,7 +23,7 @@ const WorkOrdersCompleteDialog = ({ workOrders = [], onClose }: WorkOrdersComple
   const [isPrevButtonDisabled, setIsPrevButtonDisabled] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const { [LoadingKeys.SAVING_WORK_ORDER]: isSaving } = useLoading();
-  const { updateWorkOrders } = workOrderActions;
+  const { completeWorkOrders } = workOrderActions;
 
   const dialogTitle = t('completeWorkOrder');
 
@@ -40,11 +39,15 @@ const WorkOrdersCompleteDialog = ({ workOrders = [], onClose }: WorkOrdersComple
   );
 
   const onSubmit = (values: WorkOrderDto[]) => {
-    const workOrdersToUpdate: UpdateWorkOrderDto[] = values.map((workOrderToUpdate) => ({
-      id: workOrderToUpdate.id,
-      ...getWorkOrderToUpdate(workOrderToUpdate),
-    }));
-    dispatch(updateWorkOrders(workOrdersToUpdate));
+    const workOrdersToUpdate: CompleteWorkOrderDto[] = values.map(
+      ({ id, completedAt, completedQuantity, product }) => ({
+        id,
+        completedAt: completedAt as string,
+        completedQuantity: completedQuantity as number,
+        productId: product.id,
+      })
+    );
+    dispatch(completeWorkOrders(workOrdersToUpdate));
   };
 
   const handleClose = () => {

@@ -1,13 +1,13 @@
-import { CreateWorkOrdersDto, GetWorkOrdersQuery, WorkOrderDto } from './interface';
-import { all, call, fork, put, select, takeEvery } from 'redux-saga/effects';
-import { workOrderActions, workOrderSelectors } from './workOrderSlice';
-
-import { GetListResponse } from 'types/api';
 import { LoadingKeys } from 'const';
 import { dialogActions } from 'features/dialog/dialogSlice';
 import { loadingActions } from 'features/loading/loadingSlice';
 import { notificationActions } from 'features/notification/notificationSlice';
+import { all, call, fork, put, select, takeEvery } from 'redux-saga/effects';
+import { GetListResponse } from 'types/api';
+
+import { CreateWorkOrdersDto, GetWorkOrdersQuery, WorkOrderDto } from './interface';
 import { workOrderApi } from './workOrderApi';
+import { workOrderActions, workOrderSelectors } from './workOrderSlice';
 
 const {
   getList,
@@ -21,6 +21,7 @@ const {
   updateSuccess,
   updateWorkOrders,
   updateManySuccess,
+  completeWorkOrders,
 } = workOrderActions;
 const { startLoading, finishLoading } = loadingActions;
 const { close: closeDialog } = dialogActions;
@@ -104,6 +105,25 @@ function* updateWorkOrdersSaga({ payload: workOrdersToUpdate }: ReturnType<typeo
   }
 }
 
+function* completeWorkOrdersSaga({ payload: workOrdersToUpdate }: ReturnType<typeof completeWorkOrders>) {
+  try {
+    yield put(startLoading(LoadingKeys.SAVING_WORK_ORDER));
+    const updatedWorkOrders: WorkOrderDto[] = yield call(workOrderApi.completeWorkOrders, workOrdersToUpdate);
+    if (!!updatedWorkOrders.length) {
+      yield put(closeDialog());
+      yield put(notify({ variant: 'success', message: 'workOrders:completeWorkOrdersSuccess' }));
+      yield put(updateManySuccess(updatedWorkOrders));
+      const query: GetWorkOrdersQuery = yield select(workOrderSelectors.query);
+      yield put(getList(query));
+      yield put(resetSelection());
+    }
+  } catch (error) {
+    yield put(notify({ variant: 'error', message: 'workOrders:completeWorkOrdersFailed' }));
+  } finally {
+    yield put(finishLoading(LoadingKeys.SAVING_WORK_ORDER));
+  }
+}
+
 function* deleteWorkOrdersSaga({ payload: workOrderIds }: ReturnType<typeof deleteWorkOrders>) {
   try {
     yield call(workOrderApi.deleteWorkOrders, workOrderIds);
@@ -128,6 +148,7 @@ export function* workOrderSaga(): any {
     yield takeEvery(createWorkOrders.type, createWorkOrdersSaga),
     yield takeEvery(updateWorkOrder.type, updateWorkOrderSaga),
     yield takeEvery(updateWorkOrders.type, updateWorkOrdersSaga),
+    yield takeEvery(completeWorkOrders.type, completeWorkOrdersSaga),
     yield takeEvery(deleteWorkOrders.type, deleteWorkOrdersSaga),
   ]);
 }

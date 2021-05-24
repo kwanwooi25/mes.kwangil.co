@@ -44,6 +44,13 @@ export interface UpdateWorkOrderDto
   id?: string;
 }
 
+export interface CompleteWorkOrderDto {
+  id: string;
+  completedAt: Date | string | null;
+  completedQuantity: number;
+  productId: number;
+}
+
 export interface GetWorkOrdersQuery extends BaseQuery {
   orderedAt: string[];
   accountName?: string;
