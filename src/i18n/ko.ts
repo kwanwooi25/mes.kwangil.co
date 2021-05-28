@@ -235,6 +235,7 @@ export default {
     products: '사용 제품',
     accountName: '업체명',
     productName: '제품명',
+    complete: '동판 제작 완료',
 
     searchPlaceholder: '동판명으로 검색',
     roundRequired: '동판 둘레를 입력하세요.',
@@ -253,6 +254,8 @@ export default {
     deletePlatesConfirm: '선택하신 <strong>{{count}}개</strong> 동판을 모두 삭제하시겠습니까?',
     deletePlateSuccess: '동판 삭제 성공!',
     deletePlateFailed: '동판 삭제 실패!',
+    confirmComplete: '<strong>{{productTitle}}</strong> 동판 제작 완료 처리 하시겠습니까?',
+    shouldAddPlate: '제작된 동판 정보를 등록하시겠습니까?',
   },
 
   workOrders: {

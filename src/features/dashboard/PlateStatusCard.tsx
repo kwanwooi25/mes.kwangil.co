@@ -1,5 +1,6 @@
 import AccountName from 'components/AccountName';
 import DashboardCard from 'components/DashboardCard';
+import ConfirmDialog from 'components/dialog/Confirm';
 import PlateDialog from 'components/dialog/Plate';
 import ProductName from 'components/ProductName';
 import { PlateStatus } from 'const';
@@ -10,6 +11,7 @@ import { workOrderApi } from 'features/workOrder/workOrderApi';
 import { useWorkOrderDisplay } from 'hooks/useWorkOrderDisplay';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getProductTitle } from 'utils/product';
 import { getWorkOrderToUpdate } from 'utils/workOrder';
 
 import {
@@ -88,18 +90,43 @@ const WorkOrderListItem = ({ workOrder, onComplete }: { workOrder: WorkOrderDto;
 
   const handleClickComplete = () => {
     openDialog(
-      <PlateDialog
-        products={[workOrder.product]}
-        onClose={async (result?: boolean) => {
-          if (result) {
-            const { id } = workOrder;
-            await workOrderApi.updateWorkOrder({ ...getWorkOrderToUpdate(workOrder), id, isPlateReady: true });
-            onComplete();
-          }
+      <ConfirmDialog
+        title={t('plates:complete')}
+        message={t('plates:confirmComplete', { productTitle: getProductTitle(workOrder.product) })}
+        onClose={async (isConfirmed: boolean) => {
           closeDialog();
+          if (isConfirmed) {
+            updatePlateStatus(workOrder);
+            if (workOrder.plateStatus === PlateStatus.NEW) {
+              openConfirmAddPlateDialog();
+            }
+          }
         }}
       />
     );
+  };
+
+  const openConfirmAddPlateDialog = () => {
+    openDialog(
+      <ConfirmDialog
+        title={t('plates:complete')}
+        message={t('plates:shouldAddPlate')}
+        onClose={async (isConfirmed: boolean) => {
+          closeDialog();
+          isConfirmed && openPlateDialog(workOrder);
+        }}
+      />
+    );
+  };
+
+  const openPlateDialog = (workOrder: WorkOrderDto) => {
+    openDialog(<PlateDialog products={[workOrder.product]} onClose={closeDialog} />);
+  };
+
+  const updatePlateStatus = async (workOrder: WorkOrderDto) => {
+    const { id } = workOrder;
+    await workOrderApi.updateWorkOrder({ ...getWorkOrderToUpdate(workOrder), id, isPlateReady: true });
+    onComplete();
   };
 
   return (
