@@ -1,18 +1,21 @@
-import { Checkbox, Divider, FormControlLabel, Theme, Typography, createStyles, makeStyles } from '@material-ui/core';
-import { DATE_FORMAT, DeliveryMethod, PlateStatus } from 'const';
-
 import CustomToggleButton from 'components/form/CustomToggleButton';
-import { DatePicker } from 'components/form/Pickers';
 import Input from 'components/form/Input';
-import { ProductDto } from 'features/product/interface';
+import { DatePicker } from 'components/form/Pickers';
 import ProductName from 'components/ProductName';
-import React from 'react';
-import { WorkOrderFormValues } from '.';
-import { capitalize } from 'lodash';
+import { DATE_FORMAT, DeliveryMethod, PlateStatus, PrintSide } from 'const';
 import { format } from 'date-fns';
-import { getProductSize } from 'utils/product';
+import { ProductDto } from 'features/product/interface';
 import { useFormikContext } from 'formik';
+import { capitalize } from 'lodash';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { getProductSize } from 'utils/product';
+
+import {
+    Checkbox, createStyles, Divider, FormControlLabel, makeStyles, Theme, Typography
+} from '@material-ui/core';
+
+import { WorkOrderFormValues } from './';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -86,6 +89,7 @@ const OrderInfoForm = (props: OrderInfoFormProps) => {
   const { values, touched, errors, handleChange, handleBlur, setFieldValue } = useFormikContext<WorkOrderFormValues>();
 
   const product: ProductDto = values.product as ProductDto;
+  const isPrint = product.printSide !== PrintSide.NONE;
   const plateStatusOptions = Object.values(PlateStatus).map((value) => ({
     value,
     label: t(`plateStatus${capitalize(value)}`),
@@ -152,6 +156,7 @@ const OrderInfoForm = (props: OrderInfoFormProps) => {
         value={values.plateStatus}
         onChange={handleChangePlateStatus}
         options={plateStatusOptions}
+        disabled={!isPrint}
       />
       <CustomToggleButton
         className={classes.deliveryMethod}

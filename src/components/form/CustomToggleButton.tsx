@@ -1,7 +1,9 @@
-import { Button, ButtonGroup, Theme, Typography, createStyles, makeStyles } from '@material-ui/core';
-
-import React from 'react';
 import classnames from 'classnames';
+import React from 'react';
+
+import {
+    Button, ButtonGroup, createStyles, makeStyles, Theme, Typography
+} from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -32,6 +34,7 @@ export interface CustomToggleButtonProps<T> {
   className?: string;
   size?: 'small' | 'medium' | 'large';
   color?: 'default' | 'inherit' | 'primary' | 'secondary';
+  disabled?: boolean;
 }
 
 const CustomToggleButton = <T extends string>({
@@ -42,6 +45,7 @@ const CustomToggleButton = <T extends string>({
   className,
   size = 'medium',
   color = 'primary',
+  disabled = false,
 }: CustomToggleButtonProps<T>) => {
   const classes = useStyles();
 
@@ -59,6 +63,7 @@ const CustomToggleButton = <T extends string>({
             variant={option.value === value ? 'contained' : 'outlined'}
             disableElevation
             onClick={() => onChange(option.value)}
+            disabled={disabled}
           >
             {option.label}
           </Button>
