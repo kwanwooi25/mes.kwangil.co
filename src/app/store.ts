@@ -1,25 +1,29 @@
-import { Action, ThunkAction, combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
-import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
-
-import accountReducer from 'features/account/accountSlice';
 import { accountSaga } from 'features/account/accountSaga';
-import { all } from 'redux-saga/effects';
-import authReducer from 'features/auth/authSlice';
+import accountReducer from 'features/account/accountSlice';
 import { authSaga } from 'features/auth/authSaga';
-import { createBrowserHistory } from 'history';
-import { createLogger } from 'redux-logger';
-import createSagaMiddleware from 'redux-saga';
+import authReducer from 'features/auth/authSlice';
+import { deliverySaga } from 'features/delivery/deliverySaga';
+import deliveryReducer from 'features/delivery/deliverySlice';
 import dialogReducer from 'features/dialog/dialogSlice';
 import loadingReducer from 'features/loading/loadingSlice';
 import notificationReducer from 'features/notification/notificationSlice';
-import plateReducer from 'features/plate/plateSlice';
 import { plateSaga } from 'features/plate/plateSaga';
-import productReducer from 'features/product/productSlice';
+import plateReducer from 'features/plate/plateSlice';
 import { productSaga } from 'features/product/productSaga';
+import productReducer from 'features/product/productSlice';
 import uiReducer from 'features/ui/uiSlice';
-import workOrderReducer from 'features/workOrder/workOrderSlice';
 import { workOrderSaga } from 'features/workOrder/workOrderSaga';
+import workOrderReducer from 'features/workOrder/workOrderSlice';
+import { createBrowserHistory } from 'history';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import { createLogger } from 'redux-logger';
+import createSagaMiddleware from 'redux-saga';
+import { all } from 'redux-saga/effects';
+
+import {
+    Action, combineReducers, configureStore, getDefaultMiddleware, ThunkAction
+} from '@reduxjs/toolkit';
 
 export const history = createBrowserHistory();
 
@@ -34,6 +38,7 @@ const reducer = combineReducers({
   product: productReducer,
   plate: plateReducer,
   workOrder: workOrderReducer,
+  delivery: deliveryReducer,
 });
 
 const sagaMiddleware = createSagaMiddleware();
@@ -58,7 +63,7 @@ const store = configureStore({
 });
 
 function* rootSaga() {
-  yield all([authSaga(), accountSaga(), productSaga(), plateSaga(), workOrderSaga()]);
+  yield all([authSaga(), accountSaga(), productSaga(), plateSaga(), workOrderSaga(), deliverySaga()]);
 }
 
 sagaMiddleware.run(rootSaga);

@@ -33,6 +33,7 @@ export default {
     weightInKg: '{{weight}} kg',
     yesterday: '어제',
     today: '오늘',
+    tomorrow: '내일',
     weeksCount: '{{weeks}}주',
     monthsCount: '{{months}}개월',
     sheet: '원단',
@@ -51,6 +52,7 @@ export default {
     product: '제품',
     plate: '동판',
     workOrder: '작업지시',
+    delivery: '출고',
 
     selectedCount: '<strong>{{count}}</strong>개 선택됨',
 
@@ -69,6 +71,7 @@ export default {
     products: '제품',
     plates: '동판',
     workOrders: '작업지시',
+    delivery: '출고',
   },
   auth: {
     email: '이메일',
@@ -325,5 +328,18 @@ export default {
     deleteWorkOrdersConfirm: '선택하신 <strong>{{count}}개</strong> 작업지시를 모두 삭제하시겠습니까?',
     deleteWorkOrdersSuccess: '작업지시 삭제 성공!',
     deleteWorkOrdersFailed: '작업지시 삭제 실패!',
+  },
+
+  delivery: {
+    pageTitle: '출고',
+    deliveryDate: '출고일',
+    deliveryMethod: '출고 방법',
+    addDelivery: '출고 등록',
+    deleteDelivery: '출고 삭제',
+    deliveryConfirm: '출고 확정',
+
+    getDeliveriesFailed: '출고 목록 가져오기 실패!',
+    deleteDeliveryConfirm: '출고 항목 (<strong>{{productTitle}}</strong>) 을 정말 삭제하시겠습니까?',
+    deleteDeliveriesConfirm: '선택하신 <strong>{{count}}개</strong> 출고를 모두 삭제하시겠습니까?',
   },
 };

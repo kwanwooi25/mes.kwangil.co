@@ -1,10 +1,8 @@
 import { ElementType } from 'react';
 
-import ApartmentIcon from '@material-ui/icons/Apartment';
-import BuildIcon from '@material-ui/icons/Build';
-import CameraRollIcon from '@material-ui/icons/CameraRoll';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
+import {
+    Apartment, Build, CameraRoll, Dashboard, LocalShipping, PhotoLibrary
+} from '@material-ui/icons';
 
 export enum Path {
   HOME = '/',
@@ -14,6 +12,7 @@ export enum Path {
   PRODUCTS = '/products',
   PLATES = '/plates',
   WORK_ORDERS = '/workOrders',
+  DELIVERY = '/delivery',
 }
 
 export enum ExcelVariant {
@@ -35,6 +34,8 @@ export enum LoadingKeys {
   SAVING_PLATE = 'SAVING_PLATE',
   GET_WORK_ORDERS = 'GET_WORK_ORDERS',
   SAVING_WORK_ORDER = 'SAVING_WORK_ORDER',
+  GET_DELIVERIES = 'GET_DELIVERIES',
+  SAVING_DELIVERIES = 'SAVING_DELIVERIES',
 }
 
 export enum AccountListItemHeight {
@@ -58,6 +59,12 @@ export enum WorkOrderListItemHeight {
   MOBILE = 293 + 8 + 16,
   TABLET = 138 + 8 + 16,
   DESKTOP = 72 + 8 + 16,
+}
+
+export enum DeliveryListItemHeight {
+  MOBILE = 88 + 8 + 16,
+  TABLET = 58 + 8 + 16,
+  DESKTOP = 32 + 8 + 16,
 }
 
 export enum AccountInputs {
@@ -186,16 +193,17 @@ export const DEFAULT_LIST_LIMIT = 50;
 
 export const NAV_WIDTH = 240;
 export const NAV_PATHS = {
-  [UserRole.USER]: [Path.DASHBOARD, Path.PRODUCTS, Path.PLATES, Path.WORK_ORDERS],
-  [UserRole.MANAGER]: [Path.DASHBOARD, Path.ACCOUNTS, Path.PRODUCTS, Path.PLATES, Path.WORK_ORDERS],
-  [UserRole.ADMIN]: [Path.DASHBOARD, Path.ACCOUNTS, Path.PRODUCTS, Path.PLATES, Path.WORK_ORDERS],
+  [UserRole.USER]: [Path.DASHBOARD, Path.PRODUCTS, Path.PLATES, Path.WORK_ORDERS, Path.DELIVERY],
+  [UserRole.MANAGER]: [Path.DASHBOARD, Path.ACCOUNTS, Path.PRODUCTS, Path.PLATES, Path.WORK_ORDERS, Path.DELIVERY],
+  [UserRole.ADMIN]: [Path.DASHBOARD, Path.ACCOUNTS, Path.PRODUCTS, Path.PLATES, Path.WORK_ORDERS, Path.DELIVERY],
 };
 export const NAV_ICONS: { [key: string]: ElementType } = {
-  [Path.DASHBOARD]: DashboardIcon,
-  [Path.ACCOUNTS]: ApartmentIcon,
-  [Path.PRODUCTS]: PhotoLibraryIcon,
-  [Path.PLATES]: CameraRollIcon,
-  [Path.WORK_ORDERS]: BuildIcon,
+  [Path.DASHBOARD]: Dashboard,
+  [Path.ACCOUNTS]: Apartment,
+  [Path.PRODUCTS]: PhotoLibrary,
+  [Path.PLATES]: CameraRoll,
+  [Path.WORK_ORDERS]: Build,
+  [Path.DELIVERY]: LocalShipping,
 };
 
 export const SEARCH_PANEL_WIDTH = 360;

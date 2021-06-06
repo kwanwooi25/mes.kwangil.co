@@ -1,17 +1,17 @@
-import { DEFAULT_PAGE, LoadingKeys, NAV_PATHS, Path } from 'const';
-import React, { ComponentType } from 'react';
-import { Redirect, Route, Switch } from 'react-router';
-
-import AccountPage from 'features/account/AccountPage';
-import DashboardPage from 'features/dashboard/DashboardPage';
 import Loading from 'components/Loading';
+import { DEFAULT_PAGE, LoadingKeys, NAV_PATHS, Path } from 'const';
+import AccountPage from 'features/account/AccountPage';
+import { useAuth } from 'features/auth/authHook';
 import LoginPage from 'features/auth/LoginPage';
+import DashboardPage from 'features/dashboard/DashboardPage';
+import DeliveryPage from 'features/delivery/DeliveryPage';
+import { useLoading } from 'features/loading/loadingHook';
 import Notifier from 'features/notification/Notifier';
 import PlatePage from 'features/plate/PlatePage';
 import ProductPage from 'features/product/ProductPage';
 import WorkOrderPage from 'features/workOrder/WorkOrderPage';
-import { useAuth } from 'features/auth/authHook';
-import { useLoading } from 'features/loading/loadingHook';
+import React, { ComponentType } from 'react';
+import { Redirect, Route, Switch } from 'react-router';
 
 export interface RouteProps {
   path: string;
@@ -55,6 +55,7 @@ function App() {
         <PrivateRoute path={Path.PRODUCTS} component={ProductPage} />
         <PrivateRoute path={Path.PLATES} component={PlatePage} />
         <PrivateRoute path={Path.WORK_ORDERS} component={WorkOrderPage} />
+        <PrivateRoute path={Path.DELIVERY} component={DeliveryPage} />
         <Redirect to={DEFAULT_PAGE} />
       </Switch>
       <Notifier />
