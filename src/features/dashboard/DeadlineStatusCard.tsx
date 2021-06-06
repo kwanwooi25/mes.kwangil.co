@@ -8,6 +8,7 @@ import { workOrderApi } from 'features/workOrder/workOrderApi';
 import { useWorkOrderDisplay } from 'hooks/useWorkOrderDisplay';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from 'react-query';
 import { formatDate } from 'utils/date';
 
 import {
@@ -81,14 +82,8 @@ const useStyles = makeStyles((theme: Theme) =>
 const WorkOrderListItem = ({ workOrder }: { workOrder: WorkOrderDto }) => {
   const { t } = useTranslation();
   const classes = useStyles();
-  const {
-    productSize,
-    orderQuantity,
-    deliverBy,
-    deliverByStyle,
-    workOrderStatus,
-    workOrderStatusStyle,
-  } = useWorkOrderDisplay(workOrder, t);
+  const { productSize, orderQuantity, deliverBy, deliverByStyle, workOrderStatus, workOrderStatusStyle } =
+    useWorkOrderDisplay(workOrder, t);
 
   return (
     <ListItem className={classes.workOrderListItem} divider>
@@ -136,9 +131,16 @@ export interface DeadlineStatusCardProps {}
 const DeadlineStatusCard = (props: DeadlineStatusCardProps) => {
   const { t } = useTranslation();
   const classes = useStyles();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const {
+    isLoading,
+    data: workOrdersByDeadline = { overdue: [], imminent: [] },
+    refetch,
+  } = useQuery(
+    'workOrdersByDeadline',
+    async (): Promise<WorkOrdersByDeadline> =>
+      await workOrderApi.getWorkOrdersByDeadline({ deadline: formatDate(new Date()) })
+  );
   const [deadlineStatus, setDeadlineStatus] = useState<DeadlineStatus>(DeadlineStatus.IMMINENT);
-  const [workOrdersByDeadline, setWorkOrdersByDeadline] = useState<WorkOrdersByDeadline>({ overdue: [], imminent: [] });
   const [workOrdersToShow, setWorkOrdersToShow] = useState<WorkOrderDto[]>([]);
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -159,15 +161,6 @@ const DeadlineStatusCard = (props: DeadlineStatusCardProps) => {
   const handleChangeDeadlineStatus = (deadlineStatus: DeadlineStatus) => setDeadlineStatus(deadlineStatus);
   const handlePageChange = (e: ChangeEvent<unknown>, page: number) => setPage(page);
 
-  const getWorkOrdersByDeadline = async () => {
-    setIsLoading(true);
-    setWorkOrdersByDeadline({ overdue: [], imminent: [] });
-    const deadline = formatDate(new Date());
-    const workOrdersByDeadline: WorkOrdersByDeadline = await workOrderApi.getWorkOrdersByDeadline({ deadline });
-    setWorkOrdersByDeadline(workOrdersByDeadline);
-    setIsLoading(false);
-  };
-
   const renderSkeletons = () =>
     Array(workOrderCountToDisplay)
       .fill('')
@@ -175,10 +168,6 @@ const DeadlineStatusCard = (props: DeadlineStatusCardProps) => {
 
   const renderWorkOrders = () =>
     workOrdersToShow.map((workOrder) => <WorkOrderListItem key={workOrder.id} workOrder={workOrder} />);
-
-  useEffect(() => {
-    getWorkOrdersByDeadline();
-  }, []);
 
   useEffect(() => {
     const workOrders = [...workOrdersByDeadline[deadlineStatus]];
@@ -194,11 +183,7 @@ const DeadlineStatusCard = (props: DeadlineStatusCardProps) => {
   }, [page]);
 
   return (
-    <DashboardCard
-      title={t('dashboard:deadlineStatus')}
-      onRefresh={getWorkOrdersByDeadline}
-      className={classes.deadlineStatusCard}
-    >
+    <DashboardCard title={t('dashboard:deadlineStatus')} onRefresh={refetch} className={classes.deadlineStatusCard}>
       <CustomToggleButton
         className={classes.deadlineStatusButtons}
         value={deadlineStatus}

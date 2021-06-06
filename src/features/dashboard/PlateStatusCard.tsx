@@ -11,6 +11,7 @@ import { workOrderApi } from 'features/workOrder/workOrderApi';
 import { useWorkOrderDisplay } from 'hooks/useWorkOrderDisplay';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from 'react-query';
 import { getProductTitle } from 'utils/product';
 import { getWorkOrderToUpdate } from 'utils/workOrder';
 
@@ -177,8 +178,11 @@ export interface PlateStatusCardProps {}
 const PlateStatusCard = (props: PlateStatusCardProps) => {
   const { t } = useTranslation();
   const classes = useStyles();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [workOrders, setWorkOrders] = useState<WorkOrderDto[]>([]);
+  const {
+    isLoading,
+    data: workOrders = [],
+    refetch,
+  } = useQuery('workOrdersNeedPlate', async (): Promise<WorkOrderDto[]> => await workOrderApi.getWorkOrdersNeedPlate());
   const [workOrdersToShow, setWorkOrdersToShow] = useState<WorkOrderDto[]>([]);
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -187,13 +191,6 @@ const PlateStatusCard = (props: PlateStatusCardProps) => {
 
   const handlePageChange = (e: ChangeEvent<unknown>, page: number) => setPage(page);
 
-  const getWorkOrdersNeedPlate = async () => {
-    setIsLoading(true);
-    const workOrders = await workOrderApi.getWorkOrdersNeedPlate();
-    setWorkOrders(workOrders);
-    setIsLoading(false);
-  };
-
   const renderSkeletons = () =>
     Array(workOrderCountToDisplay)
       .fill('')
@@ -201,12 +198,8 @@ const PlateStatusCard = (props: PlateStatusCardProps) => {
 
   const renderWorkOrders = () =>
     workOrdersToShow.map((workOrder) => (
-      <WorkOrderListItem key={workOrder.id} workOrder={workOrder} onComplete={getWorkOrdersNeedPlate} />
+      <WorkOrderListItem key={workOrder.id} workOrder={workOrder} onComplete={refetch} />
     ));
-
-  useEffect(() => {
-    getWorkOrdersNeedPlate();
-  }, []);
 
   useEffect(() => {
     setWorkOrdersToShow(workOrders.slice(0, workOrderCountToDisplay));
@@ -220,7 +213,7 @@ const PlateStatusCard = (props: PlateStatusCardProps) => {
   }, [page]);
 
   return (
-    <DashboardCard title={t('dashboard:plateStatus')} onRefresh={getWorkOrdersNeedPlate}>
+    <DashboardCard title={t('dashboard:plateStatus')} onRefresh={refetch}>
       <List disablePadding style={{ height: LIST_ITEM_HEIGHT * workOrderCountToDisplay }}>
         {isLoading ? renderSkeletons() : !workOrders.length ? <NoPlatesToProduce /> : renderWorkOrders()}
       </List>

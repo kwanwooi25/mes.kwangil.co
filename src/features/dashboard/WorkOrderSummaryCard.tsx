@@ -9,6 +9,7 @@ import { WorkOrderCount } from 'features/workOrder/interface';
 import { workOrderApi } from 'features/workOrder/workOrderApi';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from 'react-query';
 import { formatDate } from 'utils/date';
 import { formatDigit } from 'utils/string';
 
@@ -136,22 +137,29 @@ const WorkOrderSummaryCard = (props: WorkOrderSummaryCardProps) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const dispatch = useAppDispatch();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [orderedAtRange, setOrderedAtRange] = useState<OrderedAtRange>(OrderedAtRange.THIS_MONTH);
-  const [workOrderCount, setWorkOrderCount] = useState<WorkOrderCount>({
-    byStatus: {
-      [WorkOrderStatus.NOT_STARTED]: 0,
-      [WorkOrderStatus.EXTRUDING]: 0,
-      [WorkOrderStatus.PRINTING]: 0,
-      [WorkOrderStatus.CUTTING]: 0,
-      [WorkOrderStatus.COMPLETED]: 0,
+  const {
+    isLoading,
+    data: workOrderCount = {
+      byStatus: {
+        [WorkOrderStatus.NOT_STARTED]: 0,
+        [WorkOrderStatus.EXTRUDING]: 0,
+        [WorkOrderStatus.PRINTING]: 0,
+        [WorkOrderStatus.CUTTING]: 0,
+        [WorkOrderStatus.COMPLETED]: 0,
+      },
+      byPrintSide: {
+        [PrintSide.NONE]: 0,
+        [PrintSide.SINGLE]: 0,
+        [PrintSide.DOUBLE]: 0,
+      },
     },
-    byPrintSide: {
-      [PrintSide.NONE]: 0,
-      [PrintSide.SINGLE]: 0,
-      [PrintSide.DOUBLE]: 0,
-    },
-  });
+    refetch,
+  } = useQuery(
+    'workOrderCount',
+    async (): Promise<WorkOrderCount> =>
+      await workOrderApi.getWorkOrderCount({ orderedAt: getOrderedAt(orderedAtRange) })
+  );
 
   const { NONE, SINGLE, DOUBLE } = workOrderCount.byPrintSide;
   const printNoneCount = NONE;
@@ -192,25 +200,17 @@ const WorkOrderSummaryCard = (props: WorkOrderSummaryCardProps) => {
   };
 
   const handleChangeOrderedAtRange = (value: OrderedAtRange) => setOrderedAtRange(value);
-  const handleRefresh = () => getWorkOrderCount(orderedAtRange);
 
   const moveToWorkOrderPage = () => dispatch(routerActions.push(Path.WORK_ORDERS));
-  const getWorkOrderCount = async (orderedAtRange: OrderedAtRange) => {
-    setIsLoading(true);
-    const orderedAt = getOrderedAt(orderedAtRange);
-    const workOrderCount: WorkOrderCount = await workOrderApi.getWorkOrderCount({ orderedAt });
-    setWorkOrderCount(workOrderCount);
-    setIsLoading(false);
-  };
 
   useEffect(() => {
-    getWorkOrderCount(orderedAtRange);
+    refetch();
   }, [orderedAtRange]);
 
   return (
     <DashboardCard
       title={t('dashboard:workOrderCount')}
-      onRefresh={handleRefresh}
+      onRefresh={refetch}
       headerButton={
         <Button color="primary" size="small" onClick={moveToWorkOrderPage} endIcon={<ChevronRightIcon />}>
           {t('common:showAll')}

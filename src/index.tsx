@@ -1,21 +1,22 @@
 import 'lib/wdyr';
 import 'i18n';
 
-import * as serviceWorker from './serviceWorker';
-
-import { QueryClient, QueryClientProvider } from 'react-query';
 import store, { history } from 'app/store';
-
-import App from './App';
 import { ConnectedRouter } from 'connected-react-router';
-import { CssBaseline } from '@material-ui/core';
 import { DialogProvider } from 'features/dialog/dialogHook';
-import { Provider } from 'react-redux';
+import { theme } from 'lib/muiTheme';
+import { SnackbarProvider } from 'notistack';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { SnackbarProvider } from 'notistack';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
+import { Provider } from 'react-redux';
+
+import { CssBaseline } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
-import { theme } from 'lib/muiTheme';
+
+import App from './App';
+import * as serviceWorker from './serviceWorker';
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ ReactDOM.render(
     <Provider store={store}>
       <ConnectedRouter history={history}>
         <QueryClientProvider client={queryClient}>
+          <ReactQueryDevtools initialIsOpen />
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <SnackbarProvider>
