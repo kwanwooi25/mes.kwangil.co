@@ -1,32 +1,19 @@
-import {
-  Checkbox,
-  IconButton,
-  ListItem,
-  ListItemIcon,
-  ListItemProps,
-  ListItemSecondaryAction,
-  ListItemText,
-  Menu,
-  MenuItem,
-  Theme,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core';
-import React, { MouseEvent, memo, useCallback, useState } from 'react';
-import { accountActions, accountSelectors } from './accountSlice';
-import { useAppDispatch, useAppSelector } from 'app/store';
-
-import AccountDialog from 'components/dialog/Account';
-import { AccountDto } from 'features/account/interface';
 import AccountName from 'components/AccountName';
+import AccountDialog from 'components/dialog/Account';
 import ConfirmDialog from 'components/dialog/Confirm';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import PhoneIcon from '@material-ui/icons/Phone';
 import PhoneNumber from 'components/PhoneNumber';
-import PrintIcon from '@material-ui/icons/Print';
-import { Skeleton } from '@material-ui/lab';
+import { AccountDto, AccountFilter } from 'features/account/interface';
 import { useDialog } from 'features/dialog/dialogHook';
+import { useDeleteAccountsMutation } from 'hooks/useAccounts';
+import React, { memo, MouseEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from 'react-query';
+
+import {
+    Checkbox, createStyles, IconButton, ListItem, ListItemIcon, ListItemProps,
+    ListItemSecondaryAction, ListItemText, makeStyles, Menu, MenuItem, Theme
+} from '@material-ui/core';
+import { MoreVert, Phone, Print } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -52,50 +39,60 @@ export interface AccountListItemProps extends ListItemProps {
   itemHeight: number;
   isSelected?: boolean;
   showFaxNumber?: boolean;
+  filter?: AccountFilter;
+  toggleSelection?: (account: AccountDto) => any;
 }
 
-const AccountListItem = ({ account, itemHeight, isSelected = false, showFaxNumber = false }: AccountListItemProps) => {
+const AccountListItem = ({
+  account,
+  itemHeight,
+  isSelected = false,
+  showFaxNumber = false,
+  filter = { accountName: '' },
+  toggleSelection = (account: AccountDto) => {},
+}: AccountListItemProps) => {
   const { t } = useTranslation('accounts');
   const classes = useStyles();
 
-  const dispatch = useAppDispatch();
-  const { searchText = '' } = useAppSelector(accountSelectors.query);
-  const { toggleSelection, deleteAccounts } = accountActions;
   const { openDialog, closeDialog } = useDialog();
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
+  const queryClient = useQueryClient();
+  const { deleteAccounts } = useDeleteAccountsMutation({ queryClient });
+
+  const { accountName } = filter;
   const basePhoneNumber = account?.contacts?.find(({ isBase }) => isBase)?.phone;
   const baseFaxNumber = account?.contacts?.find(({ isBase }) => isBase)?.fax;
 
-  const handleSelectionChange = useCallback(() => {
-    dispatch(toggleSelection(account.id));
-  }, []);
+  const handleSelectionChange = () => toggleSelection(account);
 
   const openMenu = useCallback((e: MouseEvent<HTMLButtonElement>) => setMenuAnchorEl(e.currentTarget), []);
   const closeMenu = useCallback(() => setMenuAnchorEl(null), []);
 
-  const handleClickMenuItem = (onClick = () => {}) => () => {
-    closeMenu();
-    onClick();
+  const handleClickMenuItem =
+    (onClick = () => {}) =>
+    () => {
+      closeMenu();
+      onClick();
+    };
+
+  const handleClickEdit = () => {
+    openDialog(<AccountDialog onClose={closeDialog} account={account} />);
   };
 
-  const handleClickEdit = useCallback(() => {
-    openDialog(<AccountDialog onClose={closeDialog} account={account} />);
-  }, []);
-
-  const handleClickDelete = useCallback(() => {
+  const handleClickDelete = () => {
     openDialog(
       <ConfirmDialog
         title={t('deleteAccount')}
         message={t('deleteAccountConfirm', { accountName: account.name })}
         onClose={(isConfirmed: boolean) => {
-          isConfirmed && dispatch(deleteAccounts([account.id]));
+          isConfirmed && deleteAccounts([account.id]);
           closeDialog();
         }}
       />
     );
-  }, []);
+  };
 
   const actionButtons = [
     { label: t('common:edit'), onClick: handleClickEdit },
@@ -109,16 +106,16 @@ const AccountListItem = ({ account, itemHeight, isSelected = false, showFaxNumbe
       </ListItemIcon>
       <ListItemText>
         <div className={classes.accountDetail}>
-          <AccountName account={account} searchText={searchText} />
-          <div>{basePhoneNumber && <PhoneNumber icon={<PhoneIcon fontSize="small" />} number={basePhoneNumber} />}</div>
+          <AccountName account={account} searchText={accountName} />
+          <div>{basePhoneNumber && <PhoneNumber icon={<Phone fontSize="small" />} number={basePhoneNumber} />}</div>
           {showFaxNumber && (
-            <div>{baseFaxNumber && <PhoneNumber icon={<PrintIcon fontSize="small" />} number={baseFaxNumber} />}</div>
+            <div>{baseFaxNumber && <PhoneNumber icon={<Print fontSize="small" />} number={baseFaxNumber} />}</div>
           )}
         </div>
       </ListItemText>
       <ListItemSecondaryAction>
         <IconButton edge="end" onClick={openMenu}>
-          <MoreVertIcon />
+          <MoreVert />
         </IconButton>
         <Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={closeMenu}>
           {actionButtons.map(({ label, onClick }) => (
@@ -131,29 +128,5 @@ const AccountListItem = ({ account, itemHeight, isSelected = false, showFaxNumbe
     </ListItem>
   );
 };
-
-const AccountListItemSkeleton = memo(({ itemHeight }: { itemHeight: number }) => {
-  const classes = useStyles();
-
-  return (
-    <ListItem divider style={{ height: itemHeight }}>
-      <ListItemIcon>
-        <Skeleton variant="rect" width={24} height={24} />
-      </ListItemIcon>
-      <ListItemText>
-        <div className={classes.accountDetail}>
-          <Skeleton variant="rect" width="80%" height={30} />
-          <Skeleton variant="rect" width="80%" height={24} />
-          <Skeleton variant="rect" width="80%" height={24} />
-        </div>
-      </ListItemText>
-      <ListItemSecondaryAction>
-        <Skeleton variant="circle" width={48} height={48} style={{ marginRight: -12 }} />
-      </ListItemSecondaryAction>
-    </ListItem>
-  );
-});
-
-export { AccountListItemSkeleton };
 
 export default memo(AccountListItem);

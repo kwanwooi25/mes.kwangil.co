@@ -1,8 +1,11 @@
-import { Grid, IconButton, Paper, Slide, Theme, Typography, createStyles, makeStyles } from '@material-ui/core';
+import { NAV_WIDTH, SEARCH_PANEL_WIDTH } from 'const';
 import React, { ReactElement } from 'react';
-
-import CloseIcon from '@material-ui/icons/Close';
 import { useTranslation } from 'react-i18next';
+
+import {
+    createStyles, Grid, IconButton, makeStyles, Paper, Slide, Theme, Typography
+} from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -14,9 +17,14 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(1),
       zIndex: theme.zIndex.drawer - 1,
       borderRadius: theme.spacing(1, 1, 0, 0),
+      [theme.breakpoints.up('md')]: {
+        left: NAV_WIDTH,
+      },
+      [theme.breakpoints.up('xl')]: {
+        right: SEARCH_PANEL_WIDTH,
+      },
     },
     panelContent: {
-      maxWidth: theme.breakpoints.values.lg - theme.spacing(4),
       width: '100%',
       margin: 'auto',
       padding: 0,

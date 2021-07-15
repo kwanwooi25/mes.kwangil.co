@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       height: 'calc(100vh - 56px)',
       marginTop: 56,
+      position: 'relative',
       overflow: 'auto',
       [theme.breakpoints.up('sm')]: {
         height: 'calc(100vh - 64px)',

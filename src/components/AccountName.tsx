@@ -1,14 +1,15 @@
 import classNames from 'classnames';
-import { accountApi } from 'features/account/accountApi';
 import { AccountDto } from 'features/account/interface';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
+import { useAccount } from 'hooks/useAccounts';
 import React, { memo } from 'react';
 import { hideText, highlight } from 'utils/string';
 
 import { createStyles, Link, makeStyles, Theme } from '@material-ui/core';
 
 import AccountDetailDialog from './dialog/AccountDetailDialog';
+import Loading from './Loading';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -40,15 +41,12 @@ const AccountName = ({ account, className, linkClassName, searchText = '' }: Acc
   const classes = useStyles();
   const { openDialog, closeDialog } = useDialog();
   const { isUser } = useAuth();
+  const { refetch, isFetching } = useAccount(account.id);
 
   const accountNameHTML = isUser ? hideText(account.name) : highlight(account.name, searchText);
 
   const openAccountDetailDialog = async () => {
-    if (isUser) {
-      return;
-    }
-    const data = await accountApi.getAccount(account.id);
-    openDialog(<AccountDetailDialog account={data} onClose={closeDialog} />);
+    refetch().then((res) => openDialog(<AccountDetailDialog account={res.data} onClose={closeDialog} />));
   };
 
   return (
@@ -59,7 +57,9 @@ const AccountName = ({ account, className, linkClassName, searchText = '' }: Acc
         variant="h6"
         color="initial"
         onClick={openAccountDetailDialog}
+        disabled={isFetching}
       >
+        {isFetching && <Loading />}
         <span className={classes.accountName} dangerouslySetInnerHTML={{ __html: accountNameHTML }} />
       </Link>
     </div>

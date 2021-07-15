@@ -1,25 +1,17 @@
-import {
-  DialogActions,
-  DialogContent,
-  IconButton,
-  TextField,
-  Theme,
-  Tooltip,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core';
-import { ExcelVariant, LoadingKeys } from 'const';
-import React, { ChangeEvent, createRef, useState } from 'react';
-
-import CloseIcon from '@material-ui/icons/Close';
-import Dialog from 'features/dialog/Dialog';
-import DoneIcon from '@material-ui/icons/Done';
-import GetAppIcon from '@material-ui/icons/GetApp';
 import Loading from 'components/Loading';
 import RoundedButton from 'components/RoundedButton';
-import { getExcelFileReader } from 'utils/excel';
-import { useLoading } from 'features/loading/loadingHook';
+import { ExcelVariant } from 'const';
+import Dialog from 'features/dialog/Dialog';
+import React, { ChangeEvent, createRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getExcelFileReader } from 'utils/excel';
+
+import {
+    createStyles, DialogActions, DialogContent, IconButton, makeStyles, TextField, Theme, Tooltip
+} from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
+import DoneIcon from '@material-ui/icons/Done';
+import GetAppIcon from '@material-ui/icons/GetApp';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -43,11 +35,12 @@ const templates = {
 
 export interface ExcelUploadDialogProps {
   variant: ExcelVariant;
+  isUploading?: boolean;
   onSave: (dataToCreate: any[]) => void;
   onClose: () => void;
 }
 
-const ExcelUploadDialog = ({ variant, onSave, onClose }: ExcelUploadDialogProps) => {
+const ExcelUploadDialog = ({ variant, isUploading = false, onSave, onClose }: ExcelUploadDialogProps) => {
   const classes = useStyles();
   const { t } = useTranslation('common');
 
@@ -55,8 +48,6 @@ const ExcelUploadDialog = ({ variant, onSave, onClose }: ExcelUploadDialogProps)
   const [dataToCreate, setDataToCreate] = useState<any[]>([]);
 
   const fileUploadRef = createRef<HTMLInputElement>();
-
-  const { [LoadingKeys.UPLOADING]: isUploading } = useLoading();
 
   const template = templates[variant];
 

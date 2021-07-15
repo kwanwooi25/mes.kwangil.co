@@ -1,6 +1,4 @@
 import { connectRouter, routerMiddleware } from 'connected-react-router';
-import { accountSaga } from 'features/account/accountSaga';
-import accountReducer from 'features/account/accountSlice';
 import { authSaga } from 'features/auth/authSaga';
 import authReducer from 'features/auth/authSlice';
 import { deliverySaga } from 'features/delivery/deliverySaga';
@@ -34,7 +32,6 @@ const reducer = combineReducers({
   dialog: dialogReducer,
   notification: notificationReducer,
   auth: authReducer,
-  account: accountReducer,
   product: productReducer,
   plate: plateReducer,
   workOrder: workOrderReducer,
@@ -63,7 +60,7 @@ const store = configureStore({
 });
 
 function* rootSaga() {
-  yield all([authSaga(), accountSaga(), productSaga(), plateSaga(), workOrderSaga(), deliverySaga()]);
+  yield all([authSaga(), productSaga(), plateSaga(), workOrderSaga(), deliverySaga()]);
 }
 
 sagaMiddleware.run(rootSaga);

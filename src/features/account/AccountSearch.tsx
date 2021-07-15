@@ -1,15 +1,14 @@
-import { Divider, Theme, createStyles, makeStyles } from '@material-ui/core';
-import React, { useEffect } from 'react';
-import { accountActions, accountSelectors } from './accountSlice';
-import { useAppDispatch, useAppSelector } from 'app/store';
-
-import { BaseQuery } from 'types/api';
-import { GetAccountsQuery } from './interface';
+import { useAppDispatch } from 'app/store';
 import Input from 'components/form/Input';
 import RoundedButton from 'components/RoundedButton';
-import { useFormik } from 'formik';
-import { useTranslation } from 'react-i18next';
 import { useUI } from 'features/ui/uiHook';
+import { useFormik } from 'formik';
+import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { createStyles, Divider, makeStyles, Theme } from '@material-ui/core';
+
+import { AccountFilter } from './interface';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,42 +29,39 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export interface AccountSearchProps {}
+export interface AccountSearchProps {
+  filter: AccountFilter;
+  onChange: (filter: AccountFilter) => any;
+}
 
-const AccountSearch = (props: AccountSearchProps) => {
+const AccountSearch = ({ filter, onChange }: AccountSearchProps) => {
   const { t } = useTranslation('accounts');
   const classes = useStyles();
 
   const dispatch = useAppDispatch();
-  const { offset, limit, ...restQuery } = useAppSelector(accountSelectors.query);
-  const { resetList: resetAccounts, getList: getAccounts } = accountActions;
   const { closeSearch } = useUI();
 
-  const initialValues = { searchText: '' };
+  const initialValues = { accountName: '' };
 
-  const { values, setValues, handleSubmit, handleChange, handleReset } = useFormik<
-    Omit<GetAccountsQuery, keyof BaseQuery>
-  >({
+  const { values, setValues, handleSubmit, handleChange, handleReset } = useFormik<AccountFilter>({
     initialValues,
     onReset: () => {
-      dispatch(resetAccounts());
-      dispatch(getAccounts({ limit, offset: 0 }));
+      onChange({ accountName: '' });
       dispatch(closeSearch());
     },
-    onSubmit: (values) => {
-      dispatch(resetAccounts());
-      dispatch(getAccounts({ limit, offset: 0, searchText: values.searchText }));
+    onSubmit: ({ accountName = '' }) => {
+      onChange({ accountName });
       dispatch(closeSearch());
     },
   });
 
   useEffect(() => {
-    setValues({ ...initialValues, ...restQuery });
+    setValues({ ...initialValues, ...filter });
   }, []);
 
   return (
     <form onSubmit={handleSubmit} className={classes.accountSearch} noValidate>
-      <Input name="searchText" label={t('name')} value={values.searchText} onChange={handleChange} autoFocus />
+      <Input name="accountName" label={t('name')} value={values.accountName} onChange={handleChange} autoFocus />
       <Divider className={classes.divider} />
       <div className={classes.buttons}>
         <RoundedButton fullWidth variant="outlined" size="large" onClick={handleReset}>

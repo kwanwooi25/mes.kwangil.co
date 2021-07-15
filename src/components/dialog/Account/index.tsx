@@ -1,23 +1,24 @@
-import { AccountDto, CreateContactDto, UpdateAccountDto } from 'features/account/interface';
-import { DialogActions, DialogContent, Divider, Theme, Typography, createStyles, makeStyles } from '@material-ui/core';
-import React, { ChangeEvent, useEffect } from 'react';
-import { array, boolean, object, string } from 'yup';
-
-import AddIcon from '@material-ui/icons/Add';
-import ContactForm from './ContactForm';
-import Dialog from 'features/dialog/Dialog';
-import DoneIcon from '@material-ui/icons/Done';
 import Input from 'components/form/Input';
 import Loading from 'components/Loading';
-import { LoadingKeys } from 'const';
 import RoundedButton from 'components/RoundedButton';
-import { accountActions } from 'features/account/accountSlice';
-import { formatCrn } from 'utils/string';
-import { isEmpty } from 'lodash';
-import { useAppDispatch } from 'app/store';
+import { AccountDto, CreateContactDto, UpdateAccountDto } from 'features/account/interface';
+import Dialog from 'features/dialog/Dialog';
 import { useFormik } from 'formik';
-import { useLoading } from 'features/loading/loadingHook';
+import { useCreateAccountMutation, useUpdateAccountMutation } from 'hooks/useAccounts';
+import { isEmpty } from 'lodash';
+import React, { ChangeEvent, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from 'react-query';
+import { formatCrn } from 'utils/string';
+import { array, boolean, object, string } from 'yup';
+
+import {
+    createStyles, DialogActions, DialogContent, Divider, makeStyles, Theme, Typography
+} from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+import DoneIcon from '@material-ui/icons/Done';
+
+import ContactForm from './ContactForm';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -57,7 +58,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export interface AccountDialogProps {
   account?: AccountDto;
-  onClose: () => void;
+  onClose: (account?: AccountDto) => void;
 }
 
 interface AccountFormValues {
@@ -71,12 +72,20 @@ interface AccountFormValues {
 const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
   const classes = useStyles();
   const { t } = useTranslation('accounts');
+
   const isEditMode = !isEmpty(account);
   const dialogTitle = t(isEditMode ? 'updateAccount' : 'addAccount');
 
-  const dispatch = useAppDispatch();
-  const { [LoadingKeys.SAVING_ACCOUNT]: isSaving } = useLoading();
-  const { createAccount, updateAccount } = accountActions;
+  const queryClient = useQueryClient();
+
+  const onSuccess = () => {
+    queryClient.invalidateQueries('accounts');
+    onClose();
+  };
+
+  const { updateAccount, isUpdating } = useUpdateAccountMutation({ queryClient, onSuccess });
+  const { createAccount, isCreating } = useCreateAccountMutation({ queryClient, onSuccess });
+  const isLoading = isCreating || isUpdating;
 
   const { values, touched, errors, handleChange, setFieldValue, setValues, submitForm } = useFormik<AccountFormValues>({
     initialValues: {
@@ -102,7 +111,7 @@ const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
         })
       ),
     }),
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       if (isEditMode) {
         const accountToUpdate = {
           id: account?.id,
@@ -110,10 +119,10 @@ const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
           contacts: values?.contacts?.filter(({ id }) => id),
           contactsToCreate: values?.contacts?.filter(({ id }) => !id),
         };
-        dispatch(updateAccount(accountToUpdate as UpdateAccountDto));
+        updateAccount(accountToUpdate as UpdateAccountDto);
       } else {
         const { contactIdsToDelete, ...accountToCreate } = values;
-        dispatch(createAccount(accountToCreate));
+        createAccount(accountToCreate);
       }
     },
   });
@@ -127,7 +136,6 @@ const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
     const newContacts = values.contacts?.map((c, i) => (i === index ? contact : c));
     setFieldValue('contacts', newContacts);
   };
-
   const handleDeleteContact = (index: number) => () => {
     const { contactIdsToDelete = [] } = values;
     const newContacts = values.contacts?.filter((c, i) => {
@@ -136,10 +144,6 @@ const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
     });
     setFieldValue('contacts', newContacts);
     setFieldValue('contactIdsToDelete', contactIdsToDelete);
-  };
-
-  const handleClose = () => {
-    onClose && onClose();
   };
 
   const addContact = () => {
@@ -173,9 +177,9 @@ const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
   }, []);
 
   return (
-    <Dialog open onClose={handleClose} title={dialogTitle}>
+    <Dialog open onClose={onClose} title={dialogTitle}>
       <DialogContent dividers className={classes.dialogContent}>
-        {isSaving && <Loading />}
+        {isLoading && <Loading />}
         <Typography component="h3" variant="subtitle2">
           {t('accountDetail')}
         </Typography>
@@ -236,7 +240,7 @@ const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
           fullWidth
           startIcon={<DoneIcon />}
           onClick={submitForm}
-          disabled={isSaving}
+          disabled={isLoading}
         >
           {t('common:save')}
         </RoundedButton>

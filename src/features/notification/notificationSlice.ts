@@ -1,5 +1,6 @@
 import { OptionsObject as NotistackOptions, VariantType } from 'notistack';
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface Notification {
   key: string;
@@ -8,7 +9,7 @@ export interface Notification {
   dismissed?: boolean;
 }
 
-interface NotifyActionPayload {
+export interface NotifyActionPayload {
   variant: VariantType;
   message: string;
 }

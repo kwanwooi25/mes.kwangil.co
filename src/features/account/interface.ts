@@ -1,8 +1,10 @@
 import { BaseQuery } from 'types/api';
 
-export interface GetAccountsQuery extends BaseQuery {
-  searchText?: string;
+export interface AccountFilter {
+  accountName?: string;
 }
+
+export type GetAccountsQuery = BaseQuery & AccountFilter;
 
 export interface AccountDto {
   id: number;
