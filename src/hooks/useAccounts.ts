@@ -74,23 +74,15 @@ export const useCreateAccountMutation = ({
 
 export const useBulkCreateAccountMutation = ({
   queryClient,
-  onSuccess = () => {},
-  onError = () => {},
+  onSettled = (data: any) => {},
 }: {
   queryClient: QueryClient;
-  onSuccess?: () => void;
-  onError?: () => void;
+  onSettled?: (data: any) => void;
 }) => {
-  const { notify } = useNotification();
   const { mutateAsync: createAccounts, isLoading: isCreating } = useMutation(accountApi.createAccounts, {
-    onSuccess: () => {
-      notify({ variant: 'success', message: 'accounts:bulkCreateAccountSuccess' });
+    onSettled: (data) => {
       queryClient.invalidateQueries('accounts');
-      onSuccess();
-    },
-    onError: () => {
-      notify({ variant: 'error', message: 'accounts:bulkCreateAccountFailed' });
-      onError();
+      onSettled(data);
     },
   });
 

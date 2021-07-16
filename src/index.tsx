@@ -18,7 +18,14 @@ import { ThemeProvider } from '@material-ui/styles';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      staleTime: 1000 * 60 * 5,
+    },
+  },
+});
 
 ReactDOM.render(
   <React.StrictMode>

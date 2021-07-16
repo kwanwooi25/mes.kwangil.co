@@ -4,7 +4,7 @@ export const useSelection = (allIds: (number | string)[]) => {
   const [selectedIds, setSelectedIds] = useState<(number | string)[]>([]);
 
   const isSelectMode = !!selectedIds.length;
-  const isSelectedAll = allIds.every((id) => selectedIds.includes(id));
+  const isSelectedAll = allIds.length > 0 && allIds.every((id) => selectedIds.includes(id));
   const isIndeterminate = !isSelectedAll && allIds.some((id) => selectedIds.includes(id));
 
   const toggleSelection = (id: number | string) => {

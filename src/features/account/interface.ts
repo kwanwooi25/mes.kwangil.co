@@ -18,6 +18,11 @@ export interface CreateAccountDto extends Omit<AccountDto, 'id' | 'contacts'> {
   contacts?: CreateContactDto[];
 }
 
+export interface BulkAccountCreationResponse {
+  createdCount: number;
+  failedList: (CreateAccountDto & { reason: string })[];
+}
+
 export interface UpdateAccountDto extends AccountDto {
   contactsToCreate?: CreateContactDto;
   contactIdsToDelete?: number[];

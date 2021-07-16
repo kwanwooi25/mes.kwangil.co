@@ -1,19 +1,13 @@
+import {
+    DELIVERY_METHOD_TEXT, DeliveryMethod, ExcelVariant, PLATE_STATUS_TEXT, PlateStatus,
+    PRINT_SIDE_TEXT, PrintSide, WorkOrderStatus
+} from 'const';
 import { AccountDto, CreateAccountDto, CreateContactDto } from 'features/account/interface';
 import { CreateProductsDto, ProductDto } from 'features/product/interface';
 import { CreateWorkOrdersDto, WorkOrderDto } from 'features/workOrder/interface';
-import {
-  DELIVERY_METHOD_TEXT,
-  DeliveryMethod,
-  ExcelVariant,
-  PLATE_STATUS_TEXT,
-  PRINT_SIDE_TEXT,
-  PlateStatus,
-  PrintSide,
-  WorkOrderStatus,
-} from 'const';
 import { Dispatch, SetStateAction } from 'react';
-
 import XLSX from 'xlsx';
+
 import { formatDate } from './date';
 import { getFileNameFromUrl } from './string';
 
@@ -27,7 +21,10 @@ export const getExcelFileReader = {
 };
 
 export const downloadWorkbook = {
-  [ExcelVariant.ACCOUNT]: (accounts: AccountDto[], workbookTitle: string) => {
+  [ExcelVariant.ACCOUNT]: (
+    accounts: (AccountDto | (CreateAccountDto & { reason: string }))[],
+    workbookTitle: string
+  ) => {
     const data = processAccountsForDownload(accounts);
     return getWorkbook(data, workbookTitle);
   },
@@ -351,7 +348,7 @@ const generateItem = {
   },
 };
 
-function processAccountsForDownload(accounts: AccountDto[]) {
+function processAccountsForDownload(accounts: (AccountDto | (CreateAccountDto & { reason: string }))[]) {
   const accountDataKeys = Object.keys(ACCOUNT_KEY_TO_LABEL);
   const contactDataKeys = Object.keys(CONTACT_KEY_TO_LABEL);
 
@@ -380,6 +377,11 @@ function processAccountsForDownload(accounts: AccountDto[]) {
           };
         });
         return { ...processedAccount };
+      } else if (key === 'reason') {
+        return {
+          ...processedAccount,
+          실패사유: value,
+        };
       }
 
       return processedAccount;

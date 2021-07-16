@@ -1,5 +1,6 @@
 import CreationFab from 'components/CreationFab';
 import AccountDialog from 'components/dialog/Account';
+import AlertDialog from 'components/dialog/Alert';
 import ConfirmDialog from 'components/dialog/Confirm';
 import ExcelUploadDialog from 'components/dialog/ExcelUpload';
 import EndOfListItem from 'components/EndOfListItem';
@@ -20,6 +21,7 @@ import Layout from 'layouts/Layout';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
+import { downloadWorkbook } from 'utils/excel';
 import { formatDigit } from 'utils/string';
 
 import { IconButton, List, Tooltip } from '@material-ui/core';
@@ -27,7 +29,7 @@ import { Add, DeleteOutline, GetApp, Publish } from '@material-ui/icons';
 
 import AccountListItem from './AccountListItem';
 import AccountSearch from './AccountSearch';
-import { AccountDto, AccountFilter } from './interface';
+import { AccountDto, AccountFilter, BulkAccountCreationResponse } from './interface';
 
 export interface AccountPageProps {}
 
@@ -41,7 +43,22 @@ const AccountPage = (props: AccountPageProps) => {
   const { isDownloading, download } = useDownloadAccounts(filter);
 
   const queryClient = useQueryClient();
-  const { createAccounts, isCreating } = useBulkCreateAccountMutation({ queryClient });
+  const { createAccounts } = useBulkCreateAccountMutation({
+    queryClient,
+    onSettled: ({ createdCount, failedList }: BulkAccountCreationResponse) => {
+      closeDialog();
+      openDialog(
+        <AlertDialog
+          title={t('common:bulkCreationResult')}
+          message={`${t('common:success')}: ${createdCount}<br>${t('common:fail')}: ${failedList.length}`}
+          onClose={closeDialog}
+        />
+      );
+      if (failedList.length) {
+        downloadWorkbook[ExcelVariant.ACCOUNT](failedList, t('common:bulkCreationResult'));
+      }
+    },
+  });
   const { deleteAccounts, isDeleting } = useDeleteAccountsMutation({
     queryClient,
     onSuccess: () => {
@@ -89,16 +106,7 @@ const AccountPage = (props: AccountPageProps) => {
   };
 
   const openExcelUploadDialog = () => {
-    openDialog(
-      <ExcelUploadDialog
-        variant={ExcelVariant.ACCOUNT}
-        isUploading={isCreating}
-        onSave={(data) => {
-          createAccounts(data).then(() => closeDialog());
-        }}
-        onClose={closeDialog}
-      />
-    );
+    openDialog(<ExcelUploadDialog variant={ExcelVariant.ACCOUNT} onSave={createAccounts} onClose={closeDialog} />);
   };
 
   const downloadExcel = () => {

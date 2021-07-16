@@ -35,17 +35,17 @@ const templates = {
 
 export interface ExcelUploadDialogProps {
   variant: ExcelVariant;
-  isUploading?: boolean;
   onSave: (dataToCreate: any[]) => void;
   onClose: () => void;
 }
 
-const ExcelUploadDialog = ({ variant, isUploading = false, onSave, onClose }: ExcelUploadDialogProps) => {
+const ExcelUploadDialog = ({ variant, onSave, onClose }: ExcelUploadDialogProps) => {
   const classes = useStyles();
   const { t } = useTranslation('common');
 
   const [fileName, setFileName] = useState<string>('');
   const [dataToCreate, setDataToCreate] = useState<any[]>([]);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
 
   const fileUploadRef = createRef<HTMLInputElement>();
 
@@ -75,7 +75,10 @@ const ExcelUploadDialog = ({ variant, isUploading = false, onSave, onClose }: Ex
     onClose && onClose();
   };
 
-  const handleSave = () => onSave(dataToCreate);
+  const handleSave = () => {
+    setIsUploading(true);
+    onSave(dataToCreate);
+  };
 
   return (
     <Dialog title={t('createBulk')} open onClose={handleClose}>
@@ -112,7 +115,12 @@ const ExcelUploadDialog = ({ variant, isUploading = false, onSave, onClose }: Ex
         <RoundedButton onClick={handleClose} variant="outlined" startIcon={<CloseIcon />}>
           {t('cancel')}
         </RoundedButton>
-        <RoundedButton onClick={handleSave} color="primary" startIcon={<DoneIcon />} disabled={!dataToCreate.length}>
+        <RoundedButton
+          onClick={handleSave}
+          color="primary"
+          startIcon={<DoneIcon />}
+          disabled={!dataToCreate.length || isUploading}
+        >
           {t('save')}
         </RoundedButton>
       </DialogActions>
