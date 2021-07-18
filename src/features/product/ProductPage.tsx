@@ -115,17 +115,12 @@ const ProductPage = (props: ProductPageProps) => {
 
   const handleToggleSelection = (product: ProductDto) => toggleSelection(product.id);
 
-  const openProductDialog = () => {
-    openDialog(<ProductDialog mode={ProductDialogMode.CREATE} onClose={closeDialog} />);
-  };
+  const openProductDialog = () => openDialog(<ProductDialog mode={ProductDialogMode.CREATE} onClose={closeDialog} />);
 
-  const openExcelUploadDialog = () => {
+  const openExcelUploadDialog = () =>
     openDialog(<ExcelUploadDialog variant={ExcelVariant.PRODUCT} onSave={createProducts} onClose={closeDialog} />);
-  };
 
-  const downloadExcel = () => {
-    download(t('productList'));
-  };
+  const downloadExcel = () => download(t('productList'));
 
   const renderItem = (index: number) => {
     const product = products[index];

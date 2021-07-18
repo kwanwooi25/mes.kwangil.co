@@ -6,8 +6,6 @@ import deliveryReducer from 'features/delivery/deliverySlice';
 import dialogReducer from 'features/dialog/dialogSlice';
 import loadingReducer from 'features/loading/loadingSlice';
 import notificationReducer from 'features/notification/notificationSlice';
-import { plateSaga } from 'features/plate/plateSaga';
-import plateReducer from 'features/plate/plateSlice';
 import uiReducer from 'features/ui/uiSlice';
 import { workOrderSaga } from 'features/workOrder/workOrderSaga';
 import workOrderReducer from 'features/workOrder/workOrderSlice';
@@ -30,7 +28,6 @@ const reducer = combineReducers({
   dialog: dialogReducer,
   notification: notificationReducer,
   auth: authReducer,
-  plate: plateReducer,
   workOrder: workOrderReducer,
   delivery: deliveryReducer,
 });
@@ -57,7 +54,7 @@ const store = configureStore({
 });
 
 function* rootSaga() {
-  yield all([authSaga(), plateSaga(), workOrderSaga(), deliverySaga()]);
+  yield all([authSaga(), workOrderSaga(), deliverySaga()]);
 }
 
 sagaMiddleware.run(rootSaga);

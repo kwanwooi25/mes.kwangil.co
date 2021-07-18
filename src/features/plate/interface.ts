@@ -1,6 +1,16 @@
-import { BaseQuery } from 'types/api';
 import { PlateMaterial } from 'const';
 import { ProductDto } from 'features/product/interface';
+import { BaseQuery } from 'types/api';
+
+export interface PlateFilter {
+  accountName?: string;
+  productName?: string;
+  name?: string;
+  round?: [number, number];
+  length?: [number, number];
+}
+
+export type GetPlatesQuery = BaseQuery & PlateFilter;
 
 export interface PlateDto {
   id: number;
@@ -20,12 +30,4 @@ export interface CreatePlateDto extends Omit<PlateDto, 'id' | 'createdAt' | 'upd
 
 export interface UpdatePlateDto extends PlateDto {
   productsToDisconnect?: ProductDto[];
-}
-
-export interface GetPlatesQuery extends BaseQuery {
-  accountName?: string;
-  productName?: string;
-  name?: string;
-  round?: number[];
-  length?: number[];
 }

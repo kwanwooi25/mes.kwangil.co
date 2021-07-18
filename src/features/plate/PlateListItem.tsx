@@ -1,33 +1,22 @@
-import {
-  Checkbox,
-  IconButton,
-  ListItem,
-  ListItemIcon,
-  ListItemProps,
-  ListItemSecondaryAction,
-  ListItemText,
-  Menu,
-  MenuItem,
-  Theme,
-  Typography,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core';
-import React, { MouseEvent, memo, useCallback, useState } from 'react';
-import { getPlateProductsSummary, getPlateTitle } from 'utils/plate';
-import { plateActions, plateSelectors } from './plateSlice';
-import { useAppDispatch, useAppSelector } from 'app/store';
-
 import ConfirmDialog from 'components/dialog/Confirm';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import PlateDialog from 'components/dialog/Plate';
-import { PlateDto } from './interface';
 import PlateName from 'components/PlateName';
-import { Skeleton } from '@material-ui/lab';
-import { highlight } from 'utils/string';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
+import React, { memo, MouseEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from 'react-query';
+import { getPlateProductsSummary, getPlateTitle } from 'utils/plate';
+import { highlight } from 'utils/string';
+
+import {
+    Checkbox, createStyles, IconButton, ListItem, ListItemIcon, ListItemProps,
+    ListItemSecondaryAction, ListItemText, makeStyles, Menu, MenuItem, Theme, Typography
+} from '@material-ui/core';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+
+import { PlateDto, PlateFilter } from './interface';
+import { useDeletePlatesMutation } from './usePlates';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -68,50 +57,56 @@ export interface PlateListItemProps extends ListItemProps {
   itemHeight: number;
   isSelected?: boolean;
   productCountToDisplay?: number;
+  filter: PlateFilter;
+  toggleSelection?: (plate: PlateDto) => any;
 }
 
-const PlateListItem = ({ plate, itemHeight, isSelected = false, productCountToDisplay = 1 }: PlateListItemProps) => {
+const PlateListItem = ({
+  plate,
+  itemHeight,
+  isSelected = false,
+  productCountToDisplay = 1,
+  filter,
+  toggleSelection = (plate: PlateDto) => {},
+}: PlateListItemProps) => {
   const { t } = useTranslation('plates');
   const classes = useStyles();
 
-  const dispatch = useAppDispatch();
-  const { name, productName } = useAppSelector(plateSelectors.query);
-  const { toggleSelection, deletePlates } = plateActions;
   const { openDialog, closeDialog } = useDialog();
   const { isUser } = useAuth();
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
+  const queryClient = useQueryClient();
+  const { deletePlates } = useDeletePlatesMutation({ queryClient });
+
   const productsSummary = getPlateProductsSummary(plate, productCountToDisplay);
 
-  const handleSelectionChange = useCallback(() => {
-    dispatch(toggleSelection(plate.id));
-  }, []);
+  const handleSelectionChange = () => toggleSelection(plate);
 
   const openMenu = useCallback((e: MouseEvent<HTMLButtonElement>) => setMenuAnchorEl(e.currentTarget), []);
   const closeMenu = useCallback(() => setMenuAnchorEl(null), []);
 
-  const handleClickMenuItem = (onClick = () => {}) => () => {
-    closeMenu();
-    onClick();
-  };
+  const handleClickMenuItem =
+    (onClick = () => {}) =>
+    () => {
+      closeMenu();
+      onClick();
+    };
 
-  const handleClickEdit = useCallback(() => {
-    openDialog(<PlateDialog plate={plate} onClose={closeDialog} />);
-  }, []);
+  const handleClickEdit = () => openDialog(<PlateDialog plate={plate} onClose={closeDialog} />);
 
-  const handleClickDelete = useCallback(() => {
+  const handleClickDelete = () =>
     openDialog(
       <ConfirmDialog
         title={t('deletePlate')}
         message={t('deletePlateConfirm', { plateTitle: getPlateTitle(plate) })}
         onClose={(isConfirmed: boolean) => {
-          isConfirmed && dispatch(deletePlates([plate.id]));
+          isConfirmed && deletePlates([plate.id]);
           closeDialog();
         }}
       />
     );
-  }, []);
 
   const actionButtons = [
     { label: t('common:edit'), onClick: handleClickEdit },
@@ -127,13 +122,13 @@ const PlateListItem = ({ plate, itemHeight, isSelected = false, productCountToDi
       )}
       <ListItemText>
         <div className={classes.plateDetail}>
-          <PlateName className={classes.title} plate={plate} searchText={name} />
+          <PlateName className={classes.title} plate={plate} searchText={filter.name} />
           <div className={classes.products}>
             {productsSummary.map((product) => (
               <Typography
                 key={product}
                 variant="caption"
-                dangerouslySetInnerHTML={{ __html: highlight(product, productName) }}
+                dangerouslySetInnerHTML={{ __html: highlight(product, filter.productName) }}
               />
             ))}
           </div>
@@ -156,35 +151,5 @@ const PlateListItem = ({ plate, itemHeight, isSelected = false, productCountToDi
     </ListItem>
   );
 };
-
-const PlateListItemSkeleton = memo(({ itemHeight }: { itemHeight: number }) => {
-  const classes = useStyles();
-  const { isUser } = useAuth();
-
-  return (
-    <ListItem divider style={{ height: itemHeight }}>
-      {!isUser && (
-        <ListItemIcon>
-          <Skeleton variant="rect" width={24} height={24} />
-        </ListItemIcon>
-      )}
-      <ListItemText>
-        <div className={classes.plateDetail}>
-          <Skeleton className={classes.title} variant="rect" width="80%" height={30} />
-          <div className={classes.products}>
-            <Skeleton variant="rect" width="80%" height={24} />
-          </div>
-        </div>
-      </ListItemText>
-      {!isUser && (
-        <ListItemSecondaryAction>
-          <Skeleton variant="circle" width={48} height={48} style={{ marginRight: -12 }} />
-        </ListItemSecondaryAction>
-      )}
-    </ListItem>
-  );
-});
-
-export { PlateListItemSkeleton };
 
 export default memo(PlateListItem);

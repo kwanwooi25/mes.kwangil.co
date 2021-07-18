@@ -1,15 +1,15 @@
-import { useAppDispatch } from 'app/store';
 import FormikStepper, { FormikStep } from 'components/form/FormikStepper';
 import Loading from 'components/Loading';
-import { LoadingKeys, PlateLength, PlateMaterial, PlateRound } from 'const';
+import { PlateLength, PlateMaterial, PlateRound } from 'const';
 import Dialog from 'features/dialog/Dialog';
-import { useLoading } from 'features/loading/loadingHook';
+import useNotification from 'features/notification/useNotification';
 import { CreatePlateDto, PlateDto, UpdatePlateDto } from 'features/plate/interface';
-import { plateActions } from 'features/plate/plateSlice';
+import { useCreatePlateMutation, useUpdatePlateMutation } from 'features/plate/usePlates';
 import { ProductDto } from 'features/product/interface';
 import { isEmpty, isEqual } from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from 'react-query';
 import { getInitialPlateFormValues } from 'utils/plate';
 import { array, number, object, string } from 'yup';
 
@@ -32,12 +32,22 @@ export interface PlateFormValues extends CreatePlateDto {
 
 const PlateDialog = ({ products = [], plate, onClose }: PlateDialogProps) => {
   const { t } = useTranslation('plates');
-  const { [LoadingKeys.SAVING_PLATE]: isSaving } = useLoading();
-  const dispatch = useAppDispatch();
-  const { createPlate, updatePlate } = plateActions;
 
   const isEditMode = !isEmpty(plate);
   const dialogTitle = t(isEditMode ? 'editPlate' : 'addPlate');
+
+  const { notify } = useNotification();
+
+  const queryClient = useQueryClient();
+
+  const onSuccess = () => {
+    queryClient.invalidateQueries('plates');
+    onClose();
+  };
+
+  const { updatePlate, isUpdating } = useUpdatePlateMutation({ queryClient, onSuccess });
+  const { createPlate, isCreating } = useCreatePlateMutation({ queryClient, onSuccess });
+  const isSaving = isCreating || isUpdating;
 
   const initialValues: PlateFormValues = getInitialPlateFormValues({ plate, products });
 
@@ -73,13 +83,14 @@ const PlateDialog = ({ products = [], plate, onClose }: PlateDialogProps) => {
     if (isEditMode) {
       const { productsToDisconnect, ...plateToUpdate } = values;
       if (isEqual(plate, plateToUpdate)) {
+        notify({ variant: 'error', message: 'common:hasNoChange' });
         onClose();
       } else {
-        dispatch(updatePlate(values as UpdatePlateDto));
+        updatePlate(values as UpdatePlateDto);
       }
     } else {
       const { productsToDisconnect, ...plateToCreate } = values;
-      dispatch(createPlate(plateToCreate));
+      createPlate(plateToCreate);
       onClose(true);
     }
   };

@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from 'app/store';
+import { useAppDispatch } from 'app/store';
 import Input from 'components/form/Input';
 import RangeSlider from 'components/form/RangeSlider';
 import RoundedButton from 'components/RoundedButton';
@@ -8,12 +8,11 @@ import { useUI } from 'features/ui/uiHook';
 import { useFormik } from 'formik';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BaseQuery } from 'types/api';
 
 import { createStyles, Divider, makeStyles, Theme } from '@material-ui/core';
 
-import { GetPlatesQuery } from './interface';
-import { plateActions, plateSelectors } from './plateSlice';
+import { PlateFilter } from './interface';
+import { DEFAULT_PLATE_FILTER } from './PlatePage';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -61,50 +60,38 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export interface PlateSearchProps {
-  onSubmit?: () => void;
-  onReset?: () => void;
+  filter: PlateFilter;
+  onChange: (filter: PlateFilter) => any;
 }
 
-const PlateSearch = ({ onSubmit, onReset }: PlateSearchProps) => {
+const PlateSearch = ({ filter, onChange }: PlateSearchProps) => {
   const { t } = useTranslation('plates');
   const classes = useStyles();
 
   const dispatch = useAppDispatch();
-  const { offset, limit, ...restQuery } = useAppSelector(plateSelectors.query);
-  const { getList: getPlates, resetList: resetPlates } = plateActions;
   const { closeSearch } = useUI();
   const { isUser } = useAuth();
 
-  const initialValues = {
-    accountName: '',
-    productName: '',
-    name: '',
-    round: [PlateRound.MIN, PlateRound.MAX],
-    length: [PlateLength.MIN, PlateLength.MAX],
-  };
+  const initialValues = { ...DEFAULT_PLATE_FILTER };
 
-  const { values, setFieldValue, setValues, handleChange, handleSubmit, handleReset } = useFormik<
-    Omit<GetPlatesQuery, keyof BaseQuery>
-  >({
+  const { values, setFieldValue, setValues, handleChange, handleSubmit, handleReset } = useFormik<PlateFilter>({
     initialValues,
     onReset: () => {
-      dispatch(resetPlates());
-      dispatch(getPlates({ limit, offset: 0 }));
+      onChange({ ...DEFAULT_PLATE_FILTER });
       dispatch(closeSearch());
     },
     onSubmit: (values) => {
-      dispatch(resetPlates());
-      dispatch(getPlates({ ...values, limit, offset: 0 }));
+      onChange({ ...values });
       dispatch(closeSearch());
     },
   });
 
-  const handleChangeSlider = (key: keyof GetPlatesQuery) => (newValues: number[]) => {
-    setFieldValue(key, newValues);
+  const handleChangeSlider = (key: keyof PlateFilter) => (newValues: number[]) => {
+    setFieldValue(key, [...newValues]);
   };
 
   useEffect(() => {
-    setValues({ ...initialValues, ...restQuery });
+    setValues({ ...initialValues, ...filter });
   }, []);
 
   return (

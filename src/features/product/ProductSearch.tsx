@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 import { createStyles, Divider, makeStyles, Theme } from '@material-ui/core';
 
-import { GetProductsQuery, ProductFilter } from './interface';
+import { ProductFilter } from './interface';
 import { DEFAULT_PRODUCT_FILTER } from './ProductPage';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -94,7 +94,7 @@ const ProductSearch = ({ filter, onChange }: ProductSearchProps) => {
     },
   });
 
-  const handleChangeSlider = (key: keyof GetProductsQuery) => (newValues: number[]) => {
+  const handleChangeSlider = (key: keyof ProductFilter) => (newValues: number[]) => {
     setFieldValue(key, [...newValues]);
   };
 

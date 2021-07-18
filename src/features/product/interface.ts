@@ -13,6 +13,8 @@ export interface ProductFilter {
   printColor: string;
 }
 
+export type GetProductsQuery = BaseQuery & ProductFilter;
+
 export interface ImageDto {
   id: number;
   productId: number;
@@ -91,14 +93,4 @@ export interface CreateProductsDto extends Omit<CreateProductDto, 'accountId'> {
 export interface UpdateProductDto extends Omit<ProductDto, 'account'> {
   imagesToCreate?: CreateImageDto[];
   imageIdsToDelete?: number[];
-}
-
-export interface GetProductsQuery extends BaseQuery {
-  accountName?: string;
-  name?: string;
-  thickness?: number[];
-  length?: number[];
-  width?: number[];
-  extColor?: string;
-  printColor?: string;
 }

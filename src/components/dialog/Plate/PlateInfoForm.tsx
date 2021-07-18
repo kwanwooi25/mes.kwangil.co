@@ -78,8 +78,8 @@ const PlateInfoForm = (props: PlateInfoFormProps) => {
 
   useEffect(() => {
     const { round, length } = estimatePlateSize(values.products);
-    setFieldValue('round', round);
-    setFieldValue('length', length);
+    !round && setFieldValue('round', round);
+    !length && setFieldValue('length', length);
   }, [values.products]);
 
   return (
