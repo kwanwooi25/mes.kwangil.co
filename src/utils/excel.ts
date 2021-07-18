@@ -3,7 +3,7 @@ import {
     PRINT_SIDE_TEXT, PrintSide, WorkOrderStatus
 } from 'const';
 import { AccountDto, CreateAccountDto, CreateContactDto } from 'features/account/interface';
-import { CreateProductsDto, ProductDto } from 'features/product/interface';
+import { CreateProductDto, CreateProductsDto, ProductDto } from 'features/product/interface';
 import { CreateWorkOrdersDto, WorkOrderDto } from 'features/workOrder/interface';
 import { Dispatch, SetStateAction } from 'react';
 import XLSX from 'xlsx';
@@ -28,7 +28,10 @@ export const downloadWorkbook = {
     const data = processAccountsForDownload(accounts);
     return getWorkbook(data, workbookTitle);
   },
-  [ExcelVariant.PRODUCT]: (products: ProductDto[], workbookTitle: string) => {
+  [ExcelVariant.PRODUCT]: (
+    products: (ProductDto | ((CreateProductDto | CreateProductsDto) & { reason: string }))[],
+    workbookTitle: string
+  ) => {
     const data = processProductsForDownload(products);
     return getWorkbook(data, workbookTitle);
   },
@@ -389,18 +392,21 @@ function processAccountsForDownload(accounts: (AccountDto | (CreateAccountDto & 
   });
 }
 
-function processProductsForDownload(products: ProductDto[]) {
+function processProductsForDownload(
+  products: (ProductDto | ((CreateProductDto | CreateProductsDto) & { reason: string }))[]
+) {
   const productDataKeys = Object.keys(PRODUCT_KEY_TO_LABEL);
 
   return products.map((product) => {
     return productDataKeys.reduce((processedProduct, key) => {
-      const label = PRODUCT_KEY_TO_LABEL[key];
+      const label = PRODUCT_KEY_TO_LABEL[key] || key;
       // @ts-ignore
       let value = product[key];
 
       switch (key) {
         case 'accountName':
-          value = product.account.name;
+          // @ts-ignore
+          value = product.account ? product.account.name : product.accountName;
           break;
         case 'extIsAntistatic':
         case 'cutIsUltrasonic':

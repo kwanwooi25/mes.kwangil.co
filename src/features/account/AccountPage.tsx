@@ -11,16 +11,13 @@ import SubToolbar from 'components/SubToolbar';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
 import { AccountListItemHeight, ExcelVariant } from 'const';
 import { useDialog } from 'features/dialog/dialogHook';
-import {
-    useBulkCreateAccountMutation, useDeleteAccountsMutation, useDownloadAccounts,
-    useInfiniteAccounts
-} from 'hooks/useAccounts';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useSelection } from 'hooks/useSelection';
 import Layout from 'layouts/Layout';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
+import { BulkCreationResponse } from 'types/api';
 import { downloadWorkbook } from 'utils/excel';
 import { formatDigit } from 'utils/string';
 
@@ -29,7 +26,11 @@ import { Add, DeleteOutline, GetApp, Publish } from '@material-ui/icons';
 
 import AccountListItem from './AccountListItem';
 import AccountSearch from './AccountSearch';
-import { AccountDto, AccountFilter, BulkAccountCreationResponse } from './interface';
+import { AccountDto, AccountFilter, CreateAccountDto } from './interface';
+import {
+    useBulkCreateAccountMutation, useDeleteAccountsMutation, useDownloadAccounts,
+    useInfiniteAccounts
+} from './useAccounts';
 
 export interface AccountPageProps {}
 
@@ -39,13 +40,13 @@ const AccountPage = (props: AccountPageProps) => {
 
   const { openDialog, closeDialog } = useDialog();
   const { isMobileLayout, isTabletLayout, isDesktopLayout } = useScreenSize();
-  const { isFetching, data, fetchNextPage, hasNextPage } = useInfiniteAccounts(filter);
+  const { isFetching, data, loadMore } = useInfiniteAccounts(filter);
   const { isDownloading, download } = useDownloadAccounts(filter);
 
   const queryClient = useQueryClient();
   const { createAccounts } = useBulkCreateAccountMutation({
     queryClient,
-    onSettled: ({ createdCount, failedList }: BulkAccountCreationResponse) => {
+    onSettled: ({ createdCount, failedList }: BulkCreationResponse<CreateAccountDto>) => {
       closeDialog();
       openDialog(
         <AlertDialog
@@ -83,8 +84,6 @@ const AccountPage = (props: AccountPageProps) => {
   const searchResult = t('common:searchResult', {
     count: formatDigit(data?.pages[data.pages.length - 1].count || 0),
   } as any);
-
-  const loadMore = () => hasNextPage && !isFetching && fetchNextPage();
 
   const handleToggleSelection = (account: AccountDto) => toggleSelection(account.id);
 

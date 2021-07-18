@@ -4,7 +4,6 @@ import ConfirmDialog from 'components/dialog/Confirm';
 import PhoneNumber from 'components/PhoneNumber';
 import { AccountDto, AccountFilter } from 'features/account/interface';
 import { useDialog } from 'features/dialog/dialogHook';
-import { useDeleteAccountsMutation } from 'hooks/useAccounts';
 import React, { memo, MouseEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
@@ -14,6 +13,8 @@ import {
     ListItemSecondaryAction, ListItemText, makeStyles, Menu, MenuItem, Theme
 } from '@material-ui/core';
 import { MoreVert, Phone, Print } from '@material-ui/icons';
+
+import { useDeleteAccountsMutation } from './useAccounts';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

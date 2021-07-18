@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from 'app/store';
+import { useAppDispatch } from 'app/store';
 import Input from 'components/form/Input';
 import RangeSlider from 'components/form/RangeSlider';
 import RoundedButton from 'components/RoundedButton';
@@ -8,12 +8,11 @@ import { useUI } from 'features/ui/uiHook';
 import { useFormik } from 'formik';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BaseQuery } from 'types/api';
 
 import { createStyles, Divider, makeStyles, Theme } from '@material-ui/core';
 
-import { GetProductsQuery } from './interface';
-import { productActions, productSelectors } from './productSlice';
+import { GetProductsQuery, ProductFilter } from './interface';
+import { DEFAULT_PRODUCT_FILTER } from './ProductPage';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -68,40 +67,29 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export interface ProductSearchProps {}
+export interface ProductSearchProps {
+  filter: ProductFilter;
+  onChange: (filter: ProductFilter) => any;
+}
 
-const ProductSearch = (props: ProductSearchProps) => {
+const ProductSearch = ({ filter, onChange }: ProductSearchProps) => {
   const { t } = useTranslation('products');
   const classes = useStyles();
 
   const dispatch = useAppDispatch();
-  const { offset, limit, ...restQuery } = useAppSelector(productSelectors.query);
-  const { getList: getProducts, resetList: resetProducts } = productActions;
   const { closeSearch } = useUI();
   const { isUser } = useAuth();
 
-  const initialValues = {
-    accountName: '',
-    name: '',
-    thickness: [ProductThickness.MIN, ProductThickness.MAX],
-    length: [ProductLength.MIN, ProductLength.MAX],
-    width: [ProductWidth.MIN, ProductWidth.MAX],
-    extColor: '',
-    printColor: '',
-  };
+  const initialValues = { ...DEFAULT_PRODUCT_FILTER };
 
-  const { values, setFieldValue, setValues, handleSubmit, handleChange, handleReset } = useFormik<
-    Omit<GetProductsQuery, keyof BaseQuery>
-  >({
+  const { values, setFieldValue, setValues, handleSubmit, handleChange, handleReset } = useFormik<ProductFilter>({
     initialValues,
     onReset: () => {
-      dispatch(resetProducts());
-      dispatch(getProducts({ limit, offset: 0 }));
+      onChange({ ...DEFAULT_PRODUCT_FILTER });
       dispatch(closeSearch());
     },
     onSubmit: (values) => {
-      dispatch(resetProducts());
-      dispatch(getProducts({ ...values, limit, offset: 0 }));
+      onChange({ ...values });
       dispatch(closeSearch());
     },
   });
@@ -111,7 +99,7 @@ const ProductSearch = (props: ProductSearchProps) => {
   };
 
   useEffect(() => {
-    setValues({ ...initialValues, ...restQuery });
+    setValues({ ...initialValues, ...filter });
   }, []);
 
   return (

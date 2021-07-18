@@ -1,4 +1,3 @@
-import { useAppDispatch, useAppSelector } from 'app/store';
 import AccountName from 'components/AccountName';
 import ConfirmDialog from 'components/dialog/Confirm';
 import ProductDialog from 'components/dialog/Product';
@@ -10,6 +9,7 @@ import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import React, { memo, MouseEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from 'react-query';
 import { getPrintSummary, getProductSize } from 'utils/product';
 import { formatDigit, highlight } from 'utils/string';
 
@@ -18,10 +18,9 @@ import {
     ListItemSecondaryAction, ListItemText, makeStyles, Menu, MenuItem, Theme, Typography
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { Skeleton } from '@material-ui/lab';
 
-import { ProductDto } from './interface';
-import { productActions, productSelectors } from './productSlice';
+import { ProductDto, ProductFilter } from './interface';
+import { useDeleteProductsMutation } from './useProducts';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -87,19 +86,28 @@ export interface ProductListItemProps extends ListItemProps {
   itemHeight: number;
   isSelected: boolean;
   showDetails: boolean;
+  filter: ProductFilter;
+  toggleSelection?: (product: ProductDto) => any;
 }
 
-const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: ProductListItemProps) => {
+const ProductListItem = ({
+  product,
+  itemHeight,
+  isSelected,
+  showDetails,
+  filter,
+  toggleSelection = (product: ProductDto) => {},
+}: ProductListItemProps) => {
   const { t } = useTranslation('products');
   const classes = useStyles();
 
-  const dispatch = useAppDispatch();
-  const query = useAppSelector(productSelectors.query);
-  const { toggleSelection, deleteProducts } = productActions;
   const { openDialog, closeDialog } = useDialog();
   const { isUser } = useAuth();
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
+
+  const queryClient = useQueryClient();
+  const { deleteProducts } = useDeleteProductsMutation({ queryClient });
 
   const productSize = getProductSize(product);
   const printSummary = getPrintSummary(product);
@@ -108,46 +116,39 @@ const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: Produ
     ? t('common:sheetCount', { countString: formatDigit(product?.stock?.balance || 0) })
     : '';
 
-  const handleSelectionChange = useCallback(() => {
-    dispatch(toggleSelection(product.id));
-  }, [product]);
+  const handleSelectionChange = () => toggleSelection(product);
 
   const openMenu = useCallback((e: MouseEvent<HTMLButtonElement>) => setMenuAnchorEl(e.currentTarget), []);
   const closeMenu = useCallback(() => setMenuAnchorEl(null), []);
 
-  const handleClickMenuItem = (onClick = () => {}) => () => {
-    closeMenu();
-    onClick();
-  };
+  const handleClickMenuItem =
+    (onClick = () => {}) =>
+    () => {
+      closeMenu();
+      onClick();
+    };
 
-  const handleClickStock = useCallback(() => {
-    openDialog(<StockDialog products={[product]} onClose={closeDialog} />);
-  }, [product]);
+  const handleClickStock = () => openDialog(<StockDialog products={[product]} onClose={closeDialog} />);
 
-  const handleClickWorkOrder = useCallback(() => {
-    openDialog(<WorkOrderDialog product={product} onClose={closeDialog} />);
-  }, [product]);
+  const handleClickWorkOrder = () => openDialog(<WorkOrderDialog product={product} onClose={closeDialog} />);
 
-  const handleClickCopy = useCallback(() => {
+  const handleClickCopy = () =>
     openDialog(<ProductDialog mode={ProductDialogMode.COPY} product={product} onClose={closeDialog} />);
-  }, [product]);
 
-  const handleClickEdit = useCallback(() => {
+  const handleClickEdit = () =>
     openDialog(<ProductDialog mode={ProductDialogMode.EDIT} product={product} onClose={closeDialog} />);
-  }, [product]);
 
-  const handleClickDelete = useCallback(() => {
+  const handleClickDelete = () =>
     openDialog(
       <ConfirmDialog
         title={t('deleteProduct')}
         message={t('deleteProductConfirm', { productName: `${product.name}` })}
         onClose={(isConfirmed: boolean) => {
-          isConfirmed && dispatch(deleteProducts([product.id]));
+          isConfirmed && deleteProducts([product.id]);
           closeDialog();
         }}
       />
     );
-  }, [product]);
 
   const actionButtons = [
     { label: t('products:createOrUpdateStock'), onClick: handleClickStock },
@@ -170,9 +171,9 @@ const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: Produ
             account={product.account}
             className={classes.accountName}
             linkClassName={classes.accountNameLink}
-            searchText={query.accountName}
+            searchText={filter.accountName}
           />
-          <ProductName product={product} searchText={query.name} className={classes.productName} />
+          <ProductName product={product} searchText={filter.name} className={classes.productName} />
           <Typography variant="body1" className={classes.productSize}>
             {productSize}
           </Typography>
@@ -182,10 +183,10 @@ const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: Produ
           {showDetails && (
             <>
               <Typography variant="body2" className={classes.extColor}>
-                <span dangerouslySetInnerHTML={{ __html: highlight(product.extColor, query.extColor) }} />
+                <span dangerouslySetInnerHTML={{ __html: highlight(product.extColor, filter.extColor) }} />
               </Typography>
               <Typography variant="body2" className={classes.printSummary}>
-                <span dangerouslySetInnerHTML={{ __html: highlight(printSummary, query.printColor) }} />
+                <span dangerouslySetInnerHTML={{ __html: highlight(printSummary, filter.printColor) }} />
               </Typography>
             </>
           )}
@@ -208,42 +209,5 @@ const ProductListItem = ({ product, itemHeight, isSelected, showDetails }: Produ
     </ListItem>
   );
 };
-
-const ProductListItemSkeleton = memo(
-  ({ itemHeight, showDetails = false }: { itemHeight: number; showDetails?: boolean }) => {
-    const classes = useStyles();
-    const { isUser } = useAuth();
-
-    return (
-      <ListItem divider style={{ height: itemHeight }}>
-        {!isUser && (
-          <ListItemIcon>
-            <Skeleton variant="rect" width={24} height={24} />
-          </ListItemIcon>
-        )}
-        <ListItemText>
-          <div className={classes.productDetail}>
-            <Skeleton className={classes.accountName} variant="rect" width="80%" height={24} />
-            <Skeleton className={classes.productName} variant="rect" width="80%" height={30} />
-            <Skeleton className={classes.productSize} variant="rect" width="80%" height={24} />
-            {showDetails && (
-              <>
-                <Skeleton className={classes.extColor} variant="rect" width="80%" height={20} />
-                <Skeleton className={classes.printSummary} variant="rect" width="80%" height={20} />
-              </>
-            )}
-          </div>
-        </ListItemText>
-        {!isUser && (
-          <ListItemSecondaryAction>
-            <Skeleton variant="circle" width={48} height={48} style={{ marginRight: -12 }} />
-          </ListItemSecondaryAction>
-        )}
-      </ListItem>
-    );
-  }
-);
-
-export { ProductListItemSkeleton };
 
 export default memo(ProductListItem);

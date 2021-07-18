@@ -1,14 +1,13 @@
 import { useAppDispatch } from 'app/store';
 import Loading from 'components/Loading';
 import RoundedButton from 'components/RoundedButton';
-import { LoadingKeys } from 'const';
 import Dialog from 'features/dialog/Dialog';
-import { useLoading } from 'features/loading/loadingHook';
 import { CreateStockDto, ProductDto, StockDto } from 'features/product/interface';
-import { productActions } from 'features/product/productSlice';
+import { useCreateOrUpdateStocksMutation } from 'features/stock/useStocks';
 import { Form, Formik } from 'formik';
 import React, { createRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from 'react-query';
 import { array, number, object } from 'yup';
 
 import { createStyles, DialogActions, DialogContent, makeStyles, Theme } from '@material-ui/core';
@@ -42,8 +41,11 @@ const StockDialog = ({ products, onClose }: StockDialogProps) => {
   const classes = useStyles();
   const submitButtonRef = createRef<HTMLButtonElement>();
   const dispatch = useAppDispatch();
-  const { createOrUpdateStocks } = productActions;
-  const { [LoadingKeys.SAVING_STOCK]: isSaving } = useLoading();
+  const queryClient = useQueryClient();
+  const { createOrUpdateStocks, isSaving } = useCreateOrUpdateStocksMutation({
+    queryClient,
+    onSuccess: () => onClose(),
+  });
 
   const dialogTitle = t('products:createOrUpdateStock');
 

@@ -1,12 +1,14 @@
-import { Link, Theme, createStyles, makeStyles } from '@material-ui/core';
+import classnames from 'classnames';
+import { useDialog } from 'features/dialog/dialogHook';
+import { ProductDto } from 'features/product/interface';
+import { useProduct } from 'features/product/useProducts';
 import React, { memo } from 'react';
+import { highlight } from 'utils/string';
+
+import { createStyles, Link, makeStyles, Theme } from '@material-ui/core';
 
 import ProductDetailDialog from './dialog/ProductDetail';
-import { ProductDto } from 'features/product/interface';
-import classnames from 'classnames';
-import { highlight } from 'utils/string';
-import { productApi } from 'features/product/productApi';
-import { useDialog } from 'features/dialog/dialogHook';
+import Loading from './Loading';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -40,9 +42,10 @@ const ProductName = ({
   const classes = useStyles();
   const { openDialog, closeDialog } = useDialog();
 
+  const { refetch, isFetching } = useProduct(product.id);
+
   const openDetailDialog = async () => {
-    const data = await productApi.getProduct(product.id);
-    openDialog(<ProductDetailDialog product={data} onClose={closeDialog} />);
+    refetch().then((res) => openDialog(<ProductDetailDialog product={res.data} onClose={closeDialog} />));
   };
 
   return (
@@ -56,6 +59,7 @@ const ProductName = ({
         onClick={openDetailDialog}
         style={{ maxWidth }}
       >
+        {isFetching && <Loading />}
         <span
           className={classes.productName}
           dangerouslySetInnerHTML={{ __html: highlight(productName || product.name, searchText) }}

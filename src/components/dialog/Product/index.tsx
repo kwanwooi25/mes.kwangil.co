@@ -1,33 +1,28 @@
+import FormikStepper, { FormikStep } from 'components/form/FormikStepper';
+import Loading from 'components/Loading';
+import { PrintSide, ProductDialogMode, ProductLength, ProductThickness, ProductWidth } from 'const';
+import { AccountOption } from 'features/account/interface';
+import Dialog from 'features/dialog/Dialog';
+import useNotification from 'features/notification/useNotification';
+import { ImageDto, ProductDto } from 'features/product/interface';
+import { useCreateProductMutation, useUpdateProductMutation } from 'features/product/useProducts';
+import { isEqual } from 'lodash';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useQueryClient } from 'react-query';
+import {
+    getCreateProductDto, getInitialProductToCopy, getInitialProductToCreate,
+    getInitialProductToUpdate, getUpdateProductDto
+} from 'utils/product';
 import * as yup from 'yup';
 
-import FormikStepper, { FormikStep } from 'components/form/FormikStepper';
-import { ImageDto, ProductDto } from 'features/product/interface';
-import { LoadingKeys, PrintSide, ProductDialogMode, ProductLength, ProductThickness, ProductWidth } from 'const';
-import {
-  getCreateProductDto,
-  getInitialProductToCopy,
-  getInitialProductToCreate,
-  getInitialProductToUpdate,
-  getUpdateProductDto,
-} from 'utils/product';
-
-import { AccountOption } from 'features/account/interface';
 import BaseInfoForm from './BaseInfoForm';
 import CuttingForm from './CuttingForm';
-import Dialog from 'features/dialog/Dialog';
 import ExtrusionForm from './ExtrusionForm';
 import ImageForm from './ImageForm';
-import Loading from 'components/Loading';
 import PackagingForm from './PackagingForm';
 import PrintForm from './PrintForm';
 import ProductReview from './ProductReview';
-import React from 'react';
-import { isEqual } from 'lodash';
-import { notificationActions } from 'features/notification/notificationSlice';
-import { productActions } from 'features/product/productSlice';
-import { useAppDispatch } from 'app/store';
-import { useLoading } from 'features/loading/loadingHook';
-import { useTranslation } from 'react-i18next';
 
 export interface ProductDialogProps {
   mode: ProductDialogMode;
@@ -71,11 +66,21 @@ export interface ProductFormValues {
 
 const ProductDialog = ({ mode, product, onClose }: ProductDialogProps) => {
   const { t } = useTranslation('products');
-  const dispatch = useAppDispatch();
-  const { createProduct, updateProduct } = productActions;
-  const { [LoadingKeys.SAVING_PRODUCT]: isSaving } = useLoading();
 
   const dialogTitle = t(mode === ProductDialogMode.EDIT ? 'updateProduct' : 'addProduct');
+
+  const { notify } = useNotification();
+
+  const queryClient = useQueryClient();
+
+  const onSuccess = () => {
+    queryClient.invalidateQueries('products');
+    onClose();
+  };
+
+  const { updateProduct, isUpdating } = useUpdateProductMutation({ queryClient, onSuccess });
+  const { createProduct, isCreating } = useCreateProductMutation({ queryClient, onSuccess });
+  const isSaving = isCreating || isUpdating;
 
   const initialValues = {
     [ProductDialogMode.EDIT]: getInitialProductToUpdate(product as ProductDto),
@@ -165,12 +170,12 @@ const ProductDialog = ({ mode, product, onClose }: ProductDialogProps) => {
       case ProductDialogMode.CREATE:
       case ProductDialogMode.COPY:
         const productToCreate = await getCreateProductDto(values);
-        dispatch(createProduct(productToCreate));
+        createProduct(productToCreate);
         break;
 
       case ProductDialogMode.EDIT:
         if (isEqual(values, initialValues[ProductDialogMode.EDIT])) {
-          dispatch(notificationActions.notify({ variant: 'error', message: 'common:hasNoChange' }));
+          notify({ variant: 'error', message: 'common:hasNoChange' });
           onClose();
         }
         const { filesToUpload = [], imagesToDelete = [], ...restValues } = values;
@@ -179,13 +184,13 @@ const ProductDialog = ({ mode, product, onClose }: ProductDialogProps) => {
           filesToUpload,
           imagesToDelete
         );
-        dispatch(updateProduct(productToUpdate));
+        updateProduct(productToUpdate);
         break;
     }
   };
 
   return (
-    <Dialog open onClose={onClose} title={dialogTitle} fullHeight>
+    <Dialog open onClose={onClose} title={dialogTitle}>
       {isSaving && <Loading />}
       <FormikStepper initialValues={{ ...initialValues[mode] }} onSubmit={onSubmit}>
         {forms.map(({ label, Component, validationSchema }) => (

@@ -1,11 +1,12 @@
-import { AccountDto, AccountOption } from 'features/account/interface';
-import React, { ChangeEvent, FocusEvent, useEffect, useState } from 'react';
+import Loading from 'components/Loading';
+import { AccountOption } from 'features/account/interface';
+import { useAccountOptions } from 'features/account/useAccounts';
+import React, { ChangeEvent, createRef, FocusEvent, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Autocomplete } from '@material-ui/lab';
+
 import Input from './Input';
-import Loading from 'components/Loading';
-import { accountApi } from 'features/account/accountApi';
-import { useTranslation } from 'react-i18next';
 
 export interface SelectAccountProps {
   className?: string;
@@ -20,24 +21,16 @@ export interface SelectAccountProps {
 
 const SelectAccount = ({ className, value, onChange, onBlur, errorMessage }: SelectAccountProps) => {
   const { t } = useTranslation('accounts');
-  const [accountOptions, setAccountOptions] = useState<AccountOption[]>([]);
   const [isAccountOptionsOpen, setIsAccountOptionsOpen] = useState<boolean>(false);
-  const [isAccountsLoading, setIsAccountsLoading] = useState<boolean>(false);
+  const inputRef = createRef<HTMLInputElement>();
+  const { accountOptions = [], isLoading, isFetched } = useAccountOptions();
 
   const openAccountOptions = () => setIsAccountOptionsOpen(true);
   const closeAccountOptions = () => setIsAccountOptionsOpen(false);
 
   useEffect(() => {
-    if (isAccountOptionsOpen) {
-      (async () => {
-        setIsAccountsLoading(true);
-        const { rows }: { rows: AccountDto[] } = await accountApi.getAllAccounts();
-        const accountOptions = rows.map(({ id, name }) => ({ id, name }));
-        setAccountOptions(accountOptions);
-        setIsAccountsLoading(false);
-      })();
-    }
-  }, [isAccountOptionsOpen]);
+    !value && isFetched && inputRef.current && inputRef.current.click();
+  }, [isFetched]);
 
   return (
     <Autocomplete
@@ -52,18 +45,18 @@ const SelectAccount = ({ className, value, onChange, onBlur, errorMessage }: Sel
       onChange={onChange}
       onBlur={onBlur}
       openOnFocus
-      disabled={isAccountsLoading}
+      disabled={isLoading}
       renderInput={(params) => (
         <div style={{ position: 'relative' }}>
-          {isAccountsLoading && <Loading />}
+          {isLoading && <Loading />}
           <Input
             {...params}
+            ref={inputRef}
             label={t('name')}
             value={value?.name}
             error={!!errorMessage}
             helperText={errorMessage}
-            autoFocus={!value}
-            disabled={isAccountsLoading}
+            disabled={isLoading}
           />
         </div>
       )}

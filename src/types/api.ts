@@ -8,3 +8,8 @@ export interface GetListResponse<T> {
   count: number;
   hasMore: boolean;
 }
+
+export interface BulkCreationResponse<T> {
+  createdCount: number;
+  failedList: (T & { reason: string })[];
+}

@@ -1,14 +1,13 @@
 import { DEFAULT_LIST_LIMIT, ExcelVariant } from 'const';
 import { accountApi } from 'features/account/accountApi';
-import { AccountDto, AccountFilter } from 'features/account/interface';
+import { AccountDto, AccountFilter, AccountOption } from 'features/account/interface';
+import useNotification from 'features/notification/useNotification';
 import { QueryClient, useInfiniteQuery, useMutation, useQuery } from 'react-query';
 import { GetListResponse } from 'types/api';
 import { downloadWorkbook } from 'utils/excel';
 
-import useNotification from './useNotification';
-
 export const useInfiniteAccounts = (filter: AccountFilter, limit: number = DEFAULT_LIST_LIMIT) => {
-  return useInfiniteQuery(
+  const accountInfiniteQuery = useInfiniteQuery(
     ['accounts', filter.accountName],
     async ({ queryKey, pageParam: offset = 0 }): Promise<GetListResponse<AccountDto>> => {
       const [, accountName] = queryKey;
@@ -18,10 +17,29 @@ export const useInfiniteAccounts = (filter: AccountFilter, limit: number = DEFAU
       getNextPageParam: (lastPage, pages) => lastPage.hasMore && pages.length * limit,
     }
   );
+
+  const { isFetching, fetchNextPage, hasNextPage } = accountInfiniteQuery;
+
+  const loadMore = () => hasNextPage && !isFetching && fetchNextPage();
+
+  return { loadMore, ...accountInfiniteQuery };
+};
+
+export const useAccountOptions = () => {
+  const {
+    isFetching: isLoading,
+    data: accountOptions,
+    isFetched,
+  } = useQuery(['account-options'], async (): Promise<AccountOption[]> => {
+    const { rows }: { rows: AccountDto[] } = await accountApi.getAllAccounts();
+    return rows.map(({ id, name }) => ({ id, name }));
+  });
+
+  return { isLoading, accountOptions, isFetched };
 };
 
 export const useDownloadAccounts = (filter: AccountFilter) => {
-  const { isFetching: isDownloading, data: dataForDownload } = useQuery(
+  const { isFetching: isDownloading, data } = useQuery(
     ['download-accounts', filter.accountName],
     async ({ queryKey }) => {
       const [, accountName] = queryKey;
@@ -30,9 +48,7 @@ export const useDownloadAccounts = (filter: AccountFilter) => {
     }
   );
 
-  const download = (fileName: string) => {
-    downloadWorkbook[ExcelVariant.ACCOUNT](dataForDownload, fileName);
-  };
+  const download = (fileName: string) => downloadWorkbook[ExcelVariant.ACCOUNT](data, fileName);
 
   return { isDownloading, download };
 };
@@ -53,8 +69,8 @@ export const useCreateAccountMutation = ({
   onError = () => {},
 }: {
   queryClient: QueryClient;
-  onSuccess?: () => void;
-  onError?: () => void;
+  onSuccess?: () => any;
+  onError?: () => any;
 }) => {
   const { notify } = useNotification();
   const { mutateAsync: createAccount, isLoading: isCreating } = useMutation(accountApi.createAccount, {
@@ -77,7 +93,7 @@ export const useBulkCreateAccountMutation = ({
   onSettled = (data: any) => {},
 }: {
   queryClient: QueryClient;
-  onSettled?: (data: any) => void;
+  onSettled?: (data: any) => any;
 }) => {
   const { mutateAsync: createAccounts, isLoading: isCreating } = useMutation(accountApi.createAccounts, {
     onSettled: (data) => {
@@ -95,8 +111,8 @@ export const useUpdateAccountMutation = ({
   onError = () => {},
 }: {
   queryClient: QueryClient;
-  onSuccess?: () => void;
-  onError?: () => void;
+  onSuccess?: () => any;
+  onError?: () => any;
 }) => {
   const { notify } = useNotification();
   const { mutateAsync: updateAccount, isLoading: isUpdating } = useMutation(accountApi.updateAccount, {
@@ -120,8 +136,8 @@ export const useDeleteAccountsMutation = ({
   onError = () => {},
 }: {
   queryClient: QueryClient;
-  onSuccess?: () => void;
-  onError?: () => void;
+  onSuccess?: () => any;
+  onError?: () => any;
 }) => {
   const { notify } = useNotification();
   const { mutateAsync: deleteAccounts, isLoading: isDeleting } = useMutation(accountApi.deleteAccounts, {

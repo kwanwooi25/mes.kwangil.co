@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import { AccountDto } from 'features/account/interface';
+import { useAccount } from 'features/account/useAccounts';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
-import { useAccount } from 'hooks/useAccounts';
 import React, { memo } from 'react';
 import { hideText, highlight } from 'utils/string';
 

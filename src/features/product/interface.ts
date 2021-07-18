@@ -3,6 +3,16 @@ import { AccountDto } from 'features/account/interface';
 import { PlateDto } from 'features/plate/interface';
 import { BaseQuery } from 'types/api';
 
+export interface ProductFilter {
+  accountName: string;
+  name: string;
+  thickness: [number, number];
+  length: [number, number];
+  width: [number, number];
+  extColor: string;
+  printColor: string;
+}
+
 export interface ImageDto {
   id: number;
   productId: number;
