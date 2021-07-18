@@ -1,8 +1,6 @@
 import { ElementType } from 'react';
 
-import {
-    Apartment, Build, CameraRoll, Dashboard, LocalShipping, PhotoLibrary
-} from '@material-ui/icons';
+import { Apartment, Build, CameraRoll, Dashboard, PhotoLibrary } from '@material-ui/icons';
 
 export enum Path {
   HOME = '/',
@@ -12,7 +10,7 @@ export enum Path {
   PRODUCTS = '/products',
   PLATES = '/plates',
   WORK_ORDERS = '/workOrders',
-  DELIVERY = '/delivery',
+  // DELIVERY = '/delivery',
 }
 
 export enum ExcelVariant {
@@ -193,9 +191,9 @@ export const DEFAULT_LIST_LIMIT = 50;
 
 export const NAV_WIDTH = 240;
 export const NAV_PATHS = {
-  [UserRole.USER]: [Path.DASHBOARD, Path.PRODUCTS, Path.PLATES, Path.WORK_ORDERS, Path.DELIVERY],
-  [UserRole.MANAGER]: [Path.DASHBOARD, Path.ACCOUNTS, Path.PRODUCTS, Path.PLATES, Path.WORK_ORDERS, Path.DELIVERY],
-  [UserRole.ADMIN]: [Path.DASHBOARD, Path.ACCOUNTS, Path.PRODUCTS, Path.PLATES, Path.WORK_ORDERS, Path.DELIVERY],
+  [UserRole.USER]: [Path.DASHBOARD, Path.PRODUCTS, Path.PLATES, Path.WORK_ORDERS],
+  [UserRole.MANAGER]: [Path.DASHBOARD, Path.ACCOUNTS, Path.PRODUCTS, Path.PLATES, Path.WORK_ORDERS],
+  [UserRole.ADMIN]: [Path.DASHBOARD, Path.ACCOUNTS, Path.PRODUCTS, Path.PLATES, Path.WORK_ORDERS],
 };
 export const NAV_ICONS: { [key: string]: ElementType } = {
   [Path.DASHBOARD]: Dashboard,
@@ -203,7 +201,7 @@ export const NAV_ICONS: { [key: string]: ElementType } = {
   [Path.PRODUCTS]: PhotoLibrary,
   [Path.PLATES]: CameraRoll,
   [Path.WORK_ORDERS]: Build,
-  [Path.DELIVERY]: LocalShipping,
+  // [Path.DELIVERY]: LocalShipping,
 };
 
 export const SEARCH_PANEL_WIDTH = 360;
