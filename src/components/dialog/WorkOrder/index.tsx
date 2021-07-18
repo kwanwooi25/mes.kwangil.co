@@ -1,19 +1,20 @@
-import { CreateWorkOrderDto, WorkOrderDto } from 'features/workOrder/interface';
-import { DeliveryMethod, LoadingKeys, PlateStatus, WorkOrderStatus } from 'const';
 import FormikStepper, { FormikStep } from 'components/form/FormikStepper';
-import { date, number, object, string } from 'yup';
-import { getInitialWorkOrderFormValues, getWorkOrderToUpdate } from 'utils/workOrder';
-
-import Dialog from 'features/dialog/Dialog';
 import Loading from 'components/Loading';
-import OrderInfoForm from './OrderInfoForm';
+import { DeliveryMethod, PlateStatus, WorkOrderStatus } from 'const';
+import Dialog from 'features/dialog/Dialog';
 import { ProductDto } from 'features/product/interface';
+import { CreateWorkOrderDto, WorkOrderDto } from 'features/workOrder/interface';
+import {
+    useCreateWorkOrderMutation, useUpdateWorkOrderMutation
+} from 'features/workOrder/useWorkOrders';
 import React from 'react';
-import SelectProductForm from './SelectProductForm';
-import { useAppDispatch } from 'app/store';
-import { useLoading } from 'features/loading/loadingHook';
 import { useTranslation } from 'react-i18next';
-import { workOrderActions } from 'features/workOrder/workOrderSlice';
+import { useQueryClient } from 'react-query';
+import { getInitialWorkOrderFormValues, getWorkOrderToUpdate } from 'utils/workOrder';
+import { date, number, object, string } from 'yup';
+
+import OrderInfoForm from './OrderInfoForm';
+import SelectProductForm from './SelectProductForm';
 
 export interface WorkOrderDialogProps {
   workOrder?: WorkOrderDto;
@@ -27,15 +28,20 @@ export interface WorkOrderFormValues extends Omit<CreateWorkOrderDto, 'accountId
 
 const WorkOrderDialog = ({ workOrder, product, onClose }: WorkOrderDialogProps) => {
   const { t } = useTranslation('workOrders');
-
-  const { [LoadingKeys.SAVING_WORK_ORDER]: isSaving } = useLoading();
-  const dispatch = useAppDispatch();
-  const { createWorkOrder, updateWorkOrder } = workOrderActions;
-
   const isEditMode = !!workOrder;
   const isProductSelected = !!workOrder || !!product;
-
   const dialogTitle = t(isEditMode ? 'editWorkOrder' : 'addWorkOrder');
+
+  const queryClient = useQueryClient();
+
+  const onSuccess = () => {
+    queryClient.invalidateQueries('workOrders');
+    onClose();
+  };
+
+  const { updateWorkOrder, isUpdating } = useUpdateWorkOrderMutation({ queryClient, onSuccess });
+  const { createWorkOrder, isCreating } = useCreateWorkOrderMutation({ queryClient, onSuccess });
+  const isSaving = isCreating || isUpdating;
 
   const initialValues: WorkOrderFormValues = getInitialWorkOrderFormValues(workOrder, product);
 
@@ -64,7 +70,7 @@ const WorkOrderDialog = ({ workOrder, product, onClose }: WorkOrderDialogProps) 
     if (isEditMode) {
       const { id } = workOrder!;
       const workOrderToUpdate = getWorkOrderToUpdate(values);
-      dispatch(updateWorkOrder({ id, ...workOrderToUpdate }));
+      updateWorkOrder({ id, ...workOrderToUpdate });
     } else {
       const { product, ...restValues } = values;
       const workOrderToCreate = {
@@ -72,16 +78,12 @@ const WorkOrderDialog = ({ workOrder, product, onClose }: WorkOrderDialogProps) 
         productId: product?.id,
         accountId: product?.accountId,
       };
-      dispatch(createWorkOrder(workOrderToCreate as CreateWorkOrderDto));
+      createWorkOrder(workOrderToCreate as CreateWorkOrderDto);
     }
   };
 
-  const handleClose = () => {
-    onClose && onClose();
-  };
-
   return (
-    <Dialog open onClose={handleClose} title={dialogTitle} fullHeight>
+    <Dialog open onClose={onClose} title={dialogTitle} fullHeight>
       {isSaving && <Loading />}
       <FormikStepper initialValues={initialValues} onSubmit={onSubmit} initialStep={isProductSelected ? 1 : 0}>
         {forms.map(({ label, Component, validationSchema }) => (

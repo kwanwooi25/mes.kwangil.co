@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from 'app/store';
+import { useAppDispatch } from 'app/store';
 import Input from 'components/form/Input';
 import { DatePicker } from 'components/form/Pickers';
 import RoundedButton from 'components/RoundedButton';
@@ -9,14 +9,13 @@ import { useUI } from 'features/ui/uiHook';
 import { useFormik } from 'formik';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BaseQuery } from 'types/api';
 
 import {
     Checkbox, createStyles, Divider, FormControlLabel, makeStyles, Theme
 } from '@material-ui/core';
 
-import { GetWorkOrdersQuery } from './interface';
-import { initialState, workOrderActions, workOrderSelectors } from './workOrderSlice';
+import { WorkOrderFilter } from './interface';
+import { DEFAULT_WORK_ORDER_FILTER } from './WorkOrderPage';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -49,39 +48,28 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export interface WorkOrderSearchProps {
-  onSubmit?: () => void;
-  onReset?: () => void;
+  filter: WorkOrderFilter;
+  onChange: (filter: WorkOrderFilter) => any;
 }
 
-const WorkOrderSearch = ({ onSubmit, onReset }: WorkOrderSearchProps) => {
+const WorkOrderSearch = ({ filter, onChange }: WorkOrderSearchProps) => {
   const { t } = useTranslation('workOrders');
   const classes = useStyles();
 
   const dispatch = useAppDispatch();
-  const { offset, limit, ...restQuery } = useAppSelector(workOrderSelectors.query);
-  const { getList, resetList } = workOrderActions;
   const { closeSearch } = useUI();
   const { isUser } = useAuth();
 
-  const initialValues = {
-    orderedAt: [...initialState.query.orderedAt],
-    accountName: '',
-    productName: '',
-    includeCompleted: false,
-  };
+  const initialValues = { ...DEFAULT_WORK_ORDER_FILTER };
 
-  const { values, setFieldValue, setValues, handleSubmit, handleReset, handleChange } = useFormik<
-    Omit<GetWorkOrdersQuery, keyof BaseQuery>
-  >({
+  const { values, setFieldValue, setValues, handleSubmit, handleReset, handleChange } = useFormik<WorkOrderFilter>({
     initialValues,
     onReset: () => {
-      dispatch(resetList());
-      dispatch(getList({ ...initialState.query, limit, offset: 0 }));
+      onChange({ ...DEFAULT_WORK_ORDER_FILTER });
       dispatch(closeSearch());
     },
     onSubmit: (values) => {
-      dispatch(resetList());
-      dispatch(getList({ ...values, limit, offset: 0 }));
+      onChange({ ...values });
       dispatch(closeSearch());
     },
   });
@@ -114,7 +102,7 @@ const WorkOrderSearch = ({ onSubmit, onReset }: WorkOrderSearchProps) => {
   const searchForToday = () => searchForADay(new Date());
 
   useEffect(() => {
-    setValues({ ...initialValues, ...restQuery });
+    setValues({ ...initialValues, ...filter });
   }, []);
 
   return (

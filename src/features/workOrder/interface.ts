@@ -3,6 +3,15 @@ import { AccountDto } from 'features/account/interface';
 import { ProductDto } from 'features/product/interface';
 import { BaseQuery } from 'types/api';
 
+export interface WorkOrderFilter {
+  orderedAt: string[];
+  accountName?: string;
+  productName?: string;
+  includeCompleted?: boolean;
+}
+
+export type GetWorkOrdersQuery = BaseQuery & WorkOrderFilter;
+
 export interface WorkOrderDto {
   id: string;
   orderedAt: Date | string;
@@ -49,13 +58,6 @@ export interface CompleteWorkOrderDto {
   completedAt: Date | string | null;
   completedQuantity: number;
   productId: number;
-}
-
-export interface GetWorkOrdersQuery extends BaseQuery {
-  orderedAt: string[];
-  accountName?: string;
-  productName?: string;
-  includeCompleted?: boolean;
 }
 
 export interface GetWorkOrdersByDeadlineQuery {

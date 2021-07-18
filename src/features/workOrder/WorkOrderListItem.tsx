@@ -1,4 +1,3 @@
-import { useAppDispatch, useAppSelector } from 'app/store';
 import AccountName from 'components/AccountName';
 import ConfirmDialog from 'components/dialog/Confirm';
 import WorkOrderDialog from 'components/dialog/WorkOrder';
@@ -15,6 +14,7 @@ import { useScreenSize } from 'hooks/useScreenSize';
 import { useWorkOrderDisplay } from 'hooks/useWorkOrderDisplay';
 import React, { memo, MouseEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from 'react-query';
 import { getWorkOrderToUpdate } from 'utils/workOrder';
 
 import {
@@ -24,11 +24,10 @@ import {
 import { red, yellow } from '@material-ui/core/colors';
 import DoneIcon from '@material-ui/icons/Done';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { Skeleton } from '@material-ui/lab';
 import { BlobProvider } from '@react-pdf/renderer';
 
-import { WorkOrderDto } from './interface';
-import { workOrderActions, workOrderSelectors } from './workOrderSlice';
+import { WorkOrderDto, WorkOrderFilter } from './interface';
+import { useDeleteWorkOrdersMutation, useUpdateWorkOrderMutation } from './useWorkOrders';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -155,24 +154,31 @@ export interface WorkOrderListItemProps extends ListItemProps {
   workOrder: WorkOrderDto;
   itemHeight: number;
   isSelected: boolean;
+  filter: WorkOrderFilter;
+  toggleSelection?: (workOrder: WorkOrderDto) => any;
 }
 
-const WorkOrderListItem = ({ workOrder, itemHeight, isSelected }: WorkOrderListItemProps) => {
+const WorkOrderListItem = ({
+  workOrder,
+  itemHeight,
+  isSelected,
+  filter,
+  toggleSelection = (workOrder: WorkOrderDto) => {},
+}: WorkOrderListItemProps) => {
   const { t } = useTranslation('workOrders');
   const classes = useStyles();
   const { isMobileLayout, isTabletLayout, isDesktopLayout } = useScreenSize();
 
-  const dispatch = useAppDispatch();
-  const query = useAppSelector(workOrderSelectors.query);
-  const { toggleSelection, deleteWorkOrders, updateWorkOrder } = workOrderActions;
   const { openDialog, closeDialog } = useDialog();
   const { isUser } = useAuth();
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
-  const handleSelectionChange = useCallback(() => {
-    dispatch(toggleSelection(workOrder.id));
-  }, [workOrder]);
+  const queryClient = useQueryClient();
+  const { updateWorkOrder } = useUpdateWorkOrderMutation({ queryClient });
+  const { deleteWorkOrders } = useDeleteWorkOrdersMutation({ queryClient });
+
+  const handleSelectionChange = () => toggleSelection(workOrder);
 
   const openMenu = useCallback((e: MouseEvent<HTMLButtonElement>) => setMenuAnchorEl(e.currentTarget), []);
   const closeMenu = useCallback(() => setMenuAnchorEl(null), []);
@@ -180,39 +186,42 @@ const WorkOrderListItem = ({ workOrder, itemHeight, isSelected }: WorkOrderListI
   const handleChangeWorkOrderStatus = (value: WorkOrderStatus) => {
     const { id } = workOrder;
     const workOrderToUpdate = getWorkOrderToUpdate(workOrder);
-    dispatch(updateWorkOrder({ ...workOrderToUpdate, id, workOrderStatus: value }));
+    updateWorkOrder({ ...workOrderToUpdate, id, workOrderStatus: value });
   };
 
-  const handleClickMenuItem = (onClick = () => {}) => () => {
-    closeMenu();
-    onClick();
-  };
+  const handleClickMenuItem =
+    (onClick = () => {}) =>
+    () => {
+      closeMenu();
+      onClick();
+    };
 
   const handleClickPrint = (url: string) => () => {
     closeMenu();
     window.open(url);
   };
 
-  const handleClickComplete = useCallback(() => {
-    openDialog(<WorkOrdersCompleteDialog workOrders={[workOrder]} onClose={closeDialog} />);
-  }, [workOrder]);
+  const closeDialogAndUnselect = () => {
+    closeDialog();
+    isSelected && toggleSelection(workOrder);
+  };
 
-  const handleClickEdit = useCallback(() => {
-    openDialog(<WorkOrderDialog workOrder={workOrder} onClose={closeDialog} />);
-  }, [workOrder]);
+  const handleClickComplete = () =>
+    openDialog(<WorkOrdersCompleteDialog workOrders={[workOrder]} onClose={closeDialogAndUnselect} />);
 
-  const handleClickDelete = useCallback(() => {
+  const handleClickEdit = () => openDialog(<WorkOrderDialog workOrder={workOrder} onClose={closeDialog} />);
+
+  const handleClickDelete = () =>
     openDialog(
       <ConfirmDialog
         title={t('deleteWorkOrder')}
         message={t('deleteWorkOrderConfirm', { workOrderId: workOrder.id })}
         onClose={(isConfirmed: boolean) => {
-          isConfirmed && dispatch(deleteWorkOrders([workOrder.id]));
-          closeDialog();
+          isConfirmed && deleteWorkOrders([workOrder.id]);
+          closeDialogAndUnselect();
         }}
       />
     );
-  }, [workOrder]);
 
   const { product } = workOrder;
   const {
@@ -316,8 +325,12 @@ const WorkOrderListItem = ({ workOrder, itemHeight, isSelected }: WorkOrderListI
             )}
           </div>
           <div className={classes.productNames}>
-            <AccountName account={product.account} linkClassName={classes.accountName} searchText={query.accountName} />
-            <ProductName product={product} maxWidth={productNameMaxWidth} searchText={query.productName} />
+            <AccountName
+              account={product.account}
+              linkClassName={classes.accountName}
+              searchText={filter.accountName}
+            />
+            <ProductName product={product} maxWidth={productNameMaxWidth} searchText={filter.productName} />
           </div>
           <div className={classes.productDetail}>
             <Typography variant="h6">{productSize}</Typography>
@@ -374,50 +387,5 @@ const WorkOrderListItem = ({ workOrder, itemHeight, isSelected }: WorkOrderListI
     </ListItem>
   );
 };
-
-const WorkOrderListItemSkeleton = memo(({ itemHeight }: { itemHeight: number }) => {
-  const classes = useStyles();
-  const { isUser } = useAuth();
-
-  return (
-    <ListItem divider style={{ height: itemHeight }}>
-      {!isUser && (
-        <ListItemIcon>
-          <Skeleton variant="rect" width={24} height={24} />
-        </ListItemIcon>
-      )}
-      <ListItemText>
-        <div className={classes.workOrderDetail}>
-          <Skeleton className={classes.workOrderId} variant="rect" width="80%" height={24} />
-          <div className={classes.dates}>
-            <Skeleton variant="rect" width="80%" height={20} />
-            <Skeleton variant="rect" width="80%" height={20} />
-            <Skeleton variant="rect" width="80%" height={20} />
-          </div>
-          <Skeleton className={classes.workOrderStatus} variant="rect" width="80%" height={20} />
-          <div className={classes.productNames}>
-            <Skeleton variant="rect" width="80%" height={24} />
-            <Skeleton variant="rect" width="80%" height={30} />
-          </div>
-          <div className={classes.productDetail}>
-            <Skeleton variant="rect" width="80%" height={24} />
-            <Skeleton variant="rect" width="80%" height={20} />
-          </div>
-          <div className={classes.quantities}>
-            <Skeleton variant="rect" width="80%" height={20} />
-            <Skeleton variant="rect" width="80%" height={20} />
-          </div>
-        </div>
-      </ListItemText>
-      {!isUser && (
-        <ListItemSecondaryAction>
-          <Skeleton variant="circle" width={48} height={48} style={{ marginRight: -12 }} />
-        </ListItemSecondaryAction>
-      )}
-    </ListItem>
-  );
-});
-
-export { WorkOrderListItemSkeleton };
 
 export default memo(WorkOrderListItem);

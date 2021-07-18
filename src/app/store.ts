@@ -7,8 +7,6 @@ import dialogReducer from 'features/dialog/dialogSlice';
 import loadingReducer from 'features/loading/loadingSlice';
 import notificationReducer from 'features/notification/notificationSlice';
 import uiReducer from 'features/ui/uiSlice';
-import { workOrderSaga } from 'features/workOrder/workOrderSaga';
-import workOrderReducer from 'features/workOrder/workOrderSlice';
 import { createBrowserHistory } from 'history';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { createLogger } from 'redux-logger';
@@ -28,7 +26,6 @@ const reducer = combineReducers({
   dialog: dialogReducer,
   notification: notificationReducer,
   auth: authReducer,
-  workOrder: workOrderReducer,
   delivery: deliveryReducer,
 });
 
@@ -54,7 +51,7 @@ const store = configureStore({
 });
 
 function* rootSaga() {
-  yield all([authSaga(), workOrderSaga(), deliverySaga()]);
+  yield all([authSaga(), deliverySaga()]);
 }
 
 sagaMiddleware.run(rootSaga);

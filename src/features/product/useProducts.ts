@@ -28,7 +28,7 @@ export const useInfiniteProducts = (filter: ProductFilter, limit: number = DEFAU
 
 export const useDownloadProducts = (filter: ProductFilter) => {
   const { isFetching: isDownloading, data } = useQuery(
-    ['download-accounts', JSON.stringify(filter)],
+    ['download-products', JSON.stringify(filter)],
     async ({ queryKey }) => {
       const [, serializedFilter] = queryKey;
       const filter = JSON.parse(serializedFilter);

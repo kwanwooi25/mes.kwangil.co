@@ -1,13 +1,11 @@
-import { useAppDispatch } from 'app/store';
 import FormikStepper, { FormikStep, StepperType } from 'components/form/FormikStepper';
 import Loading from 'components/Loading';
-import { LoadingKeys } from 'const';
 import Dialog from 'features/dialog/Dialog';
-import { useLoading } from 'features/loading/loadingHook';
 import { CompleteWorkOrderDto, WorkOrderDto } from 'features/workOrder/interface';
-import { workOrderActions } from 'features/workOrder/workOrderSlice';
+import { useCompleteWorkOrdersMutation } from 'features/workOrder/useWorkOrders';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from 'react-query';
 import { getProductTitle } from 'utils/product';
 import { array, date, number, object } from 'yup';
 
@@ -21,9 +19,8 @@ export interface WorkOrdersCompleteDialogProps {
 const WorkOrdersCompleteDialog = ({ workOrders = [], onClose }: WorkOrdersCompleteDialogProps) => {
   const { t } = useTranslation('workOrders');
   const [isPrevButtonDisabled, setIsPrevButtonDisabled] = useState<boolean>(false);
-  const dispatch = useAppDispatch();
-  const { [LoadingKeys.SAVING_WORK_ORDER]: isSaving } = useLoading();
-  const { completeWorkOrders } = workOrderActions;
+  const queryClient = useQueryClient();
+  const { completeWorkOrders, isUpdating } = useCompleteWorkOrdersMutation({ queryClient, onSuccess: () => onClose() });
 
   const dialogTitle = t('completeWorkOrder');
 
@@ -47,11 +44,7 @@ const WorkOrdersCompleteDialog = ({ workOrders = [], onClose }: WorkOrdersComple
         productId: product.id,
       })
     );
-    dispatch(completeWorkOrders(workOrdersToUpdate));
-  };
-
-  const handleClose = () => {
-    onClose && onClose();
+    completeWorkOrders(workOrdersToUpdate);
   };
 
   const handleChangeError = (hasError: boolean) => {
@@ -59,8 +52,8 @@ const WorkOrdersCompleteDialog = ({ workOrders = [], onClose }: WorkOrdersComple
   };
 
   return (
-    <Dialog open onClose={handleClose} title={dialogTitle}>
-      {isSaving && <Loading />}
+    <Dialog open onClose={onClose} title={dialogTitle}>
+      {isUpdating && <Loading />}
       <FormikStepper initialValues={initialValues} onSubmit={onSubmit} stepperType={stepperType}>
         {!!workOrders.length &&
           workOrders.map(({ id, product }, index) => (

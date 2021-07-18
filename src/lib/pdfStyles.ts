@@ -36,7 +36,7 @@ export const baseStyles: { [key: string]: Style } = {
   },
   flexColumnCenter: {
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
   },

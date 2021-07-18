@@ -4,7 +4,10 @@ import {
 } from 'const';
 import { AccountDto, CreateAccountDto, CreateContactDto } from 'features/account/interface';
 import { CreateProductDto, CreateProductsDto, ProductDto } from 'features/product/interface';
-import { CreateWorkOrdersDto, WorkOrderDto } from 'features/workOrder/interface';
+import {
+    CreateWorkOrderDto, CreateWorkOrdersDto, WorkOrderDto
+} from 'features/workOrder/interface';
+import { isEmpty } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
 import XLSX from 'xlsx';
 
@@ -35,7 +38,10 @@ export const downloadWorkbook = {
     const data = processProductsForDownload(products);
     return getWorkbook(data, workbookTitle);
   },
-  [ExcelVariant.WORK_ORDER]: (workOrders: WorkOrderDto[], workbookTitle: string) => {
+  [ExcelVariant.WORK_ORDER]: (
+    workOrders: (WorkOrderDto | ((CreateWorkOrderDto | CreateWorkOrdersDto) & { reason: string }))[],
+    workbookTitle: string
+  ) => {
     const data = processWorkOrdersForDownload(workOrders);
     return getWorkbook(data, workbookTitle);
   },
@@ -311,10 +317,10 @@ const generateItem = {
             newValue = value === 'Y';
             break;
           case 'deliveredAt':
-            newValue = value;
+            newValue = isEmpty(value) ? null : value;
             break;
           case 'completedAt':
-            newValue = value;
+            newValue = isEmpty(value) ? null : value;
             workOrder.workOrderStatus = WorkOrderStatus.COMPLETED;
             break;
 
@@ -429,12 +435,14 @@ function processProductsForDownload(
   });
 }
 
-function processWorkOrdersForDownload(workOrders: WorkOrderDto[]) {
+function processWorkOrdersForDownload(
+  workOrders: (WorkOrderDto | ((CreateWorkOrderDto | CreateWorkOrdersDto) & { reason: string }))[]
+) {
   const workOrderDataKeys = Object.keys(WORK_ORDER_KEY_TO_LABEL);
 
   return workOrders.map((workOrder) => {
     return workOrderDataKeys.reduce((processedWorkOrder, key) => {
-      const label = WORK_ORDER_KEY_TO_LABEL[key];
+      const label = WORK_ORDER_KEY_TO_LABEL[key] || key;
       // @ts-ignore
       let value = workOrder[key];
 
@@ -446,15 +454,18 @@ function processWorkOrdersForDownload(workOrders: WorkOrderDto[]) {
           value = formatDate(value);
           break;
         case 'accountName':
-          value = workOrder.product.account.name;
+          // @ts-ignore
+          value = workOrder.product ? workOrder.product.account.name : workOrder.accountName;
           break;
         case 'productName':
-          value = workOrder.product.name;
+          // @ts-ignore
+          value = workOrder.product ? workOrder.product.name : workOrder.productName;
           break;
         case 'thickness':
         case 'length':
         case 'width':
-          value = workOrder.product[key];
+          // @ts-ignore
+          value = workOrder.product ? workOrder.product[key] : workOrder[key];
           break;
         case 'plateStatus':
           value = PLATE_STATUS_TEXT[key];

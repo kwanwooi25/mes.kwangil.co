@@ -1,11 +1,11 @@
-import { StyleSheet, Text, View } from '@react-pdf/renderer';
-
 import { PlateStatus } from 'const';
 import { ProductDto } from 'features/product/interface';
-import React from 'react';
 import { baseStyles } from 'lib/pdfStyles';
 import { capitalize } from 'lodash';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { StyleSheet, Text, View } from '@react-pdf/renderer';
 
 const {
   detailSection,
