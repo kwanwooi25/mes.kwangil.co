@@ -39,16 +39,21 @@ export const useAccountOptions = () => {
 };
 
 export const useDownloadAccounts = (filter: AccountFilter) => {
-  const { isFetching: isDownloading, data } = useQuery(
+  const { isFetching: isDownloading, refetch } = useQuery(
     ['download-accounts', filter.accountName],
     async ({ queryKey }) => {
       const [, accountName] = queryKey;
       const { rows } = await accountApi.getAllAccounts(accountName);
       return rows;
-    }
+    },
+    { enabled: false }
   );
 
-  const download = (fileName: string) => downloadWorkbook[ExcelVariant.ACCOUNT](data, fileName);
+  const download = (fileName: string) => {
+    refetch().then((res) => {
+      downloadWorkbook[ExcelVariant.ACCOUNT](res.data, fileName);
+    });
+  };
 
   return { isDownloading, download };
 };

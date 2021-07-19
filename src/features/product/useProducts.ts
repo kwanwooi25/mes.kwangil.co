@@ -27,17 +27,22 @@ export const useInfiniteProducts = (filter: ProductFilter, limit: number = DEFAU
 };
 
 export const useDownloadProducts = (filter: ProductFilter) => {
-  const { isFetching: isDownloading, data } = useQuery(
+  const { isFetching: isDownloading, refetch } = useQuery(
     ['download-products', JSON.stringify(filter)],
     async ({ queryKey }) => {
       const [, serializedFilter] = queryKey;
       const filter = JSON.parse(serializedFilter);
       const { rows } = await productApi.getAllProducts(filter);
       return rows;
-    }
+    },
+    { enabled: false }
   );
 
-  const download = (fileName: string) => downloadWorkbook[ExcelVariant.PRODUCT](data, fileName);
+  const download = (fileName: string) => {
+    refetch().then((res) => {
+      downloadWorkbook[ExcelVariant.PRODUCT](res.data, fileName);
+    });
+  };
 
   return { isDownloading, download };
 };

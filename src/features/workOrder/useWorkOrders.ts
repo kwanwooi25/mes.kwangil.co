@@ -29,17 +29,22 @@ export const useInfiniteWorkOrders = (filter: WorkOrderFilter, limit: number = D
 };
 
 export const useDownloadWorkOrders = (filter: WorkOrderFilter) => {
-  const { isFetching: isDownloading, data } = useQuery(
+  const { isFetching: isDownloading, refetch } = useQuery(
     ['download-workOrders', JSON.stringify(filter)],
     async ({ queryKey }) => {
       const [, serializedFilter] = queryKey;
       const filter = JSON.parse(serializedFilter);
       const { rows } = await workOrderApi.getAllWorkOrders(filter);
       return rows;
-    }
+    },
+    { enabled: false }
   );
 
-  const download = (fileName: string) => downloadWorkbook[ExcelVariant.WORK_ORDER](data, fileName);
+  const download = (fileName: string) => {
+    refetch().then((res) => {
+      downloadWorkbook[ExcelVariant.WORK_ORDER](res.data, fileName);
+    });
+  };
 
   return { isDownloading, download };
 };
