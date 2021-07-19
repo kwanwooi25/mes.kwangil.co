@@ -50,6 +50,7 @@ export default {
     thisYear: '올해',
     overdue: '기한 지남',
     imminent: '기한 임박',
+    refresh: '새로고침',
 
     account: '거래처',
     product: '제품',

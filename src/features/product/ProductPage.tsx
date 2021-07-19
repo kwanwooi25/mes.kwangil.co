@@ -25,7 +25,7 @@ import { downloadWorkbook } from 'utils/excel';
 import { formatDigit } from 'utils/string';
 
 import { IconButton, List, Tooltip } from '@material-ui/core';
-import { Add, DeleteOutline, GetApp, Publish } from '@material-ui/icons';
+import { Add, DeleteOutline, GetApp, Publish, Refresh } from '@material-ui/icons';
 
 import { CreateProductsDto, ProductDto, ProductFilter } from './interface';
 import ProductListItem from './ProductListItem';
@@ -100,6 +100,8 @@ const ProductPage = (props: ProductPageProps) => {
     count: formatDigit(data?.pages[data.pages.length - 1].count || 0),
   } as any);
 
+  const handleClickRefresh = () => queryClient.invalidateQueries('products');
+
   const handleClickDeleteAll = () => {
     openDialog(
       <ConfirmDialog
@@ -150,6 +152,11 @@ const ProductPage = (props: ProductPageProps) => {
   ];
 
   const toolBarButtons = [
+    <Tooltip key="refresh" title={t('common:refresh') as string} placement="top">
+      <IconButton onClick={handleClickRefresh}>
+        <Refresh />
+      </IconButton>
+    </Tooltip>,
     <Tooltip key="add-product" title={t('addProduct') as string} placement="top">
       <IconButton onClick={openProductDialog}>
         <Add />

@@ -18,7 +18,7 @@ import { useQueryClient } from 'react-query';
 import { formatDigit } from 'utils/string';
 
 import { IconButton, List, Tooltip } from '@material-ui/core';
-import { Add, DeleteOutline } from '@material-ui/icons';
+import { Add, DeleteOutline, Refresh } from '@material-ui/icons';
 
 import { PlateDto, PlateFilter } from './interface';
 import PlateListItem from './PlateListItem';
@@ -71,6 +71,8 @@ const PlatePage = (props: PlatePageProps) => {
     count: formatDigit(data?.pages[data.pages.length - 1].count || 0),
   } as any);
 
+  const handleClickRefresh = () => queryClient.invalidateQueries('plates');
+
   const handleClickDeleteAll = () => {
     openDialog(
       <ConfirmDialog
@@ -116,6 +118,11 @@ const PlatePage = (props: PlatePageProps) => {
   ];
 
   const toolBarButtons = [
+    <Tooltip key="refresh" title={t('common:refresh') as string} placement="top">
+      <IconButton onClick={handleClickRefresh}>
+        <Refresh />
+      </IconButton>
+    </Tooltip>,
     <Tooltip key="add-plate" title={t('addPlate') as string} placement="top">
       <IconButton onClick={openPlateDialog}>
         <Add />

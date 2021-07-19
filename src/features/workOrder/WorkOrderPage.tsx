@@ -23,7 +23,7 @@ import { downloadWorkbook } from 'utils/excel';
 import { formatDigit } from 'utils/string';
 
 import { IconButton, List, Tooltip } from '@material-ui/core';
-import { Add, DeleteOutline, Done, GetApp, Print, Publish } from '@material-ui/icons';
+import { Add, DeleteOutline, Done, GetApp, Print, Publish, Refresh } from '@material-ui/icons';
 import { BlobProvider } from '@react-pdf/renderer';
 
 import { CreateWorkOrdersDto, WorkOrderDto, WorkOrderFilter } from './interface';
@@ -98,6 +98,8 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
 
   const selectedWorkOrders = workOrders.filter(({ id }) => selectedIds.includes(id));
   const isAllCutting = selectedWorkOrders.every(({ workOrderStatus }) => workOrderStatus === WorkOrderStatus.CUTTING);
+
+  const handleClickRefresh = () => queryClient.invalidateQueries('workOrders');
 
   const handleToggleSelection = (workOrder: WorkOrderDto) => toggleSelection(workOrder.id);
 
@@ -193,6 +195,11 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
   ];
 
   const toolBarButtons = [
+    <Tooltip key="refresh" title={t('common:refresh') as string} placement="top">
+      <IconButton onClick={handleClickRefresh}>
+        <Refresh />
+      </IconButton>
+    </Tooltip>,
     <Tooltip key="add-work-order" title={t('addWorkOrder') as string} placement="top">
       <IconButton onClick={openWorkOrderDialog}>
         <Add />
