@@ -15,7 +15,7 @@ import { useDialog } from 'features/dialog/dialogHook';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useSelection } from 'hooks/useSelection';
 import Layout from 'layouts/Layout';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
 import { BulkCreationResponse } from 'types/api';
@@ -24,7 +24,7 @@ import { formatDigit } from 'utils/string';
 
 import { IconButton, List, Tooltip } from '@material-ui/core';
 import { Add, DeleteOutline, Done, GetApp, Print, Publish, Refresh } from '@material-ui/icons';
-import { BlobProvider } from '@react-pdf/renderer';
+import { usePDF } from '@react-pdf/renderer';
 
 import { CreateWorkOrdersDto, WorkOrderDto, WorkOrderFilter } from './interface';
 import {
@@ -99,6 +99,8 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
   const selectedWorkOrders = workOrders.filter(({ id }) => selectedIds.includes(id));
   const isAllCutting = selectedWorkOrders.every(({ workOrderStatus }) => workOrderStatus === WorkOrderStatus.CUTTING);
 
+  const [instance, update] = usePDF({ document: <WorkOrderPDF workOrders={selectedWorkOrders} /> });
+
   const handleClickRefresh = () => queryClient.invalidateQueries('workOrders');
 
   const handleToggleSelection = (workOrder: WorkOrderDto) => toggleSelection(workOrder.id);
@@ -118,7 +120,8 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
   const openWorkOrdersCompleteDialog = () =>
     openDialog(<WorkOrdersCompleteDialog workOrders={selectedWorkOrders} onClose={closeDialogAndResetSelection} />);
 
-  const openWorkOrderPDF = (url: string) => () => window.open(url);
+  // const openWorkOrderPDF = (url: string) => () => window.open(url);
+  const openWorkOrderPDF = () => update();
 
   const handleClickDeleteAll = () =>
     openDialog(
@@ -163,22 +166,30 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
     }
     selectModeButtons = [
       ...selectModeButtons,
-      <BlobProvider key="print-all" document={<WorkOrderPDF workOrders={selectedWorkOrders} />}>
-        {({ url, loading }) =>
-          loading ? (
-            <IconButton disabled>
-              <Loading />
-              <Print />
-            </IconButton>
-          ) : (
-            <Tooltip key="print-all" title={t('common:print') as string} placement="top">
-              <IconButton onClick={openWorkOrderPDF(url as string)}>
-                <Print />
-              </IconButton>
-            </Tooltip>
-          )
-        }
-      </BlobProvider>,
+      <Tooltip key="print-all" title={t('common:print') as string} placement="top">
+        <span>
+          <IconButton onClick={openWorkOrderPDF} disabled={instance.loading}>
+            {instance.loading && <Loading />}
+            <Print />
+          </IconButton>
+        </span>
+      </Tooltip>,
+      // <BlobProvider key="print-all" document={<WorkOrderPDF workOrders={selectedWorkOrders} />}>
+      //   {({ url, loading }) =>
+      //     loading ? (
+      //       <IconButton disabled>
+      //         <Loading />
+      //         <Print />
+      //       </IconButton>
+      //     ) : (
+      //       <Tooltip key="print-all" title={t('common:print') as string} placement="top">
+      //         <IconButton onClick={openWorkOrderPDF(url as string)}>
+      //           <Print />
+      //         </IconButton>
+      //       </Tooltip>
+      //     )
+      //   }
+      // </BlobProvider>,
     ];
   }
 
@@ -219,6 +230,10 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
       </span>
     </Tooltip>,
   ];
+
+  useEffect(() => {
+    selectedWorkOrders.length && instance.url && window.open(instance.url);
+  }, [instance.url]);
 
   return (
     <Layout
