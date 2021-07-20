@@ -2,6 +2,7 @@ import AccountName from 'components/AccountName';
 import DashboardCard from 'components/DashboardCard';
 import CustomToggleButton, { ToggleButtonOption } from 'components/form/CustomToggleButton';
 import ProductName from 'components/ProductName';
+import WorkOrderId from 'components/WorkOrderId';
 import { DeadlineStatus } from 'const';
 import { WorkOrderDto, WorkOrdersByDeadline } from 'features/workOrder/interface';
 import { workOrderApi } from 'features/workOrder/workOrderApi';
@@ -27,11 +28,15 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'grid',
       gridTemplateColumns: '1fr auto',
       gridTemplateAreas: `
-        "accountName deliverBy"
+        "workOrderId deliverBy"
+        "accountName workOrderStatus"
         "productName workOrderStatus"
         "productSize orderQuantity"
       `,
       gridGap: theme.spacing(0.5),
+      '& .workOrderId': {
+        gridArea: 'workOrderId',
+      },
       '& .accountName': {
         gridArea: 'accountName',
       },
@@ -87,6 +92,7 @@ const WorkOrderListItem = ({ workOrder }: { workOrder: WorkOrderDto }) => {
 
   return (
     <ListItem className={classes.workOrderListItem} divider>
+      <WorkOrderId className="workOrderId" workOrder={workOrder} />
       <AccountName className="accountName" linkClassName="accountNameText" account={workOrder.product.account} />
       <ProductName className="productName" product={workOrder.product} />
       <Typography className="productSize">{productSize}</Typography>
@@ -104,7 +110,8 @@ const WorkOrderListItemSkeleton = () => {
 
   return (
     <ListItem className={classes.workOrderListItem} divider>
-      <Skeleton className="accountName" width="60%" height={21} />
+      <Skeleton className="workOrderId" width="50%" height={25} />
+      <Skeleton className="accountName" width="40%" height={21} />
       <Skeleton className="productName" width="80%" height={32} />
       <Skeleton className="productSize" width="50%" height={21} />
       <Skeleton className="deliverBy" width={85} height={24} />
@@ -190,7 +197,7 @@ const DeadlineStatusCard = (props: DeadlineStatusCardProps) => {
         options={deadlineStatusOptions}
         onChange={handleChangeDeadlineStatus}
       />
-      <List disablePadding style={{ height: 111 * workOrderCountToDisplay }}>
+      <List disablePadding style={{ height: 138 * workOrderCountToDisplay }}>
         {isLoading ? (
           renderSkeletons()
         ) : !workOrdersToShow.length ? (
