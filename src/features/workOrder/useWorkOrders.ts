@@ -49,6 +49,16 @@ export const useDownloadWorkOrders = (filter: WorkOrderFilter) => {
   return { isDownloading, download };
 };
 
+export const useWorkOrder = (id: string) =>
+  useQuery(
+    ['workOrder', id],
+    async ({ queryKey }) => {
+      const [, workOrderId] = queryKey;
+      return await workOrderApi.getWorkOrder(workOrderId);
+    },
+    { enabled: false }
+  );
+
 export const useCreateWorkOrderMutation = ({
   queryClient,
   onSuccess = () => {},

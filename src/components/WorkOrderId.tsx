@@ -1,11 +1,13 @@
-import { Link, Theme, createStyles, makeStyles } from '@material-ui/core';
-import React, { memo } from 'react';
-
-import WorkOrderDetailDialog from './dialog/WorkOrderDetail';
-import { WorkOrderDto } from 'features/workOrder/interface';
 import classnames from 'classnames';
 import { useDialog } from 'features/dialog/dialogHook';
-import { workOrderApi } from 'features/workOrder/workOrderApi';
+import { WorkOrderDto } from 'features/workOrder/interface';
+import { useWorkOrder } from 'features/workOrder/useWorkOrders';
+import React, { memo } from 'react';
+
+import { createStyles, Link, makeStyles, Theme } from '@material-ui/core';
+
+import WorkOrderDetailDialog from './dialog/WorkOrderDetail';
+import Loading from './Loading';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,9 +33,10 @@ const WorkOrderId = ({ workOrder, className, linkClassName }: WorkOrderIdProps) 
   const classes = useStyles();
   const { openDialog, closeDialog } = useDialog();
 
+  const { refetch, isFetching } = useWorkOrder(workOrder.id);
+
   const openDetailDialog = async () => {
-    const workOrderDetail = await workOrderApi.getWorkOrder(workOrder.id);
-    openDialog(<WorkOrderDetailDialog workOrder={workOrderDetail} onClose={closeDialog} />);
+    refetch().then((res) => openDialog(<WorkOrderDetailDialog workOrder={res.data} onClose={closeDialog} />));
   };
 
   return (
@@ -45,6 +48,7 @@ const WorkOrderId = ({ workOrder, className, linkClassName }: WorkOrderIdProps) 
         color="initial"
         onClick={openDetailDialog}
       >
+        {isFetching && <Loading />}
         <span className={classes.workOrderId} dangerouslySetInnerHTML={{ __html: workOrder.id }} />
       </Link>
     </div>
