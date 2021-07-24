@@ -1,5 +1,4 @@
 import { useAppDispatch, useAppSelector } from 'app/store';
-import { useScreenSize } from 'hooks/useScreenSize';
 import { useSnackbar } from 'notistack';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +12,6 @@ const Notifier = () => {
   const dispatch = useAppDispatch();
   const { notifications } = useAppSelector((state) => state.notification);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const { isMobileLayout } = useScreenSize();
 
   const storeDisplayed = (key: string) => {
     displayed = [...displayed, key];
@@ -37,8 +35,8 @@ const Notifier = () => {
         key,
         autoHideDuration: 3000,
         anchorOrigin: {
-          vertical: 'bottom',
-          horizontal: isMobileLayout ? 'center' : 'left',
+          vertical: 'top',
+          horizontal: 'center',
         },
         ...options,
         onClose: (event, reason, myKey) => {

@@ -51,6 +51,7 @@ export default {
     overdue: '기한 지남',
     imminent: '기한 임박',
     refresh: '새로고침',
+    workOrderHistory: '작업이력',
 
     account: '거래처',
     product: '제품',
@@ -313,6 +314,7 @@ export default {
     workOrderList: '작업지시목록',
     plateIsReady: '동판 제작 완료',
     plateIsReadyMessage: '<p><strong>{{productName}}</strong></p><p>동판 제작 완료 하시겠습니까?</p>',
+    noHistory: '작업이력이 없습니다.',
 
     searchPlaceholder: '제품명으로 검색',
     productRequired: '제품을 선택하세요.',

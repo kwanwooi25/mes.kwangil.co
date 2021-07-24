@@ -59,6 +59,16 @@ export const useWorkOrder = (id: string) =>
     { enabled: false }
   );
 
+export const useWorkOrdersByProduct = (productId: number) =>
+  useQuery(
+    ['workOrdersByProductId', productId],
+    async ({ queryKey }) => {
+      const [, productId] = queryKey;
+      return await workOrderApi.getWorkOrdersByProductId(+productId);
+    },
+    { enabled: false }
+  );
+
 export const useCreateWorkOrderMutation = ({
   queryClient,
   onSuccess = () => {},

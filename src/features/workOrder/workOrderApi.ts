@@ -16,6 +16,8 @@ const api = {
   getWorkOrdersByDeadline: async (query: GetWorkOrdersByDeadlineQuery) =>
     handleRequest(await apiClient.get(`${urlPrefix}/list/deadline`, { params: { ...query } })),
   getWorkOrdersNeedPlate: async () => handleRequest(await apiClient.get(`${urlPrefix}/list/needPlate`)),
+  getWorkOrdersByProductId: async (productId: number) =>
+    handleRequest(await apiClient.get(`${urlPrefix}/list/${productId}`)),
   getWorkOrderCount: async (query: GetWorkOrderCountQuery) =>
     handleRequest(await apiClient.get(`${urlPrefix}/count`, { params: { ...query } })),
   createWorkOrder: async (workOrder: CreateWorkOrderDto) =>

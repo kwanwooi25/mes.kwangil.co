@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) =>
       gridTemplateColumns: '1fr 124px',
       gridGap: theme.spacing(2),
       padding: theme.spacing(1, 0),
-      alignItems: 'start',
+      alignItems: 'center',
       minHeight: '118px',
       [theme.breakpoints.up('md')]: {
         minHeight: '92px',

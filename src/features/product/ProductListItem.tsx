@@ -3,10 +3,13 @@ import ConfirmDialog from 'components/dialog/Confirm';
 import ProductDialog from 'components/dialog/Product';
 import StockDialog from 'components/dialog/Stock';
 import WorkOrderDialog from 'components/dialog/WorkOrder';
+import WorkOrderHistoryDialog from 'components/dialog/WorkOrderHistory';
+import Loading from 'components/Loading';
 import ProductName from 'components/ProductName';
 import { ProductDialogMode } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
+import { useWorkOrdersByProduct } from 'features/workOrder/useWorkOrders';
 import React, { memo, MouseEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
@@ -108,6 +111,7 @@ const ProductListItem = ({
 
   const queryClient = useQueryClient();
   const { deleteProducts } = useDeleteProductsMutation({ queryClient });
+  const { refetch, isFetching: isLoadingWorkOrders } = useWorkOrdersByProduct(product.id);
 
   const productSize = getProductSize(product);
   const printSummary = getPrintSummary(product);
@@ -122,23 +126,28 @@ const ProductListItem = ({
   const closeMenu = useCallback(() => setMenuAnchorEl(null), []);
 
   const handleClickMenuItem =
-    (onClick = () => {}) =>
+    (onClick = async () => {}) =>
     () => {
-      closeMenu();
-      onClick();
+      onClick().then(() => closeMenu());
     };
 
-  const handleClickStock = () => openDialog(<StockDialog products={[product]} onClose={closeDialog} />);
+  const handleClickStock = async () => openDialog(<StockDialog products={[product]} onClose={closeDialog} />);
 
-  const handleClickWorkOrder = () => openDialog(<WorkOrderDialog product={product} onClose={closeDialog} />);
+  const handleClickWorkOrder = async () => openDialog(<WorkOrderDialog product={product} onClose={closeDialog} />);
 
-  const handleClickCopy = () =>
+  const handleClickWorkOrderHistory = async () => {
+    await refetch().then((res) => {
+      openDialog(<WorkOrderHistoryDialog product={product} workOrders={res.data} onClose={closeDialog} />);
+    });
+  };
+
+  const handleClickCopy = async () =>
     openDialog(<ProductDialog mode={ProductDialogMode.COPY} product={product} onClose={closeDialog} />);
 
-  const handleClickEdit = () =>
+  const handleClickEdit = async () =>
     openDialog(<ProductDialog mode={ProductDialogMode.EDIT} product={product} onClose={closeDialog} />);
 
-  const handleClickDelete = () =>
+  const handleClickDelete = async () =>
     openDialog(
       <ConfirmDialog
         title={t('deleteProduct')}
@@ -153,6 +162,7 @@ const ProductListItem = ({
   const actionButtons = [
     { label: t('products:createOrUpdateStock'), onClick: handleClickStock },
     { label: t('common:workOrder'), onClick: handleClickWorkOrder },
+    { label: t('common:workOrderHistory'), onClick: handleClickWorkOrderHistory, isLoading: isLoadingWorkOrders },
     { label: t('common:copy'), onClick: handleClickCopy },
     { label: t('common:edit'), onClick: handleClickEdit },
     { label: t('common:delete'), onClick: handleClickDelete },
@@ -198,8 +208,9 @@ const ProductListItem = ({
             <MoreVertIcon />
           </IconButton>
           <Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={closeMenu}>
-            {actionButtons.map(({ label, onClick }) => (
-              <MenuItem key={label} onClick={handleClickMenuItem(onClick)}>
+            {actionButtons.map(({ label, onClick, isLoading }) => (
+              <MenuItem key={label} onClick={handleClickMenuItem(onClick)} disabled={isLoading}>
+                {isLoading && <Loading />}
                 {label}
               </MenuItem>
             ))}
