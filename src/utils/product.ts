@@ -1,11 +1,13 @@
-import { CreateImageDto, CreateProductDto, ImageDto, ProductDto, UpdateProductDto } from 'features/product/interface';
-
-import { PrintSide } from 'const';
 import { ProductFormValues } from 'components/dialog/Product';
+import { PrintSide } from 'const';
+import {
+    CreateImageDto, CreateProductDto, ImageDto, ProductDto, UpdateProductDto
+} from 'features/product/interface';
 import { TFunction } from 'i18next';
 import { capitalize } from 'lodash';
-import { formatDigit } from './string';
+
 import { uploadImage } from './s3';
+import { formatDigit } from './string';
 
 // import { uploadImage } from './s3';
 
@@ -296,7 +298,7 @@ export async function getCreateProductDto({ account, ...values }: ProductFormVal
  * @param imagesToDelete 제거된 이미지 목록
  */
 export async function getUpdateProductDto(
-  { account, ...product }: ProductDto,
+  { account, stock, ...product }: ProductDto,
   filesToUpload: File[],
   imagesToDelete: ImageDto[]
 ): Promise<UpdateProductDto> {
