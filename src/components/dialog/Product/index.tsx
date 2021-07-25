@@ -4,7 +4,7 @@ import { PrintSide, ProductDialogMode, ProductLength, ProductThickness, ProductW
 import { AccountOption } from 'features/account/interface';
 import Dialog from 'features/dialog/Dialog';
 import useNotification from 'features/notification/useNotification';
-import { ImageDto, ProductDto } from 'features/product/interface';
+import { ImageDto, ProductDto, StockDto } from 'features/product/interface';
 import { useCreateProductMutation, useUpdateProductMutation } from 'features/product/useProducts';
 import { isEqual } from 'lodash';
 import React from 'react';
@@ -59,6 +59,7 @@ export interface ProductFormValues {
   packUnit: number;
   packCanDeliverAll: boolean;
   packMemo: string;
+  stock?: StockDto;
   images: ImageDto[];
   filesToUpload?: File[];
   imagesToDelete?: ImageDto[];

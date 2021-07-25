@@ -268,7 +268,7 @@ export function getInitialProductToCopy(product: ProductDto): ProductFormValues 
  *
  * @param productFormValues 입력된 정보
  */
-export async function getCreateProductDto({ account, ...values }: ProductFormValues): Promise<CreateProductDto> {
+export async function getCreateProductDto({ account, stock, ...values }: ProductFormValues): Promise<CreateProductDto> {
   if (!account) {
     throw new Error('account required');
   }
