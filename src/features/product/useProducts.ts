@@ -113,6 +113,7 @@ export const useUpdateProductMutation = ({
     onSuccess: () => {
       notify({ variant: 'success', message: 'products:updateProductSuccess' });
       queryClient.invalidateQueries('products');
+      queryClient.invalidateQueries('workOrders');
       onSuccess();
     },
     onError: () => {
