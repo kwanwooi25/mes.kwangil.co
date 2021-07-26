@@ -1,4 +1,3 @@
-import AccountName from 'components/AccountName';
 import DashboardCard from 'components/DashboardCard';
 import CustomToggleButton, { ToggleButtonOption } from 'components/form/CustomToggleButton';
 import ProductName from 'components/ProductName';
@@ -29,16 +28,12 @@ const useStyles = makeStyles((theme: Theme) =>
       gridTemplateColumns: '1fr auto',
       gridTemplateAreas: `
         "workOrderId deliverBy"
-        "accountName workOrderStatus"
         "productName workOrderStatus"
         "productSize orderQuantity"
       `,
       gridGap: theme.spacing(0.5),
       '& .workOrderId': {
         gridArea: 'workOrderId',
-      },
-      '& .accountName': {
-        gridArea: 'accountName',
       },
       '& .productName': {
         gridArea: 'productName',
@@ -93,7 +88,6 @@ const WorkOrderListItem = ({ workOrder }: { workOrder: WorkOrderDto }) => {
   return (
     <ListItem className={classes.workOrderListItem} divider>
       <WorkOrderId className="workOrderId" workOrder={workOrder} />
-      <AccountName className="accountName" linkClassName="accountNameText" account={workOrder.product.account} />
       <ProductName className="productName" product={workOrder.product} />
       <Typography className="productSize">{productSize}</Typography>
       <Typography className="deliverBy" style={deliverByStyle}>
@@ -111,7 +105,6 @@ const WorkOrderListItemSkeleton = () => {
   return (
     <ListItem className={classes.workOrderListItem} divider>
       <Skeleton className="workOrderId" width="50%" height={25} />
-      <Skeleton className="accountName" width="40%" height={21} />
       <Skeleton className="productName" width="80%" height={32} />
       <Skeleton className="productSize" width="50%" height={21} />
       <Skeleton className="deliverBy" width={85} height={24} />
@@ -197,7 +190,7 @@ const DeadlineStatusCard = (props: DeadlineStatusCardProps) => {
         options={deadlineStatusOptions}
         onChange={handleChangeDeadlineStatus}
       />
-      <List disablePadding style={{ height: 138 * workOrderCountToDisplay }}>
+      <List disablePadding style={{ height: 112 * workOrderCountToDisplay }}>
         {isLoading ? (
           renderSkeletons()
         ) : !workOrdersToShow.length ? (
