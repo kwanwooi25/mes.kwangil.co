@@ -87,16 +87,19 @@ const WorkOrderSearch = ({ filter, onChange }: WorkOrderSearchProps) => {
   const searchForADay = (date: Date) => {
     const targetDate = format(date, DATE_FORMAT);
     setFieldValue('orderedAt', [targetDate, targetDate]);
+    handleSubmit();
   };
   const searchForWeeks = (weeks: number) => () => {
     const today = format(new Date(), DATE_FORMAT);
     const start = format(addDays(subWeeks(new Date(), weeks), 1), DATE_FORMAT);
     setFieldValue('orderedAt', [start, today]);
+    handleSubmit();
   };
   const searchForMonths = (months: number) => () => {
     const today = format(new Date(), DATE_FORMAT);
     const start = format(addDays(subMonths(new Date(), months), 1), DATE_FORMAT);
     setFieldValue('orderedAt', [start, today]);
+    handleSubmit();
   };
   const searchForYesterday = () => searchForADay(subDays(new Date(), 1));
   const searchForToday = () => searchForADay(new Date());
