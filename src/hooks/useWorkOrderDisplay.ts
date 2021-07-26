@@ -5,7 +5,7 @@ import { TFunction } from 'i18next';
 import { theme } from 'lib/muiTheme';
 import { capitalize } from 'lodash';
 import { CSSProperties } from 'react';
-import { getProductSize, getProductSummary } from 'utils/product';
+import { getProductSize, getProductSummary, getProductTitle } from 'utils/product';
 import { formatDigit } from 'utils/string';
 import { getWeight } from 'utils/workOrder';
 
@@ -76,6 +76,7 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
   const accountName = product.account.name;
   const productName = product.name;
   const productSize = getProductSize(product);
+  const productTitle = getProductTitle(product);
   const productSummary = getProductSummary(product, t);
   const productType = t(product.printSide === PrintSide.NONE ? 'products:printNone' : 'products:print');
 
@@ -99,6 +100,7 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
     accountName,
     productName,
     productSize,
+    productTitle,
     productSummary,
     productType,
   };

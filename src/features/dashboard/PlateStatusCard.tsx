@@ -1,8 +1,10 @@
-import AccountName from 'components/AccountName';
 import DashboardCard from 'components/DashboardCard';
 import ConfirmDialog from 'components/dialog/Confirm';
 import PlateDialog from 'components/dialog/Plate';
+import Loading from 'components/Loading';
+import NeedPlatePDF from 'components/NeedPlatePDF';
 import ProductName from 'components/ProductName';
+import WorkOrderId from 'components/WorkOrderId';
 import { PlateStatus } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
@@ -19,9 +21,9 @@ import {
     Chip, createStyles, IconButton, List, ListItem, makeStyles, Theme, Tooltip, Typography
 } from '@material-ui/core';
 import { grey, red, yellow } from '@material-ui/core/colors';
-import DoneIcon from '@material-ui/icons/Done';
-import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
+import { Done, InsertEmoticon, Print } from '@material-ui/icons';
 import { Pagination, Skeleton } from '@material-ui/lab';
+import { BlobProvider } from '@react-pdf/renderer';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -29,14 +31,14 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'grid',
       gridTemplateColumns: '2fr auto auto',
       gridTemplateAreas: `
-        "accountName plateStatus completeButton"
+        "workOrderId plateStatus completeButton"
         "productName plateStatus completeButton"
         "productSize plateStatus completeButton"
       `,
       gridGap: theme.spacing(0.5),
 
-      '& .accountName': {
-        gridArea: 'accountName',
+      '& .workOrderId': {
+        gridArea: 'workOrderId',
       },
       '& .productName': {
         gridArea: 'productName',
@@ -51,9 +53,6 @@ const useStyles = makeStyles((theme: Theme) =>
       },
       '& .completeButton': {
         gridArea: 'completeButton',
-      },
-      '& .accountNameText': {
-        fontSize: 12,
       },
     },
     pagination: {
@@ -132,14 +131,14 @@ const WorkOrderListItem = ({ workOrder, onComplete }: { workOrder: WorkOrderDto;
 
   return (
     <ListItem className={classes.workOrderListItem} divider style={{ height: LIST_ITEM_HEIGHT }}>
-      <AccountName className="accountName" linkClassName="accountNameText" account={workOrder.product.account} />
+      <WorkOrderId className="workOrderId" workOrder={workOrder} />
       <ProductName className="productName" product={workOrder.product} />
       <Typography className="productSize">{productSize}</Typography>
       <Chip className="plateStatus" label={plateStatus} style={{ backgroundColor }} />
       {!isUser && (
         <Tooltip title={t('common:complete') as string}>
           <IconButton className="completeButton" color="primary" onClick={handleClickComplete}>
-            <DoneIcon />
+            <Done />
           </IconButton>
         </Tooltip>
       )}
@@ -152,7 +151,7 @@ const WorkOrderListItemSkeleton = () => {
 
   return (
     <ListItem className={classes.workOrderListItem} divider>
-      <Skeleton className="accountName" width="60%" height={21} />
+      <Skeleton className="workOrderId" width="60%" height={24} />
       <Skeleton className="productName" width="80%" height={32} />
       <Skeleton className="productSize" width="50%" height={21} />
       <Skeleton className="plateStatus" width={75} height={32} />
@@ -167,7 +166,7 @@ const NoPlatesToProduce = () => {
 
   return (
     <ListItem className={classes.noPlatesToProduce}>
-      <InsertEmoticonIcon className="icon" />
+      <InsertEmoticon className="icon" />
       <Typography color="primary">{t('dashboard:noPlatesToProduce')}</Typography>
     </ListItem>
   );
@@ -191,6 +190,8 @@ const PlateStatusCard = (props: PlateStatusCardProps) => {
 
   const handlePageChange = (e: ChangeEvent<unknown>, page: number) => setPage(page);
 
+  const openWorkOrderPDF = (url: string) => () => window.open(url);
+
   const renderSkeletons = () =>
     Array(workOrderCountToDisplay)
       .fill('')
@@ -213,7 +214,28 @@ const PlateStatusCard = (props: PlateStatusCardProps) => {
   }, [page]);
 
   return (
-    <DashboardCard title={t('dashboard:plateStatus')} onRefresh={refetch}>
+    <DashboardCard
+      title={t('dashboard:plateStatus')}
+      onRefresh={refetch}
+      headerButton={
+        <BlobProvider document={<NeedPlatePDF workOrders={workOrders} />}>
+          {({ url, loading }) =>
+            loading ? (
+              <IconButton disabled size="small">
+                <Loading size="2rem" />
+                <Print />
+              </IconButton>
+            ) : (
+              <Tooltip key="print-all" title={t('common:print') as string} placement="top">
+                <IconButton onClick={openWorkOrderPDF(url as string)} size="small">
+                  <Print />
+                </IconButton>
+              </Tooltip>
+            )
+          }
+        </BlobProvider>
+      }
+    >
       <List disablePadding style={{ height: LIST_ITEM_HEIGHT * workOrderCountToDisplay }}>
         {isLoading ? renderSkeletons() : !workOrders.length ? <NoPlatesToProduce /> : renderWorkOrders()}
       </List>
