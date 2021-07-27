@@ -25,7 +25,8 @@ declare module '@material-ui/core/styles/createPalette' {
 
 export const theme = createMuiTheme({
   typography: {
-    fontFamily: ['Noto Sans KR', 'sans-serif'].join(','),
+    // fontFamily: ['Noto Sans KR', 'sans-serif'].join(','),
+    fontFamily: ['Godo', 'sans-serif'].join(','),
   },
   palette: {
     primary: { main: '#213f97' },

@@ -1,21 +1,27 @@
+import { WorkOrderDto } from 'features/workOrder/interface';
+import { baseStyles } from 'lib/pdfStyles';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+
 import { Document, Font, Image, Page, StyleSheet, View } from '@react-pdf/renderer';
 
 import Cutting from './Cutting';
 import Extrusion from './Extrusion';
 import Memos from './Memos';
 import Print from './Print';
-import React from 'react';
-import { WorkOrderDto } from 'features/workOrder/interface';
 import WorkOrderHeader from './WorkOrderHeader';
-import { baseStyles } from 'lib/pdfStyles';
-import { useTranslation } from 'react-i18next';
 
 Font.register({
-  family: 'Nanum Gothic',
+  // family: 'Nanum Gothic',
+  // fonts: [
+  //   { src: 'https://fonts.gstatic.com/ea/nanumgothic/v5/NanumGothic-Regular.ttf' },
+  //   { src: 'https://fonts.gstatic.com/ea/nanumgothic/v5/NanumGothic-Bold.ttf', fontWeight: 700 },
+  //   { src: 'https://fonts.gstatic.com/ea/nanumgothic/v5/NanumGothic-ExtraBold.ttf', fontWeight: 800 },
+  // ],
+  family: 'Godo',
   fonts: [
-    { src: 'https://fonts.gstatic.com/ea/nanumgothic/v5/NanumGothic-Regular.ttf' },
-    { src: 'https://fonts.gstatic.com/ea/nanumgothic/v5/NanumGothic-Bold.ttf', fontWeight: 700 },
-    { src: 'https://fonts.gstatic.com/ea/nanumgothic/v5/NanumGothic-ExtraBold.ttf', fontWeight: 800 },
+    { src: 'https://kwanwoo-fonts.s3.ap-northeast-2.amazonaws.com/GodoM.ttf' },
+    { src: 'https://kwanwoo-fonts.s3.ap-northeast-2.amazonaws.com/GodoB.ttf', fontWeight: 700 },
   ],
 });
 
@@ -24,7 +30,8 @@ const { flexRowCenter } = baseStyles;
 const styles = StyleSheet.create({
   page: {
     flexDirection: 'column',
-    fontFamily: 'Nanum Gothic',
+    // fontFamily: 'Nanum Gothic',
+    fontFamily: 'Godo',
     padding: 16,
   },
   workOrderHeader: {
