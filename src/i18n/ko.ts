@@ -88,6 +88,7 @@ export default {
     emailRequired: '이메일을 입력하세요.',
     passwordRequired: '비밀번호를 입력하세요.',
     loginFailed: '로그인 실패: 이메일 혹은 비밀번호를 확인하세요.',
+    loginRequired: '로그인이 필요합니다.',
   },
   dashboard: {
     pageTitle: '대시보드',

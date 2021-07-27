@@ -1,20 +1,23 @@
-import axios, { AxiosResponse } from 'axios';
-
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { DEFAULT_API_URL } from 'const';
+import { authActions } from 'features/auth/authSlice';
+import { notificationActions } from 'features/notification/notificationSlice';
+
+import store from './store';
 
 const baseURL = process.env.REACT_APP_API_URL || DEFAULT_API_URL;
 
 const apiClient = axios.create({ baseURL });
 
-// apiClient.interceptors.response.use(
-//   (res: AxiosResponse) => res,
-//   (error: AxiosError) => {
-//     if (error.response?.data.message === 'Token invalid') {
-//       store.dispatch(actions.auth.logout());
-//       store.dispatch(actions.snackbar.enqueueErrorSnackbar('다시 로그인 해주세요.'));
-//     }
-//   }
-// );
+apiClient.interceptors.response.use(
+  (res: AxiosResponse) => res,
+  (error: AxiosError) => {
+    if (error.response?.data.message === 'Token invalid') {
+      store.dispatch(authActions.logout());
+      store.dispatch(notificationActions.notify({ variant: 'error', message: 'auth:loginRequired' }));
+    }
+  }
+);
 
 const setAuthHeaders = (token?: string) => {
   localStorage.setItem('token', JSON.stringify(token));
