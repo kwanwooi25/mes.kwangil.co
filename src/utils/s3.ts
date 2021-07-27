@@ -1,16 +1,10 @@
-import { CreateImageDto, ImageDto } from 'features/product/interface';
-
 // @ts-ignore
 import S3 from 'aws-s3';
+import { CreateImageDto, ImageDto } from 'features/product/interface';
+
 import { removeFileExtension } from './string';
 
 export async function uploadImage(file: File): Promise<CreateImageDto> {
-  console.table({
-    bucketName: process.env.REACT_APP_S3_IMAGE_BUCKET_NAME,
-    region: process.env.REACT_APP_AWS_REGION,
-    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
-  });
   try {
     const s3 = new S3({
       bucketName: process.env.REACT_APP_S3_IMAGE_BUCKET_NAME,

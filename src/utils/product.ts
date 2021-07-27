@@ -6,7 +6,7 @@ import {
 import { TFunction } from 'i18next';
 import { capitalize } from 'lodash';
 
-import { uploadImage } from './s3';
+import { deleteImage, uploadImage } from './s3';
 import { formatDigit } from './string';
 
 // import { uploadImage } from './s3';
@@ -314,7 +314,7 @@ export async function getUpdateProductDto(
   }
 
   if (imagesToDelete.length) {
-    // imageIdsToDelete = await Promise.all(imagesToDelete.map(async (image) => await deleteImage(image)));
+    imageIdsToDelete = await Promise.all(imagesToDelete.map(async (image) => await deleteImage(image)));
     imageIdsToDelete = imagesToDelete.map(({ id }) => id);
   }
 
