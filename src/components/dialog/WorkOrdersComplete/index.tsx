@@ -37,10 +37,11 @@ const WorkOrdersCompleteDialog = ({ workOrders = [], onClose }: WorkOrdersComple
 
   const onSubmit = (values: WorkOrderDto[]) => {
     const workOrdersToUpdate: CompleteWorkOrderDto[] = values.map(
-      ({ id, completedAt, completedQuantity, product }) => ({
+      ({ id, completedAt, completedQuantity, workOrderStatus, product }) => ({
         id,
         completedAt: completedAt as string,
         completedQuantity: completedQuantity as number,
+        workOrderStatus,
         productId: product.id,
       })
     );
