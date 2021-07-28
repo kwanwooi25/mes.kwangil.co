@@ -156,12 +156,17 @@ export function getPunchDetail({ count, size, position }: { count: number; size:
   }
 
   let punchDetail = `${count}개`;
+  let detailArray = [];
+
   if (size) {
-    punchDetail += ` (크기: ${size}`;
-    if (position) {
-      punchDetail += `, 위치: ${position}`;
-    }
-    punchDetail += ')';
+    detailArray.push(`크기: ${size}`);
+  }
+  if (position) {
+    detailArray.push(`위치: ${position}`);
+  }
+
+  if (detailArray.length) {
+    punchDetail += `(${detailArray.join(', ')})`;
   }
 
   return punchDetail;
