@@ -465,7 +465,7 @@ function processWorkOrdersForDownload(
         case 'length':
         case 'width':
           // @ts-ignore
-          value = workOrder.product ? workOrder.product[key] : workOrder[key];
+          value = +workOrder.product[key];
           break;
         case 'plateStatus':
           value = PLATE_STATUS_TEXT[key];
