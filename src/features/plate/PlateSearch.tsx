@@ -6,6 +6,7 @@ import { PlateLength, PlateRound } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useUI } from 'features/ui/uiHook';
 import { useFormik } from 'formik';
+import { useScreenSize } from 'hooks/useScreenSize';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -67,6 +68,7 @@ export interface PlateSearchProps {
 const PlateSearch = ({ filter, onChange }: PlateSearchProps) => {
   const { t } = useTranslation('plates');
   const classes = useStyles();
+  const { isDesktopLayout } = useScreenSize();
 
   const dispatch = useAppDispatch();
   const { closeSearch } = useUI();
@@ -123,6 +125,7 @@ const PlateSearch = ({ filter, onChange }: PlateSearchProps) => {
         min={PlateRound.MIN}
         max={PlateRound.MAX}
         step={PlateRound.STEP}
+        showNumberInput={isDesktopLayout}
       />
       <RangeSlider
         className={classes.length}
@@ -133,6 +136,7 @@ const PlateSearch = ({ filter, onChange }: PlateSearchProps) => {
         min={PlateLength.MIN}
         max={PlateLength.MAX}
         step={PlateLength.STEP}
+        showNumberInput={isDesktopLayout}
       />
       <Divider className={classes.divider} />
       <div className={classes.buttons}>

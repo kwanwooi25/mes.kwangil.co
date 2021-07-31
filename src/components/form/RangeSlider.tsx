@@ -1,7 +1,11 @@
-import React, { ChangeEvent } from 'react';
-import { Slider, SliderProps, Theme, Typography, createStyles, makeStyles } from '@material-ui/core';
-
 import classnames from 'classnames';
+import React, { ChangeEvent } from 'react';
+
+import {
+    createStyles, makeStyles, Slider, SliderProps, Theme, Typography
+} from '@material-ui/core';
+
+import Input from './Input';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -10,6 +14,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     label: {
       display: 'flex',
+      justifyContent: 'space-between',
+    },
+    numberInputs: {
+      display: 'flex',
+      alignItems: 'center',
       justifyContent: 'space-between',
     },
   })
@@ -22,6 +31,7 @@ export interface RangeSliderProps extends Omit<SliderProps, 'value' | 'onChange'
   defaultValuesLabel?: string;
   onChange: (newValues: number[]) => void;
   hideValuesDisplay?: boolean;
+  showNumberInput?: boolean;
 }
 
 const RangeSlider = ({
@@ -31,6 +41,7 @@ const RangeSlider = ({
   onChange,
   hideValuesDisplay = false,
   defaultValuesLabel = '',
+  showNumberInput = false,
   ...props
 }: RangeSliderProps) => {
   const classes = useStyles();
@@ -50,12 +61,39 @@ const RangeSlider = ({
     onChange(newValue as number[]);
   };
 
+  const handleChangeInput = (index: number) => (e: ChangeEvent<HTMLInputElement>) => {
+    let newValues = [...values];
+    newValues[index] = +e.target.value;
+    onChange(newValues);
+  };
+
   return (
     <div className={classnames([className, classes.rangeSlider])}>
       {label && (
         <div className={classes.label}>
           <Typography variant="subtitle1">{label}</Typography>
           {!hideValuesDisplay && <Typography variant="caption">{getValuesDisplay()}</Typography>}
+        </div>
+      )}
+      {showNumberInput && (
+        <div className={classes.numberInputs}>
+          <Input
+            type="number"
+            value={values[0]}
+            onChange={handleChangeInput(0)}
+            inputProps={{ step: props.step, min: props.min, max: props.max }}
+            size="small"
+            margin="dense"
+          />
+          <span style={{ margin: '0 8px' }}>~</span>
+          <Input
+            type="number"
+            value={values[1]}
+            onChange={handleChangeInput(1)}
+            inputProps={{ step: props.step, min: props.min, max: props.max }}
+            size="small"
+            margin="dense"
+          />
         </div>
       )}
       <Slider value={values} onChange={handleChange} valueLabelDisplay="auto" {...props} />

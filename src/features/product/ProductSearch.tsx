@@ -6,6 +6,7 @@ import { ProductLength, ProductThickness, ProductWidth } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useUI } from 'features/ui/uiHook';
 import { useFormik } from 'formik';
+import { useScreenSize } from 'hooks/useScreenSize';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -75,6 +76,7 @@ export interface ProductSearchProps {
 const ProductSearch = ({ filter, onChange }: ProductSearchProps) => {
   const { t } = useTranslation('products');
   const classes = useStyles();
+  const { isDesktopLayout } = useScreenSize();
 
   const dispatch = useAppDispatch();
   const { closeSearch } = useUI();
@@ -130,6 +132,7 @@ const ProductSearch = ({ filter, onChange }: ProductSearchProps) => {
         min={ProductThickness.MIN}
         max={ProductThickness.MAX}
         step={ProductThickness.STEP}
+        showNumberInput={isDesktopLayout}
       />
       <RangeSlider
         className={classes.length}
@@ -140,6 +143,7 @@ const ProductSearch = ({ filter, onChange }: ProductSearchProps) => {
         min={ProductLength.MIN}
         max={ProductLength.MAX}
         step={ProductLength.STEP}
+        showNumberInput={isDesktopLayout}
       />
       <RangeSlider
         className={classes.width}
@@ -150,6 +154,7 @@ const ProductSearch = ({ filter, onChange }: ProductSearchProps) => {
         min={ProductWidth.MIN}
         max={ProductWidth.MAX}
         step={ProductWidth.STEP}
+        showNumberInput={isDesktopLayout}
       />
       <Input
         className={classes.extColor}
