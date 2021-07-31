@@ -1,4 +1,3 @@
-import { useAppDispatch } from 'app/store';
 import Loading from 'components/Loading';
 import RoundedButton from 'components/RoundedButton';
 import Dialog from 'features/dialog/Dialog';
@@ -40,7 +39,6 @@ const StockDialog = ({ products, onClose }: StockDialogProps) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const submitButtonRef = createRef<HTMLButtonElement>();
-  const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   const { createOrUpdateStocks, isSaving } = useCreateOrUpdateStocksMutation({
     queryClient,
@@ -63,9 +61,7 @@ const StockDialog = ({ products, onClose }: StockDialogProps) => {
     })
   );
 
-  const onSubmit = async (values: (CreateStockDto | StockDto)[]) => {
-    dispatch(createOrUpdateStocks(values));
-  };
+  const onSubmit = async (values: (CreateStockDto | StockDto)[]) => createOrUpdateStocks(values);
 
   const handleClickSave = () => {
     submitButtonRef?.current?.click();

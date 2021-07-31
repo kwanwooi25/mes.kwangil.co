@@ -3,6 +3,7 @@ import AlertDialog from 'components/dialog/Alert';
 import ConfirmDialog from 'components/dialog/Confirm';
 import ExcelUploadDialog from 'components/dialog/ExcelUpload';
 import ProductDialog from 'components/dialog/Product';
+import StockDialog from 'components/dialog/Stock';
 import EndOfListItem from 'components/EndOfListItem';
 import ListEmpty from 'components/ListEmpty';
 import Loading from 'components/Loading';
@@ -25,7 +26,7 @@ import { downloadWorkbook } from 'utils/excel';
 import { formatDigit } from 'utils/string';
 
 import { IconButton, List, Tooltip } from '@material-ui/core';
-import { Add, DeleteOutline, GetApp, Publish, Refresh } from '@material-ui/icons';
+import { Add, DeleteOutline, GetApp, Iso, Publish, Refresh } from '@material-ui/icons';
 
 import { CreateProductsDto, ProductDto, ProductFilter } from './interface';
 import ProductListItem from './ProductListItem';
@@ -99,8 +100,11 @@ const ProductPage = (props: ProductPageProps) => {
   const searchResult = t('common:searchResult', {
     count: formatDigit(data?.pages[data.pages.length - 1].count || 0),
   } as any);
+  const selectedProducts = products.filter(({ id }) => selectedIds.includes(id));
 
   const handleClickRefresh = () => queryClient.invalidateQueries('products');
+
+  const handleClickStock = async () => openDialog(<StockDialog products={selectedProducts} onClose={closeDialog} />);
 
   const handleClickDeleteAll = () => {
     openDialog(
@@ -143,6 +147,11 @@ const ProductPage = (props: ProductPageProps) => {
   };
 
   const selectModeButtons = [
+    <Tooltip key="create-or-update-stocks" title={t('createOrUpdateStock') as string} placement="top">
+      <IconButton onClick={handleClickStock}>
+        <Iso />
+      </IconButton>
+    </Tooltip>,
     <Tooltip key="delete-all" title={t('common:deleteAll') as string} placement="top">
       <IconButton onClick={handleClickDeleteAll} disabled={isDeleting}>
         {isDeleting && <Loading />}
