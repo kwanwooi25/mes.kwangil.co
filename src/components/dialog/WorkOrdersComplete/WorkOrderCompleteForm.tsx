@@ -1,15 +1,17 @@
-import { Checkbox, FormControlLabel, Theme, Typography, createStyles, makeStyles } from '@material-ui/core';
-import { DATE_FORMAT, WorkOrderStatus } from 'const';
-import React, { ChangeEvent, useEffect } from 'react';
-
 import Input from 'components/form/Input';
-import { WorkOrderDto } from 'features/workOrder/interface';
+import { DATE_FORMAT, WorkOrderStatus } from 'const';
 import { format } from 'date-fns';
-import { formatDigit } from 'utils/string';
-import { getProductSize } from 'utils/product';
-import { isEmpty } from 'lodash';
+import { WorkOrderDto } from 'features/workOrder/interface';
 import { useFormikContext } from 'formik';
+import { isEmpty } from 'lodash';
+import React, { ChangeEvent, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getProductSize } from 'utils/product';
+import { formatDigit } from 'utils/string';
+
+import {
+    Checkbox, createStyles, FormControlLabel, makeStyles, Theme, Typography
+} from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -91,6 +93,9 @@ const WorkOrderCompleteForm = ({ index, onChangeError }: WorkOrderCompleteFormPr
           error={!!errors[index]?.completedQuantity}
           helperText={errors[index]?.completedQuantity}
           autoFocus
+          onFocus={(e) => {
+            setTimeout(() => e.target.select(), 0);
+          }}
         />
         <Typography>/ {orderQuantityText}</Typography>
         <FormControlLabel
