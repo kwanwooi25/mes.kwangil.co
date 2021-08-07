@@ -1,15 +1,16 @@
-import { GetProductsQuery, ProductDto } from 'features/product/interface';
-import { List, Theme, createStyles, makeStyles } from '@material-ui/core';
-import React, { useState } from 'react';
-
 import CustomListSubHeader from 'components/CustomListSubHeader';
-import ProductListItem from '../Plate/ProductListItem';
 import SearchInput from 'components/form/SearchInput';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
-import { WorkOrderFormValues } from '.';
-import { productApi } from 'features/product/productApi';
+import { ProductDto } from 'features/product/interface';
+import { useProductOptions } from 'features/product/useProducts';
 import { useFormikContext } from 'formik';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { createStyles, List, makeStyles, Theme } from '@material-ui/core';
+
+import ProductListItem from '../Plate/ProductListItem';
+import { WorkOrderFormValues } from './';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -34,17 +35,10 @@ const SelectProductForm = ({ disabled = false }: SelectProductFormProps) => {
   const { t } = useTranslation('workOrders');
   const classes = useStyles();
 
-  const [productOptions, setProductOptions] = useState<ProductDto[]>([]);
+  const [searchText, setSearchText] = useState<string>('');
+  const { productOptions = [] } = useProductOptions(searchText);
+
   const { values, setFieldValue } = useFormikContext<WorkOrderFormValues>();
-
-  const handleSearchProduct = async (searchText: string) => {
-    if (!searchText) {
-      return setProductOptions([]);
-    }
-
-    const { rows } = await productApi.getAllProducts({ name: searchText } as GetProductsQuery);
-    setProductOptions(rows);
-  };
 
   const selectProduct = (product: ProductDto) => () => {
     setFieldValue('product', product);
@@ -63,7 +57,7 @@ const SelectProductForm = ({ disabled = false }: SelectProductFormProps) => {
     <div className={classes.selectProductForm}>
       <SearchInput
         className={classes.productSearch}
-        onSearch={handleSearchProduct}
+        onSearch={setSearchText}
         placeholder={t('products:searchPlaceholder')}
         autoFocus
       />

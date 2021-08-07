@@ -1,15 +1,16 @@
-import { GetProductsQuery, ProductDto } from 'features/product/interface';
-import { List, Theme, createStyles, makeStyles } from '@material-ui/core';
-import React, { useState } from 'react';
-
 import CustomListSubHeader from 'components/CustomListSubHeader';
-import { PlateFormValues } from '.';
-import ProductListItem from './ProductListItem';
 import SearchInput from 'components/form/SearchInput';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
-import { productApi } from 'features/product/productApi';
+import { ProductDto } from 'features/product/interface';
+import { useProductOptions } from 'features/product/useProducts';
 import { useFormikContext } from 'formik';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { createStyles, List, makeStyles, Theme } from '@material-ui/core';
+
+import { PlateFormValues } from './';
+import ProductListItem from './ProductListItem';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -67,19 +68,12 @@ export interface SelectProductsFormProps {}
 const SelectProductsForm = (props: SelectProductsFormProps) => {
   const { t } = useTranslation('plates');
   const classes = useStyles();
-  const [productOptions, setProductOptions] = useState<ProductDto[]>([]);
+
+  const [searchText, setSearchText] = useState<string>('');
+  const { productOptions = [] } = useProductOptions(searchText);
 
   const { values, setFieldValue, setValues } = useFormikContext<PlateFormValues>();
   const selectedProductIds = values.products.map(({ id }) => id);
-
-  const handleSearchProduct = async (searchText: string) => {
-    if (!searchText) {
-      return setProductOptions([]);
-    }
-
-    const { rows } = await productApi.getAllProducts({ name: searchText } as GetProductsQuery);
-    setProductOptions(rows);
-  };
 
   const selectProduct = (product: ProductDto) => () => {
     setFieldValue('products', [...values.products, product]);
@@ -107,7 +101,7 @@ const SelectProductsForm = (props: SelectProductsFormProps) => {
     <div className={classes.selectProductsForm}>
       <SearchInput
         className={classes.productSearch}
-        onSearch={handleSearchProduct}
+        onSearch={setSearchText}
         placeholder={t('products:searchPlaceholder')}
         autoFocus
       />

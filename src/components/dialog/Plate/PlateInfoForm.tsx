@@ -2,9 +2,8 @@ import CustomToggleButton from 'components/form/CustomToggleButton';
 import Input from 'components/form/Input';
 import { PlateLength, PlateMaterial, PlateRound } from 'const';
 import { useFormikContext } from 'formik';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { estimatePlateSize } from 'utils/plate';
 
 import { createStyles, Divider, List, makeStyles, Theme } from '@material-ui/core';
 
@@ -76,12 +75,6 @@ const PlateInfoForm = (props: PlateInfoFormProps) => {
     setFieldValue('material', value);
   };
 
-  useEffect(() => {
-    const { round, length } = estimatePlateSize(values.products);
-    !round && setFieldValue('round', round);
-    !length && setFieldValue('length', length);
-  }, [values.products]);
-
   return (
     <div className={classes.plateInfo}>
       <List className={classes.selectedProducts}>
@@ -116,7 +109,14 @@ const PlateInfoForm = (props: PlateInfoFormProps) => {
         onBlur={handleBlur}
         error={touched.round && Boolean(errors.round)}
         helperText={touched.round && errors.round}
-        inputProps={{ step: PlateRound.STEP, min: PlateRound.MIN, max: PlateRound.MAX }}
+        inputProps={{
+          step: PlateRound.STEP,
+          min: PlateRound.MIN,
+          max: PlateRound.MAX,
+          onFocus: (e) => {
+            e.target.select();
+          },
+        }}
         autoFocus
       />
       <Input
@@ -129,7 +129,14 @@ const PlateInfoForm = (props: PlateInfoFormProps) => {
         onBlur={handleBlur}
         error={touched.length && Boolean(errors.length)}
         helperText={touched.length && errors.length}
-        inputProps={{ step: PlateLength.STEP, min: PlateLength.MIN, max: PlateLength.MAX }}
+        inputProps={{
+          step: PlateLength.STEP,
+          min: PlateLength.MIN,
+          max: PlateLength.MAX,
+          onFocus: (e) => {
+            e.target.select();
+          },
+        }}
       />
       <Input
         className={classes.location}
