@@ -50,6 +50,9 @@ const styles = StyleSheet.create({
     fontSize: 11,
     lineHeight: 1.5,
   },
+  accountName: {
+    fontSize: 12,
+  },
   productTitle: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -78,13 +81,14 @@ export interface NeedPlatePDFProps {
 
 const Row = ({ workOrder }: { workOrder: WorkOrderDto }) => {
   const { t } = useTranslation();
-  const { productTitle, plateStatus } = useWorkOrderDisplay(workOrder, t);
+  const { productTitle, plateStatus, accountName } = useWorkOrderDisplay(workOrder, t);
   const isNew = workOrder.plateStatus === PlateStatus.NEW;
 
   return (
     <View style={styles.row}>
       <View style={[styles.column, styles.title]}>
         <Text style={styles.workOrderId}>{workOrder.id}</Text>
+        <Text style={styles.accountName}>{accountName}</Text>
         <Text style={styles.productTitle}>{productTitle}</Text>
       </View>
       <View style={styles.column}>
