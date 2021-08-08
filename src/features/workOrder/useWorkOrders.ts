@@ -150,6 +150,7 @@ export const useCompleteWorkOrdersMutation = ({
     onSuccess: () => {
       notify({ variant: 'success', message: 'workOrders:completeWorkOrdersSuccess' });
       queryClient.invalidateQueries('workOrders');
+      queryClient.invalidateQueries('products');
       onSuccess();
     },
     onError: () => {
