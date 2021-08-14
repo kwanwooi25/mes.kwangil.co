@@ -70,7 +70,7 @@ export const useLoginMutation = () => {
       dispatch(authActions.loginSuccess(data));
     },
     onError: () => {
-      notify({ variant: 'error', message: 'auth:signUpFailed' });
+      notify({ variant: 'error', message: 'auth:loginFailed' });
       dispatch(authActions.loginFailed());
     },
   });
