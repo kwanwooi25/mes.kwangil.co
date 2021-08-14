@@ -105,7 +105,7 @@ const ProductListItem = ({
   const classes = useStyles();
 
   const { openDialog, closeDialog } = useDialog();
-  const { isUser } = useAuth();
+  const { canCreateProducts, canUpdateProducts, canDeleteProducts, canViewWorkOrders, canCreateWorkOrders } = useAuth();
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -159,18 +159,41 @@ const ProductListItem = ({
       />
     );
 
-  const actionButtons = [
-    { label: t('products:createOrUpdateStock'), onClick: handleClickStock },
-    { label: t('common:workOrder'), onClick: handleClickWorkOrder },
-    { label: t('common:workOrderHistory'), onClick: handleClickWorkOrderHistory, isLoading: isLoadingWorkOrders },
-    { label: t('common:copy'), onClick: handleClickCopy },
-    { label: t('common:edit'), onClick: handleClickEdit },
-    { label: t('common:delete'), onClick: handleClickDelete },
-  ];
+  let actionButtons: { label: string; onClick: () => any; isLoading?: boolean }[] = [];
+
+  if (canCreateWorkOrders) {
+    actionButtons.push({ label: t('common:workOrder'), onClick: handleClickWorkOrder });
+  }
+
+  if (canViewWorkOrders) {
+    actionButtons.push({
+      label: t('common:workOrderHistory'),
+      onClick: handleClickWorkOrderHistory,
+      isLoading: isLoadingWorkOrders,
+    });
+  }
+
+  if (canCreateProducts) {
+    actionButtons.push({ label: t('common:copy'), onClick: handleClickCopy });
+  }
+
+  if (canUpdateProducts) {
+    actionButtons = [
+      ...actionButtons,
+      { label: t('products:createOrUpdateStock'), onClick: handleClickStock },
+      { label: t('common:edit'), onClick: handleClickEdit },
+    ];
+  }
+
+  if (canDeleteProducts) {
+    actionButtons.push({ label: t('common:delete'), onClick: handleClickDelete });
+  }
+
+  const isSelectable = !!actionButtons.length;
 
   return (
     <ListItem divider style={{ height: itemHeight }} selected={isSelected}>
-      {!isUser && (
+      {isSelectable && (
         <ListItemIcon>
           <Checkbox edge="start" color="primary" checked={isSelected} onChange={handleSelectionChange} />
         </ListItemIcon>
@@ -202,7 +225,7 @@ const ProductListItem = ({
           )}
         </div>
       </ListItemText>
-      {!isUser && (
+      {isSelectable && (
         <ListItemSecondaryAction>
           <IconButton edge="end" onClick={openMenu}>
             <MoreVertIcon />

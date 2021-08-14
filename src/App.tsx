@@ -1,16 +1,16 @@
 import Loading from 'components/Loading';
-import { DEFAULT_PAGE, LoadingKeys, NAV_PATHS, Path } from 'const';
+import { DEFAULT_PAGE, Path } from 'const';
 import AccountPage from 'features/account/AccountPage';
-import { useAuth } from 'features/auth/authHook';
+import { useAuth, useRefreshLoginMutation } from 'features/auth/authHook';
 import LoginPage from 'features/auth/LoginPage';
+import RegisterPage from 'features/auth/RegisterPage';
 import DashboardPage from 'features/dashboard/DashboardPage';
 // import DeliveryPage from 'features/delivery/DeliveryPage';
-import { useLoading } from 'features/loading/loadingHook';
 import Notifier from 'features/notification/Notifier';
 import PlatePage from 'features/plate/PlatePage';
 import ProductPage from 'features/product/ProductPage';
 import WorkOrderPage from 'features/workOrder/WorkOrderPage';
-import React, { ComponentType } from 'react';
+import React, { ComponentType, useEffect } from 'react';
 import { Redirect, Route, Switch } from 'react-router';
 
 export interface RouteProps {
@@ -30,8 +30,7 @@ const PublicRoute = ({ component: Component, ...rest }: RouteProps) => {
 };
 
 const PrivateRoute = ({ component: Component, ...rest }: RouteProps) => {
-  const { isLoggedIn, userRole } = useAuth();
-  const navPaths = NAV_PATHS[userRole];
+  const { isLoggedIn, navPaths } = useAuth();
   const isPermitted = navPaths.includes(rest.path as Path);
 
   return isLoggedIn && isPermitted ? (
@@ -42,7 +41,11 @@ const PrivateRoute = ({ component: Component, ...rest }: RouteProps) => {
 };
 
 function App() {
-  const { [LoadingKeys.REFRESH_LOGIN]: isRefreshing } = useLoading();
+  const { isTokenExists, refreshLogin, isRefreshing } = useRefreshLoginMutation();
+
+  useEffect(() => {
+    isTokenExists && refreshLogin();
+  }, []);
 
   return isRefreshing ? (
     <Loading />
@@ -50,6 +53,7 @@ function App() {
     <>
       <Switch>
         <PublicRoute path={Path.LOGIN} component={LoginPage} />
+        <PublicRoute path={Path.REGISTER} component={RegisterPage} />
         <PrivateRoute path={Path.DASHBOARD} component={DashboardPage} />
         <PrivateRoute path={Path.ACCOUNTS} component={AccountPage} />
         <PrivateRoute path={Path.PRODUCTS} component={ProductPage} />

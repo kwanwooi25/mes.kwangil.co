@@ -6,16 +6,16 @@ import { Path } from 'const';
 import { useFormik } from 'formik';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { object, string } from 'yup';
+import { object, ref, string } from 'yup';
 
 import { Button, createStyles, makeStyles, Theme, Typography } from '@material-ui/core';
 
-import { useLoginMutation } from './authHook';
-import { LoginDto } from './interface';
+import { useRegisterUserMutation } from './authHook';
+import { SignUpDto } from './interface';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    loginPage: {
+    registerPage: {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'flex-start',
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
         flexDirection: 'row',
       },
     },
-    loginHeader: {
+    registerHeader: {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'flex-end',
@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme: Theme) =>
       maxWidth: '240px',
       marginBottom: theme.spacing(2),
     },
-    loginForm: {
+    registerForm: {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'flex-start',
@@ -67,47 +67,53 @@ const useStyles = makeStyles((theme: Theme) =>
     submitButton: {
       marginTop: theme.spacing(2),
     },
-    registerButton: {
+    loginButton: {
       marginTop: theme.spacing(2),
     },
   })
 );
 
-export interface LoginPageProps {}
+export interface RegisterPageProps {}
 
-const LoginPage = (props: LoginPageProps) => {
+const RegisterPage = (props: RegisterPageProps) => {
   const { t } = useTranslation('auth');
   const classes = useStyles();
 
   const dispatch = useAppDispatch();
-  const { login, isLoggingIn } = useLoginMutation();
+  const { registerUser, isLoading } = useRegisterUserMutation();
 
-  const { values, touched, errors, handleChange, handleSubmit } = useFormik<LoginDto>({
+  const { values, touched, errors, handleChange, handleSubmit } = useFormik<SignUpDto & { passwordConfirm: string }>({
     initialValues: {
       email: '',
       password: '',
+      passwordConfirm: '',
+      name: '',
     },
     validationSchema: object({
       email: string().email(t('emailInvalid')).required(t('emailRequired')),
       password: string().required(t('passwordRequired')),
+      passwordConfirm: string()
+        .required(t('passwordConfirmRequired'))
+        .oneOf([ref('password'), null], t('passwordsMustMatch')),
+      name: string().required(t('nameRequired')),
     }),
-    onSubmit: (values) => {
-      login(values);
+    onSubmit: ({ passwordConfirm, ...values }) => {
+      registerUser(values);
     },
   });
 
-  const goToRegisterPage = () => dispatch(push(Path.REGISTER));
+  const goToLoginPage = () => dispatch(push(Path.LOGIN));
 
   return (
-    <div className={classes.loginPage}>
-      <div className={classes.loginHeader}>
+    <div className={classes.registerPage}>
+      <div className={classes.registerHeader}>
         <img className={classes.logo} src="/kwangil_logo_name_white.png" alt="kwangil logo"></img>
         <Typography component="h2" variant="h5" align="center">
           {t('common:appName')}
         </Typography>
       </div>
-      <form className={classes.loginForm} noValidate onSubmit={handleSubmit}>
-        {isLoggingIn && <Loading />}
+      <form className={classes.registerForm} noValidate onSubmit={handleSubmit}>
+        {isLoading && <Loading />}
         <Input
           id="email"
           name="email"
@@ -128,6 +134,25 @@ const LoginPage = (props: LoginPageProps) => {
           error={touched.password && !!errors.password}
           helperText={touched.password && errors.password}
         />
+        <Input
+          id="passwordConfirm"
+          name="passwordConfirm"
+          type="password"
+          label={t('passwordConfirm')}
+          value={values.passwordConfirm}
+          onChange={handleChange}
+          error={touched.passwordConfirm && !!errors.passwordConfirm}
+          helperText={touched.passwordConfirm && errors.passwordConfirm}
+        />
+        <Input
+          id="name"
+          name="name"
+          label={t('name')}
+          value={values.name}
+          onChange={handleChange}
+          error={touched.name && !!errors.name}
+          helperText={touched.name && errors.name}
+        />
         <Button
           className={classes.submitButton}
           type="submit"
@@ -136,23 +161,23 @@ const LoginPage = (props: LoginPageProps) => {
           size="large"
           color="primary"
           disableElevation
-          disabled={isLoggingIn}
+          disabled={isLoading}
         >
-          {t('login')}
+          {t('register')}
         </Button>
         <Button
-          className={classes.registerButton}
+          className={classes.loginButton}
           fullWidth
           size="large"
           color="primary"
           disableElevation
-          onClick={goToRegisterPage}
+          onClick={goToLoginPage}
         >
-          {t('register')}
+          {t('login')}
         </Button>
       </form>
     </div>
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

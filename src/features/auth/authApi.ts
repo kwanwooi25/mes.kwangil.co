@@ -1,10 +1,11 @@
-import { apiClient, handleRequest } from 'app/apiClient';
+import { handleRequest } from 'app/apiClient';
 
-import { LoginDto } from './interface';
+import { LoginDto, SignUpDto } from './interface';
 
 const api = {
-  login: async (loginData: LoginDto) => handleRequest(await apiClient.post('/auth/login', loginData)),
-  whoAmI: async () => handleRequest(await apiClient.get('/user/me')),
+  login: (data: LoginDto) => handleRequest({ method: 'post', url: '/auth/login', data }),
+  signUp: (data: SignUpDto) => handleRequest({ method: 'post', url: '/auth/signup', data }),
+  whoAmI: () => handleRequest({ method: 'get', url: '/user/me' }),
 };
 
 export { api as authApi };

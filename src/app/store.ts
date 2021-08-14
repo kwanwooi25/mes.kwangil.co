@@ -1,15 +1,11 @@
 import { connectRouter, routerMiddleware } from 'connected-react-router';
-import { authSaga } from 'features/auth/authSaga';
 import authReducer from 'features/auth/authSlice';
 import dialogReducer from 'features/dialog/dialogSlice';
-import loadingReducer from 'features/loading/loadingSlice';
 import notificationReducer from 'features/notification/notificationSlice';
 import uiReducer from 'features/ui/uiSlice';
 import { createBrowserHistory } from 'history';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { createLogger } from 'redux-logger';
-import createSagaMiddleware from 'redux-saga';
-import { all } from 'redux-saga/effects';
 
 import {
     Action, combineReducers, configureStore, getDefaultMiddleware, ThunkAction
@@ -20,20 +16,14 @@ export const history = createBrowserHistory();
 const reducer = combineReducers({
   router: connectRouter(history),
   ui: uiReducer,
-  loading: loadingReducer,
   dialog: dialogReducer,
   notification: notificationReducer,
   auth: authReducer,
 });
 
-const sagaMiddleware = createSagaMiddleware();
 const logger = createLogger({ collapsed: true });
 
-const middleware = [
-  ...getDefaultMiddleware({ thunk: false, serializableCheck: false }),
-  routerMiddleware(history),
-  sagaMiddleware,
-];
+const middleware = [...getDefaultMiddleware({ thunk: false, serializableCheck: false }), routerMiddleware(history)];
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -46,12 +36,6 @@ const store = configureStore({
   middleware,
   devTools: !isProduction,
 });
-
-function* rootSaga() {
-  yield all([authSaga()]);
-}
-
-sagaMiddleware.run(rootSaga);
 
 export type RootState = ReturnType<typeof reducer>;
 

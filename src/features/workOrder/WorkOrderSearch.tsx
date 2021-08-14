@@ -58,7 +58,7 @@ const WorkOrderSearch = ({ filter, onChange }: WorkOrderSearchProps) => {
 
   const dispatch = useAppDispatch();
   const { closeSearch } = useUI();
-  const { isUser } = useAuth();
+  const { canViewAccounts } = useAuth();
 
   const initialValues = { ...DEFAULT_WORK_ORDER_FILTER };
 
@@ -157,7 +157,7 @@ const WorkOrderSearch = ({ filter, onChange }: WorkOrderSearchProps) => {
         label={t('accountName')}
         value={values.accountName}
         onChange={handleChange}
-        disabled={isUser}
+        disabled={!canViewAccounts}
       />
       <Input name="productName" label={t('productName')} value={values.productName} onChange={handleChange} />
       <FormControlLabel

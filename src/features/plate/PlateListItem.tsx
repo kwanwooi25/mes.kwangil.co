@@ -73,7 +73,7 @@ const PlateListItem = ({
   const classes = useStyles();
 
   const { openDialog, closeDialog } = useDialog();
-  const { isUser } = useAuth();
+  const { canUpdatePlates, canDeletePlates } = useAuth();
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -108,14 +108,20 @@ const PlateListItem = ({
       />
     );
 
-  const actionButtons = [
-    { label: t('common:edit'), onClick: handleClickEdit },
-    { label: t('common:delete'), onClick: handleClickDelete },
-  ];
+  let actionButtons = [];
+
+  if (canUpdatePlates) {
+    actionButtons.push({ label: t('common:edit'), onClick: handleClickEdit });
+  }
+  if (canDeletePlates) {
+    actionButtons.push({ label: t('common:delete'), onClick: handleClickDelete });
+  }
+
+  const isSelectable = !!actionButtons.length;
 
   return (
     <ListItem divider style={{ height: itemHeight }} selected={isSelected}>
-      {!isUser && (
+      {isSelectable && (
         <ListItemIcon>
           <Checkbox edge="start" color="primary" checked={isSelected} onChange={handleSelectionChange} />
         </ListItemIcon>
@@ -134,7 +140,7 @@ const PlateListItem = ({
           </div>
         </div>
       </ListItemText>
-      {!isUser && (
+      {isSelectable && (
         <ListItemSecondaryAction>
           <IconButton edge="end" onClick={openMenu}>
             <MoreVertIcon />

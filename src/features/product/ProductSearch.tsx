@@ -80,7 +80,7 @@ const ProductSearch = ({ filter, onChange }: ProductSearchProps) => {
 
   const dispatch = useAppDispatch();
   const { closeSearch } = useUI();
-  const { isUser } = useAuth();
+  const { canViewAccounts } = useAuth();
 
   const initialValues = { ...DEFAULT_PRODUCT_FILTER };
 
@@ -112,7 +112,7 @@ const ProductSearch = ({ filter, onChange }: ProductSearchProps) => {
         label={t('accountName')}
         value={values.accountName}
         onChange={handleChange}
-        disabled={isUser}
+        disabled={!canViewAccounts}
         autoFocus
       />
       <Input
@@ -121,7 +121,7 @@ const ProductSearch = ({ filter, onChange }: ProductSearchProps) => {
         label={t('name')}
         value={values.name}
         onChange={handleChange}
-        autoFocus={isUser}
+        autoFocus={!canViewAccounts}
       />
       <RangeSlider
         className={classes.thickness}

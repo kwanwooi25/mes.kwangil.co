@@ -1,16 +1,112 @@
-import { authActions, authSelector } from './authSlice';
+import { getAuthToken, setAuthHeaders } from 'app/apiClient';
+import { useAppDispatch, useAppSelector } from 'app/store';
+import { push } from 'connected-react-router';
+import { Path, Permissions } from 'const';
+import useNotification from 'features/notification/useNotification';
+import { useMutation } from 'react-query';
 
-import { UserRole } from 'const';
-import { useAppSelector } from 'app/store';
+import { authApi } from './authApi';
+import { authActions, authSelector } from './authSlice';
+import { LoginResult, UserDto } from './interface';
 
 export const useAuth = () => {
   const authState = useAppSelector(authSelector);
   const { currentUser } = authState;
   const isLoggedIn = !!currentUser;
-  const userRole = currentUser?.role || UserRole.USER;
-  const isUser = userRole === UserRole.USER;
-  const isManager = userRole === UserRole.MANAGER;
-  const isAdmin = userRole === UserRole.ADMIN;
+  const permissions = currentUser?.userRole.permissions || [];
+  const canViewAccounts = permissions.includes(Permissions.ACCOUNT_READ);
+  const canCreateProducts = permissions.includes(Permissions.PRODUCT_CREATE);
+  const canUpdateProducts = permissions.includes(Permissions.PRODUCT_UPDATE);
+  const canDeleteProducts = permissions.includes(Permissions.PRODUCT_DELETE);
+  const canUpdatePlates = permissions.includes(Permissions.PLATE_UPDATE);
+  const canDeletePlates = permissions.includes(Permissions.PLATE_DELETE);
+  const canViewWorkOrders = permissions.includes(Permissions.WORK_ORDER_READ);
+  const canCreateWorkOrders = permissions.includes(Permissions.WORK_ORDER_CREATE);
+  const canUpdateWorkOrders = permissions.includes(Permissions.WORK_ORDER_UPDATE);
+  const canDeleteWorkOrders = permissions.includes(Permissions.WORK_ORDER_DELETE);
 
-  return { ...authState, isLoggedIn, userRole, isUser, isManager, isAdmin, ...authActions };
+  const navPaths = Object.values(Path).filter((path) => {
+    switch (path) {
+      case Path.DASHBOARD:
+        return true;
+      case Path.ACCOUNTS:
+        return permissions.includes(Permissions.ACCOUNT_READ);
+      case Path.PRODUCTS:
+        return permissions.includes(Permissions.PRODUCT_READ);
+      case Path.PLATES:
+        return permissions.includes(Permissions.PLATE_READ);
+      case Path.WORK_ORDERS:
+        return permissions.includes(Permissions.WORK_ORDER_READ);
+      default:
+        return false;
+    }
+  });
+
+  return {
+    ...authState,
+    isLoggedIn,
+    navPaths,
+    permissions,
+    canViewAccounts,
+    canCreateProducts,
+    canUpdateProducts,
+    canDeleteProducts,
+    canUpdatePlates,
+    canDeletePlates,
+    canViewWorkOrders,
+    canCreateWorkOrders,
+    canUpdateWorkOrders,
+    canDeleteWorkOrders,
+    ...authActions,
+  };
+};
+
+export const useLoginMutation = () => {
+  const dispatch = useAppDispatch();
+  const { notify } = useNotification();
+  const { mutateAsync: login, isLoading: isLoggingIn } = useMutation(authApi.login, {
+    onSuccess: (data: LoginResult) => {
+      notify({ variant: 'success', message: 'auth:loginSuccess' });
+      dispatch(authActions.loginSuccess(data));
+    },
+    onError: () => {
+      notify({ variant: 'error', message: 'auth:signUpFailed' });
+      dispatch(authActions.loginFailed());
+    },
+  });
+
+  return { login, isLoggingIn };
+};
+
+export const useRefreshLoginMutation = () => {
+  const dispatch = useAppDispatch();
+  const token = getAuthToken();
+  setAuthHeaders(token);
+
+  const { mutateAsync: refreshLogin, isLoading: isRefreshing } = useMutation(authApi.whoAmI, {
+    onSuccess: (user: UserDto) => {
+      dispatch(authActions.loginSuccess({ user, token }));
+    },
+    onError: () => {
+      dispatch(authActions.loginFailed());
+    },
+  });
+
+  return { refreshLogin, isRefreshing, isTokenExists: !!token };
+};
+
+export const useRegisterUserMutation = () => {
+  const dispatch = useAppDispatch();
+  const { notify } = useNotification();
+  const { mutateAsync: registerUser, isLoading } = useMutation(authApi.signUp, {
+    onSuccess: () => {
+      notify({ variant: 'success', message: 'auth:signUpSuccess' });
+      dispatch(push(Path.HOME));
+    },
+    onError: () => {
+      notify({ variant: 'error', message: 'auth:signUpFailed' });
+    },
+  });
+
+  return { registerUser, isLoading };
 };

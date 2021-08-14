@@ -1,22 +1,19 @@
-import { apiClient, handleRequest } from 'app/apiClient';
+import { handleRequest } from 'app/apiClient';
 
 import { CreateAccountDto, GetAccountsQuery, UpdateAccountDto } from './interface';
 
 const urlPrefix = '/account';
 
 const api = {
-  getAccount: async (id: number) => handleRequest(await apiClient.get(`${urlPrefix}/${id}`)),
-  getAccounts: async (query: GetAccountsQuery) =>
-    handleRequest(await apiClient.get(`${urlPrefix}/list`, { params: { ...query } })),
-  getAllAccounts: async (accountName?: string) =>
-    handleRequest(await apiClient.get(`${urlPrefix}/list/all`, { params: { accountName } })),
-  createAccount: async (account: CreateAccountDto) => handleRequest(await apiClient.post(`${urlPrefix}`, account)),
-  createAccounts: async (accounts: CreateAccountDto[]) =>
-    handleRequest(await apiClient.post(`${urlPrefix}/bulk`, accounts)),
-  updateAccount: async ({ id, ...account }: UpdateAccountDto) =>
-    handleRequest(await apiClient.patch(`${urlPrefix}/${id}`, account)),
-  deleteAccounts: async (accountIds: number[]) =>
-    handleRequest(await apiClient.delete(urlPrefix, { params: { ids: accountIds } })),
+  getAccount: (id: number) => handleRequest({ method: 'get', url: `${urlPrefix}/${id}` }),
+  getAccounts: (params: GetAccountsQuery) => handleRequest({ method: 'get', url: `${urlPrefix}/list`, params }),
+  getAllAccounts: (accountName?: string) =>
+    handleRequest({ method: 'get', url: `${urlPrefix}/list/all`, params: { accountName } }),
+  createAccount: (data: CreateAccountDto) => handleRequest({ method: 'post', url: `${urlPrefix}`, data }),
+  createAccounts: (data: CreateAccountDto[]) => handleRequest({ method: 'post', url: `${urlPrefix}/bulk`, data }),
+  updateAccount: ({ id, ...data }: UpdateAccountDto) =>
+    handleRequest({ method: 'patch', url: `${urlPrefix}/${id}`, data }),
+  deleteAccounts: (ids: number[]) => handleRequest({ method: 'delete', url: urlPrefix, params: { ids } }),
 };
 
 export { api as accountApi };

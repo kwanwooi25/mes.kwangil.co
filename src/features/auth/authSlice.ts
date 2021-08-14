@@ -1,8 +1,9 @@
-import { LoginDto, UserDto } from './interface';
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-
-import { RootState } from 'app/store';
 import { setAuthHeaders } from 'app/apiClient';
+import { RootState } from 'app/store';
+
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+import { UserDto } from './interface';
 
 interface AuthState {
   currentUser?: UserDto | null;
@@ -16,7 +17,6 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<LoginDto>) => {},
     loginSuccess: (state, { payload: { user, token } }: PayloadAction<{ user: UserDto; token: string }>) => {
       setAuthHeaders(token);
       state.currentUser = user;
@@ -25,7 +25,6 @@ const authSlice = createSlice({
       setAuthHeaders();
       state.currentUser = null;
     },
-    logout: (state) => {},
   },
 });
 

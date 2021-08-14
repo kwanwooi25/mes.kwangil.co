@@ -31,9 +31,9 @@ export interface ProductDetailDialogProps {
 const ProductDetailDialog = ({ product, onClose }: ProductDetailDialogProps) => {
   const { t } = useTranslation('products');
   const classes = useStyles();
-  const { isUser } = useAuth();
+  const { canViewAccounts } = useAuth();
   const title = getProductTitle(product);
-  const subTitle = isUser ? hideText(product?.account?.name) : product?.account?.name;
+  const subTitle = canViewAccounts ? product?.account?.name : hideText(product?.account?.name);
 
   return (
     <Dialog fullWidth open onClose={onClose} title={title} subTitle={subTitle}>

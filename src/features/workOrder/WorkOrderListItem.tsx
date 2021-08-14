@@ -170,7 +170,7 @@ const WorkOrderListItem = ({
   const { isMobileLayout, isTabletLayout, isDesktopLayout } = useScreenSize();
 
   const { openDialog, closeDialog } = useDialog();
-  const { isUser } = useAuth();
+  const { canUpdateWorkOrders, canDeleteWorkOrders } = useAuth();
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -252,16 +252,19 @@ const WorkOrderListItem = ({
   const productNameMaxWidth = isDesktopLayout ? 295 : isTabletLayout ? 280 : isMobileLayout ? 480 : undefined;
 
   let actionButtons: { label: string; onClick: () => void }[] = [];
-  if (workOrder.workOrderStatus === WorkOrderStatus.CUTTING) {
+  if (workOrder.workOrderStatus === WorkOrderStatus.CUTTING && canUpdateWorkOrders) {
     actionButtons.push({ label: t('common:done'), onClick: handleClickComplete });
   }
   if (!isCompleted) {
-    actionButtons = [
-      ...actionButtons,
-      { label: t('common:edit'), onClick: handleClickEdit },
-      { label: t('common:delete'), onClick: handleClickDelete },
-    ];
+    if (canUpdateWorkOrders) {
+      actionButtons.push({ label: t('common:edit'), onClick: handleClickEdit });
+    }
+    if (canDeleteWorkOrders) {
+      actionButtons.push({ label: t('common:delete'), onClick: handleClickDelete });
+    }
   }
+
+  const isSelectable = !!actionButtons.length;
 
   return (
     <ListItem
@@ -270,7 +273,7 @@ const WorkOrderListItem = ({
       selected={isSelected}
       className={classes[workOrder.workOrderStatus]}
     >
-      {!isUser && (
+      {isSelectable && (
         <ListItemIcon>
           <Checkbox
             edge="start"
@@ -318,7 +321,7 @@ const WorkOrderListItem = ({
                 options={workOrderStatusOptions}
                 onChange={handleChangeWorkOrderStatus}
                 isNative={isMobileLayout}
-                disabled={isUser}
+                disabled={!canUpdateWorkOrders}
               />
             ) : (
               <DoneIcon fontSize="large" />
@@ -354,7 +357,7 @@ const WorkOrderListItem = ({
           </div>
         </div>
       </ListItemText>
-      {!isUser && (
+      {isSelectable && (
         <ListItemSecondaryAction>
           <IconButton edge="end" onClick={openMenu}>
             <MoreVertIcon />

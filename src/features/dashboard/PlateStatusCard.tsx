@@ -85,7 +85,7 @@ const WorkOrderListItem = ({ workOrder, onComplete }: { workOrder: WorkOrderDto;
   const classes = useStyles();
   const { productSize, plateStatus } = useWorkOrderDisplay(workOrder, t);
   const { openDialog, closeDialog } = useDialog();
-  const { isUser } = useAuth();
+  const { canUpdateWorkOrders } = useAuth();
   const backgroundColor = COLORS[workOrder.plateStatus];
 
   const handleClickComplete = () => {
@@ -135,7 +135,7 @@ const WorkOrderListItem = ({ workOrder, onComplete }: { workOrder: WorkOrderDto;
       <ProductName className="productName" product={workOrder.product} />
       <Typography className="productSize">{productSize}</Typography>
       <Chip className="plateStatus" label={plateStatus} style={{ backgroundColor }} />
-      {!isUser && (
+      {canUpdateWorkOrders && (
         <Tooltip title={t('common:complete') as string}>
           <IconButton className="completeButton" color="primary" onClick={handleClickComplete}>
             <Done />

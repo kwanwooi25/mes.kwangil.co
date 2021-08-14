@@ -72,7 +72,7 @@ const PlateSearch = ({ filter, onChange }: PlateSearchProps) => {
 
   const dispatch = useAppDispatch();
   const { closeSearch } = useUI();
-  const { isUser } = useAuth();
+  const { canViewAccounts } = useAuth();
 
   const initialValues = { ...DEFAULT_PLATE_FILTER };
 
@@ -104,7 +104,7 @@ const PlateSearch = ({ filter, onChange }: PlateSearchProps) => {
         label={t('accountName')}
         value={values.accountName}
         onChange={handleChange}
-        disabled={isUser}
+        disabled={!canViewAccounts}
         autoFocus
       />
       <Input
@@ -113,7 +113,7 @@ const PlateSearch = ({ filter, onChange }: PlateSearchProps) => {
         label={t('productName')}
         value={values.productName}
         onChange={handleChange}
-        autoFocus={isUser}
+        autoFocus={!canViewAccounts}
       />
       <Input className={classes.plateName} name="name" label={t('name')} value={values.name} onChange={handleChange} />
       <RangeSlider

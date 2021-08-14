@@ -1,24 +1,16 @@
-import { DEFAULT_PAGE, NAV_ICONS, NAV_PATHS, NAV_WIDTH } from 'const';
-import {
-  Divider,
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Theme,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core';
-import React, { ElementType } from 'react';
 import { useAppDispatch, useAppSelector } from 'app/store';
-
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import { Link } from 'react-router-dom';
 import { push } from 'connected-react-router';
+import { DEFAULT_PAGE, NAV_ICONS, NAV_WIDTH } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useScreenSize } from 'hooks/useScreenSize';
+import React, { ElementType } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+
+import {
+    createStyles, Divider, Drawer, List, ListItem, ListItemIcon, ListItemText, makeStyles, Theme
+} from '@material-ui/core';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -73,11 +65,11 @@ const Navigation = ({ isOpen, onClose }: NavigationProps) => {
   const classes = useStyles();
   const { isMobileLayout } = useScreenSize();
 
-  const { logout, userRole } = useAuth();
+  const { navPaths, loginFailed } = useAuth();
   const { pathname } = useAppSelector((state) => state.router.location);
   const dispatch = useAppDispatch();
 
-  const navListItems: NavListItemProps[] = NAV_PATHS[userRole].map((path) => ({
+  const navListItems: NavListItemProps[] = navPaths.map((path) => ({
     isActive: path === pathname,
     path,
     label: t(path.replace(/\//, '')),
@@ -90,7 +82,7 @@ const Navigation = ({ isOpen, onClose }: NavigationProps) => {
     onClose();
   };
 
-  const logoutUser = () => dispatch(logout());
+  const logoutUser = () => dispatch(loginFailed());
 
   return (
     <Drawer

@@ -81,14 +81,23 @@ export default {
   auth: {
     email: '이메일',
     password: '비밀번호',
+    passwordConfirm: '비밀번호 확인',
+    name: '이름',
     login: '로그인',
     logout: '로그아웃',
+    register: '가입하기',
 
     emailInvalid: '이메일 형식이 아닙니다.',
     emailRequired: '이메일을 입력하세요.',
     passwordRequired: '비밀번호를 입력하세요.',
+    passwordConfirmRequired: '비밀번호를 한번 더 입력하세요.',
+    passwordsMustMatch: '비밀번호가 일치하지 않습니다.',
+    nameRequired: '이름을 입력하세요.',
+    loginSuccess: '로그인 성공!',
     loginFailed: '로그인 실패: 이메일 혹은 비밀번호를 확인하세요.',
     loginRequired: '로그인이 필요합니다.',
+    signUpSuccess: '가입 요청이 전송되었습니다. 관리자의 승인을 기다려주세요.',
+    signUpFailed: '가입 요청에 실패했습니다.',
   },
   dashboard: {
     pageTitle: '대시보드',

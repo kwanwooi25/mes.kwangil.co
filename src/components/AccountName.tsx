@@ -40,10 +40,10 @@ export interface AccountNameProps {
 const AccountName = ({ account, className, linkClassName, searchText = '' }: AccountNameProps) => {
   const classes = useStyles();
   const { openDialog, closeDialog } = useDialog();
-  const { isUser } = useAuth();
+  const { canViewAccounts } = useAuth();
   const { refetch, isFetching } = useAccount(account.id);
 
-  const accountNameHTML = isUser ? hideText(account.name) : highlight(account.name, searchText);
+  const accountNameHTML = canViewAccounts ? highlight(account.name, searchText) : hideText(account.name);
 
   const openAccountDetailDialog = async () => {
     refetch().then((res) => openDialog(<AccountDetailDialog account={res.data} onClose={closeDialog} />));
@@ -52,7 +52,7 @@ const AccountName = ({ account, className, linkClassName, searchText = '' }: Acc
   return (
     <div className={className}>
       <Link
-        className={classNames([classes.accountNameLink, linkClassName, isUser && classes.linkDisabled])}
+        className={classNames([classes.accountNameLink, linkClassName, !canViewAccounts && classes.linkDisabled])}
         component="button"
         variant="h6"
         color="initial"

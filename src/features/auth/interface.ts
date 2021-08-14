@@ -1,20 +1,41 @@
-import { UserRole } from 'const';
+import { Permissions } from 'const';
 
 export interface LoginDto {
   email: string;
   password: string;
 }
 
+export interface LoginResult {
+  user: UserDto;
+  token: string;
+}
+
+export interface SignUpDto {
+  email: string;
+  password: string;
+  name: string;
+  mobile?: string;
+  department?: string;
+  position?: string;
+  profileImageUrl?: string;
+}
+
 export interface UserDto {
-  id: number | string;
+  id: number;
   email: string;
   name: string;
   mobile?: string;
   department?: string;
   position?: string;
   profileImageUrl?: string;
-  role: UserRole;
   createdAt: Date;
   updatedAt: Date;
   deletedAt?: Date;
+  userRole: UserRoleDto;
+}
+
+export interface UserRoleDto {
+  id: number;
+  name: string;
+  permissions: Permissions[];
 }

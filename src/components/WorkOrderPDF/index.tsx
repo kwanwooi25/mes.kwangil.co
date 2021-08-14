@@ -1,6 +1,6 @@
 import { WorkOrderDto } from 'features/workOrder/interface';
 import { baseStyles } from 'lib/pdfStyles';
-import React from 'react';
+import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Document, Font, Image, Page, StyleSheet, View } from '@react-pdf/renderer';
@@ -99,4 +99,4 @@ const WorkOrderPDF = ({ workOrders }: WorkOrderPDFProps) => {
   );
 };
 
-export default WorkOrderPDF;
+export default memo(WorkOrderPDF);
