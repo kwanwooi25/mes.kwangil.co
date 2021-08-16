@@ -1,6 +1,8 @@
 import { ElementType } from 'react';
 
-import { Apartment, Build, CameraRoll, Dashboard, PhotoLibrary } from '@material-ui/icons';
+import {
+    Apartment, Build, CameraRoll, Dashboard, Person, PhotoLibrary, Settings
+} from '@material-ui/icons';
 
 export enum Path {
   HOME = '/',
@@ -12,6 +14,8 @@ export enum Path {
   PLATES = '/plates',
   WORK_ORDERS = '/workOrders',
   // DELIVERY = '/delivery',
+  USERS = '/users',
+  SETTINGS = '/settings',
 }
 
 export enum ExcelVariant {
@@ -78,6 +82,12 @@ export enum DeliveryListItemHeight {
   MOBILE = 88 + 8 + 16,
   TABLET = 58 + 8 + 16,
   DESKTOP = 32 + 8 + 16,
+}
+
+export enum UserListItemHeight {
+  MOBILE = 56 + 8 + 16,
+  TABLET = 32 + 8 + 16,
+  // DESKTOP = 32 + 8 + 16,
 }
 
 export enum AccountInputs {
@@ -206,6 +216,8 @@ export const NAV_ICONS: { [key: string]: ElementType } = {
   [Path.PLATES]: CameraRoll,
   [Path.WORK_ORDERS]: Build,
   // [Path.DELIVERY]: LocalShipping,
+  [Path.USERS]: Person,
+  [Path.SETTINGS]: Settings,
 };
 
 export const SEARCH_PANEL_WIDTH = 360;

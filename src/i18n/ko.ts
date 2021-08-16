@@ -1,4 +1,4 @@
-import { DeadlineStatus, WorkOrderStatus } from 'const';
+import { DeadlineStatus, Path, WorkOrderStatus } from 'const';
 
 /* eslint-disable import/no-anonymous-default-export */
 export default {
@@ -52,12 +52,17 @@ export default {
     imminent: '기한 임박',
     refresh: '새로고침',
     workOrderHistory: '작업이력',
+    active: '활성',
+    activate: '활성화',
+    inactive: '비활성',
+    inactivate: '비활성화',
 
     account: '거래처',
     product: '제품',
     plate: '동판',
     workOrder: '작업지시',
     delivery: '출고',
+    user: '사용자',
 
     selectedCount: '<strong>{{count}}</strong>개 선택됨',
 
@@ -71,12 +76,13 @@ export default {
     bulkCreateFailed: '대량 등록 실패!',
   },
   nav: {
-    dashboard: '대시보드',
-    accounts: '거래처',
-    products: '제품',
-    plates: '동판',
-    workOrders: '작업지시',
-    delivery: '출고',
+    [Path.DASHBOARD]: '대시보드',
+    [Path.ACCOUNTS]: '거래처',
+    [Path.PRODUCTS]: '제품',
+    [Path.PLATES]: '동판',
+    [Path.WORK_ORDERS]: '작업지시',
+    [Path.USERS]: '사용자',
+    [Path.SETTINGS]: '설정',
   },
   auth: {
     email: '이메일',
@@ -357,5 +363,25 @@ export default {
     getDeliveriesFailed: '출고 목록 가져오기 실패!',
     deleteDeliveryConfirm: '출고 항목 (<strong>{{productTitle}}</strong>) 을 정말 삭제하시겠습니까?',
     deleteDeliveriesConfirm: '선택하신 <strong>{{count}}개</strong> 출고를 모두 삭제하시겠습니까?',
+  },
+
+  users: {
+    pageTitle: '사용자',
+    deleteUser: '사용자 삭제',
+
+    activateUserConfirm: '사용자 (<strong>{{userName}}</strong>) 를 정말 활성화하시겠습니까?',
+    inactivateUserConfirm: '사용자 (<strong>{{userName}}</strong>) 를 정말 비활성화하시겠습니까?',
+    deleteUserConfirm: '사용자 (<strong>{{userName}}</strong>) 를 정말 삭제하시겠습니까?',
+
+    updateUserSuccess: '사용자 정보 수정 성공!',
+    updateUserFailed: '사용자 정보 수정 실패!',
+    activateUserSuccess: '사용자 활성화 성공!',
+    inactivateUserSuccess: '사용자 비활성화 성공!',
+    activateUserFailed: '사용자 활성화 실패!',
+    inactivateUserFailed: '사용자 비활성화 실패!',
+  },
+
+  settings: {
+    pageTitle: '설정',
   },
 };

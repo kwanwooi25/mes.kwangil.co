@@ -9,6 +9,8 @@ import DashboardPage from 'features/dashboard/DashboardPage';
 import Notifier from 'features/notification/Notifier';
 import PlatePage from 'features/plate/PlatePage';
 import ProductPage from 'features/product/ProductPage';
+import SettingsPage from 'features/settings/SettingsPage';
+import UsersPage from 'features/users/UsersPage';
 import WorkOrderPage from 'features/workOrder/WorkOrderPage';
 import React, { ComponentType, useEffect } from 'react';
 import { Redirect, Route, Switch } from 'react-router';
@@ -60,6 +62,8 @@ function App() {
         <PrivateRoute path={Path.PLATES} component={PlatePage} />
         <PrivateRoute path={Path.WORK_ORDERS} component={WorkOrderPage} />
         {/* <PrivateRoute path={Path.DELIVERY} component={DeliveryPage} /> */}
+        <PrivateRoute path={Path.USERS} component={UsersPage} />
+        <PrivateRoute path={Path.SETTINGS} component={SettingsPage} />
         <Redirect to={DEFAULT_PAGE} />
       </Switch>
       <Notifier />

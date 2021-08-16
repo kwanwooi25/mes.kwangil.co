@@ -72,7 +72,7 @@ const Navigation = ({ isOpen, onClose }: NavigationProps) => {
   const navListItems: NavListItemProps[] = navPaths.map((path) => ({
     isActive: path === pathname,
     path,
-    label: t(path.replace(/\//, '')),
+    label: t(path),
     Icon: NAV_ICONS[path],
     onClick: () => dispatch(push(path)),
   }));

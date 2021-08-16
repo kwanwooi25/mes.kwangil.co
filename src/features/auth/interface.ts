@@ -32,6 +32,7 @@ export interface UserDto {
   updatedAt: Date;
   deletedAt?: Date;
   userRole: UserRoleDto;
+  isActive: boolean;
 }
 
 export interface UserRoleDto {

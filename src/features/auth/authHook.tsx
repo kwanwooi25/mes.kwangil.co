@@ -24,10 +24,12 @@ export const useAuth = () => {
   const canCreateWorkOrders = permissions.includes(Permissions.WORK_ORDER_CREATE);
   const canUpdateWorkOrders = permissions.includes(Permissions.WORK_ORDER_UPDATE);
   const canDeleteWorkOrders = permissions.includes(Permissions.WORK_ORDER_DELETE);
+  const canUpdateUsers = permissions.includes(Permissions.USER_UPDATE);
 
   const navPaths = Object.values(Path).filter((path) => {
     switch (path) {
       case Path.DASHBOARD:
+      case Path.SETTINGS:
         return true;
       case Path.ACCOUNTS:
         return permissions.includes(Permissions.ACCOUNT_READ);
@@ -37,6 +39,8 @@ export const useAuth = () => {
         return permissions.includes(Permissions.PLATE_READ);
       case Path.WORK_ORDERS:
         return permissions.includes(Permissions.WORK_ORDER_READ);
+      case Path.USERS:
+        return permissions.includes(Permissions.USER_READ);
       default:
         return false;
     }
@@ -57,6 +61,7 @@ export const useAuth = () => {
     canCreateWorkOrders,
     canUpdateWorkOrders,
     canDeleteWorkOrders,
+    canUpdateUsers,
     ...authActions,
   };
 };
