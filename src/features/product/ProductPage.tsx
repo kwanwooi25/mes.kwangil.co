@@ -14,6 +14,7 @@ import {
     ExcelVariant, ProductDialogMode, ProductLength, ProductListItemHeight, ProductThickness,
     ProductWidth
 } from 'const';
+import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useSelection } from 'hooks/useSelection';
@@ -54,6 +55,7 @@ const ProductPage = (props: ProductPageProps) => {
 
   const { openDialog, closeDialog } = useDialog();
   const { isMobileLayout, isTabletLayout, isDesktopLayout } = useScreenSize();
+  const { canCreateProducts, canUpdateProducts, canDeleteProducts } = useAuth();
   const { isFetching, data, loadMore } = useInfiniteProducts(filter);
   const { isDownloading, download } = useDownloadProducts(filter);
 
@@ -140,42 +142,58 @@ const ProductPage = (props: ProductPageProps) => {
         showDetails={!isMobileLayout}
         filter={filter}
         toggleSelection={handleToggleSelection}
+        isSelectable={!!selectModeButtons.length}
       />
     ) : (
       <EndOfListItem key="end-of-list" height={itemHeight} isLoading={isFetching} message={searchResult} />
     );
   };
 
-  const selectModeButtons = [
-    <Tooltip key="create-or-update-stocks" title={t('createOrUpdateStock') as string} placement="top">
-      <IconButton onClick={handleClickStock}>
-        <Iso />
-      </IconButton>
-    </Tooltip>,
-    <Tooltip key="delete-all" title={t('common:deleteAll') as string} placement="top">
-      <IconButton onClick={handleClickDeleteAll} disabled={isDeleting}>
-        {isDeleting && <Loading />}
-        <DeleteOutline />
-      </IconButton>
-    </Tooltip>,
-  ];
+  let selectModeButtons: JSX.Element[] = [];
+  if (canCreateProducts && canUpdateProducts) {
+    selectModeButtons.push(
+      <Tooltip key="create-or-update-stocks" title={t('createOrUpdateStock') as string} placement="top">
+        <IconButton onClick={handleClickStock}>
+          <Iso />
+        </IconButton>
+      </Tooltip>
+    );
+  }
+  if (canDeleteProducts) {
+    selectModeButtons.push(
+      <Tooltip key="delete-all" title={t('common:deleteAll') as string} placement="top">
+        <IconButton onClick={handleClickDeleteAll} disabled={isDeleting}>
+          {isDeleting && <Loading />}
+          <DeleteOutline />
+        </IconButton>
+      </Tooltip>
+    );
+  }
 
-  const toolBarButtons = [
+  let toolBarButtons: JSX.Element[] = [
     <Tooltip key="refresh" title={t('common:refresh') as string} placement="top">
       <IconButton onClick={handleClickRefresh}>
         <Refresh />
       </IconButton>
     </Tooltip>,
-    <Tooltip key="add-product" title={t('addProduct') as string} placement="top">
-      <IconButton onClick={openProductDialog}>
-        <Add />
-      </IconButton>
-    </Tooltip>,
-    <Tooltip key="add-product-bulk" title={t('common:createBulk') as string} placement="top">
-      <IconButton onClick={openExcelUploadDialog}>
-        <Publish />
-      </IconButton>
-    </Tooltip>,
+  ];
+  if (canCreateProducts) {
+    toolBarButtons = [
+      ...toolBarButtons,
+      <Tooltip key="add-product" title={t('addProduct') as string} placement="top">
+        <IconButton onClick={openProductDialog}>
+          <Add />
+        </IconButton>
+      </Tooltip>,
+      <Tooltip key="add-product-bulk" title={t('common:createBulk') as string} placement="top">
+        <IconButton onClick={openExcelUploadDialog}>
+          <Publish />
+        </IconButton>
+      </Tooltip>,
+    ];
+  }
+  toolBarButtons = [
+    ...toolBarButtons,
     <Tooltip key="download-products" title={t('common:downloadExcel') as string} placement="top">
       <span>
         <IconButton onClick={downloadExcel} disabled={isDownloading}>
@@ -198,6 +216,7 @@ const ProductPage = (props: ProductPageProps) => {
     >
       {(isTabletLayout || isDesktopLayout) && (
         <SubToolbar
+          isSelectAllDisabled={!selectModeButtons.length}
           isSelectedAll={isSelectedAll}
           isIndeterminate={isIndeterminate}
           onToggleSelectAll={toggleSelectAll}
@@ -220,12 +239,14 @@ const ProductPage = (props: ProductPageProps) => {
       </List>
       {isMobileLayout && (
         <>
-          <SelectionPanel isOpen={isSelectMode} selectedCount={selectedIds.length} onClose={resetSelection}>
-            <IconButton onClick={handleClickDeleteAll}>
-              <DeleteOutline />
-            </IconButton>
-          </SelectionPanel>
-          <CreationFab show={!isSelectMode} onClick={openProductDialog} />
+          {canDeleteProducts && (
+            <SelectionPanel isOpen={isSelectMode} selectedCount={selectedIds.length} onClose={resetSelection}>
+              <IconButton onClick={handleClickDeleteAll}>
+                <DeleteOutline />
+              </IconButton>
+            </SelectionPanel>
+          )}
+          {canCreateProducts && <CreationFab show={!isSelectMode} onClick={openProductDialog} />}
         </>
       )}
     </Layout>

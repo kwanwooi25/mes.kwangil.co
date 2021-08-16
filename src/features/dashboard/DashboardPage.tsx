@@ -1,4 +1,5 @@
 import { DASHBOARD_CARD_MIN_WIDTH } from 'const';
+import { useAuth } from 'features/auth/authHook';
 import Layout from 'layouts/Layout';
 import { useTranslation } from 'react-i18next';
 
@@ -25,13 +26,18 @@ const useStyles = makeStyles((theme: Theme) =>
 const DashboardPage = () => {
   const { t } = useTranslation('dashboard');
   const classes = useStyles();
+  const { canViewWorkOrders } = useAuth();
 
   return (
     <Layout pageTitle={t('pageTitle')}>
       <div className={classes.dashboardCardContainer}>
-        <WorkOrderSummaryCard />
-        <DeadlineStatusCard />
-        <PlateStatusCard />
+        {canViewWorkOrders && (
+          <>
+            <WorkOrderSummaryCard />
+            <DeadlineStatusCard />
+            <PlateStatusCard />
+          </>
+        )}
       </div>
     </Layout>
   );

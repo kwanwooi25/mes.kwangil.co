@@ -46,7 +46,8 @@ const AccountName = ({ account, className, linkClassName, searchText = '' }: Acc
   const accountNameHTML = canViewAccounts ? highlight(account.name, searchText) : hideText(account.name);
 
   const openAccountDetailDialog = async () => {
-    refetch().then((res) => openDialog(<AccountDetailDialog account={res.data} onClose={closeDialog} />));
+    canViewAccounts &&
+      refetch().then((res) => openDialog(<AccountDetailDialog account={res.data} onClose={closeDialog} />));
   };
 
   return (

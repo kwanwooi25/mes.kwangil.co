@@ -5,6 +5,7 @@ import CustomToggleButton, { ToggleButtonOption } from 'components/form/CustomTo
 import { routerActions } from 'connected-react-router';
 import { Path, PrintSide, WorkOrderStatus } from 'const';
 import { endOfMonth, endOfYear, startOfMonth, startOfYear, subMonths, subYears } from 'date-fns';
+import { useAuth } from 'features/auth/authHook';
 import { WorkOrderCount } from 'features/workOrder/interface';
 import { workOrderApi } from 'features/workOrder/workOrderApi';
 import React, { useEffect, useState } from 'react';
@@ -137,6 +138,7 @@ const WorkOrderSummaryCard = (props: WorkOrderSummaryCardProps) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const dispatch = useAppDispatch();
+  const { canViewWorkOrders } = useAuth();
   const [orderedAtRange, setOrderedAtRange] = useState<OrderedAtRange>(OrderedAtRange.THIS_MONTH);
   const {
     isLoading,
@@ -212,9 +214,11 @@ const WorkOrderSummaryCard = (props: WorkOrderSummaryCardProps) => {
       title={t('dashboard:workOrderCount')}
       onRefresh={refetch}
       headerButton={
-        <Button color="primary" size="small" onClick={moveToWorkOrderPage} endIcon={<ChevronRightIcon />}>
-          {t('common:showAll')}
-        </Button>
+        canViewWorkOrders ? (
+          <Button color="primary" size="small" onClick={moveToWorkOrderPage} endIcon={<ChevronRightIcon />}>
+            {t('common:showAll')}
+          </Button>
+        ) : undefined
       }
     >
       <div className={classes.orderedAtRangeButtons}>

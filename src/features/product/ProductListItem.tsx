@@ -85,6 +85,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export interface ProductListItemProps extends ListItemProps {
+  isSelectable?: boolean;
   product: ProductDto;
   itemHeight: number;
   isSelected: boolean;
@@ -94,6 +95,7 @@ export interface ProductListItemProps extends ListItemProps {
 }
 
 const ProductListItem = ({
+  isSelectable = true,
   product,
   itemHeight,
   isSelected,
@@ -189,8 +191,6 @@ const ProductListItem = ({
     actionButtons.push({ label: t('common:delete'), onClick: handleClickDelete });
   }
 
-  const isSelectable = !!actionButtons.length;
-
   return (
     <ListItem divider style={{ height: itemHeight }} selected={isSelected}>
       {isSelectable && (
@@ -225,7 +225,7 @@ const ProductListItem = ({
           )}
         </div>
       </ListItemText>
-      {isSelectable && (
+      {!!actionButtons.length && (
         <ListItemSecondaryAction>
           <IconButton edge="end" onClick={openMenu}>
             <MoreVertIcon />

@@ -11,6 +11,7 @@ import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
 import WorkOrderPDF from 'components/WorkOrderPDF';
 import { DATE_FORMAT, ExcelVariant, WorkOrderListItemHeight, WorkOrderStatus } from 'const';
 import { format, subDays } from 'date-fns';
+import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useSelection } from 'hooks/useSelection';
@@ -49,6 +50,7 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
 
   const { openDialog, closeDialog } = useDialog();
   const { isMobileLayout, isTabletLayout, isDesktopLayout } = useScreenSize();
+  const { canCreateWorkOrders, canUpdateWorkOrders, canDeleteWorkOrders } = useAuth();
   const { isFetching, data, loadMore } = useInfiniteWorkOrders(filter);
   const { isDownloading, download } = useDownloadWorkOrders(filter);
 
@@ -120,7 +122,6 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
   const openWorkOrdersCompleteDialog = () =>
     openDialog(<WorkOrdersCompleteDialog workOrders={selectedWorkOrders} onClose={closeDialogAndResetSelection} />);
 
-  // const openWorkOrderPDF = (url: string) => () => window.open(url);
   const openWorkOrderPDF = () => update();
 
   const handleClickDeleteAll = () =>
@@ -146,6 +147,7 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
         isSelected={selectedIds.includes(workOrder.id)}
         filter={filter}
         toggleSelection={handleToggleSelection}
+        isSelectable={!!selectModeButtons.length}
       />
     ) : (
       <EndOfListItem key="end-of-list" height={itemHeight} isLoading={isFetching} message={searchResult} />
@@ -155,7 +157,7 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
   let selectModeButtons: JSX.Element[] = [];
 
   if (isTabletLayout || isDesktopLayout) {
-    if (isAllCutting) {
+    if (isAllCutting && canUpdateWorkOrders) {
       selectModeButtons.push(
         <Tooltip key="complete-all" title={t('common:complete') as string} placement="top">
           <IconButton onClick={openWorkOrdersCompleteDialog}>
@@ -174,53 +176,47 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
           </IconButton>
         </span>
       </Tooltip>,
-      // <BlobProvider key="print-all" document={<WorkOrderPDF workOrders={selectedWorkOrders} />}>
-      //   {({ url, loading }) =>
-      //     loading ? (
-      //       <IconButton disabled>
-      //         <Loading />
-      //         <Print />
-      //       </IconButton>
-      //     ) : (
-      //       <Tooltip key="print-all" title={t('common:print') as string} placement="top">
-      //         <IconButton onClick={openWorkOrderPDF(url as string)}>
-      //           <Print />
-      //         </IconButton>
-      //       </Tooltip>
-      //     )
-      //   }
-      // </BlobProvider>,
     ];
   }
 
-  selectModeButtons = [
-    ...selectModeButtons,
-    <Tooltip key="delete-all" title={t('common:deleteAll') as string} placement="top">
-      <span>
-        <IconButton onClick={handleClickDeleteAll} disabled={isDeleting}>
-          {isDeleting && <Loading />}
-          <DeleteOutline />
-        </IconButton>
-      </span>
-    </Tooltip>,
-  ];
+  if (canDeleteWorkOrders) {
+    selectModeButtons = [
+      ...selectModeButtons,
+      <Tooltip key="delete-all" title={t('common:deleteAll') as string} placement="top">
+        <span>
+          <IconButton onClick={handleClickDeleteAll} disabled={isDeleting}>
+            {isDeleting && <Loading />}
+            <DeleteOutline />
+          </IconButton>
+        </span>
+      </Tooltip>,
+    ];
+  }
 
-  const toolBarButtons = [
+  let toolBarButtons: JSX.Element[] = [
     <Tooltip key="refresh" title={t('common:refresh') as string} placement="top">
       <IconButton onClick={handleClickRefresh}>
         <Refresh />
       </IconButton>
     </Tooltip>,
-    <Tooltip key="add-work-order" title={t('addWorkOrder') as string} placement="top">
-      <IconButton onClick={openWorkOrderDialog}>
-        <Add />
-      </IconButton>
-    </Tooltip>,
-    <Tooltip key="add-work-order-bulk" title={t('common:createBulk') as string} placement="top">
-      <IconButton onClick={openExcelUploadDialog}>
-        <Publish />
-      </IconButton>
-    </Tooltip>,
+  ];
+  if (canCreateWorkOrders) {
+    toolBarButtons = [
+      ...toolBarButtons,
+      <Tooltip key="add-work-order" title={t('addWorkOrder') as string} placement="top">
+        <IconButton onClick={openWorkOrderDialog}>
+          <Add />
+        </IconButton>
+      </Tooltip>,
+      <Tooltip key="add-work-order-bulk" title={t('common:createBulk') as string} placement="top">
+        <IconButton onClick={openExcelUploadDialog}>
+          <Publish />
+        </IconButton>
+      </Tooltip>,
+    ];
+  }
+  toolBarButtons = [
+    ...toolBarButtons,
     <Tooltip key="download-work-orders" title={t('common:downloadExcel') as string} placement="top">
       <span>
         <IconButton onClick={downloadExcel} disabled={isDownloading}>
@@ -243,6 +239,7 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
     >
       {(isTabletLayout || isDesktopLayout) && (
         <SubToolbar
+          isSelectAllDisabled={!selectModeButtons.length}
           isSelectedAll={isSelectedAll}
           isIndeterminate={isIndeterminate}
           onToggleSelectAll={toggleSelectAll}

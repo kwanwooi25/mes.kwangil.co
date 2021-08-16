@@ -15,16 +15,29 @@ export const useAuth = () => {
   const isLoggedIn = !!currentUser;
   const permissions = currentUser?.userRole.permissions || [];
   const canViewAccounts = permissions.includes(Permissions.ACCOUNT_READ);
+  const canCreateAccounts = permissions.includes(Permissions.ACCOUNT_CREATE);
+  const canUpdateAccounts = permissions.includes(Permissions.ACCOUNT_UPDATE);
+  const canDeleteAccounts = permissions.includes(Permissions.ACCOUNT_DELETE);
+  const canViewQuotes = permissions.includes(Permissions.QUOTE_READ);
+  const canCreateQuotes = permissions.includes(Permissions.QUOTE_CREATE);
+  const canUpdateQuotes = permissions.includes(Permissions.QUOTE_UPDATE);
+  const canDeleteQuotes = permissions.includes(Permissions.QUOTE_DELETE);
+  const canViewProducts = permissions.includes(Permissions.PRODUCT_READ);
   const canCreateProducts = permissions.includes(Permissions.PRODUCT_CREATE);
   const canUpdateProducts = permissions.includes(Permissions.PRODUCT_UPDATE);
   const canDeleteProducts = permissions.includes(Permissions.PRODUCT_DELETE);
+  const canViewPlates = permissions.includes(Permissions.PLATE_READ);
+  const canCreatePlates = permissions.includes(Permissions.PLATE_CREATE);
   const canUpdatePlates = permissions.includes(Permissions.PLATE_UPDATE);
   const canDeletePlates = permissions.includes(Permissions.PLATE_DELETE);
   const canViewWorkOrders = permissions.includes(Permissions.WORK_ORDER_READ);
   const canCreateWorkOrders = permissions.includes(Permissions.WORK_ORDER_CREATE);
   const canUpdateWorkOrders = permissions.includes(Permissions.WORK_ORDER_UPDATE);
   const canDeleteWorkOrders = permissions.includes(Permissions.WORK_ORDER_DELETE);
+  const canViewUsers = permissions.includes(Permissions.USER_READ);
+  const canCreateUsers = permissions.includes(Permissions.USER_CREATE);
   const canUpdateUsers = permissions.includes(Permissions.USER_UPDATE);
+  const canDeleteUsers = permissions.includes(Permissions.USER_DELETE);
 
   const navPaths = Object.values(Path).filter((path) => {
     switch (path) {
@@ -52,16 +65,29 @@ export const useAuth = () => {
     navPaths,
     permissions,
     canViewAccounts,
+    canCreateAccounts,
+    canUpdateAccounts,
+    canDeleteAccounts,
+    canViewQuotes,
+    canCreateQuotes,
+    canUpdateQuotes,
+    canDeleteQuotes,
+    canViewProducts,
     canCreateProducts,
     canUpdateProducts,
     canDeleteProducts,
+    canViewPlates,
+    canCreatePlates,
     canUpdatePlates,
     canDeletePlates,
     canViewWorkOrders,
     canCreateWorkOrders,
     canUpdateWorkOrders,
     canDeleteWorkOrders,
+    canViewUsers,
+    canCreateUsers,
     canUpdateUsers,
+    canDeleteUsers,
     ...authActions,
   };
 };

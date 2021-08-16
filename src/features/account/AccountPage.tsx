@@ -10,6 +10,7 @@ import SelectionPanel from 'components/SelectionPanel';
 import SubToolbar from 'components/SubToolbar';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
 import { AccountListItemHeight, ExcelVariant } from 'const';
+import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useSelection } from 'hooks/useSelection';
@@ -40,6 +41,7 @@ const AccountPage = (props: AccountPageProps) => {
 
   const { openDialog, closeDialog } = useDialog();
   const { isMobileLayout, isTabletLayout, isDesktopLayout } = useScreenSize();
+  const { canCreateAccounts, canDeleteAccounts } = useAuth();
   const { isFetching, data, loadMore } = useInfiniteAccounts(filter);
   const { isDownloading, download } = useDownloadAccounts(filter);
 
@@ -131,31 +133,42 @@ const AccountPage = (props: AccountPageProps) => {
     );
   };
 
-  const selectModeButtons = [
-    <Tooltip key="delete-all" title={t('common:deleteAll') as string} placement="top">
-      <IconButton onClick={handleClickDeleteAll} disabled={isDeleting}>
-        {isDeleting && <Loading />}
-        <DeleteOutline />
-      </IconButton>
-    </Tooltip>,
-  ];
+  let selectModeButtons: JSX.Element[] = [];
+  if (canDeleteAccounts) {
+    selectModeButtons.push(
+      <Tooltip key="delete-all" title={t('common:deleteAll') as string} placement="top">
+        <IconButton onClick={handleClickDeleteAll} disabled={isDeleting}>
+          {isDeleting && <Loading />}
+          <DeleteOutline />
+        </IconButton>
+      </Tooltip>
+    );
+  }
 
-  const toolBarButtons = [
+  let toolBarButtons: JSX.Element[] = [
     <Tooltip key="refresh" title={t('common:refresh') as string} placement="top">
       <IconButton onClick={handleClickRefresh}>
         <Refresh />
       </IconButton>
     </Tooltip>,
-    <Tooltip key="add-account" title={t('addAccount') as string} placement="top">
-      <IconButton onClick={openAccountDialog}>
-        <Add />
-      </IconButton>
-    </Tooltip>,
-    <Tooltip key="add-account-bulk" title={t('common:createBulk') as string} placement="top">
-      <IconButton onClick={openExcelUploadDialog}>
-        <Publish />
-      </IconButton>
-    </Tooltip>,
+  ];
+  if (canCreateAccounts) {
+    toolBarButtons = [
+      ...toolBarButtons,
+      <Tooltip key="add-account" title={t('addAccount') as string} placement="top">
+        <IconButton onClick={openAccountDialog}>
+          <Add />
+        </IconButton>
+      </Tooltip>,
+      <Tooltip key="add-account-bulk" title={t('common:createBulk') as string} placement="top">
+        <IconButton onClick={openExcelUploadDialog}>
+          <Publish />
+        </IconButton>
+      </Tooltip>,
+    ];
+  }
+  toolBarButtons = [
+    ...toolBarButtons,
     <Tooltip key="download-accounts" title={t('common:downloadExcel') as string} placement="top">
       <span>
         <IconButton onClick={downloadExcel} disabled={isDownloading}>
@@ -200,12 +213,14 @@ const AccountPage = (props: AccountPageProps) => {
       </List>
       {isMobileLayout && (
         <>
-          <SelectionPanel isOpen={isSelectMode} selectedCount={selectedIds.length} onClose={resetSelection}>
-            <IconButton onClick={handleClickDeleteAll}>
-              <DeleteOutline />
-            </IconButton>
-          </SelectionPanel>
-          <CreationFab show={!isSelectMode} onClick={openAccountDialog} />
+          {canDeleteAccounts && (
+            <SelectionPanel isOpen={isSelectMode} selectedCount={selectedIds.length} onClose={resetSelection}>
+              <IconButton onClick={handleClickDeleteAll}>
+                <DeleteOutline />
+              </IconButton>
+            </SelectionPanel>
+          )}
+          {canCreateAccounts && <CreationFab show={!isSelectMode} onClick={openAccountDialog} />}
         </>
       )}
     </Layout>

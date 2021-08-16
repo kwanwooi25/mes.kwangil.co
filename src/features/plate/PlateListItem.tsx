@@ -59,6 +59,7 @@ export interface PlateListItemProps extends ListItemProps {
   productCountToDisplay?: number;
   filter: PlateFilter;
   toggleSelection?: (plate: PlateDto) => any;
+  isSelectable?: boolean;
 }
 
 const PlateListItem = ({
@@ -68,6 +69,7 @@ const PlateListItem = ({
   productCountToDisplay = 1,
   filter,
   toggleSelection = (plate: PlateDto) => {},
+  isSelectable = true,
 }: PlateListItemProps) => {
   const { t } = useTranslation('plates');
   const classes = useStyles();
@@ -117,8 +119,6 @@ const PlateListItem = ({
     actionButtons.push({ label: t('common:delete'), onClick: handleClickDelete });
   }
 
-  const isSelectable = !!actionButtons.length;
-
   return (
     <ListItem divider style={{ height: itemHeight }} selected={isSelected}>
       {isSelectable && (
@@ -140,7 +140,7 @@ const PlateListItem = ({
           </div>
         </div>
       </ListItemText>
-      {isSelectable && (
+      {!!actionButtons.length && (
         <ListItemSecondaryAction>
           <IconButton edge="end" onClick={openMenu}>
             <MoreVertIcon />

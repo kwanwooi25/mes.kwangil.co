@@ -8,6 +8,7 @@ import SelectionPanel from 'components/SelectionPanel';
 import SubToolbar from 'components/SubToolbar';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
 import { PlateLength, PlateListItemHeight, PlateRound } from 'const';
+import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useSelection } from 'hooks/useSelection';
@@ -41,6 +42,7 @@ const PlatePage = (props: PlatePageProps) => {
 
   const { openDialog, closeDialog } = useDialog();
   const { isMobileLayout, isTabletLayout, isDesktopLayout } = useScreenSize();
+  const { canCreatePlates, canDeletePlates } = useAuth();
   const { isFetching, data, loadMore } = useInfinitePlates(filter);
 
   const queryClient = useQueryClient();
@@ -102,33 +104,42 @@ const PlatePage = (props: PlatePageProps) => {
         productCountToDisplay={isMobileLayout ? 1 : 2}
         filter={filter}
         toggleSelection={handleToggleSelection}
+        isSelectable={!!selectModeButtons.length}
       />
     ) : (
       <EndOfListItem key="end-of-list" height={itemHeight} isLoading={isFetching} message={searchResult} />
     );
   };
 
-  const selectModeButtons = [
-    <Tooltip key="delete-all" title={t('common:deleteAll') as string} placement="top">
-      <IconButton onClick={handleClickDeleteAll} disabled={isDeleting}>
-        {isDeleting && <Loading />}
-        <DeleteOutline />
-      </IconButton>
-    </Tooltip>,
-  ];
+  let selectModeButtons: JSX.Element[] = [];
+  if (canDeletePlates) {
+    selectModeButtons.push(
+      <Tooltip key="delete-all" title={t('common:deleteAll') as string} placement="top">
+        <IconButton onClick={handleClickDeleteAll} disabled={isDeleting}>
+          {isDeleting && <Loading />}
+          <DeleteOutline />
+        </IconButton>
+      </Tooltip>
+    );
+  }
 
-  const toolBarButtons = [
+  let toolBarButtons: JSX.Element[] = [
     <Tooltip key="refresh" title={t('common:refresh') as string} placement="top">
       <IconButton onClick={handleClickRefresh}>
         <Refresh />
       </IconButton>
     </Tooltip>,
-    <Tooltip key="add-plate" title={t('addPlate') as string} placement="top">
-      <IconButton onClick={openPlateDialog}>
-        <Add />
-      </IconButton>
-    </Tooltip>,
   ];
+  if (canCreatePlates) {
+    toolBarButtons = [
+      ...toolBarButtons,
+      <Tooltip key="add-plate" title={t('addPlate') as string} placement="top">
+        <IconButton onClick={openPlateDialog}>
+          <Add />
+        </IconButton>
+      </Tooltip>,
+    ];
+  }
 
   useEffect(() => {
     resetSelection();
@@ -142,6 +153,7 @@ const PlatePage = (props: PlatePageProps) => {
     >
       {(isTabletLayout || isDesktopLayout) && (
         <SubToolbar
+          isSelectAllDisabled={!selectModeButtons.length}
           isSelectedAll={isSelectedAll}
           isIndeterminate={isIndeterminate}
           onToggleSelectAll={toggleSelectAll}
@@ -164,12 +176,14 @@ const PlatePage = (props: PlatePageProps) => {
       </List>
       {isMobileLayout && (
         <>
-          <SelectionPanel isOpen={isSelectMode} selectedCount={selectedIds.length} onClose={resetSelection}>
-            <IconButton onClick={handleClickDeleteAll}>
-              <DeleteOutline />
-            </IconButton>
-          </SelectionPanel>
-          <CreationFab show={!isSelectMode} onClick={openPlateDialog} />
+          {canDeletePlates && (
+            <SelectionPanel isOpen={isSelectMode} selectedCount={selectedIds.length} onClose={resetSelection}>
+              <IconButton onClick={handleClickDeleteAll}>
+                <DeleteOutline />
+              </IconButton>
+            </SelectionPanel>
+          )}
+          {canCreatePlates && <CreationFab show={!isSelectMode} onClick={openPlateDialog} />}
         </>
       )}
     </Layout>

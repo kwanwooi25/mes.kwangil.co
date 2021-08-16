@@ -156,6 +156,7 @@ export interface WorkOrderListItemProps extends ListItemProps {
   isSelected: boolean;
   filter: WorkOrderFilter;
   toggleSelection?: (workOrder: WorkOrderDto) => any;
+  isSelectable?: boolean;
 }
 
 const WorkOrderListItem = ({
@@ -164,6 +165,7 @@ const WorkOrderListItem = ({
   isSelected,
   filter,
   toggleSelection = (workOrder: WorkOrderDto) => {},
+  isSelectable = true,
 }: WorkOrderListItemProps) => {
   const { t } = useTranslation('workOrders');
   const classes = useStyles();
@@ -264,8 +266,6 @@ const WorkOrderListItem = ({
     }
   }
 
-  const isSelectable = !!actionButtons.length;
-
   return (
     <ListItem
       divider
@@ -357,7 +357,7 @@ const WorkOrderListItem = ({
           </div>
         </div>
       </ListItemText>
-      {isSelectable && (
+      {!!actionButtons.length && (
         <ListItemSecondaryAction>
           <IconButton edge="end" onClick={openMenu}>
             <MoreVertIcon />

@@ -185,6 +185,7 @@ const PlateStatusCard = (props: PlateStatusCardProps) => {
   const [workOrdersToShow, setWorkOrdersToShow] = useState<WorkOrderDto[]>([]);
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
+  const { canViewWorkOrders } = useAuth();
 
   const workOrderCountToDisplay = 4;
 
@@ -218,22 +219,24 @@ const PlateStatusCard = (props: PlateStatusCardProps) => {
       title={t('dashboard:plateStatus')}
       onRefresh={refetch}
       headerButton={
-        <BlobProvider document={<NeedPlatePDF workOrders={workOrders} />}>
-          {({ url, loading }) =>
-            loading ? (
-              <IconButton disabled size="small">
-                <Loading size="2rem" />
-                <Print />
-              </IconButton>
-            ) : (
-              <Tooltip key="print-all" title={t('common:print') as string} placement="top">
-                <IconButton onClick={openWorkOrderPDF(url as string)} size="small">
+        canViewWorkOrders ? (
+          <BlobProvider document={<NeedPlatePDF workOrders={workOrders} />}>
+            {({ url, loading }) =>
+              loading ? (
+                <IconButton disabled size="small">
+                  <Loading size="2rem" />
                   <Print />
                 </IconButton>
-              </Tooltip>
-            )
-          }
-        </BlobProvider>
+              ) : (
+                <Tooltip key="print-all" title={t('common:print') as string} placement="top">
+                  <IconButton onClick={openWorkOrderPDF(url as string)} size="small">
+                    <Print />
+                  </IconButton>
+                </Tooltip>
+              )
+            }
+          </BlobProvider>
+        ) : undefined
       }
     >
       <List disablePadding style={{ height: LIST_ITEM_HEIGHT * workOrderCountToDisplay }}>
