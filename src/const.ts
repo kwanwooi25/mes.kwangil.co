@@ -1,7 +1,7 @@
 import { ElementType } from 'react';
 
 import {
-    Apartment, Build, CameraRoll, Dashboard, Person, PhotoLibrary, Settings
+    Apartment, Build, CameraRoll, Dashboard, MonetizationOn, Person, PhotoLibrary, Settings
 } from '@material-ui/icons';
 
 export enum Path {
@@ -10,6 +10,7 @@ export enum Path {
   REGISTER = '/register',
   DASHBOARD = '/dashboard',
   ACCOUNTS = '/accounts',
+  QUOTES = '/quotes',
   PRODUCTS = '/products',
   PLATES = '/plates',
   WORK_ORDERS = '/workOrders',
@@ -212,6 +213,7 @@ export const NAV_WIDTH = 240;
 export const NAV_ICONS: { [key: string]: ElementType } = {
   [Path.DASHBOARD]: Dashboard,
   [Path.ACCOUNTS]: Apartment,
+  [Path.QUOTES]: MonetizationOn,
   [Path.PRODUCTS]: PhotoLibrary,
   [Path.PLATES]: CameraRoll,
   [Path.WORK_ORDERS]: Build,

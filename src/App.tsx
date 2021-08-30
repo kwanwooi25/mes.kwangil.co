@@ -9,6 +9,7 @@ import DashboardPage from 'features/dashboard/DashboardPage';
 import Notifier from 'features/notification/Notifier';
 import PlatePage from 'features/plate/PlatePage';
 import ProductPage from 'features/product/ProductPage';
+import QuotePage from 'features/quote/QuotePage';
 import SettingsPage from 'features/settings/SettingsPage';
 import UsersPage from 'features/users/UsersPage';
 import WorkOrderPage from 'features/workOrder/WorkOrderPage';
@@ -58,6 +59,7 @@ function App() {
         <PublicRoute path={Path.REGISTER} component={RegisterPage} />
         <PrivateRoute path={Path.DASHBOARD} component={DashboardPage} />
         <PrivateRoute path={Path.ACCOUNTS} component={AccountPage} />
+        <PrivateRoute path={Path.QUOTES} component={QuotePage} />
         <PrivateRoute path={Path.PRODUCTS} component={ProductPage} />
         <PrivateRoute path={Path.PLATES} component={PlatePage} />
         <PrivateRoute path={Path.WORK_ORDERS} component={WorkOrderPage} />

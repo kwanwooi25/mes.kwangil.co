@@ -78,6 +78,7 @@ export default {
   nav: {
     [Path.DASHBOARD]: '대시보드',
     [Path.ACCOUNTS]: '거래처',
+    [Path.QUOTES]: '견적',
     [Path.PRODUCTS]: '제품',
     [Path.PLATES]: '동판',
     [Path.WORK_ORDERS]: '작업지시',
@@ -154,6 +155,16 @@ export default {
 
     titleRequired: '연락처명을 입력하세요.',
   },
+
+  quotes: {
+    pageTitle: '견적',
+    createQuote: '견적 생성',
+    deleteQuote: '견적 삭제',
+
+    deleteQuoteConfirm: '견적을 정말 삭제하시겠습니까?',
+    deleteQuotesConfirm: '선택하신 <strong>{{count}}개</strong> 견적을 모두 삭제하시겠습니까?',
+  },
+
   products: {
     pageTitle: '제품',
     addProduct: '제품 등록',
