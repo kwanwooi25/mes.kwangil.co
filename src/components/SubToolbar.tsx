@@ -1,28 +1,19 @@
-import {
-  AppBar,
-  Checkbox,
-  Divider,
-  FormControlLabel,
-  IconButton,
-  Theme,
-  Toolbar,
-  Tooltip,
-  Typography,
-  createStyles,
-  fade,
-  makeStyles,
-} from '@material-ui/core';
 import React, { ChangeEvent, ReactElement } from 'react';
-
-import CloseIcon from '@material-ui/icons/Close';
-import IconButtonGroup from './IconButtonGroup';
 import { useTranslation } from 'react-i18next';
+
+import {
+    alpha, AppBar, Checkbox, createStyles, Divider, FormControlLabel, IconButton, makeStyles, Theme,
+    Toolbar, Tooltip, Typography
+} from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
+
+import IconButtonGroup from './IconButtonGroup';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     appBar: {
       background: theme.palette.background.paper,
-      borderBottom: `0.5px solid ${fade(theme.palette.primary.light, 0.15)}`,
+      borderBottom: `0.5px solid ${alpha(theme.palette.primary.light, 0.15)}`,
       zIndex: theme.zIndex.drawer,
     },
     selection: {

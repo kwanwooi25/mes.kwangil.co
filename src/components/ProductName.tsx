@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       textAlign: 'left',
+      fontSize: '16px',
     },
     productName: {},
   })
@@ -36,7 +37,7 @@ const ProductName = ({
   className,
   linkClassName,
   searchText = '',
-  maxWidth = 200,
+  maxWidth = 240,
   productName,
 }: ProductNameProps) => {
   const classes = useStyles();
@@ -59,7 +60,7 @@ const ProductName = ({
         onClick={openDetailDialog}
         style={{ maxWidth }}
       >
-        {isFetching && <Loading />}
+        {isFetching && <Loading size="16px" />}
         <span
           className={classes.productName}
           dangerouslySetInnerHTML={{ __html: highlight(productName || product.name, searchText) }}

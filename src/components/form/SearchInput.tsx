@@ -1,19 +1,19 @@
-import { IconButton, InputBase, Theme, createStyles, fade, makeStyles } from '@material-ui/core';
-import React, { ChangeEvent, useEffect, useState } from 'react';
-
-import CloseIcon from '@material-ui/icons/Close';
-import SearchIcon from '@material-ui/icons/Search';
 import classnames from 'classnames';
 import { useDebounce } from 'hooks/useDebounce';
+import React, { ChangeEvent, useEffect, useState } from 'react';
+
+import { alpha, createStyles, IconButton, InputBase, makeStyles, Theme } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
+import SearchIcon from '@material-ui/icons/Search';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     searchInput: {
       position: 'relative',
       borderRadius: 43 / 2,
-      backgroundColor: fade(theme.palette.primary.light, 0.1),
+      backgroundColor: alpha(theme.palette.primary.light, 0.1),
       '&:hover': {
-        backgroundColor: fade(theme.palette.primary.light, 0.2),
+        backgroundColor: alpha(theme.palette.primary.light, 0.2),
       },
       width: '100%',
       padding: theme.spacing(0.5),

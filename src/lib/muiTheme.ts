@@ -1,7 +1,7 @@
 import { WorkOrderStatus } from 'const';
 
 import {
-    fade, lighten, unstable_createMuiStrictModeTheme as createMuiTheme
+    alpha, lighten, unstable_createMuiStrictModeTheme as createMuiTheme
 } from '@material-ui/core';
 import { grey, lightGreen, orange, red, yellow } from '@material-ui/core/colors';
 import deepOrange from '@material-ui/core/colors/deepOrange';
@@ -44,7 +44,7 @@ export const theme = createMuiTheme({
           position: 'relative',
           '&::after': {
             content: '""',
-            background: fade(deepOrange[500], 0.5),
+            background: alpha(deepOrange[500], 0.5),
             position: 'absolute',
             bottom: 0,
             left: 0,

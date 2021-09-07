@@ -1,14 +1,16 @@
-import { AppBar, IconButton, Theme, Toolbar, Typography, createStyles, fade, makeStyles } from '@material-ui/core';
-
-import MenuIcon from '@material-ui/icons/Menu';
 import React from 'react';
+
+import {
+    alpha, AppBar, createStyles, IconButton, makeStyles, Theme, Toolbar, Typography
+} from '@material-ui/core';
+import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     appBar: {
       background: theme.palette.background.paper,
-      borderBottom: `0.5px solid ${fade(theme.palette.primary.light, 0.15)}`,
+      borderBottom: `0.5px solid ${alpha(theme.palette.primary.light, 0.15)}`,
       zIndex: theme.zIndex.drawer + 1,
     },
     pageTitle: {

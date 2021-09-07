@@ -14,7 +14,7 @@ import React, { memo, MouseEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
 import { getPrintSummary, getProductSize } from 'utils/product';
-import { formatDigit, highlight } from 'utils/string';
+import { highlight } from 'utils/string';
 
 import {
     Checkbox, createStyles, IconButton, ListItem, ListItemIcon, ListItemProps,
@@ -52,14 +52,14 @@ const useStyles = makeStyles((theme: Theme) =>
         `,
       },
       [theme.breakpoints.up('lg')]: {
-        gridTemplateColumns: '2fr 3fr 2fr 1fr 3fr 90px',
+        gridTemplateColumns: '2fr 4fr 2fr 1fr 3fr 90px',
         gridTemplateAreas: `
           "accountName productName productSize extColor printSummary stockBalance"
         `,
       },
     },
     accountNameLink: {
-      fontSize: theme.typography.body2.fontSize,
+      fontSize: '12px',
     },
     accountName: {
       gridArea: 'accountName',
@@ -69,17 +69,21 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     productSize: {
       gridArea: 'productSize',
+      fontSize: '14px',
     },
     stockBalance: {
       gridArea: 'stockBalance',
       justifySelf: 'end',
       paddingRight: theme.spacing(1),
+      fontSize: '12px',
     },
     extColor: {
       gridArea: 'extColor',
+      fontSize: '14px',
     },
     printSummary: {
       gridArea: 'printSummary',
+      fontSize: '14px',
     },
   })
 );
@@ -117,10 +121,10 @@ const ProductListItem = ({
 
   const productSize = getProductSize(product);
   const printSummary = getPrintSummary(product);
-  const hasStock = !!product.stock;
-  const stockBalance = hasStock
-    ? t('common:sheetCount', { countString: formatDigit(product?.stock?.balance || 0) })
-    : '';
+  // const hasStock = !!product.stock;
+  // const stockBalance = hasStock
+  //   ? t('common:sheetCount', { countString: formatDigit(product?.stock?.balance || 0) })
+  //   : '';
 
   const handleSelectionChange = () => toggleSelection(product);
 
@@ -211,7 +215,7 @@ const ProductListItem = ({
             {productSize}
           </Typography>
           <Typography variant="body1" className={classes.stockBalance}>
-            {stockBalance}
+            {/* {stockBalance} */}
           </Typography>
           {showDetails && (
             <>

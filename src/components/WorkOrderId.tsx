@@ -12,12 +12,12 @@ import Loading from './Loading';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     workOrderIdLink: {
-      maxWidth: '200px',
+      maxWidth: '120px',
       whiteSpace: 'nowrap',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       textAlign: 'left',
-      fontSize: theme.typography.body1.fontSize,
+      fontSize: '16px',
     },
     workOrderId: {},
   })
@@ -48,7 +48,7 @@ const WorkOrderId = ({ workOrder, className, linkClassName }: WorkOrderIdProps) 
         color="initial"
         onClick={openDetailDialog}
       >
-        {isFetching && <Loading />}
+        {isFetching && <Loading size="16px" />}
         <span className={classes.workOrderId} dangerouslySetInnerHTML={{ __html: workOrder.id }} />
       </Link>
     </div>

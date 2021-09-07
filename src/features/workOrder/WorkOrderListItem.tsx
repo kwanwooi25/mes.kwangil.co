@@ -123,10 +123,11 @@ const useStyles = makeStyles((theme: Theme) =>
       gridArea: 'productNames',
     },
     accountName: {
-      fontSize: theme.typography.body2.fontSize,
+      fontSize: '12px',
     },
     productDetail: {
       gridArea: 'productDetail',
+      fontSize: '14px',
     },
     quantities: {
       gridArea: 'quantities',
@@ -336,7 +337,7 @@ const WorkOrderListItem = ({
             <ProductName product={product} maxWidth={productNameMaxWidth} searchText={filter.productName} />
           </div>
           <div className={classes.productDetail}>
-            <Typography variant="h6">{productSize}</Typography>
+            <Typography>{productSize}</Typography>
             <Typography>{productSummary}</Typography>
           </div>
           <div className={classes.quantities}>

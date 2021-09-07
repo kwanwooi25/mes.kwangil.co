@@ -1,12 +1,12 @@
-import React, { ReactElement, forwardRef } from 'react';
-import { Theme, createStyles, fade, makeStyles } from '@material-ui/core';
-
 import classnames from 'classnames';
+import React, { forwardRef, ReactElement } from 'react';
+
+import { alpha, createStyles, makeStyles, Theme } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     iconButtonGroup: {
-      background: fade(theme.palette.primary.light, 0.03),
+      background: alpha(theme.palette.primary.light, 0.03),
       borderRadius: '24px',
     },
   })

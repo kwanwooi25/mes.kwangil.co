@@ -14,11 +14,12 @@ import Loading from './Loading';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     accountNameLink: {
-      maxWidth: '200px',
+      maxWidth: '180px',
       whiteSpace: 'nowrap',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       textAlign: 'left',
+      fontSize: '16px',
     },
     linkDisabled: {
       cursor: 'default',
@@ -60,7 +61,7 @@ const AccountName = ({ account, className, linkClassName, searchText = '' }: Acc
         onClick={openAccountDetailDialog}
         disabled={isFetching}
       >
-        {isFetching && <Loading />}
+        {isFetching && <Loading size="16px" />}
         <span className={classes.accountName} dangerouslySetInnerHTML={{ __html: accountNameHTML }} />
       </Link>
     </div>

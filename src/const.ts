@@ -58,25 +58,25 @@ export enum Permissions {
 
 export enum AccountListItemHeight {
   MOBILE = 72,
-  TABLET = 54,
+  TABLET = 48,
 }
 
 export enum ProductListItemHeight {
-  MOBILE = 104,
-  TABLET = 72,
-  DESKTOP = 54,
+  MOBILE = 71 + 16,
+  TABLET = 47 + 16,
+  DESKTOP = 48,
 }
 
 export enum PlateListItemHeight {
   MOBILE = 64,
   TABLET = 73,
-  DESKTOP = 54,
+  DESKTOP = 48,
 }
 
 export enum WorkOrderListItemHeight {
-  MOBILE = 293 + 8 + 16,
-  TABLET = 138 + 8 + 16,
-  DESKTOP = 72 + 8 + 16,
+  MOBILE = 275 + 16,
+  TABLET = 129 + 16,
+  DESKTOP = 72 + 16,
 }
 
 export enum DeliveryListItemHeight {
@@ -167,7 +167,7 @@ export enum PlateRound {
 
 export enum PlateLength {
   STEP = 50,
-  MIN = 300,
+  MIN = 250,
   MAX = 800,
 }
 

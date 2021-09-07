@@ -1,13 +1,14 @@
-import { Link, Theme, createStyles, makeStyles } from '@material-ui/core';
-import React, { memo } from 'react';
-
-import PlateDetailDialog from './dialog/PlateDetail';
-import { PlateDto } from 'features/plate/interface';
 import classnames from 'classnames';
+import { useDialog } from 'features/dialog/dialogHook';
+import { PlateDto } from 'features/plate/interface';
+import { plateApi } from 'features/plate/plateApi';
+import React, { memo } from 'react';
 import { getPlateTitle } from 'utils/plate';
 import { highlight } from 'utils/string';
-import { plateApi } from 'features/plate/plateApi';
-import { useDialog } from 'features/dialog/dialogHook';
+
+import { createStyles, Link, makeStyles, Theme } from '@material-ui/core';
+
+import PlateDetailDialog from './dialog/PlateDetail';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -17,6 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       textAlign: 'left',
+      fontSize: '16px',
     },
     plateName: {},
   })
