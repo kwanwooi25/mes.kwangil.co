@@ -5,7 +5,7 @@ import Loading from 'components/Loading';
 import NeedPlatePDF from 'components/NeedPlatePDF';
 import ProductName from 'components/ProductName';
 import WorkOrderId from 'components/WorkOrderId';
-import { PlateStatus } from 'const';
+import { PLATE_STATUS_COLORS, PlateStatus } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { WorkOrderDto } from 'features/workOrder/interface';
@@ -20,7 +20,6 @@ import { getWorkOrderToUpdate } from 'utils/workOrder';
 import {
     Chip, createStyles, IconButton, List, ListItem, makeStyles, Theme, Tooltip, Typography
 } from '@material-ui/core';
-import { grey, red, yellow } from '@material-ui/core/colors';
 import { Done, InsertEmoticon, Print } from '@material-ui/icons';
 import { Pagination, Skeleton } from '@material-ui/lab';
 import { BlobProvider } from '@react-pdf/renderer';
@@ -74,19 +73,13 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const LIST_ITEM_HEIGHT = 100;
 
-const COLORS: { [key in PlateStatus]: string } = {
-  [PlateStatus.NEW]: red[700],
-  [PlateStatus.UPDATE]: yellow[700],
-  [PlateStatus.CONFIRM]: grey[700],
-};
-
 const WorkOrderListItem = ({ workOrder, onComplete }: { workOrder: WorkOrderDto; onComplete: () => void }) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const { productSize, plateStatus } = useWorkOrderDisplay(workOrder, t);
   const { openDialog, closeDialog } = useDialog();
   const { canUpdateWorkOrders } = useAuth();
-  const backgroundColor = COLORS[workOrder.plateStatus];
+  const backgroundColor = PLATE_STATUS_COLORS[workOrder.plateStatus];
 
   const handleClickComplete = () => {
     openDialog(

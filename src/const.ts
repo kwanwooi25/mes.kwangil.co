@@ -1,5 +1,6 @@
 import { ElementType } from 'react';
 
+import { grey, red, yellow } from '@material-ui/core/colors';
 import {
     Apartment, Build, CameraRoll, Dashboard, MonetizationOn, Person, PhotoLibrary, Settings
 } from '@material-ui/icons';
@@ -244,6 +245,12 @@ export const PLATE_STATUS_TEXT: { [key: string]: string } = {
   [PlateStatus.NEW]: '신규',
   [PlateStatus.UPDATE]: '수정',
   [PlateStatus.CONFIRM]: '확인',
+};
+
+export const PLATE_STATUS_COLORS: { [key in PlateStatus]: string } = {
+  [PlateStatus.NEW]: red[700],
+  [PlateStatus.UPDATE]: yellow[700],
+  [PlateStatus.CONFIRM]: grey[700],
 };
 
 export const DELIVERY_METHOD_TEXT: { [key: string]: string } = {

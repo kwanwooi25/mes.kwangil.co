@@ -7,7 +7,7 @@ import ProductName from 'components/ProductName';
 import SelectWorkOrderStatus from 'components/SelectWorkOrderStatus';
 import WorkOrderId from 'components/WorkOrderId';
 import WorkOrderPDF from 'components/WorkOrderPDF';
-import { PrintSide, WorkOrderStatus } from 'const';
+import { PLATE_STATUS_COLORS, PrintSide, WorkOrderStatus } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useScreenSize } from 'hooks/useScreenSize';
@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme: Theme) =>
       gridTemplateAreas: `
         "workOrderId workOrderId"
         "dates workOrderStatus"
-        "productNames productNames"
+        "productNames workOrderStatus"
         "productDetail productDetail"
         "quantities quantities"
       `,
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme: Theme) =>
         gridTemplateColumns: '1fr 130px 100px',
         gridTemplateAreas: `
           "workOrderId dates workOrderStatus"
-          "productNames productNames productNames"
+          "productNames productNames workOrderStatus"
           "productDetail quantities quantities"
         `,
         gridGap: theme.spacing(1, 2),
@@ -69,12 +69,12 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.up('md')]: {
         gridTemplateColumns: '1fr minmax(150px, 1fr) 130px 100px',
         gridTemplateAreas: `
-          "workOrderId workOrderId dates workOrderStatus"
+          "workOrderId dates workOrderStatus workOrderStatus"
           "productNames productDetail quantities quantities"
         `,
       },
       [theme.breakpoints.up('xl')]: {
-        gridTemplateColumns: '105px 130px 3fr 2fr 200px 100px',
+        gridTemplateColumns: '105px 130px 3fr 2fr 200px 200px',
         gridTemplateAreas: `
           "workOrderId dates productNames productDetail quantities workOrderStatus"
         `,
@@ -114,7 +114,20 @@ const useStyles = makeStyles((theme: Theme) =>
     workOrderStatus: {
       gridArea: 'workOrderStatus',
       display: 'flex',
-      justifyContent: 'center',
+      flexDirection: 'column',
+      justifyContent: 'start',
+      alignItems: 'center',
+      '& .plateStatus': {
+        color: 'white',
+        marginTop: theme.spacing(1),
+      },
+
+      [theme.breakpoints.up('md')]: {
+        flexDirection: 'row-reverse',
+        '& .plateStatus': {
+          margin: theme.spacing(0, 2, 0, 0),
+        },
+      },
     },
     selectWorkOrderStatus: {
       width: '100px',
@@ -239,7 +252,10 @@ const WorkOrderListItem = ({
     completedWeight,
     productSize,
     productSummary,
+    isPrint,
+    plateStatus,
   } = useWorkOrderDisplay(workOrder, t);
+  const plateStatusColor = PLATE_STATUS_COLORS[workOrder.plateStatus];
 
   const workOrderStatusOptions = Object.values(WorkOrderStatus)
     .filter((value) => {
@@ -326,6 +342,9 @@ const WorkOrderListItem = ({
               />
             ) : (
               <DoneIcon fontSize="large" />
+            )}
+            {isPrint && (
+              <Chip className="plateStatus" label={plateStatus} style={{ backgroundColor: plateStatusColor }} />
             )}
           </div>
           <div className={classes.productNames}>

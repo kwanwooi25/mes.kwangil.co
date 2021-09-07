@@ -36,7 +36,7 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
   const orderedAt = format(parseISO(workOrder.orderedAt as string), DATE_FORMAT);
   const deliverBy = format(parseISO(workOrder.deliverBy as string), DATE_FORMAT);
   const isCompleted = !!workOrder.completedAt;
-  const completedAt = isCompleted && format(parseISO(workOrder.completedAt as string), DATE_FORMAT);
+  const completedAt = isCompleted ? format(parseISO(workOrder.completedAt as string), DATE_FORMAT) : '';
   const orderQuantity = t('common:sheetCount', { countString: formatDigit(workOrder.orderQuantity) });
   const orderWeight = t('common:weightInKg', { weight: getWeight({ product, quantity: workOrder.orderQuantity }) });
   const completedQuantity = t('common:sheetCount', { countString: formatDigit(workOrder.completedQuantity || 0) });
@@ -51,6 +51,7 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
     deliveryTags.push(t('workOrders:shouldBePunctual'));
   }
 
+  const deliveryMethod = t(`workOrders:deliveryMethod${capitalize(workOrder.deliveryMethod)}`);
   const deliverByRemaining = differenceInBusinessDays(new Date(workOrder.deliverBy), new Date());
   const deliverByStyle: CSSProperties = {
     color: isCompleted
@@ -71,6 +72,7 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
     backgroundColor: BACKGROUND_COLORS[workOrder.workOrderStatus],
   };
 
+  const isPrint = product.printSide !== PrintSide.NONE;
   const plateStatus = t(`workOrders:plateStatus${capitalize(workOrder.plateStatus)}`);
 
   const accountName = product.account.name;
@@ -93,6 +95,8 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
     completedQuantity,
     completedWeight,
     deliveryTags,
+    deliveryMethod,
+    isPrint,
     plateStatus,
     workOrderStatus,
     workOrderStatusStyle,
