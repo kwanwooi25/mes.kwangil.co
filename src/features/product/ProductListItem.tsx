@@ -1,6 +1,7 @@
 import AccountName from 'components/AccountName';
 import ConfirmDialog from 'components/dialog/Confirm';
 import ProductDialog from 'components/dialog/Product';
+import EditProductDialog from 'components/dialog/Product/EditProductDialog';
 import StockDialog from 'components/dialog/Stock';
 import WorkOrderDialog from 'components/dialog/WorkOrder';
 import WorkOrderHistoryDialog from 'components/dialog/WorkOrderHistory';
@@ -150,8 +151,7 @@ const ProductListItem = ({
   const handleClickCopy = async () =>
     openDialog(<ProductDialog mode={ProductDialogMode.COPY} product={product} onClose={closeDialog} />);
 
-  const handleClickEdit = async () =>
-    openDialog(<ProductDialog mode={ProductDialogMode.EDIT} product={product} onClose={closeDialog} />);
+  const handleClickEdit = async () => openDialog(<EditProductDialog product={product} onClose={closeDialog} />);
 
   const handleClickDelete = async () =>
     openDialog(

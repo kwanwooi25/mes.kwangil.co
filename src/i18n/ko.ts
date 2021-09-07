@@ -6,6 +6,7 @@ export default {
     appName: '생산 관리 시스템',
     cancel: '취소',
     confirm: '확인',
+    close: '닫기',
     save: '저장',
     search: '검색',
     reset: '초기화',

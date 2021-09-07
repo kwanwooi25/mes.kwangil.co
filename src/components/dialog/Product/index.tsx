@@ -3,16 +3,13 @@ import Loading from 'components/Loading';
 import { PrintSide, ProductDialogMode, ProductLength, ProductThickness, ProductWidth } from 'const';
 import { AccountOption } from 'features/account/interface';
 import Dialog from 'features/dialog/Dialog';
-import useNotification from 'features/notification/useNotification';
 import { ImageDto, ProductDto, StockDto } from 'features/product/interface';
-import { useCreateProductMutation, useUpdateProductMutation } from 'features/product/useProducts';
-import { isEqual } from 'lodash';
+import { useCreateProductMutation } from 'features/product/useProducts';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
 import {
-    getCreateProductDto, getInitialProductToCopy, getInitialProductToCreate,
-    getInitialProductToUpdate, getUpdateProductDto
+    getCreateProductDto, getInitialProductToCopy, getInitialProductToCreate
 } from 'utils/product';
 import * as yup from 'yup';
 
@@ -68,9 +65,7 @@ export interface ProductFormValues {
 const ProductDialog = ({ mode, product, onClose }: ProductDialogProps) => {
   const { t } = useTranslation('products');
 
-  const dialogTitle = t(mode === ProductDialogMode.EDIT ? 'updateProduct' : 'addProduct');
-
-  const { notify } = useNotification();
+  const dialogTitle = t('addProduct');
 
   const queryClient = useQueryClient();
 
@@ -79,12 +74,10 @@ const ProductDialog = ({ mode, product, onClose }: ProductDialogProps) => {
     onClose();
   };
 
-  const { updateProduct, isUpdating } = useUpdateProductMutation({ queryClient, onSuccess });
   const { createProduct, isCreating } = useCreateProductMutation({ queryClient, onSuccess });
-  const isSaving = isCreating || isUpdating;
+  const isSaving = isCreating;
 
   const initialValues = {
-    [ProductDialogMode.EDIT]: getInitialProductToUpdate(product as ProductDto),
     [ProductDialogMode.COPY]: getInitialProductToCopy(product as ProductDto),
     [ProductDialogMode.CREATE]: getInitialProductToCreate(),
   };
@@ -167,27 +160,8 @@ const ProductDialog = ({ mode, product, onClose }: ProductDialogProps) => {
   ];
 
   const onSubmit = async (values: ProductFormValues) => {
-    switch (mode) {
-      case ProductDialogMode.CREATE:
-      case ProductDialogMode.COPY:
-        const productToCreate = await getCreateProductDto(values);
-        createProduct(productToCreate);
-        break;
-
-      case ProductDialogMode.EDIT:
-        if (isEqual(values, initialValues[ProductDialogMode.EDIT])) {
-          notify({ variant: 'error', message: 'common:hasNoChange' });
-          onClose();
-        }
-        const { filesToUpload = [], imagesToDelete = [], ...restValues } = values;
-        const productToUpdate = await getUpdateProductDto(
-          { ...product, ...restValues } as ProductDto,
-          filesToUpload,
-          imagesToDelete
-        );
-        updateProduct(productToUpdate);
-        break;
-    }
+    const productToCreate = await getCreateProductDto(values);
+    createProduct(productToCreate);
   };
 
   return (

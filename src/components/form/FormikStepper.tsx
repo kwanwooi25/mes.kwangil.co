@@ -1,21 +1,14 @@
-import {
-  DialogActions,
-  DialogContent,
-  Step,
-  StepLabel,
-  Stepper,
-  Theme,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core';
+import RoundedButton from 'components/RoundedButton';
 import { Form, Formik, FormikConfig, FormikHelpers, FormikValues } from 'formik';
-import React, { ReactElement, createRef, useState } from 'react';
+import React, { createRef, ReactElement, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
+import {
+    createStyles, DialogActions, DialogContent, makeStyles, Step, StepLabel, Stepper, Theme
+} from '@material-ui/core';
 import DoneIcon from '@material-ui/icons/Done';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import RoundedButton from 'components/RoundedButton';
-import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -24,6 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     dialogContent: {
       padding: theme.spacing(1, 3),
+      minHeight: '320px',
     },
     actionButtons: {
       padding: theme.spacing(3),

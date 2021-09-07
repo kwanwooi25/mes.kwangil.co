@@ -133,7 +133,6 @@ export enum ProductWidth {
 
 export enum ProductDialogMode {
   CREATE = 'CREATE',
-  EDIT = 'EDIT',
   COPY = 'COPY',
 }
 
