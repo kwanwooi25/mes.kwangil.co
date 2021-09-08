@@ -35,6 +35,7 @@ export default {
     yearMonth: '{{year}}년 {{month}}월',
     sheetCount: '{{countString}} 매',
     weightInKg: '{{weight}} kg',
+    currency: '{{value}} 원',
     yesterday: '어제',
     today: '오늘',
     tomorrow: '내일',
@@ -175,6 +176,8 @@ export default {
     minQuantity: '최소수량',
     plateCost: '동판비용',
     plateCount: '동판개수',
+    print: '인쇄',
+    printNone: '무지',
 
     createQuoteSuccess: '견적 생성 성공!',
     createQuoteFailed: '견적 생성 실패!',

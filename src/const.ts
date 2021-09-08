@@ -62,6 +62,12 @@ export enum AccountListItemHeight {
   TABLET = 48,
 }
 
+export enum QuoteListItemHeight {
+  MOBILE = 96 + 16,
+  TABLET = 72 + 16,
+  DESKTOP = 48 + 16,
+}
+
 export enum ProductListItemHeight {
   MOBILE = 71 + 16,
   TABLET = 47 + 16,

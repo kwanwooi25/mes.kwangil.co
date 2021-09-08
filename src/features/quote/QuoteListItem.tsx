@@ -1,13 +1,17 @@
+import AccountName from 'components/AccountName';
 import ConfirmDialog from 'components/dialog/Confirm';
 import Loading from 'components/Loading';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
+import { ProductDto } from 'features/product/interface';
 import React, { memo, MouseEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getProductSize } from 'utils/product';
+import { formatDigit } from 'utils/string';
 
 import {
     Checkbox, createStyles, IconButton, ListItem, ListItemIcon, ListItemProps,
-    ListItemSecondaryAction, ListItemText, makeStyles, Menu, MenuItem, Theme
+    ListItemSecondaryAction, ListItemText, makeStyles, Menu, MenuItem, Theme, Typography
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 
@@ -16,15 +20,45 @@ import { QuoteDto } from './interface';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     quoteDetail: {
-      // display: 'grid',
-      // gridTemplateColumns: '3fr 2fr',
-      // gridTemplateAreas: `
-      //   "accountName accountName"
-      //   "productName productName"
-      //   "productSize stockBalance"
-      // `,
-      // alignItems: 'center',
-      // gridColumnGap: theme.spacing(1),
+      display: 'grid',
+      gridTemplateColumns: '2fr 1fr',
+      gridTemplateAreas: `
+        "accountName accountName"
+        "productName productName"
+        "productSize minQuantity"
+        "productDetail unitPrice"
+      `,
+      alignItems: 'center',
+      gridColumnGap: theme.spacing(1),
+      paddingRight: theme.spacing(2),
+      [theme.breakpoints.up('sm')]: {
+        gridTemplateColumns: '2fr 2fr 1fr 100px',
+        gridTemplateAreas: `
+          "accountName accountName minQuantity unitPrice"
+          "productName productName minQuantity unitPrice"
+          "productSize productDetail minQuantity unitPrice"
+        `,
+      },
+      [theme.breakpoints.up('md')]: {
+        gridTemplateColumns: 'repeat(4, 1fr) 100px',
+        gridTemplateAreas: `
+          "accountName productSize productDetail minQuantity unitPrice"
+          "productName productSize productDetail minQuantity unitPrice"
+        `,
+      },
+    },
+    accountName: { gridArea: 'accountName' },
+    productName: { gridArea: 'productName' },
+    productSize: { gridArea: 'productSize' },
+    productDetail: { gridArea: 'productDetail' },
+    unitPrice: {
+      gridArea: 'unitPrice',
+      justifySelf: 'end',
+    },
+    minQuantity: { gridArea: 'minQuantity' },
+
+    accountNameLink: {
+      fontSize: '14px',
     },
   })
 );
@@ -95,6 +129,10 @@ const QuoteListItem = ({
     actionButtons.push({ label: t('common:delete'), onClick: handleClickDelete });
   }
 
+  const { account, thickness, length, width, productName, printColorCount, unitPrice, minQuantity } = quote;
+
+  const productDetail = !printColorCount ? t('printNone') : `${t('print')} ${printColorCount}도`;
+
   return (
     <ListItem divider style={{ height: itemHeight }} selected={isSelected}>
       {isSelectable && (
@@ -103,7 +141,18 @@ const QuoteListItem = ({
         </ListItemIcon>
       )}
       <ListItemText>
-        <div className={classes.quoteDetail}>{JSON.stringify(quote)}</div>
+        <div className={classes.quoteDetail}>
+          <AccountName account={account} className={classes.accountName} linkClassName={classes.accountNameLink} />
+          <Typography className={classes.productName}>{productName}</Typography>
+          <Typography className={classes.productSize}>
+            {getProductSize({ thickness, length, width } as ProductDto)}
+          </Typography>
+          <Typography className={classes.productDetail}>{productDetail}</Typography>
+          <Typography className={classes.unitPrice}>{t('common:currency', { value: unitPrice })}</Typography>
+          <Typography className={classes.minQuantity}>
+            {t('common:sheetCount', { countString: formatDigit(minQuantity) })}
+          </Typography>
+        </div>
       </ListItemText>
       {!!actionButtons.length && (
         <ListItemSecondaryAction>

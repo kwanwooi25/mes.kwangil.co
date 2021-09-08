@@ -6,6 +6,7 @@ import ListEmpty from 'components/ListEmpty';
 import SelectionPanel from 'components/SelectionPanel';
 import SubToolbar from 'components/SubToolbar';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
+import { QuoteListItemHeight } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useScreenSize } from 'hooks/useScreenSize';
@@ -48,7 +49,11 @@ const QuotePage = (props: QuotePageProps) => {
   } = useSelection(quoteIds);
 
   const itemCount = quotes.length + 1;
-  const itemHeight = isTabletLayout ? 180 : 180;
+  const itemHeight = isMobileLayout
+    ? QuoteListItemHeight.MOBILE
+    : isTabletLayout
+    ? QuoteListItemHeight.TABLET
+    : QuoteListItemHeight.DESKTOP;
   const searchResult = t('common:searchResult', {
     count: formatDigit(data?.pages[data.pages.length - 1].count || 0),
   } as any);
