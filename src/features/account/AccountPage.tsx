@@ -82,7 +82,7 @@ const AccountPage = (props: AccountPageProps) => {
   } = useSelection(accountIds);
 
   const itemCount = accounts.length + 1;
-  const itemHeight = isTabletLayout ? AccountListItemHeight.TABLET : AccountListItemHeight.MOBILE;
+  const itemHeight = isMobileLayout ? AccountListItemHeight.MOBILE : AccountListItemHeight.TABLET;
   const searchResult = t('common:searchResult', {
     count: formatDigit(data?.pages[data.pages.length - 1].count || 0),
   } as any);
