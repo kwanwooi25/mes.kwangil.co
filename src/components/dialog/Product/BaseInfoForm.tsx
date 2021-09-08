@@ -1,13 +1,14 @@
-import { ProductLength, ProductThickness, ProductWidth } from 'const';
-import React, { ChangeEvent } from 'react';
-import { Theme, createStyles, makeStyles } from '@material-ui/core';
-
-import { AccountOption } from 'features/account/interface';
 import Input from 'components/form/Input';
-import { ProductFormValues } from '.';
 import SelectAccount from 'components/form/SelectAccount';
+import { ProductLength, ProductThickness, ProductWidth } from 'const';
+import { AccountOption } from 'features/account/interface';
 import { useFormikContext } from 'formik';
+import React, { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { createStyles, makeStyles, Theme } from '@material-ui/core';
+
+import { ProductFormValues } from './';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -64,7 +65,7 @@ const BaseInfoForm = (props: BaseInfoFormProps) => {
         value={values.account}
         onChange={handleChangeAccount}
         onBlur={handleBlur}
-        errorMessage={touched.name ? errors.account : ''}
+        errorMessage={touched.account ? errors.account : ''}
       />
       <Input
         className={classes.name}

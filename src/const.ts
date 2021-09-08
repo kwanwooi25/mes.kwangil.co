@@ -171,6 +171,12 @@ export enum PlateLength {
   MAX = 800,
 }
 
+export enum VariableRate {
+  STEP = 10,
+  MIN = 350,
+  MAX = 700,
+}
+
 export enum PlateStatus {
   NEW = 'NEW',
   UPDATE = 'UPDATE',

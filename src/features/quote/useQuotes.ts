@@ -1,5 +1,6 @@
 import { DEFAULT_LIST_LIMIT } from 'const';
-import { useInfiniteQuery } from 'react-query';
+import useNotification from 'features/notification/useNotification';
+import { QueryClient, useInfiniteQuery, useMutation } from 'react-query';
 import { GetListResponse } from 'types/api';
 
 import { QuoteDto, QuoteFilter } from './interface';
@@ -23,4 +24,29 @@ export const useInfiniteQuotes = (filter: QuoteFilter, limit: number = DEFAULT_L
   const loadMore = () => hasNextPage && !isFetching && fetchNextPage();
 
   return { loadMore, ...quoteInfiniteQuery };
+};
+
+export const useCreateQuoteMutation = ({
+  queryClient,
+  onSuccess = () => {},
+  onError = () => {},
+}: {
+  queryClient: QueryClient;
+  onSuccess?: () => any;
+  onError?: () => any;
+}) => {
+  const { notify } = useNotification();
+  const { mutateAsync: createQuote, isLoading: isCreating } = useMutation(quoteApi.createQuote, {
+    onSuccess: () => {
+      notify({ variant: 'success', message: 'quotes:createQuoteSuccess' });
+      queryClient.invalidateQueries('quotes');
+      onSuccess();
+    },
+    onError: () => {
+      notify({ variant: 'error', message: 'quotes:createQuoteFailed' });
+      onError();
+    },
+  });
+
+  return { createQuote, isCreating };
 };

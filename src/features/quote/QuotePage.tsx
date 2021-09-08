@@ -1,5 +1,6 @@
 import CreationFab from 'components/CreationFab';
 import ConfirmDialog from 'components/dialog/Confirm';
+import QuoteDialog from 'components/dialog/Quote';
 import EndOfListItem from 'components/EndOfListItem';
 import ListEmpty from 'components/ListEmpty';
 import SelectionPanel from 'components/SelectionPanel';
@@ -71,8 +72,7 @@ const QuotePage = (props: QuotePageProps) => {
   };
 
   const openQuoteDialog = () => {
-    // TODO: open create quote dialog
-    // openDialog(<QuoteDialog onClose={closeDialog} />);
+    openDialog(<QuoteDialog onClose={closeDialog} />);
   };
 
   let selectModeButtons: JSX.Element[] = [];
