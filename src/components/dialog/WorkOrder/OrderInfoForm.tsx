@@ -10,6 +10,7 @@ import { capitalize } from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { getProductSize } from 'utils/product';
+import { getWeight } from 'utils/workOrder';
 
 import {
     Checkbox, createStyles, Divider, FormControlLabel, makeStyles, Theme, Typography
@@ -21,23 +22,24 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     orderInfoForm: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(2, 1fr)',
+      gridTemplateColumns: 'repeat(4, 1fr)',
       gridTemplateAreas: `
-        "productTitle productTitle"
-        "deliverBy deliverBy"
-        "orderQuantity orderQuantity"
-        "isUrgent shouldBePunctual"
-        "plateStatus plateStatus"
-        "deliveryMethod deliveryMethod"
-        "workMemo workMemo"
-        "deliveryMemo deliveryMemo"
+        "productTitle productTitle productTitle productTitle"
+        "deliverBy deliverBy deliverBy deliverBy"
+        "orderQuantity orderQuantity orderQuantity orderWeight"
+        "isUrgent isUrgent shouldBePunctual shouldBePunctual"
+        "plateStatus plateStatus plateStatus plateStatus"
+        "deliveryMethod deliveryMethod deliveryMethod deliveryMethod"
+        "workMemo workMemo workMemo workMemo"
+        "deliveryMemo deliveryMemo deliveryMemo deliveryMemo"
       `,
       gridColumnGap: theme.spacing(2),
+      alignItems: 'center',
       [theme.breakpoints.up('sm')]: {
         gridTemplateColumns: 'repeat(4, 1fr)',
         gridTemplateAreas: `
           "productTitle productTitle productTitle productTitle"
-          "deliverBy deliverBy orderQuantity orderQuantity"
+          "deliverBy deliverBy orderQuantity orderWeight"
           "isUrgent plateStatus plateStatus plateStatus"
           "shouldBePunctual deliveryMethod deliveryMethod deliveryMethod"
           "workMemo workMemo workMemo workMemo"
@@ -56,6 +58,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     orderQuantity: {
       gridArea: 'orderQuantity',
+    },
+    orderWeight: {
+      gridArea: 'orderWeight',
+      justifySelf: 'end',
     },
     isUrgent: {
       gridArea: 'isUrgent',
@@ -138,6 +144,9 @@ const OrderInfoForm = (props: OrderInfoFormProps) => {
         helperText={touched.orderQuantity && errors.orderQuantity}
         inputProps={{ min: 1, max: Infinity }}
       />
+      <Typography className={classes.orderWeight}>
+        ({getWeight({ product, quantity: values.orderQuantity })} kg)
+      </Typography>
       <FormControlLabel
         className={classes.isUrgent}
         control={<Checkbox color="primary" name="isUrgent" checked={values.isUrgent} onChange={handleChange} />}
