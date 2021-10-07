@@ -171,13 +171,13 @@ const WORK_ORDER_KEY_TO_LABEL: { [key: string]: string } = {
   deliverBy: '납기일',
   shouldBePunctual: '납기엄수',
   isUrgent: '지급',
-  workMemo: '작업메모',
-  deliveryMemo: '납품메모',
   completedAt: '완료일',
   completedQuantity: '완료수량',
   deliveredAt: '납품일',
   deliveredQuantity: '납품수량',
   deliveryMethod: '납품방법',
+  workMemo: '작업메모',
+  deliveryMemo: '납품메모',
 };
 
 function getFileReader<T>(variant: ExcelVariant, stateSetter: Dispatch<SetStateAction<T[]>>) {
@@ -468,14 +468,14 @@ function processWorkOrdersForDownload(
           value = +workOrder.product[key];
           break;
         case 'plateStatus':
-          value = PLATE_STATUS_TEXT[key];
+          value = PLATE_STATUS_TEXT[value];
           break;
         case 'shouldBePunctual':
         case 'isUrgent':
           value = value ? 'Y' : '';
           break;
         case 'deliveryMethod':
-          value = DELIVERY_METHOD_TEXT[key];
+          value = DELIVERY_METHOD_TEXT[value];
           break;
       }
 
