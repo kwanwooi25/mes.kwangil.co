@@ -7,6 +7,9 @@ export interface WorkOrderFilter {
   orderedAt: string[];
   accountName?: string;
   productName?: string;
+  thickness?: string;
+  length?: string;
+  width?: string;
   includeCompleted?: boolean;
 }
 
@@ -34,7 +37,8 @@ export interface WorkOrderDto {
   product: ProductDto;
 }
 
-export interface CreateWorkOrderDto extends Omit<WorkOrderDto, 'id' | 'orderUpdatedAt' | 'account' | 'product'> {
+export interface CreateWorkOrderDto
+  extends Omit<WorkOrderDto, 'id' | 'orderUpdatedAt' | 'account' | 'product'> {
   accountId: number;
   productId: number;
 }

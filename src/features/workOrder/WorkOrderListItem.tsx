@@ -18,8 +18,21 @@ import { useQueryClient } from 'react-query';
 import { getWorkOrderToUpdate } from 'utils/workOrder';
 
 import {
-    Checkbox, Chip, createStyles, IconButton, Link, ListItem, ListItemIcon, ListItemProps,
-    ListItemSecondaryAction, ListItemText, makeStyles, Menu, MenuItem, Theme, Typography
+  Checkbox,
+  Chip,
+  createStyles,
+  IconButton,
+  Link,
+  ListItem,
+  ListItemIcon,
+  ListItemProps,
+  ListItemSecondaryAction,
+  ListItemText,
+  makeStyles,
+  Menu,
+  MenuItem,
+  Theme,
+  Typography,
 } from '@material-ui/core';
 import { red, yellow } from '@material-ui/core/colors';
 import DoneIcon from '@material-ui/icons/Done';
@@ -28,6 +41,7 @@ import { BlobProvider } from '@react-pdf/renderer';
 
 import { WorkOrderDto, WorkOrderFilter } from './interface';
 import { useDeleteWorkOrdersMutation, useUpdateWorkOrderMutation } from './useWorkOrders';
+import { highlight } from 'utils/string';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -161,7 +175,7 @@ const useStyles = makeStyles((theme: Theme) =>
     value: {
       fontSize: theme.typography.body1.fontSize,
     },
-  })
+  }),
 );
 
 export interface WorkOrderListItemProps extends ListItemProps {
@@ -196,7 +210,10 @@ const WorkOrderListItem = ({
 
   const handleSelectionChange = () => toggleSelection(workOrder);
 
-  const openMenu = useCallback((e: MouseEvent<HTMLButtonElement>) => setMenuAnchorEl(e.currentTarget), []);
+  const openMenu = useCallback(
+    (e: MouseEvent<HTMLButtonElement>) => setMenuAnchorEl(e.currentTarget),
+    [],
+  );
   const closeMenu = useCallback(() => setMenuAnchorEl(null), []);
 
   const handleChangeWorkOrderStatus = (value: WorkOrderStatus) => {
@@ -223,9 +240,12 @@ const WorkOrderListItem = ({
   };
 
   const handleClickComplete = () =>
-    openDialog(<WorkOrdersCompleteDialog workOrders={[workOrder]} onClose={closeDialogAndUnselect} />);
+    openDialog(
+      <WorkOrdersCompleteDialog workOrders={[workOrder]} onClose={closeDialogAndUnselect} />,
+    );
 
-  const handleClickEdit = () => openDialog(<WorkOrderDialog workOrder={workOrder} onClose={closeDialog} />);
+  const handleClickEdit = () =>
+    openDialog(<WorkOrderDialog workOrder={workOrder} onClose={closeDialog} />);
 
   const handleClickDelete = () =>
     openDialog(
@@ -236,7 +256,7 @@ const WorkOrderListItem = ({
           isConfirmed && deleteWorkOrders([workOrder.id]);
           closeDialogAndUnselect();
         }}
-      />
+      />,
     );
 
   const { product } = workOrder;
@@ -250,7 +270,6 @@ const WorkOrderListItem = ({
     orderWeight,
     completedQuantity,
     completedWeight,
-    productSize,
     productSummary,
     isPrint,
     plateStatus,
@@ -268,7 +287,13 @@ const WorkOrderListItem = ({
       label: t(`workOrders:workOrderStatus:${value}`),
       value,
     }));
-  const productNameMaxWidth = isDesktopLayout ? 295 : isTabletLayout ? 280 : isMobileLayout ? 480 : undefined;
+  const productNameMaxWidth = isDesktopLayout
+    ? 295
+    : isTabletLayout
+    ? 280
+    : isMobileLayout
+    ? 480
+    : undefined;
 
   let actionButtons: { label: string; onClick: () => void }[] = [];
   if (workOrder.workOrderStatus === WorkOrderStatus.CUTTING && canUpdateWorkOrders) {
@@ -307,9 +332,15 @@ const WorkOrderListItem = ({
             <WorkOrderId workOrder={workOrder} />
             {!isCompleted && (
               <div className={classes.workOrderTags}>
-                {workOrder.isUrgent && <Chip className={classes.isUrgent} size="small" label={t('isUrgent')} />}
+                {workOrder.isUrgent && (
+                  <Chip className={classes.isUrgent} size="small" label={t('isUrgent')} />
+                )}
                 {workOrder.shouldBePunctual && (
-                  <Chip className={classes.shouldBePunctual} size="small" label={t('shouldBePunctual')} />
+                  <Chip
+                    className={classes.shouldBePunctual}
+                    size="small"
+                    label={t('shouldBePunctual')}
+                  />
                 )}
               </div>
             )}
@@ -344,7 +375,11 @@ const WorkOrderListItem = ({
               <DoneIcon fontSize="large" />
             )}
             {isPrint && (
-              <Chip className="plateStatus" label={plateStatus} style={{ backgroundColor: plateStatusColor }} />
+              <Chip
+                className="plateStatus"
+                label={plateStatus}
+                style={{ backgroundColor: plateStatusColor }}
+              />
             )}
           </div>
           <div className={classes.productNames}>
@@ -353,10 +388,23 @@ const WorkOrderListItem = ({
               linkClassName={classes.accountName}
               searchText={filter.accountName}
             />
-            <ProductName product={product} maxWidth={productNameMaxWidth} searchText={filter.productName} />
+            <ProductName
+              product={product}
+              maxWidth={productNameMaxWidth}
+              searchText={filter.productName}
+            />
           </div>
           <div className={classes.productDetail}>
-            <Typography>{productSize}</Typography>
+            <Typography>
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: `${highlight(String(product.thickness), filter.thickness)} x ${highlight(
+                    String(product.length),
+                    filter.length,
+                  )} x ${highlight(String(product.width), filter.width)}`,
+                }}
+              />
+            </Typography>
             <Typography>{productSummary}</Typography>
           </div>
           <div className={classes.quantities}>

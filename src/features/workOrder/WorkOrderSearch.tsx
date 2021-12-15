@@ -42,6 +42,21 @@ const useStyles = makeStyles((theme: Theme) =>
       gridArea: 'divider',
       margin: theme.spacing(2, 0),
     },
+    searchInputs: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(3, 1fr)',
+      gridColumnGap: theme.spacing(2),
+      gridTemplateAreas: `
+        "accountName accountName accountName"
+        "productName productName productName"
+        "thickness length width"
+      `,
+      '& > .accountName': { gridArea: 'accountName' },
+      '& > .productName': { gridArea: 'productName' },
+      '& > .thickness': { gridArea: 'thickness' },
+      '& > .length': { gridArea: 'length' },
+      '& > .width': { gridArea: 'width' },
+    },
     buttons: {
       gridArea: 'buttons',
       display: 'grid',
@@ -154,19 +169,44 @@ const WorkOrderSearch = ({ filter, onChange }: WorkOrderSearchProps) => {
         </RoundedButton>
       </div>
       <Divider className={classes.divider} />
-      <Input
-        name="accountName"
-        label={t('accountName')}
-        value={values.accountName}
-        onChange={handleChange}
-        disabled={!canViewAccounts}
-      />
-      <Input
-        name="productName"
-        label={t('productName')}
-        value={values.productName}
-        onChange={handleChange}
-      />
+      <div className={classes.searchInputs}>
+        <Input
+          className="accountName"
+          name="accountName"
+          label={t('accountName')}
+          value={values.accountName}
+          onChange={handleChange}
+          disabled={!canViewAccounts}
+        />
+        <Input
+          className="productName"
+          name="productName"
+          label={t('productName')}
+          value={values.productName}
+          onChange={handleChange}
+        />
+        <Input
+          className="thickness"
+          name="thickness"
+          label={t('products:thickness')}
+          value={values.thickness}
+          onChange={handleChange}
+        />
+        <Input
+          className="length"
+          name="length"
+          label={t('products:length')}
+          value={values.length}
+          onChange={handleChange}
+        />
+        <Input
+          className="width"
+          name="width"
+          label={t('products:width')}
+          value={values.width}
+          onChange={handleChange}
+        />
+      </div>
       <FormControlLabel
         control={
           <Checkbox

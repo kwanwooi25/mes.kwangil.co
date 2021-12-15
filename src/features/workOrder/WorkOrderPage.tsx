@@ -29,8 +29,10 @@ import { usePDF } from '@react-pdf/renderer';
 
 import { CreateWorkOrdersDto, WorkOrderDto, WorkOrderFilter } from './interface';
 import {
-    useBulkCreateWorkOrderMutation, useDeleteWorkOrdersMutation, useDownloadWorkOrders,
-    useInfiniteWorkOrders
+  useBulkCreateWorkOrderMutation,
+  useDeleteWorkOrdersMutation,
+  useDownloadWorkOrders,
+  useInfiniteWorkOrders,
 } from './useWorkOrders';
 import WorkOrderListItem from './WorkOrderListItem';
 import WorkOrderSearch from './WorkOrderSearch';
@@ -41,6 +43,9 @@ export const DEFAULT_WORK_ORDER_FILTER: WorkOrderFilter = {
   orderedAt: [format(subDays(new Date(), 14), DATE_FORMAT), format(new Date(), DATE_FORMAT)],
   accountName: '',
   productName: '',
+  thickness: '',
+  length: '',
+  width: '',
   includeCompleted: false,
 };
 
@@ -62,9 +67,11 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
       openDialog(
         <AlertDialog
           title={t('common:bulkCreationResult')}
-          message={`${t('common:success')}: ${createdCount}<br>${t('common:fail')}: ${failedList.length}`}
+          message={`${t('common:success')}: ${createdCount}<br>${t('common:fail')}: ${
+            failedList.length
+          }`}
           onClose={closeDialog}
-        />
+        />,
       );
       if (failedList.length) {
         downloadWorkbook[ExcelVariant.WORK_ORDER](failedList, t('common:bulkCreationResult'));
@@ -76,7 +83,9 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
     onSuccess: () => resetSelection(),
   });
 
-  const workOrders = data?.pages.reduce((workOrders: WorkOrderDto[], { rows }) => [...workOrders, ...rows], []) || [];
+  const workOrders =
+    data?.pages.reduce((workOrders: WorkOrderDto[], { rows }) => [...workOrders, ...rows], []) ||
+    [];
   const workOrderIds = workOrders.map(({ id }) => id);
   const {
     selectedIds,
@@ -99,7 +108,9 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
   } as any);
 
   const selectedWorkOrders = workOrders.filter(({ id }) => selectedIds.includes(id));
-  const isAllCutting = selectedWorkOrders.every(({ workOrderStatus }) => workOrderStatus === WorkOrderStatus.CUTTING);
+  const isAllCutting = selectedWorkOrders.every(
+    ({ workOrderStatus }) => workOrderStatus === WorkOrderStatus.CUTTING,
+  );
 
   const [instance, update] = usePDF({ document: <WorkOrderPDF workOrders={selectedWorkOrders} /> });
 
@@ -115,12 +126,23 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
   const openWorkOrderDialog = () => openDialog(<WorkOrderDialog onClose={closeDialog} />);
 
   const openExcelUploadDialog = () =>
-    openDialog(<ExcelUploadDialog variant={ExcelVariant.WORK_ORDER} onSave={createWorkOrders} onClose={closeDialog} />);
+    openDialog(
+      <ExcelUploadDialog
+        variant={ExcelVariant.WORK_ORDER}
+        onSave={createWorkOrders}
+        onClose={closeDialog}
+      />,
+    );
 
   const downloadExcel = () => download(t('workOrderList'));
 
   const openWorkOrdersCompleteDialog = () =>
-    openDialog(<WorkOrdersCompleteDialog workOrders={selectedWorkOrders} onClose={closeDialogAndResetSelection} />);
+    openDialog(
+      <WorkOrdersCompleteDialog
+        workOrders={selectedWorkOrders}
+        onClose={closeDialogAndResetSelection}
+      />,
+    );
 
   const openWorkOrderPDF = () => update();
 
@@ -133,7 +155,7 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
           isConfirmed && deleteWorkOrders(selectedIds as string[]);
           closeDialogAndResetSelection();
         }}
-      />
+      />,
     );
 
   const renderItem = (index: number) => {
@@ -150,7 +172,12 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
         isSelectable={!!selectModeButtons.length}
       />
     ) : (
-      <EndOfListItem key="end-of-list" height={itemHeight} isLoading={isFetching} message={searchResult} />
+      <EndOfListItem
+        key="end-of-list"
+        height={itemHeight}
+        isLoading={isFetching}
+        message={searchResult}
+      />
     );
   };
 
@@ -163,7 +190,7 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
           <IconButton onClick={openWorkOrdersCompleteDialog}>
             <Done />
           </IconButton>
-        </Tooltip>
+        </Tooltip>,
       );
     }
     selectModeButtons = [
