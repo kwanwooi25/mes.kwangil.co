@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
       gridGap: theme.spacing(2),
       padding: theme.spacing(1, 0),
     },
-  })
+  }),
 );
 
 export interface AccountSearchProps {
@@ -47,7 +47,6 @@ const AccountSearch = ({ filter, onChange }: AccountSearchProps) => {
     initialValues,
     onReset: () => {
       onChange({ accountName: '' });
-      dispatch(closeSearch());
     },
     onSubmit: ({ accountName = '' }) => {
       onChange({ accountName });
@@ -61,7 +60,13 @@ const AccountSearch = ({ filter, onChange }: AccountSearchProps) => {
 
   return (
     <form onSubmit={handleSubmit} className={classes.accountSearch} noValidate>
-      <Input name="accountName" label={t('name')} value={values.accountName} onChange={handleChange} autoFocus />
+      <Input
+        name="accountName"
+        label={t('name')}
+        value={values.accountName}
+        onChange={handleChange}
+        autoFocus
+      />
       <Divider className={classes.divider} />
       <div className={classes.buttons}>
         <RoundedButton fullWidth variant="outlined" size="large" onClick={handleReset}>

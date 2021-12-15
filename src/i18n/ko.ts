@@ -41,6 +41,7 @@ export default {
     tomorrow: '내일',
     weeksCount: '{{weeks}}주',
     monthsCount: '{{months}}개월',
+    yearsCount: '{{years}}년',
     sheet: '원단',
     treatment: '처리',
     loadMore: '더보기',
@@ -375,7 +376,8 @@ export default {
     workOrder: '작업지시서',
     workOrderList: '작업지시목록',
     plateIsReady: '동판 제작 완료',
-    plateIsReadyMessage: '<p><strong>{{productName}}</strong></p><p>동판 제작 완료 하시겠습니까?</p>',
+    plateIsReadyMessage:
+      '<p><strong>{{productName}}</strong></p><p>동판 제작 완료 하시겠습니까?</p>',
     noHistory: '작업이력이 없습니다.',
 
     searchPlaceholder: '제품명으로 검색',
@@ -393,7 +395,8 @@ export default {
     completeWorkOrdersSuccess: '작업 완료 등록 성공!',
     completeWorkOrdersFailed: '작업 완료 등록 실패!',
     deleteWorkOrderConfirm: '<strong>{{workOrderId}}</strong>을(를) 정말 삭제하시겠습니까?',
-    deleteWorkOrdersConfirm: '선택하신 <strong>{{count}}개</strong> 작업지시를 모두 삭제하시겠습니까?',
+    deleteWorkOrdersConfirm:
+      '선택하신 <strong>{{count}}개</strong> 작업지시를 모두 삭제하시겠습니까?',
     deleteWorkOrdersSuccess: '작업지시 삭제 성공!',
     deleteWorkOrdersFailed: '작업지시 삭제 실패!',
   },
@@ -407,7 +410,8 @@ export default {
     deliveryConfirm: '출고 확정',
 
     getDeliveriesFailed: '출고 목록 가져오기 실패!',
-    deleteDeliveryConfirm: '출고 항목 (<strong>{{productTitle}}</strong>) 을 정말 삭제하시겠습니까?',
+    deleteDeliveryConfirm:
+      '출고 항목 (<strong>{{productTitle}}</strong>) 을 정말 삭제하시겠습니까?',
     deleteDeliveriesConfirm: '선택하신 <strong>{{count}}개</strong> 출고를 모두 삭제하시겠습니까?',
   },
 

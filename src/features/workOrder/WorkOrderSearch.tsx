@@ -11,7 +11,12 @@ import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import {
-    Checkbox, createStyles, Divider, FormControlLabel, makeStyles, Theme
+  Checkbox,
+  createStyles,
+  Divider,
+  FormControlLabel,
+  makeStyles,
+  Theme,
 } from '@material-ui/core';
 
 import { WorkOrderFilter } from './interface';
@@ -44,7 +49,7 @@ const useStyles = makeStyles((theme: Theme) =>
       gridGap: theme.spacing(2),
       padding: theme.spacing(1, 0),
     },
-  })
+  }),
 );
 
 export interface WorkOrderSearchProps {
@@ -62,17 +67,17 @@ const WorkOrderSearch = ({ filter, onChange }: WorkOrderSearchProps) => {
 
   const initialValues = { ...DEFAULT_WORK_ORDER_FILTER };
 
-  const { values, setFieldValue, setValues, handleSubmit, handleReset, handleChange } = useFormik<WorkOrderFilter>({
-    initialValues,
-    onReset: () => {
-      onChange({ ...DEFAULT_WORK_ORDER_FILTER });
-      dispatch(closeSearch());
-    },
-    onSubmit: (values) => {
-      onChange({ ...values });
-      dispatch(closeSearch());
-    },
-  });
+  const { values, setFieldValue, setValues, handleSubmit, handleReset, handleChange } =
+    useFormik<WorkOrderFilter>({
+      initialValues,
+      onReset: () => {
+        onChange({ ...DEFAULT_WORK_ORDER_FILTER });
+      },
+      onSubmit: (values) => {
+        onChange({ ...values });
+        dispatch(closeSearch());
+      },
+    });
 
   const handleChangeOrderedAtStart = (date: Date) => {
     const startDate = format(date, DATE_FORMAT);
@@ -87,19 +92,16 @@ const WorkOrderSearch = ({ filter, onChange }: WorkOrderSearchProps) => {
   const searchForADay = (date: Date) => {
     const targetDate = format(date, DATE_FORMAT);
     setFieldValue('orderedAt', [targetDate, targetDate]);
-    handleSubmit();
   };
   const searchForWeeks = (weeks: number) => () => {
     const today = format(new Date(), DATE_FORMAT);
     const start = format(addDays(subWeeks(new Date(), weeks), 1), DATE_FORMAT);
     setFieldValue('orderedAt', [start, today]);
-    handleSubmit();
   };
   const searchForMonths = (months: number) => () => {
     const today = format(new Date(), DATE_FORMAT);
     const start = format(addDays(subMonths(new Date(), months), 1), DATE_FORMAT);
     setFieldValue('orderedAt', [start, today]);
-    handleSubmit();
   };
   const searchForYesterday = () => searchForADay(subDays(new Date(), 1));
   const searchForToday = () => searchForADay(new Date());
@@ -148,7 +150,7 @@ const WorkOrderSearch = ({ filter, onChange }: WorkOrderSearchProps) => {
           {t('common:monthsCount', { months: 6 })}
         </RoundedButton>
         <RoundedButton variant="outlined" onClick={searchForMonths(12)}>
-          {t('common:monthsCount', { months: 12 })}
+          {t('common:yearsCount', { years: 1 })}
         </RoundedButton>
       </div>
       <Divider className={classes.divider} />
@@ -159,10 +161,20 @@ const WorkOrderSearch = ({ filter, onChange }: WorkOrderSearchProps) => {
         onChange={handleChange}
         disabled={!canViewAccounts}
       />
-      <Input name="productName" label={t('productName')} value={values.productName} onChange={handleChange} />
+      <Input
+        name="productName"
+        label={t('productName')}
+        value={values.productName}
+        onChange={handleChange}
+      />
       <FormControlLabel
         control={
-          <Checkbox color="primary" name="includeCompleted" checked={values.includeCompleted} onChange={handleChange} />
+          <Checkbox
+            color="primary"
+            name="includeCompleted"
+            checked={values.includeCompleted}
+            onChange={handleChange}
+          />
         }
         label={t('includeCompleted')}
       />

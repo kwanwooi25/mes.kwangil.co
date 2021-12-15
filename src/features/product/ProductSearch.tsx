@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme: Theme) =>
       gridGap: theme.spacing(2),
       padding: theme.spacing(1, 0),
     },
-  })
+  }),
 );
 
 export interface ProductSearchProps {
@@ -84,17 +84,17 @@ const ProductSearch = ({ filter, onChange }: ProductSearchProps) => {
 
   const initialValues = { ...DEFAULT_PRODUCT_FILTER };
 
-  const { values, setFieldValue, setValues, handleSubmit, handleChange, handleReset } = useFormik<ProductFilter>({
-    initialValues,
-    onReset: () => {
-      onChange({ ...DEFAULT_PRODUCT_FILTER });
-      dispatch(closeSearch());
-    },
-    onSubmit: (values) => {
-      onChange({ ...values });
-      dispatch(closeSearch());
-    },
-  });
+  const { values, setFieldValue, setValues, handleSubmit, handleChange, handleReset } =
+    useFormik<ProductFilter>({
+      initialValues,
+      onReset: () => {
+        onChange({ ...DEFAULT_PRODUCT_FILTER });
+      },
+      onSubmit: (values) => {
+        onChange({ ...values });
+        dispatch(closeSearch());
+      },
+    });
 
   const handleChangeSlider = (key: keyof ProductFilter) => (newValues: number[]) => {
     setFieldValue(key, [...newValues]);

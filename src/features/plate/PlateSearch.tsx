@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme: Theme) =>
       gridGap: theme.spacing(2),
       padding: theme.spacing(1, 0),
     },
-  })
+  }),
 );
 
 export interface PlateSearchProps {
@@ -76,17 +76,17 @@ const PlateSearch = ({ filter, onChange }: PlateSearchProps) => {
 
   const initialValues = { ...DEFAULT_PLATE_FILTER };
 
-  const { values, setFieldValue, setValues, handleChange, handleSubmit, handleReset } = useFormik<PlateFilter>({
-    initialValues,
-    onReset: () => {
-      onChange({ ...DEFAULT_PLATE_FILTER });
-      dispatch(closeSearch());
-    },
-    onSubmit: (values) => {
-      onChange({ ...values });
-      dispatch(closeSearch());
-    },
-  });
+  const { values, setFieldValue, setValues, handleChange, handleSubmit, handleReset } =
+    useFormik<PlateFilter>({
+      initialValues,
+      onReset: () => {
+        onChange({ ...DEFAULT_PLATE_FILTER });
+      },
+      onSubmit: (values) => {
+        onChange({ ...values });
+        dispatch(closeSearch());
+      },
+    });
 
   const handleChangeSlider = (key: keyof PlateFilter) => (newValues: number[]) => {
     setFieldValue(key, [...newValues]);
@@ -115,7 +115,13 @@ const PlateSearch = ({ filter, onChange }: PlateSearchProps) => {
         onChange={handleChange}
         autoFocus={!canViewAccounts}
       />
-      <Input className={classes.plateName} name="name" label={t('name')} value={values.name} onChange={handleChange} />
+      <Input
+        className={classes.plateName}
+        name="name"
+        label={t('name')}
+        value={values.name}
+        onChange={handleChange}
+      />
       <RangeSlider
         className={classes.round}
         label={t('round')}
