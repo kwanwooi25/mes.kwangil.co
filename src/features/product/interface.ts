@@ -6,9 +6,9 @@ import { BaseQuery } from 'types/api';
 export interface ProductFilter {
   accountName: string;
   name: string;
-  thickness: [number, number];
-  length: [number, number];
-  width: [number, number];
+  thickness: string;
+  length: string;
+  width: string;
   extColor: string;
   printColor: string;
 }
@@ -33,7 +33,8 @@ export interface StockDto {
   history: StockHistoryDto[];
 }
 
-export interface CreateStockDto extends Omit<StockDto, 'id' | 'createdAt' | 'updatedAt' | 'history'> {}
+export interface CreateStockDto
+  extends Omit<StockDto, 'id' | 'createdAt' | 'updatedAt' | 'history'> {}
 
 export interface StockHistoryDto {
   id: number;
@@ -82,7 +83,10 @@ export interface ProductDto {
 }
 
 export interface CreateProductDto
-  extends Omit<ProductDto, 'id' | 'account' | 'images' | 'plates' | 'createdAt' | 'updatedAt' | 'deletedAt'> {
+  extends Omit<
+    ProductDto,
+    'id' | 'account' | 'images' | 'plates' | 'createdAt' | 'updatedAt' | 'deletedAt'
+  > {
   images: CreateImageDto[];
 }
 

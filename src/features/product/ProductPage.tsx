@@ -10,10 +10,7 @@ import Loading from 'components/Loading';
 import SelectionPanel from 'components/SelectionPanel';
 import SubToolbar from 'components/SubToolbar';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
-import {
-    ExcelVariant, ProductDialogMode, ProductLength, ProductListItemHeight, ProductThickness,
-    ProductWidth
-} from 'const';
+import { ExcelVariant, ProductDialogMode, ProductListItemHeight } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useScreenSize } from 'hooks/useScreenSize';
@@ -33,8 +30,10 @@ import { CreateProductsDto, ProductDto, ProductFilter } from './interface';
 import ProductListItem from './ProductListItem';
 import ProductSearch from './ProductSearch';
 import {
-    useBulkCreateProductMutation, useDeleteProductsMutation, useDownloadProducts,
-    useInfiniteProducts
+  useBulkCreateProductMutation,
+  useDeleteProductsMutation,
+  useDownloadProducts,
+  useInfiniteProducts,
 } from './useProducts';
 
 export interface ProductPageProps {}
@@ -42,9 +41,9 @@ export interface ProductPageProps {}
 export const DEFAULT_PRODUCT_FILTER: ProductFilter = {
   accountName: '',
   name: '',
-  thickness: [ProductThickness.MIN, ProductThickness.MAX],
-  length: [ProductLength.MIN, ProductLength.MAX],
-  width: [ProductWidth.MIN, ProductWidth.MAX],
+  thickness: '',
+  length: '',
+  width: '',
   extColor: '',
   printColor: '',
 };
@@ -67,9 +66,11 @@ const ProductPage = (props: ProductPageProps) => {
       openDialog(
         <AlertDialog
           title={t('common:bulkCreationResult')}
-          message={`${t('common:success')}: ${createdCount}<br>${t('common:fail')}: ${failedList.length}`}
+          message={`${t('common:success')}: ${createdCount}<br>${t('common:fail')}: ${
+            failedList.length
+          }`}
           onClose={closeDialog}
-        />
+        />,
       );
       if (failedList.length) {
         downloadWorkbook[ExcelVariant.PRODUCT](failedList, t('common:bulkCreationResult'));
@@ -81,7 +82,8 @@ const ProductPage = (props: ProductPageProps) => {
     onSuccess: () => resetSelection(),
   });
 
-  const products = data?.pages.reduce((products: ProductDto[], { rows }) => [...products, ...rows], []) || [];
+  const products =
+    data?.pages.reduce((products: ProductDto[], { rows }) => [...products, ...rows], []) || [];
   const productIds = products.map(({ id }) => id);
   const {
     selectedIds,
@@ -106,7 +108,8 @@ const ProductPage = (props: ProductPageProps) => {
 
   const handleClickRefresh = () => queryClient.invalidateQueries('products');
 
-  const handleClickStock = async () => openDialog(<StockDialog products={selectedProducts} onClose={closeDialog} />);
+  const handleClickStock = async () =>
+    openDialog(<StockDialog products={selectedProducts} onClose={closeDialog} />);
 
   const handleClickDeleteAll = () => {
     openDialog(
@@ -117,16 +120,23 @@ const ProductPage = (props: ProductPageProps) => {
           isConfirmed && deleteProducts(selectedIds as number[]);
           closeDialog();
         }}
-      />
+      />,
     );
   };
 
   const handleToggleSelection = (product: ProductDto) => toggleSelection(product.id);
 
-  const openProductDialog = () => openDialog(<ProductDialog mode={ProductDialogMode.CREATE} onClose={closeDialog} />);
+  const openProductDialog = () =>
+    openDialog(<ProductDialog mode={ProductDialogMode.CREATE} onClose={closeDialog} />);
 
   const openExcelUploadDialog = () =>
-    openDialog(<ExcelUploadDialog variant={ExcelVariant.PRODUCT} onSave={createProducts} onClose={closeDialog} />);
+    openDialog(
+      <ExcelUploadDialog
+        variant={ExcelVariant.PRODUCT}
+        onSave={createProducts}
+        onClose={closeDialog}
+      />,
+    );
 
   const downloadExcel = () => download(t('productList'));
 
@@ -145,18 +155,27 @@ const ProductPage = (props: ProductPageProps) => {
         isSelectable={!!selectModeButtons.length}
       />
     ) : (
-      <EndOfListItem key="end-of-list" height={itemHeight} isLoading={isFetching} message={searchResult} />
+      <EndOfListItem
+        key="end-of-list"
+        height={itemHeight}
+        isLoading={isFetching}
+        message={searchResult}
+      />
     );
   };
 
   let selectModeButtons: JSX.Element[] = [];
   if (canCreateProducts && canUpdateProducts) {
     selectModeButtons.push(
-      <Tooltip key="create-or-update-stocks" title={t('createOrUpdateStock') as string} placement="top">
+      <Tooltip
+        key="create-or-update-stocks"
+        title={t('createOrUpdateStock') as string}
+        placement="top"
+      >
         <IconButton onClick={handleClickStock}>
           <Iso />
         </IconButton>
-      </Tooltip>
+      </Tooltip>,
     );
   }
   if (canDeleteProducts) {
@@ -166,7 +185,7 @@ const ProductPage = (props: ProductPageProps) => {
           {isDeleting && <Loading />}
           <DeleteOutline />
         </IconButton>
-      </Tooltip>
+      </Tooltip>,
     );
   }
 
@@ -240,7 +259,11 @@ const ProductPage = (props: ProductPageProps) => {
       {isMobileLayout && (
         <>
           {canDeleteProducts && (
-            <SelectionPanel isOpen={isSelectMode} selectedCount={selectedIds.length} onClose={resetSelection}>
+            <SelectionPanel
+              isOpen={isSelectMode}
+              selectedCount={selectedIds.length}
+              onClose={resetSelection}
+            >
               <IconButton onClick={handleClickDeleteAll}>
                 <DeleteOutline />
               </IconButton>

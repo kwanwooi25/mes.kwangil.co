@@ -14,12 +14,23 @@ import { useWorkOrdersByProduct } from 'features/workOrder/useWorkOrders';
 import React, { memo, MouseEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
-import { getPrintSummary, getProductSize } from 'utils/product';
+import { getPrintSummary } from 'utils/product';
 import { highlight } from 'utils/string';
 
 import {
-    Checkbox, createStyles, IconButton, ListItem, ListItemIcon, ListItemProps,
-    ListItemSecondaryAction, ListItemText, makeStyles, Menu, MenuItem, Theme, Typography
+  Checkbox,
+  createStyles,
+  IconButton,
+  ListItem,
+  ListItemIcon,
+  ListItemProps,
+  ListItemSecondaryAction,
+  ListItemText,
+  makeStyles,
+  Menu,
+  MenuItem,
+  Theme,
+  Typography,
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 
@@ -86,7 +97,7 @@ const useStyles = makeStyles((theme: Theme) =>
       gridArea: 'printSummary',
       fontSize: '14px',
     },
-  })
+  }),
 );
 
 export interface ProductListItemProps extends ListItemProps {
@@ -112,7 +123,13 @@ const ProductListItem = ({
   const classes = useStyles();
 
   const { openDialog, closeDialog } = useDialog();
-  const { canCreateProducts, canUpdateProducts, canDeleteProducts, canViewWorkOrders, canCreateWorkOrders } = useAuth();
+  const {
+    canCreateProducts,
+    canUpdateProducts,
+    canDeleteProducts,
+    canViewWorkOrders,
+    canCreateWorkOrders,
+  } = useAuth();
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -120,7 +137,6 @@ const ProductListItem = ({
   const { deleteProducts } = useDeleteProductsMutation({ queryClient });
   const { refetch, isFetching: isLoadingWorkOrders } = useWorkOrdersByProduct(product.id);
 
-  const productSize = getProductSize(product);
   const printSummary = getPrintSummary(product);
   // const hasStock = !!product.stock;
   // const stockBalance = hasStock
@@ -129,7 +145,10 @@ const ProductListItem = ({
 
   const handleSelectionChange = () => toggleSelection(product);
 
-  const openMenu = useCallback((e: MouseEvent<HTMLButtonElement>) => setMenuAnchorEl(e.currentTarget), []);
+  const openMenu = useCallback(
+    (e: MouseEvent<HTMLButtonElement>) => setMenuAnchorEl(e.currentTarget),
+    [],
+  );
   const closeMenu = useCallback(() => setMenuAnchorEl(null), []);
 
   const handleClickMenuItem =
@@ -138,20 +157,27 @@ const ProductListItem = ({
       onClick().then(() => closeMenu());
     };
 
-  const handleClickStock = async () => openDialog(<StockDialog products={[product]} onClose={closeDialog} />);
+  const handleClickStock = async () =>
+    openDialog(<StockDialog products={[product]} onClose={closeDialog} />);
 
-  const handleClickWorkOrder = async () => openDialog(<WorkOrderDialog product={product} onClose={closeDialog} />);
+  const handleClickWorkOrder = async () =>
+    openDialog(<WorkOrderDialog product={product} onClose={closeDialog} />);
 
   const handleClickWorkOrderHistory = async () => {
     await refetch().then((res) => {
-      openDialog(<WorkOrderHistoryDialog product={product} workOrders={res.data} onClose={closeDialog} />);
+      openDialog(
+        <WorkOrderHistoryDialog product={product} workOrders={res.data} onClose={closeDialog} />,
+      );
     });
   };
 
   const handleClickCopy = async () =>
-    openDialog(<ProductDialog mode={ProductDialogMode.COPY} product={product} onClose={closeDialog} />);
+    openDialog(
+      <ProductDialog mode={ProductDialogMode.COPY} product={product} onClose={closeDialog} />,
+    );
 
-  const handleClickEdit = async () => openDialog(<EditProductDialog product={product} onClose={closeDialog} />);
+  const handleClickEdit = async () =>
+    openDialog(<EditProductDialog product={product} onClose={closeDialog} />);
 
   const handleClickDelete = async () =>
     openDialog(
@@ -162,7 +188,7 @@ const ProductListItem = ({
           isConfirmed && deleteProducts([product.id]);
           closeDialog();
         }}
-      />
+      />,
     );
 
   let actionButtons: { label: string; onClick: () => any; isLoading?: boolean }[] = [];
@@ -199,7 +225,12 @@ const ProductListItem = ({
     <ListItem divider style={{ height: itemHeight }} selected={isSelected}>
       {isSelectable && (
         <ListItemIcon>
-          <Checkbox edge="start" color="primary" checked={isSelected} onChange={handleSelectionChange} />
+          <Checkbox
+            edge="start"
+            color="primary"
+            checked={isSelected}
+            onChange={handleSelectionChange}
+          />
         </ListItemIcon>
       )}
       <ListItemText>
@@ -212,7 +243,14 @@ const ProductListItem = ({
           />
           <ProductName product={product} searchText={filter.name} className={classes.productName} />
           <Typography variant="body1" className={classes.productSize}>
-            {productSize}
+            <span
+              dangerouslySetInnerHTML={{
+                __html: `${highlight(String(product.thickness), filter.thickness)} x ${highlight(
+                  String(product.length),
+                  filter.length,
+                )} x ${highlight(String(product.width), filter.width)}`,
+              }}
+            />
           </Typography>
           <Typography variant="body1" className={classes.stockBalance}>
             {/* {stockBalance} */}
@@ -220,10 +258,14 @@ const ProductListItem = ({
           {showDetails && (
             <>
               <Typography variant="body2" className={classes.extColor}>
-                <span dangerouslySetInnerHTML={{ __html: highlight(product.extColor, filter.extColor) }} />
+                <span
+                  dangerouslySetInnerHTML={{ __html: highlight(product.extColor, filter.extColor) }}
+                />
               </Typography>
               <Typography variant="body2" className={classes.printSummary}>
-                <span dangerouslySetInnerHTML={{ __html: highlight(printSummary, filter.printColor) }} />
+                <span
+                  dangerouslySetInnerHTML={{ __html: highlight(printSummary, filter.printColor) }}
+                />
               </Typography>
             </>
           )}

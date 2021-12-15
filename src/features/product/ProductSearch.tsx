@@ -1,12 +1,9 @@
 import { useAppDispatch } from 'app/store';
 import Input from 'components/form/Input';
-import RangeSlider from 'components/form/RangeSlider';
 import RoundedButton from 'components/RoundedButton';
-import { ProductLength, ProductThickness, ProductWidth } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useUI } from 'features/ui/uiHook';
 import { useFormik } from 'formik';
-import { useScreenSize } from 'hooks/useScreenSize';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -20,17 +17,15 @@ const useStyles = makeStyles((theme: Theme) =>
     productSearch: {
       width: '100%',
       display: 'grid',
-      gridTemplateColumns: 'repeat(2, 1fr)',
+      gridTemplateColumns: 'repeat(6, 1fr)',
       gridColumnGap: theme.spacing(2),
       gridTemplateAreas: `
-        "accountName accountName"
-        "productName productName"
-        "thickness thickness"
-        "length length"
-        "width width"
-        "extColor printColor"
-        "divider divider"
-        "buttons buttons"
+        "accountName accountName accountName accountName accountName accountName"
+        "productName productName productName productName productName productName"
+        "thickness thickness length length width width"
+        "extColor extColor extColor printColor printColor printColor"
+        "divider divider divider divider divider divider"
+        "buttons buttons buttons buttons buttons buttons"
       `,
     },
     accountName: {
@@ -76,7 +71,6 @@ export interface ProductSearchProps {
 const ProductSearch = ({ filter, onChange }: ProductSearchProps) => {
   const { t } = useTranslation('products');
   const classes = useStyles();
-  const { isDesktopLayout } = useScreenSize();
 
   const dispatch = useAppDispatch();
   const { closeSearch } = useUI();
@@ -84,21 +78,16 @@ const ProductSearch = ({ filter, onChange }: ProductSearchProps) => {
 
   const initialValues = { ...DEFAULT_PRODUCT_FILTER };
 
-  const { values, setFieldValue, setValues, handleSubmit, handleChange, handleReset } =
-    useFormik<ProductFilter>({
-      initialValues,
-      onReset: () => {
-        onChange({ ...DEFAULT_PRODUCT_FILTER });
-      },
-      onSubmit: (values) => {
-        onChange({ ...values });
-        dispatch(closeSearch());
-      },
-    });
-
-  const handleChangeSlider = (key: keyof ProductFilter) => (newValues: number[]) => {
-    setFieldValue(key, [...newValues]);
-  };
+  const { values, setValues, handleSubmit, handleChange, handleReset } = useFormik<ProductFilter>({
+    initialValues,
+    onReset: () => {
+      onChange({ ...DEFAULT_PRODUCT_FILTER });
+    },
+    onSubmit: (values) => {
+      onChange({ ...values });
+      dispatch(closeSearch());
+    },
+  });
 
   useEffect(() => {
     setValues({ ...initialValues, ...filter });
@@ -123,38 +112,26 @@ const ProductSearch = ({ filter, onChange }: ProductSearchProps) => {
         onChange={handleChange}
         autoFocus={!canViewAccounts}
       />
-      <RangeSlider
+      <Input
         className={classes.thickness}
+        name="thickness"
         label={t('thickness')}
-        values={[...(values.thickness as number[])]}
-        defaultValuesLabel={t('common:all')}
-        onChange={handleChangeSlider('thickness')}
-        min={ProductThickness.MIN}
-        max={ProductThickness.MAX}
-        step={ProductThickness.STEP}
-        showNumberInput={isDesktopLayout}
+        value={values.thickness}
+        onChange={handleChange}
       />
-      <RangeSlider
+      <Input
         className={classes.length}
+        name="length"
         label={t('length')}
-        values={[...(values.length as number[])]}
-        defaultValuesLabel={t('common:all')}
-        onChange={handleChangeSlider('length')}
-        min={ProductLength.MIN}
-        max={ProductLength.MAX}
-        step={ProductLength.STEP}
-        showNumberInput={isDesktopLayout}
+        value={values.length}
+        onChange={handleChange}
       />
-      <RangeSlider
+      <Input
         className={classes.width}
+        name="width"
         label={t('width')}
-        values={[...(values.width as number[])]}
-        defaultValuesLabel={t('common:all')}
-        onChange={handleChangeSlider('width')}
-        min={ProductWidth.MIN}
-        max={ProductWidth.MAX}
-        step={ProductWidth.STEP}
-        showNumberInput={isDesktopLayout}
+        value={values.width}
+        onChange={handleChange}
       />
       <Input
         className={classes.extColor}
