@@ -18,6 +18,8 @@ import { ThemeProvider } from '@material-ui/styles';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
+import './index.css';
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -45,7 +47,7 @@ ReactDOM.render(
       </ConnectedRouter>
     </Provider>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById('root'),
 );
 
 // If you want your app to work offline and load faster, you can change

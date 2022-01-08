@@ -5,10 +5,13 @@ import notificationReducer from 'features/notification/notificationSlice';
 import uiReducer from 'features/ui/uiSlice';
 import { createBrowserHistory } from 'history';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-import { createLogger } from 'redux-logger';
 
 import {
-    Action, combineReducers, configureStore, getDefaultMiddleware, ThunkAction
+  Action,
+  combineReducers,
+  configureStore,
+  getDefaultMiddleware,
+  ThunkAction,
 } from '@reduxjs/toolkit';
 
 export const history = createBrowserHistory();
@@ -21,15 +24,12 @@ const reducer = combineReducers({
   auth: authReducer,
 });
 
-const logger = createLogger({ collapsed: true });
-
-const middleware = [...getDefaultMiddleware({ thunk: false, serializableCheck: false }), routerMiddleware(history)];
+const middleware = [
+  ...getDefaultMiddleware({ thunk: false, serializableCheck: false }),
+  routerMiddleware(history),
+];
 
 const isProduction = process.env.NODE_ENV === 'production';
-
-if (!isProduction) {
-  middleware.push(logger);
-}
 
 const store = configureStore({
   reducer,
