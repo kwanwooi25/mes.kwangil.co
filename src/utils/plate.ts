@@ -78,23 +78,24 @@ export function getPlateProductsSummary(
  * @example { round: 300, length: 300 }
  */
 export function estimatePlateSize(products: ProductDto[]) {
-  let round = PlateRound.MIN;
+  const round = PlateRound.MIN;
   let length = PlateLength.MIN;
 
   if (products.length) {
-    const productWidths = products.map((product) => product.width * 10);
+    // const productWidths = products.map((product) => product.width * 10);
     const productLengths = products.map((product) => product.length * 10);
-    while (true) {
-      // eslint-disable-next-line
-      if (productWidths.every((width) => round % width === 0)) {
-        break;
-      }
-      round += 10;
-    }
-    length = Math.max(
-      PlateLength.MIN,
-      productLengths.reduce((total, l) => total + l, 0),
-    );
+    // for (round; round < 600; round += 10) {
+    //   // eslint-disable-next-line
+    //   if (productWidths.every((width) => round % width === 0)) {
+    //     break;
+    //   }
+    //   if (round >= PlateRound.MAX) {
+    //     break;
+    //   }
+    //   round += 10;
+    // }
+    length = Math.max(PlateLength.MIN, productLengths.reduce((total, l) => total + l, 0) + 50);
+    console.log(productLengths, length);
   }
 
   return { round, length };
