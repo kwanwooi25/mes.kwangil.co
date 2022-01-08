@@ -10,6 +10,8 @@ import RoundedButton from 'components/RoundedButton';
 import { getPlateSize } from 'utils/plate';
 import { getProductTitle } from 'utils/product';
 import { useTranslation } from 'react-i18next';
+import { format } from 'date-fns';
+import { DATE_FORMAT } from 'const';
 import DetailField from '../DetailField';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -34,7 +36,7 @@ export interface PlateDetailDialogProps {
 function PlateDetailDialog({ plate, onClose }: PlateDetailDialogProps) {
   const { t } = useTranslation('plates');
   const classes = useStyles();
-  const { name, material, location, memo, products = [] } = plate;
+  const { name, material, location, memo, products = [], createdAt, updatedAt } = plate;
 
   return (
     <Dialog fullWidth open onClose={onClose} title={getPlateSize(plate)} subTitle={name}>
@@ -42,6 +44,14 @@ function PlateDetailDialog({ plate, onClose }: PlateDetailDialogProps) {
         <DetailField label={t('material')} value={`${t(material.toLowerCase())}`} />
         <DetailField label={t('location')} value={location} />
         <DetailField label={t('memo')} value={memo} />
+        <DetailField
+          label={t('common:createdAt')}
+          value={format(new Date(createdAt), DATE_FORMAT)}
+        />
+        <DetailField
+          label={t('common:updatedAt')}
+          value={format(new Date(updatedAt), DATE_FORMAT)}
+        />
         {products.length && (
           <>
             <CustomListSubHeader>{t('products')}</CustomListSubHeader>

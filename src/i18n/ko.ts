@@ -59,6 +59,8 @@ export default {
     activate: '활성화',
     inactive: '비활성',
     inactivate: '비활성화',
+    createdAt: '생성일',
+    updatedAt: '최종수정일',
 
     account: '거래처',
     product: '제품',
