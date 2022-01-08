@@ -13,10 +13,16 @@ import { getProductSize } from 'utils/product';
 import { getWeight } from 'utils/workOrder';
 
 import {
-    Checkbox, createStyles, Divider, FormControlLabel, makeStyles, Theme, Typography
+  Checkbox,
+  createStyles,
+  Divider,
+  FormControlLabel,
+  makeStyles,
+  Theme,
+  Typography,
 } from '@material-ui/core';
 
-import { WorkOrderFormValues } from './';
+import { WorkOrderFormValues } from 'features/workOrder/interface';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -83,16 +89,15 @@ const useStyles = makeStyles((theme: Theme) =>
     deliveryMemo: {
       gridArea: 'deliveryMemo',
     },
-  })
+  }),
 );
 
-export interface OrderInfoFormProps {}
-
-const OrderInfoForm = (props: OrderInfoFormProps) => {
+function OrderInfoForm() {
   const { t } = useTranslation('workOrders');
   const classes = useStyles();
 
-  const { values, touched, errors, handleChange, handleBlur, setFieldValue } = useFormikContext<WorkOrderFormValues>();
+  const { values, touched, errors, handleChange, handleBlur, setFieldValue } =
+    useFormikContext<WorkOrderFormValues>();
 
   const product: ProductDto = values.product as ProductDto;
   const isPrint = product.printSide !== PrintSide.NONE;
@@ -149,13 +154,25 @@ const OrderInfoForm = (props: OrderInfoFormProps) => {
       </Typography>
       <FormControlLabel
         className={classes.isUrgent}
-        control={<Checkbox color="primary" name="isUrgent" checked={values.isUrgent} onChange={handleChange} />}
+        control={
+          <Checkbox
+            color="primary"
+            name="isUrgent"
+            checked={values.isUrgent}
+            onChange={handleChange}
+          />
+        }
         label={t('isUrgent')}
       />
       <FormControlLabel
         className={classes.shouldBePunctual}
         control={
-          <Checkbox color="primary" name="shouldBePunctual" checked={values.shouldBePunctual} onChange={handleChange} />
+          <Checkbox
+            color="primary"
+            name="shouldBePunctual"
+            checked={values.shouldBePunctual}
+            onChange={handleChange}
+          />
         }
         label={t('shouldBePunctual')}
       />
@@ -192,6 +209,6 @@ const OrderInfoForm = (props: OrderInfoFormProps) => {
       />
     </div>
   );
-};
+}
 
 export default OrderInfoForm;

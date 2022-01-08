@@ -66,7 +66,7 @@ export interface WorkOrderPDFProps {
   workOrders: WorkOrderDto[];
 }
 
-const WorkOrderPDF = ({ workOrders }: WorkOrderPDFProps) => {
+function WorkOrderPDF({ workOrders }: WorkOrderPDFProps) {
   const { t } = useTranslation('workOrders');
 
   return (
@@ -87,7 +87,11 @@ const WorkOrderPDF = ({ workOrders }: WorkOrderPDFProps) => {
                 <Print product={product} plateStatus={plateStatus} />
                 <Cutting product={product} />
               </View>
-              <Memos workMemo={workMemo} deliveryMemo={deliveryMemo} deliveryMethod={deliveryMethod} />
+              <Memos
+                workMemo={workMemo}
+                deliveryMemo={deliveryMemo}
+                deliveryMethod={deliveryMethod}
+              />
             </View>
             <View style={styles.productImageContainer}>
               {image?.imageUrl && <Image style={styles.productImage} src={image.imageUrl} />}
@@ -97,6 +101,6 @@ const WorkOrderPDF = ({ workOrders }: WorkOrderPDFProps) => {
       })}
     </Document>
   );
-};
+}
 
 export default memo(WorkOrderPDF);

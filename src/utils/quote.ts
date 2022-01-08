@@ -1,5 +1,4 @@
-import { QuoteFormValues } from 'components/dialog/Quote';
-import { CreateQuoteDto } from 'features/quote/interface';
+import { CreateQuoteDto, QuoteFormValues } from 'features/quote/interface';
 
 export interface QuoteSource {
   thickness: number;
@@ -44,6 +43,7 @@ export function getQuote({
     };
   }
 
+  // eslint-disable-next-line no-nested-ternary
   const weightPerRoll = +length < 15 ? 13 : +length < 25 ? 15 : +length < 35 ? 18 : 20;
   const lengthPerRoll = Math.round(weightPerRoll / (+thickness * (+length + 5) * 0.0184));
   const printCostPerColor = printCostPerRoll / (lengthPerRoll / (+width / 100));

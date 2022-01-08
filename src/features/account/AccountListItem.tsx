@@ -9,8 +9,18 @@ import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
 
 import {
-    Checkbox, createStyles, IconButton, ListItem, ListItemIcon, ListItemProps,
-    ListItemSecondaryAction, ListItemText, makeStyles, Menu, MenuItem, Theme
+  Checkbox,
+  createStyles,
+  IconButton,
+  ListItem,
+  ListItemIcon,
+  ListItemProps,
+  ListItemSecondaryAction,
+  ListItemText,
+  makeStyles,
+  Menu,
+  MenuItem,
+  Theme,
 } from '@material-ui/core';
 import { MoreVert, Phone, Print } from '@material-ui/icons';
 
@@ -32,7 +42,7 @@ const useStyles = makeStyles((theme: Theme) =>
         gridTemplateColumns: 'minmax(200px, 1fr) 1fr 1fr',
       },
     },
-  })
+  }),
 );
 
 export interface AccountListItemProps extends ListItemProps {
@@ -44,14 +54,14 @@ export interface AccountListItemProps extends ListItemProps {
   toggleSelection?: (account: AccountDto) => any;
 }
 
-const AccountListItem = ({
+function AccountListItem({
   account,
   itemHeight,
   isSelected = false,
   showFaxNumber = false,
   filter = { accountName: '' },
-  toggleSelection = (account: AccountDto) => {},
-}: AccountListItemProps) => {
+  toggleSelection = () => {},
+}: AccountListItemProps) {
   const { t } = useTranslation('accounts');
   const classes = useStyles();
 
@@ -68,7 +78,10 @@ const AccountListItem = ({
 
   const handleSelectionChange = () => toggleSelection(account);
 
-  const openMenu = useCallback((e: MouseEvent<HTMLButtonElement>) => setMenuAnchorEl(e.currentTarget), []);
+  const openMenu = useCallback(
+    (e: MouseEvent<HTMLButtonElement>) => setMenuAnchorEl(e.currentTarget),
+    [],
+  );
   const closeMenu = useCallback(() => setMenuAnchorEl(null), []);
 
   const handleClickMenuItem =
@@ -88,10 +101,12 @@ const AccountListItem = ({
         title={t('deleteAccount')}
         message={t('deleteAccountConfirm', { accountName: account.name })}
         onClose={(isConfirmed: boolean) => {
-          isConfirmed && deleteAccounts([account.id]);
+          if (isConfirmed) {
+            deleteAccounts([account.id]);
+          }
           closeDialog();
         }}
-      />
+      />,
     );
   };
 
@@ -103,14 +118,27 @@ const AccountListItem = ({
   return (
     <ListItem divider style={{ height: itemHeight }} selected={isSelected}>
       <ListItemIcon>
-        <Checkbox edge="start" color="primary" checked={isSelected} onChange={handleSelectionChange} />
+        <Checkbox
+          edge="start"
+          color="primary"
+          checked={isSelected}
+          onChange={handleSelectionChange}
+        />
       </ListItemIcon>
       <ListItemText>
         <div className={classes.accountDetail}>
           <AccountName account={account} searchText={accountName} />
-          <div>{basePhoneNumber && <PhoneNumber icon={<Phone fontSize="small" />} number={basePhoneNumber} />}</div>
+          <div>
+            {basePhoneNumber && (
+              <PhoneNumber icon={<Phone fontSize="small" />} number={basePhoneNumber} />
+            )}
+          </div>
           {showFaxNumber && (
-            <div>{baseFaxNumber && <PhoneNumber icon={<Print fontSize="small" />} number={baseFaxNumber} />}</div>
+            <div>
+              {baseFaxNumber && (
+                <PhoneNumber icon={<Print fontSize="small" />} number={baseFaxNumber} />
+              )}
+            </div>
           )}
         </div>
       </ListItemText>
@@ -128,6 +156,6 @@ const AccountListItem = ({
       </ListItemSecondaryAction>
     </ListItem>
   );
-};
+}
 
 export default memo(AccountListItem);

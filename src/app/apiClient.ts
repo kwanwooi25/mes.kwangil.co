@@ -15,14 +15,21 @@ apiClient.interceptors.response.use(
   (error: AxiosError) => {
     if (error.response?.data.message === 'Token invalid') {
       store.dispatch(authActions.loginFailed());
-      store.dispatch(notificationActions.notify({ variant: 'error', message: 'auth:loginRequired' }));
+      store.dispatch(
+        notificationActions.notify({ variant: 'error', message: 'auth:loginRequired' }),
+      );
       store.dispatch(push(Path.LOGIN));
     }
-  }
+  },
 );
 
 const setAuthHeaders = (token?: string) => {
-  token ? localStorage.setItem('token', token) : localStorage.removeItem('token');
+  if (token) {
+    localStorage.setItem('token', token);
+  } else {
+    localStorage.removeItem('token');
+  }
+
   apiClient.defaults.headers = {
     ...apiClient.defaults.headers,
     authorization: !token ? undefined : `Bearer ${token}`,
@@ -32,13 +39,8 @@ const setAuthHeaders = (token?: string) => {
 const getAuthToken = () => localStorage.getItem('token') || '';
 
 const handleRequest = (config: AxiosRequestConfig) => {
-  const onSuccess = (res: AxiosResponse) => {
-    return res.data;
-  };
-
-  const onError = (error: AxiosError) => {
-    return Promise.reject(error.response || error.message);
-  };
+  const onSuccess = (res: AxiosResponse) => res.data;
+  const onError = (error: AxiosError) => Promise.reject(error.response || error.message);
 
   return apiClient(config).then(onSuccess).catch(onError);
 };

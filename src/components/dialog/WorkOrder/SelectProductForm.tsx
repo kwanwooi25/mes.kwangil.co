@@ -9,8 +9,8 @@ import { useTranslation } from 'react-i18next';
 
 import { createStyles, List, makeStyles, Theme } from '@material-ui/core';
 
+import { WorkOrderFormValues } from 'features/workOrder/interface';
 import ProductListItem from '../Plate/ProductListItem';
-import { WorkOrderFormValues } from './';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -24,14 +24,14 @@ const useStyles = makeStyles((theme: Theme) =>
     selectedProductHeader: {},
     searchedListHeader: {},
     searchedList: {},
-  })
+  }),
 );
 
 export interface SelectProductFormProps {
   disabled?: boolean;
 }
 
-const SelectProductForm = ({ disabled = false }: SelectProductFormProps) => {
+function SelectProductForm({ disabled = false }: SelectProductFormProps) {
   const { t } = useTranslation('workOrders');
   const classes = useStyles();
 
@@ -50,7 +50,11 @@ const SelectProductForm = ({ disabled = false }: SelectProductFormProps) => {
 
   const renderProductOptions = (index: number) => {
     const product = productOptions[index];
-    return !!product && <ProductListItem key={product.id} product={product} onSelect={selectProduct(product)} />;
+    return (
+      !!product && (
+        <ProductListItem key={product.id} product={product} onSelect={selectProduct(product)} />
+      )
+    );
   };
 
   return (
@@ -62,12 +66,15 @@ const SelectProductForm = ({ disabled = false }: SelectProductFormProps) => {
         autoFocus
       />
 
-      {!!values.product ? (
+      {values.product ? (
         <>
           <CustomListSubHeader className={classes.selectedProductHeader}>
             <span>{t('selectedProduct')}</span>
           </CustomListSubHeader>
-          <ProductListItem product={values.product} onDelete={disabled ? undefined : removeProduct} />
+          <ProductListItem
+            product={values.product}
+            onDelete={disabled ? undefined : removeProduct}
+          />
         </>
       ) : (
         <>
@@ -86,6 +93,6 @@ const SelectProductForm = ({ disabled = false }: SelectProductFormProps) => {
       )}
     </div>
   );
-};
+}
 
 export default SelectProductForm;

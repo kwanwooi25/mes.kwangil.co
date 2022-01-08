@@ -1,6 +1,5 @@
-import { PlateFormValues } from 'components/dialog/Plate';
 import { PlateLength, PlateMaterial, PlateRound } from 'const';
-import { PlateDto } from 'features/plate/interface';
+import { PlateDto, PlateFormValues } from 'features/plate/interface';
 import { ProductDto } from 'features/product/interface';
 
 import { getProductTitle } from './product';
@@ -47,16 +46,19 @@ export function getPlateTitle(plate: PlateDto) {
  *
  * @example ['가나다약국 (0.07 x 20 x 13)', '... + 1']
  */
-export function getPlateProductsSummary({ products }: PlateDto, displayCount: number = 1): string[] {
+export function getPlateProductsSummary(
+  { products }: PlateDto,
+  displayCount: number = 1,
+): string[] {
   if (!products || !products.length) {
     return [];
   }
 
   const iterateTo = Math.min(displayCount, products.length);
 
-  let summaryTextArray = [];
+  const summaryTextArray = [];
 
-  for (let i = 0; i < iterateTo; i++) {
+  for (let i = 0; i < iterateTo; i += 1) {
     summaryTextArray.push(getProductTitle(products[i]));
   }
 
@@ -66,6 +68,36 @@ export function getPlateProductsSummary({ products }: PlateDto, displayCount: nu
   }
 
   return summaryTextArray;
+}
+
+/**
+ * 사용되는 제품 규격으로 동판 규격을 유추하여 반환
+ *
+ * @param products 제품 목록
+ *
+ * @example { round: 300, length: 300 }
+ */
+export function estimatePlateSize(products: ProductDto[]) {
+  let round = PlateRound.MIN;
+  let length = PlateLength.MIN;
+
+  if (products.length) {
+    const productWidths = products.map((product) => product.width * 10);
+    const productLengths = products.map((product) => product.length * 10);
+    while (true) {
+      // eslint-disable-next-line
+      if (productWidths.every((width) => round % width === 0)) {
+        break;
+      }
+      round += 10;
+    }
+    length = Math.max(
+      PlateLength.MIN,
+      productLengths.reduce((total, l) => total + l, 0),
+    );
+  }
+
+  return { round, length };
 }
 
 /**
@@ -94,34 +126,4 @@ export function getInitialPlateFormValues({
     products: [...(plate?.products || products)],
     productsToDisconnect: [],
   };
-}
-
-/**
- * 사용되는 제품 규격으로 동판 규격을 유추하여 반환
- *
- * @param products 제품 목록
- *
- * @example { round: 300, length: 300 }
- */
-export function estimatePlateSize(products: ProductDto[]) {
-  let round = PlateRound.MIN;
-  let length = PlateLength.MIN;
-
-  if (!!products.length) {
-    const productWidths = products.map(({ width }) => width * 10);
-    const productLengths = products.map(({ length }) => length * 10);
-    while (true) {
-      // eslint-disable-next-line
-      if (productWidths.every((width) => round % width === 0)) {
-        break;
-      }
-      round += 10;
-    }
-    length = Math.max(
-      PlateLength.MIN,
-      productLengths.reduce((total, length) => total + length, 0)
-    );
-  }
-
-  return { round, length };
 }

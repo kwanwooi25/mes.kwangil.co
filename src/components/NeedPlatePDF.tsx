@@ -1,3 +1,4 @@
+import React from 'react';
 import { PlateStatus } from 'const';
 import { WorkOrderDto } from 'features/workOrder/interface';
 import { useWorkOrderDisplay } from 'hooks/useWorkOrderDisplay';
@@ -79,7 +80,7 @@ export interface NeedPlatePDFProps {
   workOrders: WorkOrderDto[];
 }
 
-const Row = ({ workOrder }: { workOrder: WorkOrderDto }) => {
+function Row({ workOrder }: { workOrder: WorkOrderDto }) {
   const { t } = useTranslation();
   const { productTitle, plateStatus, accountName } = useWorkOrderDisplay(workOrder, t);
   const isNew = workOrder.plateStatus === PlateStatus.NEW;
@@ -96,9 +97,9 @@ const Row = ({ workOrder }: { workOrder: WorkOrderDto }) => {
       </View>
     </View>
   );
-};
+}
 
-const NeedPlatePDF = ({ workOrders }: NeedPlatePDFProps) => {
+function NeedPlatePDF({ workOrders }: NeedPlatePDFProps) {
   const { t } = useTranslation('workOrders');
 
   return (
@@ -113,6 +114,6 @@ const NeedPlatePDF = ({ workOrders }: NeedPlatePDFProps) => {
       </Page>
     </Document>
   );
-};
+}
 
 export default NeedPlatePDF;

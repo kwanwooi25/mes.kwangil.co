@@ -1,9 +1,9 @@
 import React, { ReactElement, memo, useEffect, useMemo } from 'react';
-import { Theme, createStyles, makeStyles } from '@material-ui/core';
+import { createStyles, makeStyles } from '@material-ui/core';
 
 import { useVirtualInfiniteScroll } from 'hooks/useVirtualInfiniteScroll';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     virtualInfiniteScroll: {
       overflow: 'auto',
@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme: Theme) =>
     contentVisible: {
       willChange: 'transform',
     },
-  })
+  }),
 );
 
 export interface VirtualInfiniteScrollProps {
@@ -27,18 +27,18 @@ export interface VirtualInfiniteScrollProps {
   onLoadMore?: () => void;
 }
 
-const VirtualInfiniteScroll = ({
+function VirtualInfiniteScroll({
   itemCount,
   itemHeight,
   renderItem,
   threshold = 10,
   onLoadMore = () => {},
-}: VirtualInfiniteScrollProps) => {
+}: VirtualInfiniteScrollProps) {
   const classes = useStyles();
 
   const nodePositions = useMemo(() => {
-    let positions = [0];
-    for (let i = 1; i < itemCount; i++) {
+    const positions = [0];
+    for (let i = 1; i < itemCount; i += 1) {
       positions.push(positions[i - 1] + itemHeight);
     }
     return positions;
@@ -64,11 +64,10 @@ const VirtualInfiniteScroll = ({
   const visibleNodeCount = endNode - startNode + 1;
   const offsetY = nodePositions[startNode];
 
-  const visibleNodes = useMemo(() => new Array(visibleNodeCount).fill(null).map((_, i) => renderItem(startNode + i)), [
-    visibleNodeCount,
-    renderItem,
-    startNode,
-  ]);
+  const visibleNodes = useMemo(
+    () => new Array(visibleNodeCount).fill(null).map((_, i) => renderItem(startNode + i)),
+    [visibleNodeCount, renderItem, startNode],
+  );
 
   useEffect(() => {
     if (shouldLoadMore) {
@@ -78,7 +77,11 @@ const VirtualInfiniteScroll = ({
   }, [shouldLoadMore]);
 
   return (
-    <div className={classes.virtualInfiniteScroll} style={{ height: containerHeight }} ref={containerRef}>
+    <div
+      className={classes.virtualInfiniteScroll}
+      style={{ height: containerHeight }}
+      ref={containerRef}
+    >
       <div ref={contentTotalRef} className={classes.contentTotal} style={{ height: totalHeight }}>
         <div className={classes.contentVisible} style={{ transform: `translateY(${offsetY}px)` }}>
           {visibleNodes}
@@ -86,6 +89,6 @@ const VirtualInfiniteScroll = ({
       </div>
     </div>
   );
-};
+}
 
 export default memo(VirtualInfiniteScroll);

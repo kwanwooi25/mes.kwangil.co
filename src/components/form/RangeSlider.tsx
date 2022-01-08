@@ -2,7 +2,12 @@ import classnames from 'classnames';
 import React, { ChangeEvent } from 'react';
 
 import {
-    createStyles, makeStyles, Slider, SliderProps, Theme, Typography
+  createStyles,
+  makeStyles,
+  Slider,
+  SliderProps,
+  Theme,
+  Typography,
 } from '@material-ui/core';
 
 import Input from './Input';
@@ -21,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       justifyContent: 'space-between',
     },
-  })
+  }),
 );
 
 export interface RangeSliderProps extends Omit<SliderProps, 'value' | 'onChange'> {
@@ -34,7 +39,7 @@ export interface RangeSliderProps extends Omit<SliderProps, 'value' | 'onChange'
   showNumberInput?: boolean;
 }
 
-const RangeSlider = ({
+function RangeSlider({
   className,
   label,
   values = [],
@@ -43,7 +48,7 @@ const RangeSlider = ({
   defaultValuesLabel = '',
   showNumberInput = false,
   ...props
-}: RangeSliderProps) => {
+}: RangeSliderProps) {
   const classes = useStyles();
 
   const getValuesDisplay = () => {
@@ -62,7 +67,7 @@ const RangeSlider = ({
   };
 
   const handleChangeInput = (index: number) => (e: ChangeEvent<HTMLInputElement>) => {
-    let newValues = [...values];
+    const newValues = [...values];
     newValues[index] = +e.target.value;
     onChange(newValues);
   };
@@ -99,6 +104,6 @@ const RangeSlider = ({
       <Slider value={values} onChange={handleChange} valueLabelDisplay="auto" {...props} />
     </div>
   );
-};
+}
 
 export default RangeSlider;

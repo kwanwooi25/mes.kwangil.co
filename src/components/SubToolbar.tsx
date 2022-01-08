@@ -2,8 +2,18 @@ import React, { ChangeEvent, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import {
-    alpha, AppBar, Checkbox, createStyles, Divider, FormControlLabel, IconButton, makeStyles, Theme,
-    Toolbar, Tooltip, Typography
+  alpha,
+  AppBar,
+  Checkbox,
+  createStyles,
+  Divider,
+  FormControlLabel,
+  IconButton,
+  makeStyles,
+  Theme,
+  Toolbar,
+  Tooltip,
+  Typography,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 
@@ -23,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
     buttons: {
       marginLeft: 'auto',
     },
-  })
+  }),
 );
 
 export interface SubToolbarProps {
@@ -36,7 +46,7 @@ export interface SubToolbarProps {
   buttons?: ReactElement | ReactElement[];
 }
 
-const SubToolbar = ({
+function SubToolbar({
   isSelectAllDisabled = false,
   isSelectedAll = false,
   isIndeterminate = false,
@@ -44,7 +54,7 @@ const SubToolbar = ({
   onResetSelection = () => {},
   selectedCount = 0,
   buttons,
-}: SubToolbarProps) => {
+}: SubToolbarProps) {
   const { t } = useTranslation('common');
   const classes = useStyles();
 
@@ -90,6 +100,6 @@ const SubToolbar = ({
       </Toolbar>
     </AppBar>
   );
-};
+}
 
 export default SubToolbar;

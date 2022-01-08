@@ -22,7 +22,7 @@ export interface RouteProps {
   component: ComponentType<any>;
 }
 
-const PublicRoute = ({ component: Component, ...rest }: RouteProps) => {
+function PublicRoute({ component: Component, ...rest }: RouteProps) {
   const { currentUser } = useAuth();
 
   return !currentUser ? (
@@ -30,9 +30,9 @@ const PublicRoute = ({ component: Component, ...rest }: RouteProps) => {
   ) : (
     <Redirect to={DEFAULT_PAGE} />
   );
-};
+}
 
-const PrivateRoute = ({ component: Component, ...rest }: RouteProps) => {
+function PrivateRoute({ component: Component, ...rest }: RouteProps) {
   const { isLoggedIn, navPaths } = useAuth();
   const isPermitted = navPaths.includes(rest.path as Path);
 
@@ -41,13 +41,15 @@ const PrivateRoute = ({ component: Component, ...rest }: RouteProps) => {
   ) : (
     <Redirect to={!isLoggedIn ? Path.LOGIN : DEFAULT_PAGE} />
   );
-};
+}
 
 function App() {
   const { isTokenExists, refreshLogin, isRefreshing } = useRefreshLoginMutation();
 
   useEffect(() => {
-    isTokenExists && refreshLogin();
+    if (isTokenExists) {
+      refreshLogin();
+    }
   }, []);
 
   return isRefreshing ? (

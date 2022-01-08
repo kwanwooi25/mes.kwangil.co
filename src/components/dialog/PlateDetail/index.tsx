@@ -1,7 +1,6 @@
 import { DialogActions, DialogContent, Theme, createStyles, makeStyles } from '@material-ui/core';
 
 import CustomListSubHeader from 'components/CustomListSubHeader';
-import DetailField from '../DetailField';
 import Dialog from 'features/dialog/Dialog';
 import DoneIcon from '@material-ui/icons/Done';
 import { PlateDto } from 'features/plate/interface';
@@ -11,6 +10,7 @@ import RoundedButton from 'components/RoundedButton';
 import { getPlateSize } from 'utils/plate';
 import { getProductTitle } from 'utils/product';
 import { useTranslation } from 'react-i18next';
+import DetailField from '../DetailField';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
     productName: {
       fontSize: theme.typography.body1.fontSize,
     },
-  })
+  }),
 );
 
 export interface PlateDetailDialogProps {
@@ -31,7 +31,7 @@ export interface PlateDetailDialogProps {
   onClose: () => void;
 }
 
-const PlateDetailDialog = ({ plate, onClose }: PlateDetailDialogProps) => {
+function PlateDetailDialog({ plate, onClose }: PlateDetailDialogProps) {
   const { t } = useTranslation('plates');
   const classes = useStyles();
   const { name, material, location, memo, products = [] } = plate;
@@ -70,6 +70,6 @@ const PlateDetailDialog = ({ plate, onClose }: PlateDetailDialogProps) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default PlateDetailDialog;

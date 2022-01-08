@@ -34,7 +34,7 @@ ReactDOM.render(
     <Provider store={store}>
       <ConnectedRouter history={history}>
         <QueryClientProvider client={queryClient}>
-          <ReactQueryDevtools initialIsOpen />
+          <ReactQueryDevtools />
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <SnackbarProvider>

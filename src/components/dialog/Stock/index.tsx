@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) =>
         maxWidth: '120px',
       },
     },
-  })
+  }),
 );
 
 export interface StockDialogProps {
@@ -35,7 +35,7 @@ export interface StockDialogProps {
   onClose: () => void;
 }
 
-const StockDialog = ({ products, onClose }: StockDialogProps) => {
+function StockDialog({ products, onClose }: StockDialogProps) {
   const { t } = useTranslation();
   const classes = useStyles();
   const submitButtonRef = createRef<HTMLButtonElement>();
@@ -58,7 +58,7 @@ const StockDialog = ({ products, onClose }: StockDialogProps) => {
       id: number().integer(),
       balance: number().integer().required(t('products:balanceRequired')),
       productId: number().integer(),
-    })
+    }),
   );
 
   const onSubmit = async (values: (CreateStockDto | StockDto)[]) => createOrUpdateStocks(values);
@@ -71,12 +71,17 @@ const StockDialog = ({ products, onClose }: StockDialogProps) => {
     <Dialog open onClose={onClose} title={dialogTitle}>
       {isSaving && <Loading />}
       <DialogContent dividers className={classes.dialogContent}>
-        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={onSubmit}
+        >
           <Form autoComplete="off" style={{ height: '100%' }}>
             {products.map((product, index) => (
               <StockForm key={product.id} index={index} product={product} />
             ))}
-            <button ref={submitButtonRef} type="submit" style={{ display: 'none' }}></button>
+            {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
+            <button ref={submitButtonRef} type="submit" style={{ display: 'none' }} />
           </Form>
         </Formik>
       </DialogContent>
@@ -104,6 +109,6 @@ const StockDialog = ({ products, onClose }: StockDialogProps) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default StockDialog;

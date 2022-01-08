@@ -1,7 +1,14 @@
 import React from 'react';
 
 import {
-    alpha, AppBar, createStyles, IconButton, makeStyles, Theme, Toolbar, Typography
+  alpha,
+  AppBar,
+  createStyles,
+  IconButton,
+  makeStyles,
+  Theme,
+  Toolbar,
+  Typography,
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
@@ -15,13 +22,13 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     pageTitle: {
       flex: 1,
-      fontWeight: theme.typography.fontWeightBold,
+      fontWeight: 'bold',
     },
     logo: {
       width: 32,
       marginRight: theme.spacing(2),
     },
-  })
+  }),
 );
 
 export interface MainHeaderProps {
@@ -30,18 +37,18 @@ export interface MainHeaderProps {
   onClickSearch?: () => void;
 }
 
-const MainHeader = ({ pageTitle, onClickNavMenu, onClickSearch }: MainHeaderProps) => {
+function MainHeader({ pageTitle, onClickNavMenu, onClickSearch }: MainHeaderProps) {
   const classes = useStyles();
 
   return (
     <AppBar className={classes.appBar} position="fixed" color="inherit" elevation={0}>
       <Toolbar>
-        {!!onClickNavMenu ? (
+        {onClickNavMenu ? (
           <IconButton edge="start" aria-label="nav-menu" onClick={onClickNavMenu}>
             <MenuIcon />
           </IconButton>
         ) : (
-          <img src="/kwangil_logo_only.png" alt="kwangil-logo" className={classes.logo}></img>
+          <img src="/kwangil_logo_only.png" alt="kwangil-logo" className={classes.logo} />
         )}
         <Typography component="h2" variant="h5" className={classes.pageTitle}>
           {pageTitle}
@@ -54,6 +61,6 @@ const MainHeader = ({ pageTitle, onClickNavMenu, onClickSearch }: MainHeaderProp
       </Toolbar>
     </AppBar>
   );
-};
+}
 
 export default MainHeader;

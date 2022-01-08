@@ -1,10 +1,10 @@
 import { Checkbox, FormControlLabel, Theme, createStyles, makeStyles } from '@material-ui/core';
 
 import Input from 'components/form/Input';
-import { ProductFormValues } from '.';
 import React from 'react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { ProductFormValues } from 'features/product/interface';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -27,15 +27,14 @@ const useStyles = makeStyles((theme: Theme) =>
     extMemo: {
       gridArea: 'extMemo',
     },
-  })
+  }),
 );
 
-export interface ExtrusionFormProps {}
-
-const ExtrusionForm = (props: ExtrusionFormProps) => {
+function ExtrusionForm() {
   const { t } = useTranslation('products');
   const classes = useStyles();
-  const { values, touched, errors, handleChange, handleBlur } = useFormikContext<ProductFormValues>();
+  const { values, touched, errors, handleChange, handleBlur } =
+    useFormikContext<ProductFormValues>();
 
   return (
     <div className={classes.extrusion}>
@@ -52,7 +51,12 @@ const ExtrusionForm = (props: ExtrusionFormProps) => {
       <FormControlLabel
         className={classes.extIsAntistatic}
         control={
-          <Checkbox color="primary" name="extIsAntistatic" checked={values.extIsAntistatic} onChange={handleChange} />
+          <Checkbox
+            color="primary"
+            name="extIsAntistatic"
+            checked={values.extIsAntistatic}
+            onChange={handleChange}
+          />
         }
         label={t('extIsAntistatic')}
       />
@@ -66,6 +70,6 @@ const ExtrusionForm = (props: ExtrusionFormProps) => {
       />
     </div>
   );
-};
+}
 
 export default ExtrusionForm;

@@ -13,7 +13,13 @@ import { formatCrn } from 'utils/string';
 import { array, boolean, object, string } from 'yup';
 
 import {
-    createStyles, DialogActions, DialogContent, Divider, makeStyles, Theme, Typography
+  createStyles,
+  DialogActions,
+  DialogContent,
+  Divider,
+  makeStyles,
+  Theme,
+  Typography,
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import DoneIcon from '@material-ui/icons/Done';
@@ -53,7 +59,7 @@ const useStyles = makeStyles((theme: Theme) =>
     actionButtons: {
       padding: theme.spacing(3),
     },
-  })
+  }),
 );
 
 export interface AccountDialogProps {
@@ -69,7 +75,7 @@ interface AccountFormValues {
   contactIdsToDelete?: number[];
 }
 
-const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
+function AccountDialog({ account, onClose }: AccountDialogProps) {
   const classes = useStyles();
   const { t } = useTranslation('accounts');
 
@@ -87,47 +93,49 @@ const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
   const { createAccount, isCreating } = useCreateAccountMutation({ queryClient, onSuccess });
   const isLoading = isCreating || isUpdating;
 
-  const { values, touched, errors, handleChange, setFieldValue, setValues, submitForm } = useFormik<AccountFormValues>({
-    initialValues: {
-      name: '',
-      crn: '',
-      memo: '',
-      contacts: [],
-      contactIdsToDelete: [],
-    },
-    validationSchema: object({
-      name: string().required(t('accountNameRequired')),
-      crn: string().nullable(),
-      memo: string().nullable(),
-      contacts: array().of(
-        object().shape({
-          title: string().required(t('contacts:titleRequired')),
-          isBase: boolean().default(false),
-          phone: string().nullable(),
-          fax: string().nullable(),
-          email: string().email(t('common:emailInvalid')).nullable(),
-          address: string().nullable(),
-          memo: string().nullable(),
-        })
-      ),
-    }),
-    onSubmit: async (values) => {
-      if (isEditMode) {
-        const accountToUpdate = {
-          id: account?.id,
-          ...values,
-          contacts: values?.contacts?.filter(({ id }) => id),
-          contactsToCreate: values?.contacts?.filter(({ id }) => !id),
-        };
-        updateAccount(accountToUpdate as UpdateAccountDto);
-      } else {
-        const { contactIdsToDelete, ...accountToCreate } = values;
-        createAccount(accountToCreate);
-      }
-    },
-  });
+  const { values, touched, errors, handleChange, setFieldValue, setValues, submitForm } =
+    useFormik<AccountFormValues>({
+      initialValues: {
+        name: '',
+        crn: '',
+        memo: '',
+        contacts: [],
+        contactIdsToDelete: [],
+      },
+      validationSchema: object({
+        name: string().required(t('accountNameRequired')),
+        crn: string().nullable(),
+        memo: string().nullable(),
+        contacts: array().of(
+          object().shape({
+            title: string().required(t('contacts:titleRequired')),
+            isBase: boolean().default(false),
+            phone: string().nullable(),
+            fax: string().nullable(),
+            email: string().email(t('common:emailInvalid')).nullable(),
+            address: string().nullable(),
+            memo: string().nullable(),
+          }),
+        ),
+      }),
+      onSubmit: async (submitValues) => {
+        if (isEditMode) {
+          const accountToUpdate = {
+            id: account?.id,
+            ...submitValues,
+            contacts: submitValues?.contacts?.filter(({ id }) => id),
+            contactsToCreate: submitValues?.contacts?.filter(({ id }) => !id),
+          };
+          updateAccount(accountToUpdate as UpdateAccountDto);
+        } else {
+          const { contactIdsToDelete, ...accountToCreate } = submitValues;
+          createAccount(accountToCreate);
+        }
+      },
+    });
 
   const handleChangeCrn = (e: ChangeEvent<HTMLInputElement>) => {
+    // eslint-disable-next-line no-param-reassign
     e.target.value = formatCrn(e.target.value);
     handleChange(e);
   };
@@ -139,7 +147,9 @@ const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
   const handleDeleteContact = (index: number) => () => {
     const { contactIdsToDelete = [] } = values;
     const newContacts = values.contacts?.filter((c, i) => {
-      i === index && c.id && contactIdsToDelete.push(c.id);
+      if (i === index && c.id) {
+        contactIdsToDelete.push(c.id);
+      }
       return i !== index;
     });
     setFieldValue('contacts', newContacts);
@@ -154,7 +164,7 @@ const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
       ...contacts,
       {
         title: isContactsEmpty ? '기본' : '',
-        isBase: isContactsEmpty ? true : false,
+        isBase: !!isContactsEmpty,
         phone: '',
         fax: '',
         email: '',
@@ -164,8 +174,8 @@ const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
     ]);
   };
 
-  const setInitialValues = ({ contacts = [], ...account }: AccountDto) => {
-    setValues({ ...values, ...account, contacts: [...contacts] });
+  const setInitialValues = ({ contacts = [], ...rest }: AccountDto) => {
+    setValues({ ...values, ...rest, contacts: [...contacts] });
   };
 
   useEffect(() => {
@@ -214,6 +224,7 @@ const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
         />
         {values.contacts?.map((contact, index) => (
           <ContactForm
+            // eslint-disable-next-line react/no-array-index-key
             key={index}
             contact={contact}
             // @ts-ignore
@@ -247,6 +258,6 @@ const AccountDialog = ({ account, onClose }: AccountDialogProps) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default AccountDialog;

@@ -3,7 +3,14 @@ import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import {
-    createStyles, Grid, IconButton, makeStyles, Paper, Slide, Theme, Typography
+  createStyles,
+  Grid,
+  IconButton,
+  makeStyles,
+  Paper,
+  Slide,
+  Theme,
+  Typography,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 
@@ -32,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
     panelActions: {
       marginLeft: 'auto',
     },
-  })
+  }),
 );
 
 export interface SelectionPanelProps {
@@ -42,7 +49,7 @@ export interface SelectionPanelProps {
   children: ReactElement | ReactElement[];
 }
 
-const SelectionPanel = ({ isOpen, onClose, selectedCount, children }: SelectionPanelProps) => {
+function SelectionPanel({ isOpen, onClose, selectedCount, children }: SelectionPanelProps) {
   const { t } = useTranslation('common');
   const classes = useStyles();
 
@@ -56,7 +63,9 @@ const SelectionPanel = ({ isOpen, onClose, selectedCount, children }: SelectionP
             </IconButton>
           </Grid>
           <Grid item>
-            <Typography dangerouslySetInnerHTML={{ __html: t('selectedCount', { count: selectedCount }) }} />
+            <Typography
+              dangerouslySetInnerHTML={{ __html: t('selectedCount', { count: selectedCount }) }}
+            />
           </Grid>
           <Grid item className={classes.panelActions}>
             {children}
@@ -65,6 +74,6 @@ const SelectionPanel = ({ isOpen, onClose, selectedCount, children }: SelectionP
       </Paper>
     </Slide>
   );
-};
+}
 
 export default SelectionPanel;

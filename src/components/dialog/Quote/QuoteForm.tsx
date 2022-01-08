@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-duplicate-props */
 import CustomNumberFormat from 'components/form/CustomNumberFormat';
 import Input from 'components/form/Input';
 import SelectAccount from 'components/form/SelectAccount';
@@ -10,7 +11,7 @@ import { getPlateCost, getQuote, PlateSizes, QuoteSource } from 'utils/quote';
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core';
 
-import { QuoteFormValues } from './';
+import { QuoteFormValues } from 'features/quote/interface';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -51,16 +52,15 @@ const useStyles = makeStyles((theme: Theme) =>
     minQuantity: { gridArea: 'minQuantity' },
     plateCost: { gridArea: 'plateCost' },
     plateCount: { gridArea: 'plateCount' },
-  })
+  }),
 );
 
-export interface QuoteFormProps {}
-
-const QuoteForm = (props: QuoteFormProps) => {
+function QuoteForm() {
   const { t } = useTranslation('quotes');
   const classes = useStyles();
 
-  const { values, touched, errors, handleChange, handleBlur, setFieldValue } = useFormikContext<QuoteFormValues>();
+  const { values, touched, errors, handleChange, handleBlur, setFieldValue } =
+    useFormikContext<QuoteFormValues>();
 
   const handleChangeAccount = (e: ChangeEvent<{}>, value: AccountOption | null) => {
     setFieldValue('account', value);
@@ -124,7 +124,11 @@ const QuoteForm = (props: QuoteFormProps) => {
         onBlur={handleBlur}
         error={touched.thickness && Boolean(errors.thickness)}
         helperText={touched.thickness && errors.thickness}
-        inputProps={{ step: ProductThickness.STEP, min: ProductThickness.MIN, max: ProductThickness.MAX }}
+        inputProps={{
+          step: ProductThickness.STEP,
+          min: ProductThickness.MIN,
+          max: ProductThickness.MAX,
+        }}
       />
       <Input
         className={classes.length}
@@ -271,6 +275,6 @@ const QuoteForm = (props: QuoteFormProps) => {
       />
     </div>
   );
-};
+}
 
 export default QuoteForm;

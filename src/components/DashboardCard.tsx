@@ -1,8 +1,13 @@
-import classNames from 'classnames';
 import React, { ReactElement } from 'react';
+import classNames from 'classnames';
 
 import {
-    createStyles, IconButton, lighten, makeStyles, Theme, Typography
+  createStyles,
+  IconButton,
+  lighten,
+  makeStyles,
+  Theme,
+  Typography,
 } from '@material-ui/core';
 import RefreshIcon from '@material-ui/icons/Refresh';
 
@@ -33,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) =>
     cardContent: {
       padding: theme.spacing(1),
     },
-  })
+  }),
 );
 
 export interface DashboardCardProps {
@@ -44,7 +49,13 @@ export interface DashboardCardProps {
   children?: ReactElement | ReactElement[];
 }
 
-const DashboardCard = ({ className, title, onRefresh, headerButton, children }: DashboardCardProps) => {
+function DashboardCard({
+  className,
+  title,
+  onRefresh,
+  headerButton,
+  children,
+}: DashboardCardProps) {
   const classes = useStyles();
 
   return (
@@ -65,6 +76,6 @@ const DashboardCard = ({ className, title, onRefresh, headerButton, children }: 
       <div className={classes.cardContent}>{children}</div>
     </div>
   );
-};
+}
 
 export default DashboardCard;

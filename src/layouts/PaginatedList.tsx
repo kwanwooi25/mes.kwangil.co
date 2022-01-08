@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       justifyContent: 'center',
     },
-  })
+  }),
 );
 
 export interface PaginatedListProps {
@@ -29,7 +29,7 @@ export interface PaginatedListProps {
   onPageChange: (e: ChangeEvent<unknown>, value: number) => void;
 }
 
-const PaginatedList = ({
+function PaginatedList({
   children,
   className,
   height,
@@ -37,7 +37,7 @@ const PaginatedList = ({
   totalPages,
   currentPage,
   onPageChange,
-}: PaginatedListProps) => {
+}: PaginatedListProps) {
   const classes = useStyles();
 
   return (
@@ -59,6 +59,6 @@ const PaginatedList = ({
       </div>
     </>
   );
-};
+}
 
 export default PaginatedList;

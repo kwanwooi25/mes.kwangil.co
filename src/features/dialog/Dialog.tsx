@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'column',
     },
-  })
+  }),
 );
 
 export interface DialogProps extends MuiDialogProps {
@@ -42,7 +42,14 @@ export interface DialogProps extends MuiDialogProps {
   fullHeight?: boolean;
 }
 
-const Dialog = ({ title, subTitle, disableFullscreen = false, onClose, fullHeight, ...props }: DialogProps) => {
+function Dialog({
+  title,
+  subTitle,
+  disableFullscreen = false,
+  onClose,
+  fullHeight,
+  ...props
+}: DialogProps) {
   const classes = useStyles();
   const { isMobileLayout } = useScreenSize();
   const isFullscreen = !disableFullscreen && isMobileLayout;
@@ -54,7 +61,9 @@ const Dialog = ({ title, subTitle, disableFullscreen = false, onClose, fullHeigh
       fullWidth
       fullScreen={isFullscreen}
       {...props}
-      classes={{ paper: classnames([classes.dialogPaper, fullHeight ? classes.fullHeight : undefined]) }}
+      classes={{
+        paper: classnames([classes.dialogPaper, fullHeight ? classes.fullHeight : undefined]),
+      }}
     >
       <DialogTitle disableTypography className={classes.dialogHeader}>
         <div className={classes.dialogTitle}>
@@ -68,6 +77,6 @@ const Dialog = ({ title, subTitle, disableFullscreen = false, onClose, fullHeigh
       {props.children}
     </MuiDialog>
   );
-};
+}
 
 export default Dialog;

@@ -7,7 +7,7 @@ import Loading from 'components/Loading';
 import SelectionPanel from 'components/SelectionPanel';
 import SubToolbar from 'components/SubToolbar';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
-import { PlateLength, PlateListItemHeight, PlateRound } from 'const';
+import { DEFAULT_PLATE_FILTER, PlateListItemHeight } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useScreenSize } from 'hooks/useScreenSize';
@@ -26,17 +26,7 @@ import PlateListItem from './PlateListItem';
 import PlateSearch from './PlateSearch';
 import { useDeletePlatesMutation, useInfinitePlates } from './usePlates';
 
-export interface PlatePageProps {}
-
-export const DEFAULT_PLATE_FILTER: PlateFilter = {
-  accountName: '',
-  productName: '',
-  name: '',
-  round: [PlateRound.MIN, PlateRound.MAX],
-  length: [PlateLength.MIN, PlateLength.MAX],
-};
-
-const PlatePage = (props: PlatePageProps) => {
+function PlatePage() {
   const { t } = useTranslation('plates');
   const [filter, setFilter] = useState<PlateFilter>(DEFAULT_PLATE_FILTER);
 
@@ -45,13 +35,7 @@ const PlatePage = (props: PlatePageProps) => {
   const { canCreatePlates, canDeletePlates } = useAuth();
   const { isFetching, data, loadMore } = useInfinitePlates(filter);
 
-  const queryClient = useQueryClient();
-  const { deletePlates, isDeleting } = useDeletePlatesMutation({
-    queryClient,
-    onSuccess: () => resetSelection(),
-  });
-
-  const plates = data?.pages.reduce((plates: PlateDto[], { rows }) => [...plates, ...rows], []) || [];
+  const plates = data?.pages.reduce((p: PlateDto[], { rows }) => [...p, ...rows], []) || [];
   const plateIds = plates.map(({ id }) => id);
   const {
     selectedIds,
@@ -63,7 +47,14 @@ const PlatePage = (props: PlatePageProps) => {
     resetSelection,
   } = useSelection(plateIds);
 
+  const queryClient = useQueryClient();
+  const { deletePlates, isDeleting } = useDeletePlatesMutation({
+    queryClient,
+    onSuccess: () => resetSelection(),
+  });
+
   const itemCount = plates.length + 1;
+  // eslint-disable-next-line no-nested-ternary
   const itemHeight = isDesktopLayout
     ? PlateListItemHeight.DESKTOP
     : isTabletLayout
@@ -81,16 +72,28 @@ const PlatePage = (props: PlatePageProps) => {
         title={t('deletePlate')}
         message={t('deletePlatesConfirm', { count: selectedIds.length })}
         onClose={(isConfirmed: boolean) => {
-          isConfirmed && deletePlates(selectedIds as number[]);
+          if (isConfirmed) deletePlates(selectedIds as number[]);
           closeDialog();
         }}
-      />
+      />,
     );
   };
 
   const handleToggleSelection = (plate: PlateDto) => toggleSelection(plate.id);
 
   const openPlateDialog = () => openDialog(<PlateDialog onClose={closeDialog} />);
+
+  const selectModeButtons: JSX.Element[] = [];
+  if (canDeletePlates) {
+    selectModeButtons.push(
+      <Tooltip key="delete-all" title={t('common:deleteAll') as string} placement="top">
+        <IconButton onClick={handleClickDeleteAll} disabled={isDeleting}>
+          {isDeleting && <Loading />}
+          <DeleteOutline />
+        </IconButton>
+      </Tooltip>,
+    );
+  }
 
   const renderItem = (index: number) => {
     const plate = plates[index];
@@ -107,21 +110,14 @@ const PlatePage = (props: PlatePageProps) => {
         isSelectable={!!selectModeButtons.length}
       />
     ) : (
-      <EndOfListItem key="end-of-list" height={itemHeight} isLoading={isFetching} message={searchResult} />
+      <EndOfListItem
+        key="end-of-list"
+        height={itemHeight}
+        isLoading={isFetching}
+        message={searchResult}
+      />
     );
   };
-
-  let selectModeButtons: JSX.Element[] = [];
-  if (canDeletePlates) {
-    selectModeButtons.push(
-      <Tooltip key="delete-all" title={t('common:deleteAll') as string} placement="top">
-        <IconButton onClick={handleClickDeleteAll} disabled={isDeleting}>
-          {isDeleting && <Loading />}
-          <DeleteOutline />
-        </IconButton>
-      </Tooltip>
-    );
-  }
 
   let toolBarButtons: JSX.Element[] = [
     <Tooltip key="refresh" title={t('common:refresh') as string} placement="top">
@@ -177,7 +173,11 @@ const PlatePage = (props: PlatePageProps) => {
       {isMobileLayout && (
         <>
           {canDeletePlates && (
-            <SelectionPanel isOpen={isSelectMode} selectedCount={selectedIds.length} onClose={resetSelection}>
+            <SelectionPanel
+              isOpen={isSelectMode}
+              selectedCount={selectedIds.length}
+              onClose={resetSelection}
+            >
               <IconButton onClick={handleClickDeleteAll}>
                 <DeleteOutline />
               </IconButton>
@@ -188,6 +188,6 @@ const PlatePage = (props: PlatePageProps) => {
       )}
     </Layout>
   );
-};
+}
 
 export default PlatePage;

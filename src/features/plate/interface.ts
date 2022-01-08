@@ -26,7 +26,16 @@ export interface PlateDto {
   products: ProductDto[];
 }
 
-export interface CreatePlateDto extends Omit<PlateDto, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'> {}
+export interface CreatePlateDto
+  extends Omit<PlateDto, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'> {}
+
+export interface PlateFormValues extends CreatePlateDto {
+  id?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
+  productsToDisconnect?: ProductDto[];
+}
 
 export interface UpdatePlateDto extends PlateDto {
   productsToDisconnect?: ProductDto[];

@@ -1,7 +1,6 @@
 import Loading from 'components/Loading';
 import RoundedButton from 'components/RoundedButton';
 import { ProductLength, ProductThickness, ProductWidth } from 'const';
-import { AccountOption } from 'features/account/interface';
 import Dialog from 'features/dialog/Dialog';
 import { useCreateQuoteMutation } from 'features/quote/useQuotes';
 import { Form, Formik } from 'formik';
@@ -14,6 +13,7 @@ import { number, object, string } from 'yup';
 import { createStyles, DialogActions, DialogContent, makeStyles, Theme } from '@material-ui/core';
 import { Close, Save } from '@material-ui/icons';
 
+import { QuoteFormValues } from 'features/quote/interface';
 import QuoteForm from './QuoteForm';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -29,37 +29,22 @@ const useStyles = makeStyles((theme: Theme) =>
         maxWidth: '120px',
       },
     },
-  })
+  }),
 );
 
 export interface QuoteDialogProps {
   onClose: () => any;
 }
 
-export interface QuoteFormValues {
-  account: AccountOption | null;
-  productName?: string;
-  thickness: number;
-  length: number;
-  width: number;
-  printColorCount: number;
-  variableRate: number;
-  printCostPerRoll: number;
-  defectiveRate: number;
-  plateRound?: number;
-  plateLength?: number;
-  unitPrice: number;
-  minQuantity: number;
-  plateCost?: number;
-  plateCount?: number;
-}
-
-const QuoteDialog = ({ onClose }: QuoteDialogProps) => {
+function QuoteDialog({ onClose }: QuoteDialogProps) {
   const { t } = useTranslation('quotes');
   const classes = useStyles();
   const submitButtonRef = createRef<HTMLButtonElement>();
   const queryClient = useQueryClient();
-  const { createQuote, isCreating } = useCreateQuoteMutation({ queryClient, onSuccess: () => onClose() });
+  const { createQuote, isCreating } = useCreateQuoteMutation({
+    queryClient,
+    onSuccess: () => onClose(),
+  });
 
   const isSaving = isCreating;
   const dialogTitle = t('createQuote');
@@ -123,10 +108,15 @@ const QuoteDialog = ({ onClose }: QuoteDialogProps) => {
   return (
     <Dialog open onClose={onClose} title={dialogTitle}>
       <DialogContent dividers className={classes.dialogContent}>
-        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
           <Form autoComplete="off" style={{ height: '100%' }}>
             <QuoteForm />
-            <button ref={submitButtonRef} type="submit" style={{ display: 'none' }}></button>
+            {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
+            <button ref={submitButtonRef} type="submit" style={{ display: 'none' }} />
           </Form>
         </Formik>
       </DialogContent>
@@ -155,6 +145,6 @@ const QuoteDialog = ({ onClose }: QuoteDialogProps) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default QuoteDialog;

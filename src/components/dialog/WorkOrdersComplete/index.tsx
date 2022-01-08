@@ -16,11 +16,14 @@ export interface WorkOrdersCompleteDialogProps {
   onClose: () => void;
 }
 
-const WorkOrdersCompleteDialog = ({ workOrders = [], onClose }: WorkOrdersCompleteDialogProps) => {
+function WorkOrdersCompleteDialog({ workOrders = [], onClose }: WorkOrdersCompleteDialogProps) {
   const { t } = useTranslation('workOrders');
   const [isPrevButtonDisabled, setIsPrevButtonDisabled] = useState<boolean>(false);
   const queryClient = useQueryClient();
-  const { completeWorkOrders, isUpdating } = useCompleteWorkOrdersMutation({ queryClient, onSuccess: () => onClose() });
+  const { completeWorkOrders, isUpdating } = useCompleteWorkOrdersMutation({
+    queryClient,
+    onSuccess: () => onClose(),
+  });
 
   const dialogTitle = t('completeWorkOrder');
 
@@ -32,7 +35,7 @@ const WorkOrdersCompleteDialog = ({ workOrders = [], onClose }: WorkOrdersComple
     object({
       completedAt: date().nullable(),
       completedQuantity: number().integer().required(t('completedQuantityRequired')),
-    })
+    }),
   );
 
   const onSubmit = (values: WorkOrderDto[]) => {
@@ -43,7 +46,7 @@ const WorkOrdersCompleteDialog = ({ workOrders = [], onClose }: WorkOrdersComple
         completedQuantity: completedQuantity as number,
         workOrderStatus,
         productId: product.id,
-      })
+      }),
     );
     completeWorkOrders(workOrdersToUpdate);
   };
@@ -70,6 +73,6 @@ const WorkOrdersCompleteDialog = ({ workOrders = [], onClose }: WorkOrdersComple
       </FormikStepper>
     </Dialog>
   );
-};
+}
 
 export default WorkOrdersCompleteDialog;

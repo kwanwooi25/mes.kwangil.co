@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { DATE_FORMAT, PrintSide, WorkOrderStatus } from 'const';
 import { differenceInBusinessDays, format, parseISO } from 'date-fns';
 import { WorkOrderDto } from 'features/workOrder/interface';
@@ -36,14 +37,22 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
   const orderedAt = format(parseISO(workOrder.orderedAt as string), DATE_FORMAT);
   const deliverBy = format(parseISO(workOrder.deliverBy as string), DATE_FORMAT);
   const isCompleted = !!workOrder.completedAt;
-  const completedAt = isCompleted ? format(parseISO(workOrder.completedAt as string), DATE_FORMAT) : '';
-  const orderQuantity = t('common:sheetCount', { countString: formatDigit(workOrder.orderQuantity) });
-  const orderWeight = t('common:weightInKg', { weight: getWeight({ product, quantity: workOrder.orderQuantity }) });
-  const completedQuantity = t('common:sheetCount', { countString: formatDigit(workOrder.completedQuantity || 0) });
+  const completedAt = isCompleted
+    ? format(parseISO(workOrder.completedAt as string), DATE_FORMAT)
+    : '';
+  const orderQuantity = t('common:sheetCount', {
+    countString: formatDigit(workOrder.orderQuantity),
+  });
+  const orderWeight = t('common:weightInKg', {
+    weight: getWeight({ product, quantity: workOrder.orderQuantity }),
+  });
+  const completedQuantity = t('common:sheetCount', {
+    countString: formatDigit(workOrder.completedQuantity || 0),
+  });
   const completedWeight = t('common:weightInKg', {
     weight: getWeight({ product, quantity: workOrder.completedQuantity }),
   });
-  let deliveryTags = [];
+  const deliveryTags = [];
   if (workOrder.isUrgent) {
     deliveryTags.push(t('workOrders:isUrgent'));
   }
@@ -80,7 +89,9 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
   const productSize = getProductSize(product);
   const productTitle = getProductTitle(product);
   const productSummary = getProductSummary(product, t);
-  const productType = t(product.printSide === PrintSide.NONE ? 'products:printNone' : 'products:print');
+  const productType = t(
+    product.printSide === PrintSide.NONE ? 'products:printNone' : 'products:print',
+  );
 
   return {
     workOrderMonth,

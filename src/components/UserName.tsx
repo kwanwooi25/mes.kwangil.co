@@ -2,9 +2,9 @@ import classNames from 'classnames';
 import { UserDto } from 'features/auth/interface';
 import React from 'react';
 
-import { createStyles, Link, makeStyles, Theme } from '@material-ui/core';
+import { createStyles, Link, makeStyles } from '@material-ui/core';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     userNameLink: {
       maxWidth: '200px',
@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     userName: {},
-  })
+  }),
 );
 
 export interface UserNameProps {
@@ -29,7 +29,7 @@ export interface UserNameProps {
   user: UserDto;
 }
 
-const UserName = ({ user, className, linkClassName }: UserNameProps) => {
+function UserName({ user, className, linkClassName }: UserNameProps) {
   const classes = useStyles();
 
   // const {refetch, isFetching} = useUser();
@@ -41,6 +41,7 @@ const UserName = ({ user, className, linkClassName }: UserNameProps) => {
 
   return (
     <div className={className}>
+      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
       <Link
         className={classNames([classes.userNameLink, linkClassName])}
         component="button"
@@ -54,6 +55,6 @@ const UserName = ({ user, className, linkClassName }: UserNameProps) => {
       </Link>
     </div>
   );
-};
+}
 
 export default UserName;

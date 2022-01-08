@@ -3,7 +3,7 @@ import Loading from 'components/Loading';
 import { PlateLength, PlateMaterial, PlateRound } from 'const';
 import Dialog from 'features/dialog/Dialog';
 import useNotification from 'features/notification/useNotification';
-import { CreatePlateDto, PlateDto, UpdatePlateDto } from 'features/plate/interface';
+import { PlateDto, PlateFormValues, UpdatePlateDto } from 'features/plate/interface';
 import { useCreatePlateMutation, useUpdatePlateMutation } from 'features/plate/usePlates';
 import { ProductDto } from 'features/product/interface';
 import { isEmpty, isEqual } from 'lodash';
@@ -22,15 +22,7 @@ export interface PlateDialogProps {
   onClose: (result?: boolean) => void;
 }
 
-export interface PlateFormValues extends CreatePlateDto {
-  id?: number;
-  createdAt?: Date;
-  updatedAt?: Date;
-  deletedAt?: Date;
-  productsToDisconnect?: ProductDto[];
-}
-
-const PlateDialog = ({ products = [], plate, onClose }: PlateDialogProps) => {
+function PlateDialog({ products = [], plate, onClose }: PlateDialogProps) {
   const { t } = useTranslation('plates');
 
   const isEditMode = !isEmpty(plate);
@@ -51,7 +43,7 @@ const PlateDialog = ({ products = [], plate, onClose }: PlateDialogProps) => {
 
   const initialValues: PlateFormValues = getInitialPlateFormValues({ plate, products });
 
-  const validationSchema = {
+  const validationSchemas = {
     plateInfo: object({
       round: number()
         .required(t('roundRequired'))
@@ -75,8 +67,16 @@ const PlateDialog = ({ products = [], plate, onClose }: PlateDialogProps) => {
   };
 
   const forms = [
-    { label: t('selectProducts'), Component: SelectProductsForm, validationSchema: validationSchema.selectProducts },
-    { label: t('plateInfo'), Component: PlateInfoForm, validationSchema: validationSchema.plateInfo },
+    {
+      label: t('selectProducts'),
+      Component: SelectProductsForm,
+      validationSchema: validationSchemas.selectProducts,
+    },
+    {
+      label: t('plateInfo'),
+      Component: PlateInfoForm,
+      validationSchema: validationSchemas.plateInfo,
+    },
   ];
 
   const onSubmit = async (values: PlateFormValues) => {
@@ -98,7 +98,11 @@ const PlateDialog = ({ products = [], plate, onClose }: PlateDialogProps) => {
   return (
     <Dialog open onClose={onClose} title={dialogTitle} fullHeight>
       {isSaving && <Loading />}
-      <FormikStepper initialValues={initialValues} onSubmit={onSubmit} initialStep={!products.length ? 0 : 1}>
+      <FormikStepper
+        initialValues={initialValues}
+        onSubmit={onSubmit}
+        initialStep={!products.length ? 0 : 1}
+      >
         {forms.map(({ label, Component, validationSchema }) => (
           <FormikStep key={label} label={label} validationSchema={validationSchema}>
             <Component />
@@ -107,6 +111,6 @@ const PlateDialog = ({ products = [], plate, onClose }: PlateDialogProps) => {
       </FormikStepper>
     </Dialog>
   );
-};
+}
 
 export default PlateDialog;

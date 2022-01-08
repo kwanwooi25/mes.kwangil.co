@@ -70,12 +70,10 @@ const useStyles = makeStyles((theme: Theme) =>
     registerButton: {
       marginTop: theme.spacing(2),
     },
-  })
+  }),
 );
 
-export interface LoginPageProps {}
-
-const LoginPage = (props: LoginPageProps) => {
+function LoginPage() {
   const { t } = useTranslation('auth');
   const classes = useStyles();
 
@@ -91,8 +89,8 @@ const LoginPage = (props: LoginPageProps) => {
       email: string().email(t('emailInvalid')).required(t('emailRequired')),
       password: string().required(t('passwordRequired')),
     }),
-    onSubmit: (values) => {
-      login(values);
+    onSubmit: (submitValues) => {
+      login(submitValues);
     },
   });
 
@@ -101,7 +99,7 @@ const LoginPage = (props: LoginPageProps) => {
   return (
     <div className={classes.loginPage}>
       <div className={classes.loginHeader}>
-        <img className={classes.logo} src="/kwangil_logo_name_white.png" alt="kwangil logo"></img>
+        <img className={classes.logo} src="/kwangil_logo_name_white.png" alt="kwangil logo" />
         <Typography component="h2" variant="h5" align="center">
           {t('common:appName')}
         </Typography>
@@ -153,6 +151,6 @@ const LoginPage = (props: LoginPageProps) => {
       </form>
     </div>
   );
-};
+}
 
 export default LoginPage;

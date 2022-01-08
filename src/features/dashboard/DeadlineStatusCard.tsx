@@ -1,3 +1,4 @@
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import DashboardCard from 'components/DashboardCard';
 import CustomToggleButton, { ToggleButtonOption } from 'components/form/CustomToggleButton';
 import ProductName from 'components/ProductName';
@@ -6,13 +7,18 @@ import { DeadlineStatus } from 'const';
 import { WorkOrderDto, WorkOrdersByDeadline } from 'features/workOrder/interface';
 import { workOrderApi } from 'features/workOrder/workOrderApi';
 import { useWorkOrderDisplay } from 'hooks/useWorkOrderDisplay';
-import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { formatDate } from 'utils/date';
 
 import {
-    Chip, createStyles, List, ListItem, makeStyles, Theme, Typography
+  Chip,
+  createStyles,
+  List,
+  ListItem,
+  makeStyles,
+  Theme,
+  Typography,
 } from '@material-ui/core';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import { Pagination, Skeleton } from '@material-ui/lab';
@@ -76,14 +82,20 @@ const useStyles = makeStyles((theme: Theme) =>
         margin: theme.spacing(2),
       },
     },
-  })
+  }),
 );
 
-const WorkOrderListItem = ({ workOrder }: { workOrder: WorkOrderDto }) => {
+function WorkOrderListItem({ workOrder }: { workOrder: WorkOrderDto }) {
   const { t } = useTranslation();
   const classes = useStyles();
-  const { productSize, orderQuantity, deliverBy, deliverByStyle, workOrderStatus, workOrderStatusStyle } =
-    useWorkOrderDisplay(workOrder, t);
+  const {
+    productSize,
+    orderQuantity,
+    deliverBy,
+    deliverByStyle,
+    workOrderStatus,
+    workOrderStatusStyle,
+  } = useWorkOrderDisplay(workOrder, t);
 
   return (
     <ListItem className={classes.workOrderListItem} divider>
@@ -93,13 +105,18 @@ const WorkOrderListItem = ({ workOrder }: { workOrder: WorkOrderDto }) => {
       <Typography className="deliverBy" style={deliverByStyle}>
         {deliverBy}
       </Typography>
-      <Chip className="workOrderStatus" size="small" label={workOrderStatus} style={workOrderStatusStyle} />
+      <Chip
+        className="workOrderStatus"
+        size="small"
+        label={workOrderStatus}
+        style={workOrderStatusStyle}
+      />
       <Typography className="orderQuantity">{orderQuantity}</Typography>
     </ListItem>
   );
-};
+}
 
-const WorkOrderListItemSkeleton = () => {
+function WorkOrderListItemSkeleton() {
   const classes = useStyles();
 
   return (
@@ -112,9 +129,9 @@ const WorkOrderListItemSkeleton = () => {
       <Skeleton className="orderQuantity" width={85} height={30} />
     </ListItem>
   );
-};
+}
 
-const NoWorkOrders = ({ deadlineStatus }: { deadlineStatus: DeadlineStatus }) => {
+function NoWorkOrders({ deadlineStatus }: { deadlineStatus: DeadlineStatus }) {
   const { t } = useTranslation();
   const classes = useStyles();
 
@@ -124,11 +141,9 @@ const NoWorkOrders = ({ deadlineStatus }: { deadlineStatus: DeadlineStatus }) =>
       <Typography color="primary">{t(`dashboard:noWorkOrders:${deadlineStatus}`)}</Typography>
     </ListItem>
   );
-};
+}
 
-export interface DeadlineStatusCardProps {}
-
-const DeadlineStatusCard = (props: DeadlineStatusCardProps) => {
+function DeadlineStatusCard() {
   const { t } = useTranslation();
   const classes = useStyles();
   const {
@@ -138,7 +153,7 @@ const DeadlineStatusCard = (props: DeadlineStatusCardProps) => {
   } = useQuery(
     'workOrdersByDeadline',
     async (): Promise<WorkOrdersByDeadline> =>
-      await workOrderApi.getWorkOrdersByDeadline({ deadline: formatDate(new Date()) })
+      workOrderApi.getWorkOrdersByDeadline({ deadline: formatDate(new Date()) }),
   );
   const [deadlineStatus, setDeadlineStatus] = useState<DeadlineStatus>(DeadlineStatus.IMMINENT);
   const [workOrdersToShow, setWorkOrdersToShow] = useState<WorkOrderDto[]>([]);
@@ -158,16 +173,19 @@ const DeadlineStatusCard = (props: DeadlineStatusCardProps) => {
     },
   ];
 
-  const handleChangeDeadlineStatus = (deadlineStatus: DeadlineStatus) => setDeadlineStatus(deadlineStatus);
-  const handlePageChange = (e: ChangeEvent<unknown>, page: number) => setPage(page);
+  const handleChangeDeadlineStatus = (status: DeadlineStatus) => setDeadlineStatus(status);
+  const handlePageChange = (e: ChangeEvent<unknown>, p: number) => setPage(p);
 
   const renderSkeletons = () =>
     Array(workOrderCountToDisplay)
       .fill('')
+      // eslint-disable-next-line react/no-array-index-key
       .map((_, index) => <WorkOrderListItemSkeleton key={index} />);
 
   const renderWorkOrders = () =>
-    workOrdersToShow.map((workOrder) => <WorkOrderListItem key={workOrder.id} workOrder={workOrder} />);
+    workOrdersToShow.map((workOrder) => (
+      <WorkOrderListItem key={workOrder.id} workOrder={workOrder} />
+    ));
 
   useEffect(() => {
     const workOrders = [...workOrdersByDeadline[deadlineStatus]];
@@ -183,7 +201,11 @@ const DeadlineStatusCard = (props: DeadlineStatusCardProps) => {
   }, [page]);
 
   return (
-    <DashboardCard title={t('dashboard:deadlineStatus')} onRefresh={refetch} className={classes.deadlineStatusCard}>
+    <DashboardCard
+      title={t('dashboard:deadlineStatus')}
+      onRefresh={refetch}
+      className={classes.deadlineStatusCard}
+    >
       <CustomToggleButton
         className={classes.deadlineStatusButtons}
         value={deadlineStatus}
@@ -191,13 +213,9 @@ const DeadlineStatusCard = (props: DeadlineStatusCardProps) => {
         onChange={handleChangeDeadlineStatus}
       />
       <List disablePadding style={{ height: 112 * workOrderCountToDisplay }}>
-        {isLoading ? (
-          renderSkeletons()
-        ) : !workOrdersToShow.length ? (
-          <NoWorkOrders deadlineStatus={deadlineStatus} />
-        ) : (
-          renderWorkOrders()
-        )}
+        {isLoading && renderSkeletons()}
+        {!isLoading && !workOrdersToShow.length && <NoWorkOrders deadlineStatus={deadlineStatus} />}
+        {!isLoading && workOrdersToShow.length && renderWorkOrders()}
       </List>
       <Pagination
         className={classes.pagination}
@@ -210,6 +228,6 @@ const DeadlineStatusCard = (props: DeadlineStatusCardProps) => {
       />
     </DashboardCard>
   );
-};
+}
 
 export default DeadlineStatusCard;

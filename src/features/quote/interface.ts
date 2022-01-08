@@ -1,4 +1,4 @@
-import { AccountDto } from 'features/account/interface';
+import { AccountDto, AccountOption } from 'features/account/interface';
 import { BaseQuery } from 'types/api';
 
 export interface QuoteFilter {}
@@ -27,6 +27,25 @@ export interface QuoteDto {
   account: AccountDto;
 }
 
-export interface CreateQuoteDto extends Omit<QuoteDto, 'id' | 'account' | 'createdAt' | 'updatedAt' | 'deletedAt'> {
+export interface CreateQuoteDto
+  extends Omit<QuoteDto, 'id' | 'account' | 'createdAt' | 'updatedAt' | 'deletedAt'> {
   accountId: number;
+}
+
+export interface QuoteFormValues {
+  account: AccountOption | null;
+  productName?: string;
+  thickness: number;
+  length: number;
+  width: number;
+  printColorCount: number;
+  variableRate: number;
+  printCostPerRoll: number;
+  defectiveRate: number;
+  plateRound?: number;
+  plateLength?: number;
+  unitPrice: number;
+  minQuantity: number;
+  plateCost?: number;
+  plateCount?: number;
 }

@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 import { createStyles, List, makeStyles, Theme } from '@material-ui/core';
 
-import { PlateFormValues } from './';
+import { PlateFormValues } from 'features/plate/interface';
 import ProductListItem from './ProductListItem';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -60,12 +60,10 @@ const useStyles = makeStyles((theme: Theme) =>
         gridArea: 'searchedListSubheader',
       },
     },
-  })
+  }),
 );
 
-export interface SelectProductsFormProps {}
-
-const SelectProductsForm = (props: SelectProductsFormProps) => {
+function SelectProductsForm() {
   const { t } = useTranslation('plates');
   const classes = useStyles();
 
@@ -89,12 +87,23 @@ const SelectProductsForm = (props: SelectProductsFormProps) => {
 
   const renderSelectedProduct = (index: number) => {
     const product = values.products[index];
-    return <ProductListItem key={product.id} product={product} onDelete={removeProduct(product)} isSelected />;
+    return (
+      <ProductListItem
+        key={product.id}
+        product={product}
+        onDelete={removeProduct(product)}
+        isSelected
+      />
+    );
   };
 
   const renderProductOptions = (index: number) => {
     const product = productOptions.filter(({ id }) => !selectedProductIds.includes(id))[index];
-    return !!product && <ProductListItem key={product.id} product={product} onSelect={selectProduct(product)} />;
+    return (
+      !!product && (
+        <ProductListItem key={product.id} product={product} onSelect={selectProduct(product)} />
+      )
+    );
   };
 
   return (
@@ -111,7 +120,11 @@ const SelectProductsForm = (props: SelectProductsFormProps) => {
         <span>{values.products.length}</span>
       </CustomListSubHeader>
       <List disablePadding className={classes.selectedList}>
-        <VirtualInfiniteScroll itemCount={values.products.length} itemHeight={98} renderItem={renderSelectedProduct} />
+        <VirtualInfiniteScroll
+          itemCount={values.products.length}
+          itemHeight={98}
+          renderItem={renderSelectedProduct}
+        />
       </List>
 
       <CustomListSubHeader className={classes.searchedListSubHeader}>
@@ -119,10 +132,14 @@ const SelectProductsForm = (props: SelectProductsFormProps) => {
         <span>{productOptions.length}</span>
       </CustomListSubHeader>
       <List disablePadding className={classes.searchedList}>
-        <VirtualInfiniteScroll itemCount={productOptions.length} itemHeight={98} renderItem={renderProductOptions} />
+        <VirtualInfiniteScroll
+          itemCount={productOptions.length}
+          itemHeight={98}
+          renderItem={renderProductOptions}
+        />
       </List>
     </div>
   );
-};
+}
 
 export default SelectProductsForm;

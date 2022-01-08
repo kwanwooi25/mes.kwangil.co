@@ -4,9 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Typography } from '@material-ui/core';
 
-export interface SettingsPageProps {}
-
-const SettingsPage = (props: SettingsPageProps) => {
+function SettingsPage() {
   const { t } = useTranslation('settings');
 
   return (
@@ -14,6 +12,6 @@ const SettingsPage = (props: SettingsPageProps) => {
       <Typography>설정페이지</Typography>
     </Layout>
   );
-};
+}
 
 export default SettingsPage;

@@ -1,3 +1,4 @@
+import React from 'react';
 import { DASHBOARD_CARD_MIN_WIDTH } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import Layout from 'layouts/Layout';
@@ -20,10 +21,10 @@ const useStyles = makeStyles((theme: Theme) =>
       gridGap: theme.spacing(2),
       padding: theme.spacing(2),
     },
-  })
+  }),
 );
 
-const DashboardPage = () => {
+function DashboardPage() {
   const { t } = useTranslation('dashboard');
   const classes = useStyles();
   const { canViewWorkOrders } = useAuth();
@@ -41,6 +42,6 @@ const DashboardPage = () => {
       </div>
     </Layout>
   );
-};
+}
 
 export default DashboardPage;

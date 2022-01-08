@@ -26,7 +26,7 @@ export interface ExtrusionProps {
   product: ProductDto;
 }
 
-const Extrusion = ({ product }: ExtrusionProps) => {
+function Extrusion({ product }: ExtrusionProps) {
   const { t } = useTranslation('products');
   const { extColor, printSide, extMemo, extIsAntistatic } = product;
 
@@ -49,6 +49,6 @@ const Extrusion = ({ product }: ExtrusionProps) => {
       </View>
     </View>
   );
-};
+}
 
 export default Extrusion;

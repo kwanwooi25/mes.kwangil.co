@@ -18,14 +18,14 @@ const useStyles = makeStyles((theme: Theme) =>
     icon: {
       fontSize: theme.typography.h3.fontSize,
     },
-  })
+  }),
 );
 
 export interface ListEmptyProps {
   message?: string;
 }
 
-const ListEmpty = ({ message }: ListEmptyProps) => {
+function ListEmpty({ message }: ListEmptyProps) {
   const classes = useStyles();
   const { t } = useTranslation('common');
 
@@ -37,6 +37,6 @@ const ListEmpty = ({ message }: ListEmptyProps) => {
       </Typography>
     </div>
   );
-};
+}
 
 export default ListEmpty;

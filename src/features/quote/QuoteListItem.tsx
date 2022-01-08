@@ -10,8 +10,19 @@ import { getProductSize } from 'utils/product';
 import { formatDigit } from 'utils/string';
 
 import {
-    Checkbox, createStyles, IconButton, ListItem, ListItemIcon, ListItemProps,
-    ListItemSecondaryAction, ListItemText, makeStyles, Menu, MenuItem, Theme, Typography
+  Checkbox,
+  createStyles,
+  IconButton,
+  ListItem,
+  ListItemIcon,
+  ListItemProps,
+  ListItemSecondaryAction,
+  ListItemText,
+  makeStyles,
+  Menu,
+  MenuItem,
+  Theme,
+  Typography,
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 
@@ -60,7 +71,7 @@ const useStyles = makeStyles((theme: Theme) =>
     accountNameLink: {
       fontSize: '14px',
     },
-  })
+  }),
 );
 
 export interface QuoteListItemProps extends ListItemProps {
@@ -71,13 +82,13 @@ export interface QuoteListItemProps extends ListItemProps {
   toggleSelection?: (quote: QuoteDto) => any;
 }
 
-const QuoteListItem = ({
+function QuoteListItem({
   isSelectable = true,
   quote,
   itemHeight,
   isSelected,
-  toggleSelection = (quote: QuoteDto) => {},
-}: QuoteListItemProps) => {
+  toggleSelection = () => {},
+}: QuoteListItemProps) {
   const { t } = useTranslation('quotes');
   const classes = useStyles();
 
@@ -88,7 +99,10 @@ const QuoteListItem = ({
 
   const handleSelectionChange = () => toggleSelection(quote);
 
-  const openMenu = useCallback((e: MouseEvent<HTMLButtonElement>) => setMenuAnchorEl(e.currentTarget), []);
+  const openMenu = useCallback(
+    (e: MouseEvent<HTMLButtonElement>) => setMenuAnchorEl(e.currentTarget),
+    [],
+  );
   const closeMenu = useCallback(() => setMenuAnchorEl(null), []);
 
   const handleClickMenuItem =
@@ -108,11 +122,11 @@ const QuoteListItem = ({
       <ConfirmDialog
         title={t('deleteQuote')}
         message={t('deleteQuoteConfirm')}
-        onClose={(isConfirmed: boolean) => {
+        onClose={() => {
           // TODO: delete quote
           closeDialog();
         }}
-      />
+      />,
     );
 
   let actionButtons: { label: string; onClick: () => any; isLoading?: boolean }[] = [];
@@ -129,7 +143,16 @@ const QuoteListItem = ({
     actionButtons.push({ label: t('common:delete'), onClick: handleClickDelete });
   }
 
-  const { account, thickness, length, width, productName, printColorCount, unitPrice, minQuantity } = quote;
+  const {
+    account,
+    thickness,
+    length,
+    width,
+    productName,
+    printColorCount,
+    unitPrice,
+    minQuantity,
+  } = quote;
 
   const productDetail = !printColorCount ? t('printNone') : `${t('print')} ${printColorCount}도`;
 
@@ -137,18 +160,29 @@ const QuoteListItem = ({
     <ListItem divider style={{ height: itemHeight }} selected={isSelected}>
       {isSelectable && (
         <ListItemIcon>
-          <Checkbox edge="start" color="primary" checked={isSelected} onChange={handleSelectionChange} />
+          <Checkbox
+            edge="start"
+            color="primary"
+            checked={isSelected}
+            onChange={handleSelectionChange}
+          />
         </ListItemIcon>
       )}
       <ListItemText>
         <div className={classes.quoteDetail}>
-          <AccountName account={account} className={classes.accountName} linkClassName={classes.accountNameLink} />
+          <AccountName
+            account={account}
+            className={classes.accountName}
+            linkClassName={classes.accountNameLink}
+          />
           <Typography className={classes.productName}>{productName}</Typography>
           <Typography className={classes.productSize}>
             {getProductSize({ thickness, length, width } as ProductDto)}
           </Typography>
           <Typography className={classes.productDetail}>{productDetail}</Typography>
-          <Typography className={classes.unitPrice}>{t('common:currency', { value: unitPrice })}</Typography>
+          <Typography className={classes.unitPrice}>
+            {t('common:currency', { value: unitPrice })}
+          </Typography>
           <Typography className={classes.minQuantity}>
             {t('common:sheetCount', { countString: formatDigit(minQuantity) })}
           </Typography>
@@ -171,6 +205,6 @@ const QuoteListItem = ({
       )}
     </ListItem>
   );
-};
+}
 
 export default memo(QuoteListItem);

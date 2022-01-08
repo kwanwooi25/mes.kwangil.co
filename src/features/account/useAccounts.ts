@@ -11,11 +11,11 @@ export const useInfiniteAccounts = (filter: AccountFilter, limit: number = DEFAU
     ['accounts', filter.accountName],
     async ({ queryKey, pageParam: offset = 0 }): Promise<GetListResponse<AccountDto>> => {
       const [, accountName] = queryKey;
-      return await accountApi.getAccounts({ offset, limit, accountName });
+      return accountApi.getAccounts({ offset, limit, accountName });
     },
     {
       getNextPageParam: (lastPage, pages) => lastPage.hasMore && pages.length * limit,
-    }
+    },
   );
 
   const { isFetching, fetchNextPage, hasNextPage } = accountInfiniteQuery;
@@ -46,7 +46,7 @@ export const useDownloadAccounts = (filter: AccountFilter) => {
       const { rows } = await accountApi.getAllAccounts(accountName);
       return rows;
     },
-    { enabled: false }
+    { enabled: false },
   );
 
   const download = (fileName: string) => {
@@ -63,9 +63,9 @@ export const useAccount = (id: number) =>
     ['account', id],
     async ({ queryKey }) => {
       const [, accountId] = queryKey;
-      return await accountApi.getAccount(accountId as number);
+      return accountApi.getAccount(accountId as number);
     },
-    { enabled: false }
+    { enabled: false },
   );
 
 export const useCreateAccountMutation = ({
@@ -78,34 +78,40 @@ export const useCreateAccountMutation = ({
   onError?: () => any;
 }) => {
   const { notify } = useNotification();
-  const { mutateAsync: createAccount, isLoading: isCreating } = useMutation(accountApi.createAccount, {
-    onSuccess: () => {
-      notify({ variant: 'success', message: 'accounts:createAccountSuccess' });
-      queryClient.invalidateQueries('accounts');
-      onSuccess();
+  const { mutateAsync: createAccount, isLoading: isCreating } = useMutation(
+    accountApi.createAccount,
+    {
+      onSuccess: () => {
+        notify({ variant: 'success', message: 'accounts:createAccountSuccess' });
+        queryClient.invalidateQueries('accounts');
+        onSuccess();
+      },
+      onError: () => {
+        notify({ variant: 'error', message: 'accounts:createAccountFailed' });
+        onError();
+      },
     },
-    onError: () => {
-      notify({ variant: 'error', message: 'accounts:createAccountFailed' });
-      onError();
-    },
-  });
+  );
 
   return { createAccount, isCreating };
 };
 
 export const useBulkCreateAccountMutation = ({
   queryClient,
-  onSettled = (data: any) => {},
+  onSettled = () => {},
 }: {
   queryClient: QueryClient;
   onSettled?: (data: any) => any;
 }) => {
-  const { mutateAsync: createAccounts, isLoading: isCreating } = useMutation(accountApi.createAccounts, {
-    onSettled: (data) => {
-      queryClient.invalidateQueries('accounts');
-      onSettled(data);
+  const { mutateAsync: createAccounts, isLoading: isCreating } = useMutation(
+    accountApi.createAccounts,
+    {
+      onSettled: (data) => {
+        queryClient.invalidateQueries('accounts');
+        onSettled(data);
+      },
     },
-  });
+  );
 
   return { createAccounts, isCreating };
 };
@@ -120,17 +126,20 @@ export const useUpdateAccountMutation = ({
   onError?: () => any;
 }) => {
   const { notify } = useNotification();
-  const { mutateAsync: updateAccount, isLoading: isUpdating } = useMutation(accountApi.updateAccount, {
-    onSuccess: () => {
-      notify({ variant: 'success', message: 'accounts:updateAccountSuccess' });
-      queryClient.invalidateQueries('accounts');
-      onSuccess();
+  const { mutateAsync: updateAccount, isLoading: isUpdating } = useMutation(
+    accountApi.updateAccount,
+    {
+      onSuccess: () => {
+        notify({ variant: 'success', message: 'accounts:updateAccountSuccess' });
+        queryClient.invalidateQueries('accounts');
+        onSuccess();
+      },
+      onError: () => {
+        notify({ variant: 'error', message: 'accounts:updateAccountFailed' });
+        onError();
+      },
     },
-    onError: () => {
-      notify({ variant: 'error', message: 'accounts:updateAccountFailed' });
-      onError();
-    },
-  });
+  );
 
   return { updateAccount, isUpdating };
 };
@@ -145,17 +154,20 @@ export const useDeleteAccountsMutation = ({
   onError?: () => any;
 }) => {
   const { notify } = useNotification();
-  const { mutateAsync: deleteAccounts, isLoading: isDeleting } = useMutation(accountApi.deleteAccounts, {
-    onSuccess: () => {
-      notify({ variant: 'success', message: 'accounts:deleteAccountSuccess' });
-      queryClient.invalidateQueries('accounts');
-      onSuccess();
+  const { mutateAsync: deleteAccounts, isLoading: isDeleting } = useMutation(
+    accountApi.deleteAccounts,
+    {
+      onSuccess: () => {
+        notify({ variant: 'success', message: 'accounts:deleteAccountSuccess' });
+        queryClient.invalidateQueries('accounts');
+        onSuccess();
+      },
+      onError: () => {
+        notify({ variant: 'error', message: 'accounts:deleteAccountFailed' });
+        onError();
+      },
     },
-    onError: () => {
-      notify({ variant: 'error', message: 'accounts:deleteAccountFailed' });
-      onError();
-    },
-  });
+  );
 
   return { deleteAccounts, isDeleting };
 };

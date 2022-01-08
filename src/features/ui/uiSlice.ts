@@ -1,5 +1,6 @@
 import { RootState } from 'app/store';
 import { createSlice } from '@reduxjs/toolkit';
+
 export interface UIState {
   isNavOpen: boolean;
   isSearchOpen: boolean;

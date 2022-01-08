@@ -4,7 +4,12 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import {
-    createStyles, DialogActions, DialogContent, makeStyles, Theme, Typography
+  createStyles,
+  DialogActions,
+  DialogContent,
+  makeStyles,
+  Theme,
+  Typography,
 } from '@material-ui/core';
 import DoneIcon from '@material-ui/icons/Done';
 
@@ -13,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
     buttons: {
       padding: theme.spacing(2, 3),
     },
-  })
+  }),
 );
 
 export interface AlertDialogProps {
@@ -22,7 +27,7 @@ export interface AlertDialogProps {
   onClose: () => void;
 }
 
-const AlertDialog = ({ title, message, onClose }: AlertDialogProps) => {
+function AlertDialog({ title, message, onClose }: AlertDialogProps) {
   const { t } = useTranslation('common');
   const classes = useStyles();
 
@@ -38,6 +43,6 @@ const AlertDialog = ({ title, message, onClose }: AlertDialogProps) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default AlertDialog;

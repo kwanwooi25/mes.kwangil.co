@@ -9,7 +9,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
 import {
-    getCreateProductDto, getInitialProductToCopy, getInitialProductToCreate
+  getCreateProductDto,
+  getInitialProductToCopy,
+  getInitialProductToCreate,
 } from 'utils/product';
 import * as yup from 'yup';
 
@@ -62,7 +64,7 @@ export interface ProductFormValues {
   imagesToDelete?: ImageDto[];
 }
 
-const ProductDialog = ({ mode, product, onClose }: ProductDialogProps) => {
+function ProductDialog({ mode, product, onClose }: ProductDialogProps) {
   const { t } = useTranslation('products');
 
   const dialogTitle = t('addProduct');
@@ -82,7 +84,7 @@ const ProductDialog = ({ mode, product, onClose }: ProductDialogProps) => {
     [ProductDialogMode.CREATE]: getInitialProductToCreate(),
   };
 
-  const validationSchema = {
+  const validationSchemas = {
     baseInfo: yup.object({
       account: yup
         .object()
@@ -144,18 +146,26 @@ const ProductDialog = ({ mode, product, onClose }: ProductDialogProps) => {
         yup.object().shape({
           fileName: yup.string(),
           imageUrl: yup.string(),
-        })
+        }),
       ),
     }),
   };
 
   const forms = [
-    { label: t('baseInfo'), Component: BaseInfoForm, validationSchema: validationSchema.baseInfo },
-    { label: t('extrusion'), Component: ExtrusionForm, validationSchema: validationSchema.extrusion },
-    { label: t('print'), Component: PrintForm, validationSchema: validationSchema.print },
-    { label: t('cutting'), Component: CuttingForm, validationSchema: validationSchema.cutting },
-    { label: t('packaging'), Component: PackagingForm, validationSchema: validationSchema.packaging },
-    { label: t('images'), Component: ImageForm, validationSchema: validationSchema.images },
+    { label: t('baseInfo'), Component: BaseInfoForm, validationSchema: validationSchemas.baseInfo },
+    {
+      label: t('extrusion'),
+      Component: ExtrusionForm,
+      validationSchema: validationSchemas.extrusion,
+    },
+    { label: t('print'), Component: PrintForm, validationSchema: validationSchemas.print },
+    { label: t('cutting'), Component: CuttingForm, validationSchema: validationSchemas.cutting },
+    {
+      label: t('packaging'),
+      Component: PackagingForm,
+      validationSchema: validationSchemas.packaging,
+    },
+    { label: t('images'), Component: ImageForm, validationSchema: validationSchemas.images },
     { label: t('review'), Component: ProductReview },
   ];
 
@@ -176,6 +186,6 @@ const ProductDialog = ({ mode, product, onClose }: ProductDialogProps) => {
       </FormikStepper>
     </Dialog>
   );
-};
+}
 
 export default ProductDialog;

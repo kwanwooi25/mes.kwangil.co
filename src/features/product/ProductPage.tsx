@@ -10,7 +10,12 @@ import Loading from 'components/Loading';
 import SelectionPanel from 'components/SelectionPanel';
 import SubToolbar from 'components/SubToolbar';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
-import { ExcelVariant, ProductDialogMode, ProductListItemHeight } from 'const';
+import {
+  DEFAULT_PRODUCT_FILTER,
+  ExcelVariant,
+  ProductDialogMode,
+  ProductListItemHeight,
+} from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useScreenSize } from 'hooks/useScreenSize';
@@ -36,19 +41,7 @@ import {
   useInfiniteProducts,
 } from './useProducts';
 
-export interface ProductPageProps {}
-
-export const DEFAULT_PRODUCT_FILTER: ProductFilter = {
-  accountName: '',
-  name: '',
-  thickness: '',
-  length: '',
-  width: '',
-  extColor: '',
-  printColor: '',
-};
-
-const ProductPage = (props: ProductPageProps) => {
+function ProductPage() {
   const { t } = useTranslation('products');
   const [filter, setFilter] = useState<ProductFilter>(DEFAULT_PRODUCT_FILTER);
 
@@ -57,6 +50,18 @@ const ProductPage = (props: ProductPageProps) => {
   const { canCreateProducts, canUpdateProducts, canDeleteProducts } = useAuth();
   const { isFetching, data, loadMore } = useInfiniteProducts(filter);
   const { isDownloading, download } = useDownloadProducts(filter);
+
+  const products = data?.pages.reduce((p: ProductDto[], { rows }) => [...p, ...rows], []) || [];
+  const productIds = products.map(({ id }) => id);
+  const {
+    selectedIds,
+    isSelectMode,
+    isSelectedAll,
+    isIndeterminate,
+    toggleSelection,
+    toggleSelectAll,
+    resetSelection,
+  } = useSelection(productIds);
 
   const queryClient = useQueryClient();
   const { createProducts } = useBulkCreateProductMutation({
@@ -82,20 +87,8 @@ const ProductPage = (props: ProductPageProps) => {
     onSuccess: () => resetSelection(),
   });
 
-  const products =
-    data?.pages.reduce((products: ProductDto[], { rows }) => [...products, ...rows], []) || [];
-  const productIds = products.map(({ id }) => id);
-  const {
-    selectedIds,
-    isSelectMode,
-    isSelectedAll,
-    isIndeterminate,
-    toggleSelection,
-    toggleSelectAll,
-    resetSelection,
-  } = useSelection(productIds);
-
   const itemCount = products.length + 1;
+  // eslint-disable-next-line no-nested-ternary
   const itemHeight = isDesktopLayout
     ? ProductListItemHeight.DESKTOP
     : isTabletLayout
@@ -117,7 +110,7 @@ const ProductPage = (props: ProductPageProps) => {
         title={t('deleteProduct')}
         message={t('deleteProductsConfirm', { count: selectedIds.length })}
         onClose={(isConfirmed: boolean) => {
-          isConfirmed && deleteProducts(selectedIds as number[]);
+          if (isConfirmed) deleteProducts(selectedIds as number[]);
           closeDialog();
         }}
       />,
@@ -139,6 +132,31 @@ const ProductPage = (props: ProductPageProps) => {
     );
 
   const downloadExcel = () => download(t('productList'));
+
+  const selectModeButtons: JSX.Element[] = [];
+  if (canCreateProducts && canUpdateProducts) {
+    selectModeButtons.push(
+      <Tooltip
+        key="create-or-update-stocks"
+        title={t('createOrUpdateStock') as string}
+        placement="top"
+      >
+        <IconButton onClick={handleClickStock}>
+          <Iso />
+        </IconButton>
+      </Tooltip>,
+    );
+  }
+  if (canDeleteProducts) {
+    selectModeButtons.push(
+      <Tooltip key="delete-all" title={t('common:deleteAll') as string} placement="top">
+        <IconButton onClick={handleClickDeleteAll} disabled={isDeleting}>
+          {isDeleting && <Loading />}
+          <DeleteOutline />
+        </IconButton>
+      </Tooltip>,
+    );
+  }
 
   const renderItem = (index: number) => {
     const product = products[index];
@@ -163,31 +181,6 @@ const ProductPage = (props: ProductPageProps) => {
       />
     );
   };
-
-  let selectModeButtons: JSX.Element[] = [];
-  if (canCreateProducts && canUpdateProducts) {
-    selectModeButtons.push(
-      <Tooltip
-        key="create-or-update-stocks"
-        title={t('createOrUpdateStock') as string}
-        placement="top"
-      >
-        <IconButton onClick={handleClickStock}>
-          <Iso />
-        </IconButton>
-      </Tooltip>,
-    );
-  }
-  if (canDeleteProducts) {
-    selectModeButtons.push(
-      <Tooltip key="delete-all" title={t('common:deleteAll') as string} placement="top">
-        <IconButton onClick={handleClickDeleteAll} disabled={isDeleting}>
-          {isDeleting && <Loading />}
-          <DeleteOutline />
-        </IconButton>
-      </Tooltip>,
-    );
-  }
 
   let toolBarButtons: JSX.Element[] = [
     <Tooltip key="refresh" title={t('common:refresh') as string} placement="top">
@@ -274,6 +267,6 @@ const ProductPage = (props: ProductPageProps) => {
       )}
     </Layout>
   );
-};
+}
 
 export default ProductPage;

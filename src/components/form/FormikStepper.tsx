@@ -1,10 +1,18 @@
+/* eslint-disable react/no-unused-prop-types */
 import RoundedButton from 'components/RoundedButton';
 import { Form, Formik, FormikConfig, FormikHelpers, FormikValues } from 'formik';
 import React, { createRef, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import {
-    createStyles, DialogActions, DialogContent, makeStyles, Step, StepLabel, Stepper, Theme
+  createStyles,
+  DialogActions,
+  DialogContent,
+  makeStyles,
+  Step,
+  StepLabel,
+  Stepper,
+  Theme,
 } from '@material-ui/core';
 import DoneIcon from '@material-ui/icons/Done';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
@@ -27,17 +35,19 @@ const useStyles = makeStyles((theme: Theme) =>
         maxWidth: '120px',
       },
     },
-  })
+  }),
 );
 
-interface FormikStepProps<Values> extends Pick<FormikConfig<Values>, 'children' | 'validationSchema'> {
+interface FormikStepProps<Values>
+  extends Pick<FormikConfig<Values>, 'children' | 'validationSchema'> {
   label: string;
   isPrevButtonDisabled?: boolean;
 }
 
-export const FormikStep = <Values extends FormikValues>({ children }: FormikStepProps<Values>) => {
+export function FormikStep<Values extends FormikValues>({ children }: FormikStepProps<Values>) {
+  // eslint-disable-next-line react/jsx-no-useless-fragment
   return <>{children}</>;
-};
+}
 
 export enum StepperType {
   NONE = 'none',
@@ -50,12 +60,12 @@ interface FormikStepperProps<Values> extends FormikConfig<Values> {
   stepperType?: StepperType;
 }
 
-const FormikStepper = <Values extends FormikValues>({
+function FormikStepper<Values extends FormikValues>({
   initialStep = 0,
   stepperType = StepperType.DEFAULT,
   children,
   ...props
-}: FormikStepperProps<Values>) => {
+}: FormikStepperProps<Values>) {
   const classes = useStyles();
   const { t } = useTranslation('common');
   const submitButtonRef = createRef<HTMLButtonElement>();
@@ -68,10 +78,14 @@ const FormikStepper = <Values extends FormikValues>({
   const currentForm = childrenArray[step];
 
   const moveToPrevStep = () => {
-    step > 0 && setStep(step - 1);
+    if (step > 0) {
+      setStep(step - 1);
+    }
   };
   const moveToNextStep = () => {
-    step < lastStep && setStep(step + 1);
+    if (step < lastStep) {
+      setStep(step + 1);
+    }
   };
 
   const handleClickNext = () => {
@@ -90,9 +104,9 @@ const FormikStepper = <Values extends FormikValues>({
     <>
       {stepperType === StepperType.DEFAULT && (
         <Stepper activeStep={step} alternativeLabel>
-          {childrenArray.map(({ props }) => (
-            <Step key={props.label}>
-              <StepLabel>{props.label}</StepLabel>
+          {childrenArray.map(({ props: { label } }) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
             </Step>
           ))}
         </Stepper>
@@ -103,10 +117,15 @@ const FormikStepper = <Values extends FormikValues>({
         </div>
       )}
       <DialogContent dividers className={classes.dialogContent}>
-        <Formik {...props} validationSchema={currentForm?.props.validationSchema} onSubmit={handleSubmit}>
+        <Formik
+          {...props}
+          validationSchema={currentForm?.props.validationSchema}
+          onSubmit={handleSubmit}
+        >
           <Form autoComplete="off" style={{ height: '100%' }}>
             {currentForm}
-            <button ref={submitButtonRef} type="submit" style={{ display: 'none' }}></button>
+            {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
+            <button ref={submitButtonRef} type="submit" style={{ display: 'none' }} />
           </Form>
         </Formik>
       </DialogContent>
@@ -135,6 +154,6 @@ const FormikStepper = <Values extends FormikValues>({
       </DialogActions>
     </>
   );
-};
+}
 
 export default FormikStepper;

@@ -1,5 +1,5 @@
 import { PrintSide, StockHistoryType } from 'const';
-import { AccountDto } from 'features/account/interface';
+import { AccountDto, AccountOption } from 'features/account/interface';
 import { PlateDto } from 'features/plate/interface';
 import { BaseQuery } from 'types/api';
 
@@ -97,4 +97,39 @@ export interface CreateProductsDto extends Omit<CreateProductDto, 'accountId'> {
 export interface UpdateProductDto extends Omit<ProductDto, 'account'> {
   imagesToCreate?: CreateImageDto[];
   imageIdsToDelete?: number[];
+}
+
+export interface ProductFormValues {
+  id?: number;
+  account: AccountOption | null;
+  name: string;
+  thickness: number;
+  length: number;
+  width: number;
+  extColor: string;
+  extIsAntistatic: boolean;
+  extMemo: string;
+  printSide: PrintSide;
+  printFrontColorCount: number;
+  printFrontColor: string;
+  printFrontPosition: string;
+  printBackColorCount: number;
+  printBackColor: string;
+  printBackPosition: string;
+  printMemo: string;
+  cutPosition: string;
+  cutIsUltrasonic: boolean;
+  cutIsForPowder: boolean;
+  cutPunchCount: number;
+  cutPunchSize: string;
+  cutPunchPosition: string;
+  cutMemo: string;
+  packMaterial: string;
+  packUnit: number;
+  packCanDeliverAll: boolean;
+  packMemo: string;
+  stock?: StockDto;
+  images: ImageDto[];
+  filesToUpload?: File[];
+  imagesToDelete?: ImageDto[];
 }

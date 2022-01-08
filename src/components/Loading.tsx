@@ -1,4 +1,11 @@
-import { Backdrop, CircularProgress, CircularProgressProps, Theme, createStyles, makeStyles } from '@material-ui/core';
+import {
+  Backdrop,
+  CircularProgress,
+  CircularProgressProps,
+  Theme,
+  createStyles,
+  makeStyles,
+} from '@material-ui/core';
 
 import React from 'react';
 
@@ -10,12 +17,12 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.primary.main,
       background: `${theme.palette.background.default}77`,
     },
-  })
+  }),
 );
 
 export interface LoadingProps extends CircularProgressProps {}
 
-const Loading = (props: LoadingProps) => {
+function Loading(props: LoadingProps) {
   const classes = useStyles();
 
   return (
@@ -23,6 +30,6 @@ const Loading = (props: LoadingProps) => {
       <CircularProgress color="inherit" {...props} />
     </Backdrop>
   );
-};
+}
 
 export default Loading;

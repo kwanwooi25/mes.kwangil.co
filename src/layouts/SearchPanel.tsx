@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) =>
       maxWidth: SEARCH_PANEL_WIDTH,
       flexShrink: 0,
     },
-  })
+  }),
 );
 
 export interface SearchPanelProps {
@@ -39,11 +39,11 @@ export interface SearchPanelProps {
   children?: ReactNode;
 }
 
-const SearchPanel = ({ isOpen, onClose, children, title }: SearchPanelProps) => {
+function SearchPanel({ isOpen, onClose, children, title }: SearchPanelProps) {
   const classes = useStyles();
   const { isDesktopLayout } = useScreenSize();
 
-  return !!children ? (
+  return children ? (
     <Drawer
       className={classes.searchPanel}
       anchor="right"
@@ -54,7 +54,7 @@ const SearchPanel = ({ isOpen, onClose, children, title }: SearchPanelProps) => 
         paper: classes.drawerPaper,
       }}
     >
-      {isDesktopLayout && <div className={classes.toolbar}></div>}
+      {isDesktopLayout && <div className={classes.toolbar} />}
       <List>
         <ListItem>
           <ListItemIcon>
@@ -73,6 +73,6 @@ const SearchPanel = ({ isOpen, onClose, children, title }: SearchPanelProps) => 
       </List>
     </Drawer>
   ) : null;
-};
+}
 
 export default SearchPanel;

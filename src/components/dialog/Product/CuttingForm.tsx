@@ -1,11 +1,11 @@
 import { Checkbox, FormControlLabel, Theme, createStyles, makeStyles } from '@material-ui/core';
 
 import Input from 'components/form/Input';
-import { ProductFormValues } from '.';
 import { PunchCount } from 'const';
 import React from 'react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { ProductFormValues } from 'features/product/interface';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -66,12 +66,10 @@ const useStyles = makeStyles((theme: Theme) =>
         gridArea: 'cutMemo',
       },
     },
-  })
+  }),
 );
 
-export interface CuttingFormProps {}
-
-const CuttingForm = (props: CuttingFormProps) => {
+function CuttingForm() {
   const { t } = useTranslation('products');
   const classes = useStyles();
   const { values, handleChange } = useFormikContext<ProductFormValues>();
@@ -88,14 +86,24 @@ const CuttingForm = (props: CuttingFormProps) => {
       <FormControlLabel
         className={classes.cutIsUltrasonic}
         control={
-          <Checkbox color="primary" name="cutIsUltrasonic" checked={values.cutIsUltrasonic} onChange={handleChange} />
+          <Checkbox
+            color="primary"
+            name="cutIsUltrasonic"
+            checked={values.cutIsUltrasonic}
+            onChange={handleChange}
+          />
         }
         label={t('cutIsUltrasonic')}
       />
       <FormControlLabel
         className={classes.cutIsForPowder}
         control={
-          <Checkbox color="primary" name="cutIsForPowder" checked={values.cutIsForPowder} onChange={handleChange} />
+          <Checkbox
+            color="primary"
+            name="cutIsForPowder"
+            checked={values.cutIsForPowder}
+            onChange={handleChange}
+          />
         }
         label={t('cutIsForPowder')}
       />
@@ -134,6 +142,6 @@ const CuttingForm = (props: CuttingFormProps) => {
       />
     </div>
   );
-};
+}
 
 export default CuttingForm;

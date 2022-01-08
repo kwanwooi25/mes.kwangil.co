@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
     buttons: {
       padding: theme.spacing(2, 3),
     },
-  })
+  }),
 );
 
 export interface ProductDetailDialogProps {
@@ -28,7 +28,7 @@ export interface ProductDetailDialogProps {
   onClose: () => void;
 }
 
-const ProductDetailDialog = ({ product, onClose }: ProductDetailDialogProps) => {
+function ProductDetailDialog({ product, onClose }: ProductDetailDialogProps) {
   const { t } = useTranslation('products');
   const classes = useStyles();
   const { canViewAccounts } = useAuth();
@@ -47,6 +47,6 @@ const ProductDetailDialog = ({ product, onClose }: ProductDetailDialogProps) => 
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default ProductDetailDialog;

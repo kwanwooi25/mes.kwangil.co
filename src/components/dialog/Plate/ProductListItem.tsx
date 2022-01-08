@@ -1,4 +1,12 @@
-import { IconButton, ListItem, Theme, Typography, createStyles, lighten, makeStyles } from '@material-ui/core';
+import {
+  IconButton,
+  ListItem,
+  Theme,
+  Typography,
+  createStyles,
+  lighten,
+  makeStyles,
+} from '@material-ui/core';
 
 import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
@@ -29,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) =>
       textAlign: 'left',
     },
     button: {},
-  })
+  }),
 );
 
 export interface ProductListItemProps {
@@ -39,7 +47,12 @@ export interface ProductListItemProps {
   onDelete?: () => void;
 }
 
-const ProductListItem = ({ product, isSelected = false, onSelect, onDelete }: ProductListItemProps) => {
+function ProductListItem({
+  product,
+  isSelected = false,
+  onSelect,
+  onDelete,
+}: ProductListItemProps) {
   const classes = useStyles();
 
   return (
@@ -65,6 +78,6 @@ const ProductListItem = ({ product, isSelected = false, onSelect, onDelete }: Pr
       </div>
     </ListItem>
   );
-};
+}
 
 export default ProductListItem;

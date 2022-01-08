@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme: Theme) =>
       textAlign: 'left',
     },
     productSize: { gridArea: 'productSize' },
-  })
+  }),
 );
 
 export interface StockFormProps {
@@ -61,7 +61,7 @@ export interface StockFormProps {
   product: ProductDto;
 }
 
-const StockForm = ({ index, product }: StockFormProps) => {
+function StockForm({ index, product }: StockFormProps) {
   const { t } = useTranslation();
   const classes = useStyles();
   const { isMobileLayout } = useScreenSize();
@@ -70,7 +70,8 @@ const StockForm = ({ index, product }: StockFormProps) => {
   const productSize = getProductSize(product);
   const productImageUrl = !!images && images.length ? images[0].imageUrl : undefined;
 
-  const { values, touched, errors, handleChange } = useFormikContext<(CreateStockDto | StockDto)[]>();
+  const { values, touched, errors, handleChange } =
+    useFormikContext<(CreateStockDto | StockDto)[]>();
 
   return (
     <>
@@ -78,7 +79,9 @@ const StockForm = ({ index, product }: StockFormProps) => {
       <div className={classes.stockForm}>
         <div className={classes.productDetail}>
           {isMobileLayout && (
-            <div className={classes.productImage}>{productImageUrl && <img src={productImageUrl} alt="product" />}</div>
+            <div className={classes.productImage}>
+              {productImageUrl && <img src={productImageUrl} alt="product" />}
+            </div>
           )}
 
           <Typography className={classes.accountName} variant="caption">
@@ -107,6 +110,6 @@ const StockForm = ({ index, product }: StockFormProps) => {
       </div>
     </>
   );
-};
+}
 
 export default StockForm;

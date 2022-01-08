@@ -11,12 +11,11 @@ export const useInfiniteProducts = (filter: ProductFilter, limit: number = DEFAU
     ['products', JSON.stringify(filter)],
     async ({ queryKey, pageParam: offset = 0 }): Promise<GetListResponse<ProductDto>> => {
       const [, serializedFilter] = queryKey;
-      const filter = JSON.parse(serializedFilter);
-      return await productApi.getProducts({ offset, limit, ...filter });
+      return productApi.getProducts({ offset, limit, ...JSON.parse(serializedFilter) });
     },
     {
       getNextPageParam: (lastPage, pages) => lastPage.hasMore && pages.length * limit,
-    }
+    },
   );
 
   const { isFetching, fetchNextPage, hasNextPage } = productInfiniteQuery;
@@ -32,8 +31,8 @@ export const useProductOptions = (searchText: string) => {
     data: productOptions,
     isFetched,
   } = useQuery(['products', searchText], async ({ queryKey }) => {
-    const [, searchText] = queryKey;
-    const { rows = [] } = await productApi.getAllProducts({ name: searchText } as GetProductsQuery);
+    const [, name] = queryKey;
+    const { rows = [] } = await productApi.getAllProducts({ name } as GetProductsQuery);
     return rows as ProductDto[];
   });
 
@@ -45,11 +44,10 @@ export const useDownloadProducts = (filter: ProductFilter) => {
     ['download-products', JSON.stringify(filter)],
     async ({ queryKey }) => {
       const [, serializedFilter] = queryKey;
-      const filter = JSON.parse(serializedFilter);
-      const { rows } = await productApi.getAllProducts(filter);
+      const { rows } = await productApi.getAllProducts(JSON.parse(serializedFilter));
       return rows;
     },
-    { enabled: false }
+    { enabled: false },
   );
 
   const download = (fileName: string) => {
@@ -66,9 +64,9 @@ export const useProduct = (id: number) =>
     ['product', id],
     async ({ queryKey }) => {
       const [, productId] = queryKey;
-      return await productApi.getProduct(productId as number);
+      return productApi.getProduct(productId as number);
     },
-    { enabled: false }
+    { enabled: false },
   );
 
 export const useCreateProductMutation = ({
@@ -81,34 +79,40 @@ export const useCreateProductMutation = ({
   onError?: () => any;
 }) => {
   const { notify } = useNotification();
-  const { mutateAsync: createProduct, isLoading: isCreating } = useMutation(productApi.createProduct, {
-    onSuccess: () => {
-      notify({ variant: 'success', message: 'products:createProductSuccess' });
-      queryClient.invalidateQueries('products');
-      onSuccess();
+  const { mutateAsync: createProduct, isLoading: isCreating } = useMutation(
+    productApi.createProduct,
+    {
+      onSuccess: () => {
+        notify({ variant: 'success', message: 'products:createProductSuccess' });
+        queryClient.invalidateQueries('products');
+        onSuccess();
+      },
+      onError: () => {
+        notify({ variant: 'error', message: 'products:createProductFailed' });
+        onError();
+      },
     },
-    onError: () => {
-      notify({ variant: 'error', message: 'products:createProductFailed' });
-      onError();
-    },
-  });
+  );
 
   return { createProduct, isCreating };
 };
 
 export const useBulkCreateProductMutation = ({
   queryClient,
-  onSettled = (data: any) => {},
+  onSettled = () => {},
 }: {
   queryClient: QueryClient;
   onSettled?: (data: any) => any;
 }) => {
-  const { mutateAsync: createProducts, isLoading: isCreating } = useMutation(productApi.createProducts, {
-    onSettled: (data) => {
-      queryClient.invalidateQueries('products');
-      onSettled(data);
+  const { mutateAsync: createProducts, isLoading: isCreating } = useMutation(
+    productApi.createProducts,
+    {
+      onSettled: (data) => {
+        queryClient.invalidateQueries('products');
+        onSettled(data);
+      },
     },
-  });
+  );
 
   return { createProducts, isCreating };
 };
@@ -123,18 +127,21 @@ export const useUpdateProductMutation = ({
   onError?: () => any;
 }) => {
   const { notify } = useNotification();
-  const { mutateAsync: updateProduct, isLoading: isUpdating } = useMutation(productApi.updateProduct, {
-    onSuccess: () => {
-      notify({ variant: 'success', message: 'products:updateProductSuccess' });
-      queryClient.invalidateQueries('products');
-      queryClient.invalidateQueries('workOrders');
-      onSuccess();
+  const { mutateAsync: updateProduct, isLoading: isUpdating } = useMutation(
+    productApi.updateProduct,
+    {
+      onSuccess: () => {
+        notify({ variant: 'success', message: 'products:updateProductSuccess' });
+        queryClient.invalidateQueries('products');
+        queryClient.invalidateQueries('workOrders');
+        onSuccess();
+      },
+      onError: () => {
+        notify({ variant: 'error', message: 'products:updateProductFailed' });
+        onError();
+      },
     },
-    onError: () => {
-      notify({ variant: 'error', message: 'products:updateProductFailed' });
-      onError();
-    },
-  });
+  );
 
   return { updateProduct, isUpdating };
 };
@@ -149,17 +156,20 @@ export const useDeleteProductsMutation = ({
   onError?: () => any;
 }) => {
   const { notify } = useNotification();
-  const { mutateAsync: deleteProducts, isLoading: isDeleting } = useMutation(productApi.deleteProducts, {
-    onSuccess: () => {
-      notify({ variant: 'success', message: 'products:deleteProductSuccess' });
-      queryClient.invalidateQueries('products');
-      onSuccess();
+  const { mutateAsync: deleteProducts, isLoading: isDeleting } = useMutation(
+    productApi.deleteProducts,
+    {
+      onSuccess: () => {
+        notify({ variant: 'success', message: 'products:deleteProductSuccess' });
+        queryClient.invalidateQueries('products');
+        onSuccess();
+      },
+      onError: () => {
+        notify({ variant: 'error', message: 'products:deleteProductFailed' });
+        onError();
+      },
     },
-    onError: () => {
-      notify({ variant: 'error', message: 'products:deleteProductFailed' });
-      onError();
-    },
-  });
+  );
 
   return { deleteProducts, isDeleting };
 };

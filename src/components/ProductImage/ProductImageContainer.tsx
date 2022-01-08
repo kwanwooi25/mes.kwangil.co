@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
         display: 'inline-block',
       },
     },
-  })
+  }),
 );
 
 export interface ProductImageContainerProps {
@@ -27,10 +27,10 @@ export interface ProductImageContainerProps {
   children: any;
 }
 
-const ProductImageContainer = ({ className, children }: ProductImageContainerProps) => {
+function ProductImageContainer({ className, children }: ProductImageContainerProps) {
   const classes = useStyles();
 
   return <div className={classnames([className, classes.productImageContainer])}>{children}</div>;
-};
+}
 
 export default ProductImageContainer;

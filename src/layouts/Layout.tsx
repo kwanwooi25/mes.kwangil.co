@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) =>
         marginTop: 64,
       },
     },
-  })
+  }),
 );
 
 export interface LayoutProps {
@@ -38,20 +38,25 @@ export interface LayoutProps {
   searchPanelTitle?: string;
 }
 
-const Layout = ({ pageTitle, children, SearchPanelContent, searchPanelTitle = '' }: LayoutProps) => {
+function Layout({ pageTitle, children, SearchPanelContent, searchPanelTitle = '' }: LayoutProps) {
   const classes = useStyles();
   const { isMobileLayout, isDesktopLayout } = useScreenSize();
   const { isNavOpen, openNav, closeNav, isSearchOpen, openSearch, closeSearch } = useUI();
   const dispatch = useAppDispatch();
 
   const handleClickNavMenu = isMobileLayout ? () => dispatch(openNav()) : undefined;
-  const handleClickSearch = !isDesktopLayout && SearchPanelContent ? () => dispatch(openSearch()) : undefined;
+  const handleClickSearch =
+    !isDesktopLayout && SearchPanelContent ? () => dispatch(openSearch()) : undefined;
   const handleCloseNav = () => dispatch(closeNav());
   const handleCloseSearch = () => dispatch(closeSearch());
 
   return (
     <div className={classes.root}>
-      <MainHeader pageTitle={pageTitle} onClickNavMenu={handleClickNavMenu} onClickSearch={handleClickSearch} />
+      <MainHeader
+        pageTitle={pageTitle}
+        onClickNavMenu={handleClickNavMenu}
+        onClickSearch={handleClickSearch}
+      />
       <Navigation isOpen={isNavOpen} onClose={handleCloseNav} />
       <div className={classes.content}>{children}</div>
       <SearchPanel isOpen={isSearchOpen} onClose={handleCloseSearch} title={searchPanelTitle}>
@@ -59,6 +64,6 @@ const Layout = ({ pageTitle, children, SearchPanelContent, searchPanelTitle = ''
       </SearchPanel>
     </div>
   );
-};
+}
 
 export default Layout;

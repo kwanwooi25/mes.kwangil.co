@@ -2,7 +2,12 @@ import classnames from 'classnames';
 import React from 'react';
 
 import {
-    Button, ButtonGroup, createStyles, makeStyles, Theme, Typography
+  Button,
+  ButtonGroup,
+  createStyles,
+  makeStyles,
+  Theme,
+  Typography,
 } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -18,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))',
     },
-  })
+  }),
 );
 
 export interface ToggleButtonOption<T> {
@@ -37,7 +42,7 @@ export interface CustomToggleButtonProps<T> {
   disabled?: boolean;
 }
 
-const CustomToggleButton = <T extends string>({
+function CustomToggleButton<T extends string>({
   label,
   value,
   onChange,
@@ -46,7 +51,7 @@ const CustomToggleButton = <T extends string>({
   size = 'medium',
   color = 'primary',
   disabled = false,
-}: CustomToggleButtonProps<T>) => {
+}: CustomToggleButtonProps<T>) {
   const classes = useStyles();
 
   return (
@@ -71,6 +76,6 @@ const CustomToggleButton = <T extends string>({
       </ButtonGroup>
     </div>
   );
-};
+}
 
 export default CustomToggleButton;

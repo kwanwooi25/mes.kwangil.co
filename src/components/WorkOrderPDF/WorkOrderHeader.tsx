@@ -117,7 +117,7 @@ export interface WorkOrderHeaderProps {
   workOrder: WorkOrderDto;
 }
 
-const WorkOrderHeader = ({ workOrder }: WorkOrderHeaderProps) => {
+function WorkOrderHeader({ workOrder }: WorkOrderHeaderProps) {
   const { t } = useTranslation('workOrders');
 
   const documentTitle = t('workOrder');
@@ -180,6 +180,6 @@ const WorkOrderHeader = ({ workOrder }: WorkOrderHeaderProps) => {
       </View>
     </>
   );
-};
+}
 
 export default WorkOrderHeader;

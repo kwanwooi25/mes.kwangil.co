@@ -9,12 +9,11 @@ import { userApi } from './userApi';
 export const useInfiniteUsers = (limit: number = DEFAULT_LIST_LIMIT) => {
   const userInfiniteQuery = useInfiniteQuery(
     ['users'],
-    async ({ pageParam: offset = 0 }): Promise<GetListResponse<UserDto>> => {
-      return await userApi.getUsers({ offset, limit });
-    },
+    async ({ pageParam: offset = 0 }): Promise<GetListResponse<UserDto>> =>
+      userApi.getUsers({ offset, limit }),
     {
       getNextPageParam: (lastPage, pages) => lastPage.hasMore && pages.length * limit,
-    }
+    },
   );
 
   const { isFetching, fetchNextPage, hasNextPage } = userInfiniteQuery;

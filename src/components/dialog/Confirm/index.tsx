@@ -1,4 +1,11 @@
-import { DialogActions, DialogContent, Theme, Typography, createStyles, makeStyles } from '@material-ui/core';
+import {
+  DialogActions,
+  DialogContent,
+  Theme,
+  Typography,
+  createStyles,
+  makeStyles,
+} from '@material-ui/core';
 
 import CloseIcon from '@material-ui/icons/Close';
 import Dialog from 'features/dialog/Dialog';
@@ -12,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
     buttons: {
       padding: theme.spacing(2, 3),
     },
-  })
+  }),
 );
 
 export interface ConfirmDialogProps {
@@ -21,7 +28,7 @@ export interface ConfirmDialogProps {
   onClose: (isConfirmed: boolean) => void;
 }
 
-const ConfirmDialog = ({ title, message, onClose }: ConfirmDialogProps) => {
+function ConfirmDialog({ title, message, onClose }: ConfirmDialogProps) {
   const { t } = useTranslation('accounts');
   const classes = useStyles();
 
@@ -42,6 +49,6 @@ const ConfirmDialog = ({ title, message, onClose }: ConfirmDialogProps) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default ConfirmDialog;

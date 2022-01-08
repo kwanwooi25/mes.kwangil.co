@@ -2,8 +2,19 @@ import { ElementType } from 'react';
 
 import { grey, red, yellow } from '@material-ui/core/colors';
 import {
-    Apartment, Build, CameraRoll, Dashboard, MonetizationOn, Person, PhotoLibrary, Settings
+  Apartment,
+  Build,
+  CameraRoll,
+  Dashboard,
+  MonetizationOn,
+  Person,
+  PhotoLibrary,
+  Settings,
 } from '@material-ui/icons';
+import { PlateFilter } from 'features/plate/interface';
+import { ProductFilter } from 'features/product/interface';
+import { format, subDays } from 'date-fns';
+import { WorkOrderFilter } from 'features/workOrder/interface';
 
 export enum Path {
   HOME = '/',
@@ -217,10 +228,6 @@ export enum StockHistoryType {
   STOCKTAKING = 'STOCKTAKING',
 }
 
-export const DEFAULT_PAGE = Path.DASHBOARD;
-export const DEFAULT_API_URL = 'http://localhost:5000';
-export const DEFAULT_LIST_LIMIT = 50;
-
 export const NAV_WIDTH = 240;
 export const NAV_ICONS: { [key: string]: ElementType } = {
   [Path.DASHBOARD]: Dashboard,
@@ -269,4 +276,36 @@ export const DELIVERY_METHOD_TEXT: { [key: string]: string } = {
   [DeliveryMethod.DIRECT]: '직납',
   [DeliveryMethod.COURIER]: '택배',
   [DeliveryMethod.EXPRESS]: '퀵/화물',
+};
+
+export const DEFAULT_PAGE = Path.DASHBOARD;
+export const DEFAULT_API_URL = 'http://localhost:5000';
+export const DEFAULT_LIST_LIMIT = 50;
+
+export const DEFAULT_PLATE_FILTER: PlateFilter = {
+  accountName: '',
+  productName: '',
+  name: '',
+  round: [PlateRound.MIN, PlateRound.MAX],
+  length: [PlateLength.MIN, PlateLength.MAX],
+};
+
+export const DEFAULT_PRODUCT_FILTER: ProductFilter = {
+  accountName: '',
+  name: '',
+  thickness: '',
+  length: '',
+  width: '',
+  extColor: '',
+  printColor: '',
+};
+
+export const DEFAULT_WORK_ORDER_FILTER: WorkOrderFilter = {
+  orderedAt: [format(subDays(new Date(), 14), DATE_FORMAT), format(new Date(), DATE_FORMAT)],
+  accountName: '',
+  productName: '',
+  thickness: '',
+  length: '',
+  width: '',
+  includeCompleted: false,
 };

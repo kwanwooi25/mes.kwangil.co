@@ -8,7 +8,15 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import {
-    createStyles, Divider, Drawer, List, ListItem, ListItemIcon, ListItemText, makeStyles, Theme
+  createStyles,
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  makeStyles,
+  Theme,
 } from '@material-ui/core';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
@@ -33,7 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
     navItemList: {
       flexGrow: 1,
     },
-  })
+  }),
 );
 
 export interface NavigationProps {
@@ -49,7 +57,7 @@ export interface NavListItemProps {
   onClick: () => void;
 }
 
-const NavListItem = ({ isActive, label, Icon, onClick }: NavListItemProps) => {
+function NavListItem({ isActive, label, Icon, onClick }: NavListItemProps) {
   return (
     <ListItem button selected={isActive} onClick={onClick}>
       <ListItemIcon>
@@ -58,9 +66,9 @@ const NavListItem = ({ isActive, label, Icon, onClick }: NavListItemProps) => {
       <ListItemText primary={label} />
     </ListItem>
   );
-};
+}
 
-const Navigation = ({ isOpen, onClose }: NavigationProps) => {
+function Navigation({ isOpen, onClose }: NavigationProps) {
   const { t } = useTranslation('nav');
   const classes = useStyles();
   const { isMobileLayout } = useScreenSize();
@@ -97,7 +105,7 @@ const Navigation = ({ isOpen, onClose }: NavigationProps) => {
       <List className={classes.navList}>
         <ListItem>
           <Link to={DEFAULT_PAGE} onClick={onClose}>
-            <img className={classes.logo} src="/kwangil_logo_name.png" alt="kwangil logo"></img>
+            <img className={classes.logo} src="/kwangil_logo_name.png" alt="kwangil logo" />
           </Link>
         </ListItem>
         <Divider />
@@ -116,6 +124,6 @@ const Navigation = ({ isOpen, onClose }: NavigationProps) => {
       </List>
     </Drawer>
   );
-};
+}
 
 export default Navigation;

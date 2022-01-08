@@ -18,7 +18,15 @@ import { getProductTitle } from 'utils/product';
 import { getWorkOrderToUpdate } from 'utils/workOrder';
 
 import {
-    Chip, createStyles, IconButton, List, ListItem, makeStyles, Theme, Tooltip, Typography
+  Chip,
+  createStyles,
+  IconButton,
+  List,
+  ListItem,
+  makeStyles,
+  Theme,
+  Tooltip,
+  Typography,
 } from '@material-ui/core';
 import { Done, InsertEmoticon, Print } from '@material-ui/icons';
 import { Pagination, Skeleton } from '@material-ui/lab';
@@ -68,18 +76,51 @@ const useStyles = makeStyles((theme: Theme) =>
         margin: theme.spacing(2),
       },
     },
-  })
+  }),
 );
 
 const LIST_ITEM_HEIGHT = 100;
 
-const WorkOrderListItem = ({ workOrder, onComplete }: { workOrder: WorkOrderDto; onComplete: () => void }) => {
+function WorkOrderListItem({
+  workOrder,
+  onComplete,
+}: {
+  workOrder: WorkOrderDto;
+  onComplete: () => void;
+}) {
   const { t } = useTranslation();
   const classes = useStyles();
   const { productSize, plateStatus } = useWorkOrderDisplay(workOrder, t);
   const { openDialog, closeDialog } = useDialog();
   const { canUpdateWorkOrders } = useAuth();
   const backgroundColor = PLATE_STATUS_COLORS[workOrder.plateStatus];
+
+  const updatePlateStatus = async (wo: WorkOrderDto) => {
+    const { id } = wo;
+    await workOrderApi.updateWorkOrder({
+      ...getWorkOrderToUpdate(wo),
+      id,
+      isPlateReady: true,
+    });
+    onComplete();
+  };
+
+  const openPlateDialog = ({ product }: WorkOrderDto) => {
+    openDialog(<PlateDialog products={[product]} onClose={closeDialog} />);
+  };
+
+  const openConfirmAddPlateDialog = () => {
+    openDialog(
+      <ConfirmDialog
+        title={t('plates:complete')}
+        message={t('plates:shouldAddPlate')}
+        onClose={async (isConfirmed: boolean) => {
+          closeDialog();
+          if (isConfirmed) openPlateDialog(workOrder);
+        }}
+      />,
+    );
+  };
 
   const handleClickComplete = () => {
     openDialog(
@@ -95,31 +136,8 @@ const WorkOrderListItem = ({ workOrder, onComplete }: { workOrder: WorkOrderDto;
             }
           }
         }}
-      />
+      />,
     );
-  };
-
-  const openConfirmAddPlateDialog = () => {
-    openDialog(
-      <ConfirmDialog
-        title={t('plates:complete')}
-        message={t('plates:shouldAddPlate')}
-        onClose={async (isConfirmed: boolean) => {
-          closeDialog();
-          isConfirmed && openPlateDialog(workOrder);
-        }}
-      />
-    );
-  };
-
-  const openPlateDialog = (workOrder: WorkOrderDto) => {
-    openDialog(<PlateDialog products={[workOrder.product]} onClose={closeDialog} />);
-  };
-
-  const updatePlateStatus = async (workOrder: WorkOrderDto) => {
-    const { id } = workOrder;
-    await workOrderApi.updateWorkOrder({ ...getWorkOrderToUpdate(workOrder), id, isPlateReady: true });
-    onComplete();
   };
 
   return (
@@ -137,9 +155,9 @@ const WorkOrderListItem = ({ workOrder, onComplete }: { workOrder: WorkOrderDto;
       )}
     </ListItem>
   );
-};
+}
 
-const WorkOrderListItemSkeleton = () => {
+function WorkOrderListItemSkeleton() {
   const classes = useStyles();
 
   return (
@@ -151,9 +169,9 @@ const WorkOrderListItemSkeleton = () => {
       <Skeleton className="completeButton" width={48} height={48} variant="circle" />
     </ListItem>
   );
-};
+}
 
-const NoPlatesToProduce = () => {
+function NoPlatesToProduce() {
   const { t } = useTranslation();
   const classes = useStyles();
 
@@ -163,18 +181,19 @@ const NoPlatesToProduce = () => {
       <Typography color="primary">{t('dashboard:noPlatesToProduce')}</Typography>
     </ListItem>
   );
-};
+}
 
-export interface PlateStatusCardProps {}
-
-const PlateStatusCard = (props: PlateStatusCardProps) => {
+function PlateStatusCard() {
   const { t } = useTranslation();
   const classes = useStyles();
   const {
     isLoading,
     data: workOrders = [],
     refetch,
-  } = useQuery('workOrdersNeedPlate', async (): Promise<WorkOrderDto[]> => await workOrderApi.getWorkOrdersNeedPlate());
+  } = useQuery(
+    'workOrdersNeedPlate',
+    async (): Promise<WorkOrderDto[]> => workOrderApi.getWorkOrdersNeedPlate(),
+  );
   const [workOrdersToShow, setWorkOrdersToShow] = useState<WorkOrderDto[]>([]);
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -182,13 +201,14 @@ const PlateStatusCard = (props: PlateStatusCardProps) => {
 
   const workOrderCountToDisplay = 4;
 
-  const handlePageChange = (e: ChangeEvent<unknown>, page: number) => setPage(page);
+  const handlePageChange = (e: ChangeEvent<unknown>, p: number) => setPage(p);
 
   const openWorkOrderPDF = (url: string) => () => window.open(url);
 
   const renderSkeletons = () =>
     Array(workOrderCountToDisplay)
       .fill('')
+      // eslint-disable-next-line react/no-array-index-key
       .map((_, index) => <WorkOrderListItemSkeleton key={index} />);
 
   const renderWorkOrders = () =>
@@ -233,7 +253,9 @@ const PlateStatusCard = (props: PlateStatusCardProps) => {
       }
     >
       <List disablePadding style={{ height: LIST_ITEM_HEIGHT * workOrderCountToDisplay }}>
-        {isLoading ? renderSkeletons() : !workOrders.length ? <NoPlatesToProduce /> : renderWorkOrders()}
+        {isLoading && renderSkeletons()}
+        {!isLoading && !workOrders.length && <NoPlatesToProduce />}
+        {!isLoading && workOrders.length && renderWorkOrders()}
       </List>
       <Pagination
         className={classes.pagination}
@@ -246,6 +268,6 @@ const PlateStatusCard = (props: PlateStatusCardProps) => {
       />
     </DashboardCard>
   );
-};
+}
 
 export default PlateStatusCard;

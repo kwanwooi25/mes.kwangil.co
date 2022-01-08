@@ -13,7 +13,7 @@ export interface SelectWorkOrderStatusProps extends Omit<SelectProps, 'onChange'
   onChange: (value: WorkOrderStatus) => void;
 }
 
-const SelectWorkOrderStatus = ({
+function SelectWorkOrderStatus({
   className,
   label,
   name,
@@ -22,7 +22,7 @@ const SelectWorkOrderStatus = ({
   options,
   onChange,
   ...props
-}: SelectWorkOrderStatusProps) => {
+}: SelectWorkOrderStatusProps) {
   const handleChange = (e: ChangeEvent<{ name?: string; value: unknown }>) => {
     onChange(e.target.value as WorkOrderStatus);
   };
@@ -32,15 +32,22 @@ const SelectWorkOrderStatus = ({
   return (
     <FormControl variant="outlined" className={className}>
       {label && <InputLabel>{label}</InputLabel>}
-      <Select {...props} native={isNative} value={value} onChange={handleChange} label={label} inputProps={{ name }}>
-        {options.map(({ label, value }) => (
-          <MenuItemComponent key={value} value={value}>
-            {label}
+      <Select
+        {...props}
+        native={isNative}
+        value={value}
+        onChange={handleChange}
+        label={label}
+        inputProps={{ name }}
+      >
+        {options.map((option) => (
+          <MenuItemComponent key={option.value} value={option.value}>
+            {option.label}
           </MenuItemComponent>
         ))}
       </Select>
     </FormControl>
   );
-};
+}
 
 export default SelectWorkOrderStatus;

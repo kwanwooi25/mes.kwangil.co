@@ -17,7 +17,10 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    loginSuccess: (state, { payload: { user, token } }: PayloadAction<{ user: UserDto; token: string }>) => {
+    loginSuccess: (
+      state,
+      { payload: { user, token } }: PayloadAction<{ user: UserDto; token: string }>,
+    ) => {
       setAuthHeaders(token);
       state.currentUser = user;
     },

@@ -29,13 +29,13 @@ import AccountListItem from './AccountListItem';
 import AccountSearch from './AccountSearch';
 import { AccountDto, AccountFilter, CreateAccountDto } from './interface';
 import {
-    useBulkCreateAccountMutation, useDeleteAccountsMutation, useDownloadAccounts,
-    useInfiniteAccounts
+  useBulkCreateAccountMutation,
+  useDeleteAccountsMutation,
+  useDownloadAccounts,
+  useInfiniteAccounts,
 } from './useAccounts';
 
-export interface AccountPageProps {}
-
-const AccountPage = (props: AccountPageProps) => {
+function AccountPage() {
   const { t } = useTranslation('accounts');
   const [filter, setFilter] = useState<AccountFilter>({ accountName: '' });
 
@@ -45,6 +45,19 @@ const AccountPage = (props: AccountPageProps) => {
   const { isFetching, data, loadMore } = useInfiniteAccounts(filter);
   const { isDownloading, download } = useDownloadAccounts(filter);
 
+  const accounts =
+    data?.pages.reduce((accs: AccountDto[], { rows }) => [...accs, ...rows], []) || [];
+  const accountIds = accounts.map(({ id }) => id);
+  const {
+    selectedIds,
+    isSelectMode,
+    isSelectedAll,
+    isIndeterminate,
+    toggleSelection,
+    toggleSelectAll,
+    resetSelection,
+  } = useSelection(accountIds);
+
   const queryClient = useQueryClient();
   const { createAccounts } = useBulkCreateAccountMutation({
     queryClient,
@@ -53,9 +66,11 @@ const AccountPage = (props: AccountPageProps) => {
       openDialog(
         <AlertDialog
           title={t('common:bulkCreationResult')}
-          message={`${t('common:success')}: ${createdCount}<br>${t('common:fail')}: ${failedList.length}`}
+          message={`${t('common:success')}: ${createdCount}<br>${t('common:fail')}: ${
+            failedList.length
+          }`}
           onClose={closeDialog}
-        />
+        />,
       );
       if (failedList.length) {
         downloadWorkbook[ExcelVariant.ACCOUNT](failedList, t('common:bulkCreationResult'));
@@ -68,18 +83,6 @@ const AccountPage = (props: AccountPageProps) => {
       resetSelection();
     },
   });
-
-  const accounts = data?.pages.reduce((accounts: AccountDto[], { rows }) => [...accounts, ...rows], []) || [];
-  const accountIds = accounts.map(({ id }) => id);
-  const {
-    selectedIds,
-    isSelectMode,
-    isSelectedAll,
-    isIndeterminate,
-    toggleSelection,
-    toggleSelectAll,
-    resetSelection,
-  } = useSelection(accountIds);
 
   const itemCount = accounts.length + 1;
   const itemHeight = isMobileLayout ? AccountListItemHeight.MOBILE : AccountListItemHeight.TABLET;
@@ -97,10 +100,10 @@ const AccountPage = (props: AccountPageProps) => {
         title={t('accounts:deleteAccount')}
         message={t('accounts:deleteAccountsConfirm', { count: selectedIds.length })}
         onClose={(isConfirmed: boolean) => {
-          isConfirmed && deleteAccounts(selectedIds as number[]);
+          if (isConfirmed) deleteAccounts(selectedIds as number[]);
           closeDialog();
         }}
-      />
+      />,
     );
   };
 
@@ -109,7 +112,13 @@ const AccountPage = (props: AccountPageProps) => {
   };
 
   const openExcelUploadDialog = () => {
-    openDialog(<ExcelUploadDialog variant={ExcelVariant.ACCOUNT} onSave={createAccounts} onClose={closeDialog} />);
+    openDialog(
+      <ExcelUploadDialog
+        variant={ExcelVariant.ACCOUNT}
+        onSave={createAccounts}
+        onClose={closeDialog}
+      />,
+    );
   };
 
   const downloadExcel = () => {
@@ -129,11 +138,16 @@ const AccountPage = (props: AccountPageProps) => {
         filter={filter}
       />
     ) : (
-      <EndOfListItem key="end-of-list" height={itemHeight} isLoading={isFetching} message={searchResult} />
+      <EndOfListItem
+        key="end-of-list"
+        height={itemHeight}
+        isLoading={isFetching}
+        message={searchResult}
+      />
     );
   };
 
-  let selectModeButtons: JSX.Element[] = [];
+  const selectModeButtons: JSX.Element[] = [];
   if (canDeleteAccounts) {
     selectModeButtons.push(
       <Tooltip key="delete-all" title={t('common:deleteAll') as string} placement="top">
@@ -141,7 +155,7 @@ const AccountPage = (props: AccountPageProps) => {
           {isDeleting && <Loading />}
           <DeleteOutline />
         </IconButton>
-      </Tooltip>
+      </Tooltip>,
     );
   }
 
@@ -214,7 +228,11 @@ const AccountPage = (props: AccountPageProps) => {
       {isMobileLayout && (
         <>
           {canDeleteAccounts && (
-            <SelectionPanel isOpen={isSelectMode} selectedCount={selectedIds.length} onClose={resetSelection}>
+            <SelectionPanel
+              isOpen={isSelectMode}
+              selectedCount={selectedIds.length}
+              onClose={resetSelection}
+            >
               <IconButton onClick={handleClickDeleteAll}>
                 <DeleteOutline />
               </IconButton>
@@ -225,6 +243,6 @@ const AccountPage = (props: AccountPageProps) => {
       )}
     </Layout>
   );
-};
+}
 
 export default AccountPage;

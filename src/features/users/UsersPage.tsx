@@ -14,15 +14,13 @@ import { List } from '@material-ui/core';
 import UserListItem from './UserListItem';
 import { useInfiniteUsers } from './useUsers';
 
-export interface UsersPageProps {}
-
-const UsersPage = (props: UsersPageProps) => {
+function UsersPage() {
   const { t } = useTranslation('users');
   const { isMobileLayout } = useScreenSize();
 
   const { isFetching, data, loadMore } = useInfiniteUsers();
 
-  const users = data?.pages.reduce((users: UserDto[], { rows }) => [...users, ...rows], []) || [];
+  const users = data?.pages.reduce((u: UserDto[], { rows }) => [...u, ...rows], []) || [];
   const itemCount = users.length + 1;
   const itemHeight = isMobileLayout ? UserListItemHeight.MOBILE : UserListItemHeight.TABLET;
   const searchResult = t('common:searchResult', {
@@ -35,7 +33,12 @@ const UsersPage = (props: UsersPageProps) => {
     return user ? (
       <UserListItem key={user.id} user={user} itemHeight={itemHeight} />
     ) : (
-      <EndOfListItem key="end-of-list" height={itemHeight} isLoading={isFetching} message={searchResult} />
+      <EndOfListItem
+        key="end-of-list"
+        height={itemHeight}
+        isLoading={isFetching}
+        message={searchResult}
+      />
     );
   };
 
@@ -55,6 +58,6 @@ const UsersPage = (props: UsersPageProps) => {
       </List>
     </Layout>
   );
-};
+}
 
 export default UsersPage;

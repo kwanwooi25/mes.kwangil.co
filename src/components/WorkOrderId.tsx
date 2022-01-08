@@ -4,12 +4,12 @@ import { WorkOrderDto } from 'features/workOrder/interface';
 import { useWorkOrder } from 'features/workOrder/useWorkOrders';
 import React, { memo } from 'react';
 
-import { createStyles, Link, makeStyles, Theme } from '@material-ui/core';
+import { createStyles, Link, makeStyles } from '@material-ui/core';
 
 import WorkOrderDetailDialog from './dialog/WorkOrderDetail';
 import Loading from './Loading';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     workOrderIdLink: {
       maxWidth: '120px',
@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '16px',
     },
     workOrderId: {},
-  })
+  }),
 );
 
 export interface WorkOrderIdProps {
@@ -29,18 +29,21 @@ export interface WorkOrderIdProps {
   workOrder: WorkOrderDto;
 }
 
-const WorkOrderId = ({ workOrder, className, linkClassName }: WorkOrderIdProps) => {
+function WorkOrderId({ workOrder, className, linkClassName }: WorkOrderIdProps) {
   const classes = useStyles();
   const { openDialog, closeDialog } = useDialog();
 
   const { refetch, isFetching } = useWorkOrder(workOrder.id);
 
   const openDetailDialog = async () => {
-    refetch().then((res) => openDialog(<WorkOrderDetailDialog workOrder={res.data} onClose={closeDialog} />));
+    refetch().then((res) =>
+      openDialog(<WorkOrderDetailDialog workOrder={res.data} onClose={closeDialog} />),
+    );
   };
 
   return (
     <div className={className}>
+      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
       <Link
         className={classnames(classes.workOrderIdLink, linkClassName)}
         component="button"
@@ -53,6 +56,6 @@ const WorkOrderId = ({ workOrder, className, linkClassName }: WorkOrderIdProps) 
       </Link>
     </div>
   );
-};
+}
 
 export default memo(WorkOrderId);

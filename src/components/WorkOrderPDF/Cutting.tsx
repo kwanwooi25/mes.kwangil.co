@@ -24,7 +24,7 @@ export interface CuttingProps {
   product: ProductDto;
 }
 
-const Cutting = ({ product }: CuttingProps) => {
+function Cutting({ product }: CuttingProps) {
   const { t } = useTranslation('products');
   const {
     cutIsForPowder,
@@ -64,6 +64,6 @@ const Cutting = ({ product }: CuttingProps) => {
       </View>
     </View>
   );
-};
+}
 
 export default Cutting;

@@ -122,7 +122,7 @@ const useStyles = makeStyles((theme: Theme) =>
         backgroundColor: theme.palette.COMPLETED.light,
       },
     },
-  })
+  }),
 );
 
 enum OrderedAtRange {
@@ -132,14 +132,39 @@ enum OrderedAtRange {
   THIS_YEAR = 'thisYear',
 }
 
-export interface WorkOrderSummaryCardProps {}
-
-const WorkOrderSummaryCard = (props: WorkOrderSummaryCardProps) => {
+function WorkOrderSummaryCard() {
   const { t } = useTranslation();
   const classes = useStyles();
   const dispatch = useAppDispatch();
   const { canViewWorkOrders } = useAuth();
   const [orderedAtRange, setOrderedAtRange] = useState<OrderedAtRange>(OrderedAtRange.THIS_MONTH);
+
+  const getOrderedAt = (range: OrderedAtRange) => {
+    let from = '';
+    let to = '';
+    switch (range) {
+      case OrderedAtRange.LAST_MONTH:
+        from = formatDate(startOfMonth(subMonths(new Date(), 1)));
+        to = formatDate(endOfMonth(subMonths(new Date(), 1)));
+        break;
+      case OrderedAtRange.THIS_MONTH:
+        from = formatDate(startOfMonth(new Date()));
+        to = formatDate(endOfMonth(new Date()));
+        break;
+      case OrderedAtRange.LAST_YEAR:
+        from = formatDate(startOfYear(subYears(new Date(), 1)));
+        to = formatDate(endOfYear(subYears(new Date(), 1)));
+        break;
+      case OrderedAtRange.THIS_YEAR:
+        from = formatDate(startOfYear(new Date()));
+        to = formatDate(endOfYear(new Date()));
+        break;
+      default:
+        break;
+    }
+    return [from, to];
+  };
+
   const {
     isLoading,
     data: workOrderCount = {
@@ -160,7 +185,7 @@ const WorkOrderSummaryCard = (props: WorkOrderSummaryCardProps) => {
   } = useQuery(
     'workOrderCount',
     async (): Promise<WorkOrderCount> =>
-      await workOrderApi.getWorkOrderCount({ orderedAt: getOrderedAt(orderedAtRange) })
+      workOrderApi.getWorkOrderCount({ orderedAt: getOrderedAt(orderedAtRange) }),
   );
 
   const { NONE, SINGLE, DOUBLE } = workOrderCount.byPrintSide;
@@ -177,30 +202,6 @@ const WorkOrderSummaryCard = (props: WorkOrderSummaryCardProps) => {
     { value: OrderedAtRange.THIS_YEAR, label: t('common:thisYear') },
   ];
 
-  const getOrderedAt = (orderedAtRange: OrderedAtRange) => {
-    let from = '';
-    let to = '';
-    switch (orderedAtRange) {
-      case OrderedAtRange.LAST_MONTH:
-        from = formatDate(startOfMonth(subMonths(new Date(), 1)));
-        to = formatDate(endOfMonth(subMonths(new Date(), 1)));
-        break;
-      case OrderedAtRange.THIS_MONTH:
-        from = formatDate(startOfMonth(new Date()));
-        to = formatDate(endOfMonth(new Date()));
-        break;
-      case OrderedAtRange.LAST_YEAR:
-        from = formatDate(startOfYear(subYears(new Date(), 1)));
-        to = formatDate(endOfYear(subYears(new Date(), 1)));
-        break;
-      case OrderedAtRange.THIS_YEAR:
-        from = formatDate(startOfYear(new Date()));
-        to = formatDate(endOfYear(new Date()));
-        break;
-    }
-    return [from, to];
-  };
-
   const handleChangeOrderedAtRange = (value: OrderedAtRange) => setOrderedAtRange(value);
 
   const moveToWorkOrderPage = () => dispatch(routerActions.push(Path.WORK_ORDERS));
@@ -215,7 +216,12 @@ const WorkOrderSummaryCard = (props: WorkOrderSummaryCardProps) => {
       onRefresh={refetch}
       headerButton={
         canViewWorkOrders ? (
-          <Button color="primary" size="small" onClick={moveToWorkOrderPage} endIcon={<ChevronRightIcon />}>
+          <Button
+            color="primary"
+            size="small"
+            onClick={moveToWorkOrderPage}
+            endIcon={<ChevronRightIcon />}
+          >
             {t('common:showAll')}
           </Button>
         ) : undefined
@@ -246,8 +252,13 @@ const WorkOrderSummaryCard = (props: WorkOrderSummaryCardProps) => {
       </div>
       <div className={classes.workOrderCountByStatus}>
         {Object.entries(workOrderCount.byStatus).map(([status, count]) => (
-          <div key={status} className={classNames(classes.item, classes[status as WorkOrderStatus])}>
-            <div className={classNames(classes.status, 'status')}>{t(`workOrders:workOrderStatus:${status}`)}</div>
+          <div
+            key={status}
+            className={classNames(classes.item, classes[status as WorkOrderStatus])}
+          >
+            <div className={classNames(classes.status, 'status')}>
+              {t(`workOrders:workOrderStatus:${status}`)}
+            </div>
             <div className={classNames(classes.count, 'count')}>
               {isLoading ? <Skeleton height="100%" width={30} /> : formatDigit(count)}
             </div>
@@ -256,6 +267,6 @@ const WorkOrderSummaryCard = (props: WorkOrderSummaryCardProps) => {
       </div>
     </DashboardCard>
   );
-};
+}
 
 export default WorkOrderSummaryCard;

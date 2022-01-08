@@ -2,7 +2,7 @@ import { useAppDispatch } from 'app/store';
 import Input from 'components/form/Input';
 import { DatePicker } from 'components/form/Pickers';
 import RoundedButton from 'components/RoundedButton';
-import { DATE_FORMAT } from 'const';
+import { DATE_FORMAT, DEFAULT_WORK_ORDER_FILTER } from 'const';
 import { addDays, format, subDays, subMonths, subWeeks } from 'date-fns';
 import { useAuth } from 'features/auth/authHook';
 import { useUI } from 'features/ui/uiHook';
@@ -20,7 +20,6 @@ import {
 } from '@material-ui/core';
 
 import { WorkOrderFilter } from './interface';
-import { DEFAULT_WORK_ORDER_FILTER } from './WorkOrderPage';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -72,7 +71,7 @@ export interface WorkOrderSearchProps {
   onChange: (filter: WorkOrderFilter) => any;
 }
 
-const WorkOrderSearch = ({ filter, onChange }: WorkOrderSearchProps) => {
+function WorkOrderSearch({ filter, onChange }: WorkOrderSearchProps) {
   const { t } = useTranslation('workOrders');
   const classes = useStyles();
 
@@ -88,8 +87,8 @@ const WorkOrderSearch = ({ filter, onChange }: WorkOrderSearchProps) => {
       onReset: () => {
         onChange({ ...DEFAULT_WORK_ORDER_FILTER });
       },
-      onSubmit: (values) => {
-        onChange({ ...values });
+      onSubmit: (submitValues) => {
+        onChange({ ...submitValues });
         dispatch(closeSearch());
       },
     });
@@ -229,6 +228,6 @@ const WorkOrderSearch = ({ filter, onChange }: WorkOrderSearchProps) => {
       </div>
     </form>
   );
-};
+}
 
 export default WorkOrderSearch;

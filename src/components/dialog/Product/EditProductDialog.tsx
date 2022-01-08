@@ -3,7 +3,7 @@ import RoundedButton from 'components/RoundedButton';
 import { PrintSide, ProductLength, ProductThickness, ProductWidth } from 'const';
 import Dialog from 'features/dialog/Dialog';
 import useNotification from 'features/notification/useNotification';
-import { ProductDto } from 'features/product/interface';
+import { ProductDto, ProductFormValues } from 'features/product/interface';
 import { useUpdateProductMutation } from 'features/product/useProducts';
 import { Form, Formik } from 'formik';
 import { useScreenSize } from 'hooks/useScreenSize';
@@ -15,11 +15,16 @@ import { getInitialProductToUpdate, getUpdateProductDto } from 'utils/product';
 import { array, boolean, number, object, string } from 'yup';
 
 import {
-    createStyles, DialogActions, DialogContent, makeStyles, Tab, Tabs, Theme
+  createStyles,
+  DialogActions,
+  DialogContent,
+  makeStyles,
+  Tab,
+  Tabs,
+  Theme,
 } from '@material-ui/core';
 import { Close, Save } from '@material-ui/icons';
 
-import { ProductFormValues } from './';
 import BaseInfoForm from './BaseInfoForm';
 import CuttingForm from './CuttingForm';
 import ExtrusionForm from './ExtrusionForm';
@@ -44,7 +49,7 @@ const useStyles = makeStyles((theme: Theme) =>
         maxWidth: '120px',
       },
     },
-  })
+  }),
 );
 
 export interface EditProductDialogProps {
@@ -52,7 +57,7 @@ export interface EditProductDialogProps {
   onClose: () => any;
 }
 
-const EditProductDialog = ({ product, onClose }: EditProductDialogProps) => {
+function EditProductDialog({ product, onClose }: EditProductDialogProps) {
   const { t } = useTranslation('products');
   const classes = useStyles();
   const [tabIndex, setTabIndex] = useState<number>(0);
@@ -129,17 +134,25 @@ const EditProductDialog = ({ product, onClose }: EditProductDialogProps) => {
         object().shape({
           fileName: string(),
           imageUrl: string(),
-        })
+        }),
       ),
     }),
   };
 
   const forms = [
     { label: t('baseInfo'), Component: BaseInfoForm, validationSchema: validationSchema.baseInfo },
-    { label: t('extrusion'), Component: ExtrusionForm, validationSchema: validationSchema.extrusion },
+    {
+      label: t('extrusion'),
+      Component: ExtrusionForm,
+      validationSchema: validationSchema.extrusion,
+    },
     { label: t('print'), Component: PrintForm, validationSchema: validationSchema.print },
     { label: t('cutting'), Component: CuttingForm, validationSchema: validationSchema.cutting },
-    { label: t('packaging'), Component: PackagingForm, validationSchema: validationSchema.packaging },
+    {
+      label: t('packaging'),
+      Component: PackagingForm,
+      validationSchema: validationSchema.packaging,
+    },
     { label: t('images'), Component: ImageForm, validationSchema: validationSchema.images },
   ];
 
@@ -158,7 +171,7 @@ const EditProductDialog = ({ product, onClose }: EditProductDialogProps) => {
     const productToUpdate = await getUpdateProductDto(
       { ...product, ...restValues } as ProductDto,
       filesToUpload,
-      imagesToDelete
+      imagesToDelete,
     );
     updateProduct(productToUpdate);
   };
@@ -183,10 +196,15 @@ const EditProductDialog = ({ product, onClose }: EditProductDialogProps) => {
         ))}
       </Tabs>
       <DialogContent dividers className={classes.dialogContent}>
-        <Formik initialValues={initialValues} validationSchema={form.validationSchema} onSubmit={handleSubmit}>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={form.validationSchema}
+          onSubmit={handleSubmit}
+        >
           <Form autoComplete="off" style={{ height: '100%' }}>
             <form.Component />
-            <button ref={submitButtonRef} type="submit" style={{ display: 'none' }}></button>
+            {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
+            <button ref={submitButtonRef} type="submit" style={{ display: 'none' }} />
           </Form>
         </Formik>
       </DialogContent>
@@ -215,6 +233,6 @@ const EditProductDialog = ({ product, onClose }: EditProductDialogProps) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default EditProductDialog;

@@ -1,15 +1,25 @@
 import { IconButton, Paper, Theme, Typography, createStyles, makeStyles } from '@material-ui/core';
-import React, { Ref, forwardRef, useEffect, useRef } from 'react';
+import React, { Ref, forwardRef, useEffect, useRef, ReactNode } from 'react';
 import ReactDatePicker, { CalendarContainer } from 'react-datepicker';
-import { addMonths, endOfMonth, getDate, getDay, getMonth, getYear, isAfter, isBefore, subMonths } from 'date-fns';
+import {
+  addMonths,
+  endOfMonth,
+  getDate,
+  getDay,
+  getMonth,
+  getYear,
+  isAfter,
+  isBefore,
+  subMonths,
+} from 'date-fns';
 import { indigo, red } from '@material-ui/core/colors';
 
 import { DATE_FORMAT } from 'const';
-import Input from '../Input';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useTranslation } from 'react-i18next';
+import Input from '../Input';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -59,7 +69,7 @@ const useStyles = makeStyles((theme: Theme) =>
     notThisMonth: {
       opacity: 0.2,
     },
-  })
+  }),
 );
 
 export interface DatePickerProps {
@@ -77,7 +87,17 @@ const CustomInput = forwardRef(({ label, value, onClick }: any, ref: Ref<HTMLInp
   <Input ref={ref} onClick={onClick} label={label} value={value} />
 ));
 
-const DatePicker = ({
+function CustomCalendarContainer({ children }: { children: ReactNode[] }): ReactNode {
+  const classes = useStyles();
+
+  return (
+    <Paper className={classes.root} elevation={2}>
+      <CalendarContainer className={classes.calendarContainer}>{children}</CalendarContainer>
+    </Paper>
+  );
+}
+
+function DatePicker({
   className,
   selectedDate,
   onChange,
@@ -86,14 +106,14 @@ const DatePicker = ({
   maxDate,
   disablePast,
   disableFuture,
-}: DatePickerProps) => {
+}: DatePickerProps) {
   const { t } = useTranslation('common');
   const classes = useStyles();
   const { isMobileLayout } = useScreenSize();
   const calendarRef = useRef<ReactDatePicker>(null);
 
-  minDate = disablePast ? new Date() : minDate;
-  maxDate = disableFuture ? new Date() : maxDate;
+  const minimumDate = disablePast ? new Date() : minDate;
+  const maximumDate = disableFuture ? new Date() : maxDate;
 
   const getDayClassName = (date: Date) => {
     const weekday = getDay(date);
@@ -106,28 +126,30 @@ const DatePicker = ({
       5: '',
       6: classes.saturday,
     };
-    let className = classNames[weekday];
+    let dayClassName = classNames[weekday];
     if (getMonth(date) !== getMonth(selectedDate)) {
-      className += ` ${classes.notThisMonth}`;
+      dayClassName += ` ${classes.notThisMonth}`;
     }
-    return className;
+    return dayClassName;
   };
 
   const handleClickPrevMonth = (decreaseMonth: () => void) => () => {
     decreaseMonth();
     const aMonthBefore = subMonths(selectedDate, 1);
-    const date = minDate && isBefore(aMonthBefore, minDate) ? minDate : aMonthBefore;
+    const date = minimumDate && isBefore(aMonthBefore, minimumDate) ? minimumDate : aMonthBefore;
     onChange(date);
   };
   const handleClickNextMonth = (increaseMonth: () => void) => () => {
     increaseMonth();
     const aMonthAfter = addMonths(selectedDate, 1);
-    const date = maxDate && isAfter(aMonthAfter, maxDate) ? maxDate : aMonthAfter;
+    const date = maximumDate && isAfter(aMonthAfter, maximumDate) ? maximumDate : aMonthAfter;
     onChange(date);
   };
 
   useEffect(() => {
-    const inputContainerEl = document.getElementsByClassName('react-datepicker__input-container')[0];
+    const inputContainerEl = document.getElementsByClassName(
+      'react-datepicker__input-container',
+    )[0];
     const containerEl = inputContainerEl?.parentElement;
     if (containerEl && className) {
       containerEl.className = className;
@@ -142,20 +164,14 @@ const DatePicker = ({
       dateFormat={DATE_FORMAT}
       selected={selectedDate}
       onChange={onChange}
-      minDate={minDate}
-      maxDate={maxDate}
+      minDate={minimumDate}
+      maxDate={maximumDate}
       dayClassName={getDayClassName}
       weekDayClassName={getDayClassName}
       customInput={<CustomInput label={label} />}
       popperProps={{ positionFixed: true }}
       popperModifiers={{ flip: { behavior: ['right'] } }}
-      calendarContainer={({ children }) => {
-        return (
-          <Paper className={classes.root} elevation={2}>
-            <CalendarContainer className={classes.calendarContainer}>{children}</CalendarContainer>
-          </Paper>
-        );
-      }}
+      calendarContainer={CustomCalendarContainer}
       renderCustomHeader={({ date, decreaseMonth, increaseMonth }) => {
         const parsedDate = {
           year: getYear(date),
@@ -164,17 +180,23 @@ const DatePicker = ({
         };
         const aMonthBefore = endOfMonth(subMonths(date, 1));
         const aMonthAfter = addMonths(date, 1);
-        const prevMonthDisabled = minDate && isBefore(aMonthBefore, minDate);
-        const nextMonthDisabled = maxDate && isAfter(aMonthAfter, maxDate);
+        const prevMonthDisabled = minimumDate && isBefore(aMonthBefore, minimumDate);
+        const nextMonthDisabled = maximumDate && isAfter(aMonthAfter, maximumDate);
 
         return (
           <div className={classes.calendarHeader}>
             <div className={classes.monthDisplay}>
-              <IconButton onClick={handleClickPrevMonth(decreaseMonth)} disabled={prevMonthDisabled}>
+              <IconButton
+                onClick={handleClickPrevMonth(decreaseMonth)}
+                disabled={prevMonthDisabled}
+              >
                 <KeyboardArrowLeftIcon />
               </IconButton>
               <Typography variant="h6">{t('yearMonth', parsedDate)}</Typography>
-              <IconButton onClick={handleClickNextMonth(increaseMonth)} disabled={nextMonthDisabled}>
+              <IconButton
+                onClick={handleClickNextMonth(increaseMonth)}
+                disabled={nextMonthDisabled}
+              >
                 <KeyboardArrowRightIcon />
               </IconButton>
             </div>
@@ -183,6 +205,6 @@ const DatePicker = ({
       }}
     />
   );
-};
+}
 
 export default DatePicker;

@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme: Theme) =>
     yes: {
       color: theme.palette.success.main,
     },
-  })
+  }),
 );
 
 export interface BooleanIconProps {
@@ -17,13 +17,13 @@ export interface BooleanIconProps {
   size?: 'default' | 'inherit' | 'large' | 'small';
 }
 
-const BooleanIcon = ({ value, size = 'default' }: BooleanIconProps) => {
+function BooleanIcon({ value, size = 'default' }: BooleanIconProps) {
   const classes = useStyles();
   return value ? (
     <CheckCircleOutlineIcon className={classes.yes} fontSize={size} />
   ) : (
     <HighlightOffIcon color="error" fontSize={size} />
   );
-};
+}
 
 export default BooleanIcon;

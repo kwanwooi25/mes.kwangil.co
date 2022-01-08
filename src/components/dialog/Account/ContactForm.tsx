@@ -1,5 +1,12 @@
 import { ContactInputs, PHONE_INPUT_KEYS } from 'const';
-import { Divider, IconButton, Theme, Typography, createStyles, makeStyles } from '@material-ui/core';
+import {
+  Divider,
+  IconButton,
+  Theme,
+  Typography,
+  createStyles,
+  makeStyles,
+} from '@material-ui/core';
 import React, { ChangeEvent } from 'react';
 
 import CloseIcon from '@material-ui/icons/Close';
@@ -61,7 +68,7 @@ const useStyles = makeStyles((theme: Theme) =>
     memo: {
       gridArea: 'memo',
     },
-  })
+  }),
 );
 
 export interface ContactFormProps {
@@ -71,7 +78,7 @@ export interface ContactFormProps {
   onDelete: () => void;
 }
 
-const ContactForm = ({ contact, error, onChange, onDelete }: ContactFormProps) => {
+function ContactForm({ contact, error, onChange, onDelete }: ContactFormProps) {
   const classes = useStyles();
   const { t } = useTranslation('contacts');
 
@@ -149,6 +156,6 @@ const ContactForm = ({ contact, error, onChange, onDelete }: ContactFormProps) =
       </div>
     </>
   );
-};
+}
 
 export default ContactForm;

@@ -5,12 +5,12 @@ import { useProduct } from 'features/product/useProducts';
 import React, { memo } from 'react';
 import { highlight } from 'utils/string';
 
-import { createStyles, Link, makeStyles, Theme } from '@material-ui/core';
+import { createStyles, Link, makeStyles } from '@material-ui/core';
 
 import ProductDetailDialog from './dialog/ProductDetail';
 import Loading from './Loading';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     productNameLink: {
       whiteSpace: 'nowrap',
@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '16px',
     },
     productName: {},
-  })
+  }),
 );
 
 export interface ProductNameProps {
@@ -32,25 +32,28 @@ export interface ProductNameProps {
   productName?: string;
 }
 
-const ProductName = ({
+function ProductName({
   product,
   className,
   linkClassName,
   searchText = '',
   maxWidth = 240,
   productName,
-}: ProductNameProps) => {
+}: ProductNameProps) {
   const classes = useStyles();
   const { openDialog, closeDialog } = useDialog();
 
   const { refetch, isFetching } = useProduct(product.id);
 
   const openDetailDialog = async () => {
-    refetch().then((res) => openDialog(<ProductDetailDialog product={res.data} onClose={closeDialog} />));
+    refetch().then((res) =>
+      openDialog(<ProductDetailDialog product={res.data} onClose={closeDialog} />),
+    );
   };
 
   return (
     <div className={className}>
+      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
       <Link
         className={classnames(classes.productNameLink, linkClassName)}
         component="button"
@@ -68,6 +71,6 @@ const ProductName = ({
       </Link>
     </div>
   );
-};
+}
 
 export default memo(ProductName);

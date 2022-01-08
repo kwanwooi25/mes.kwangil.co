@@ -1,15 +1,21 @@
 import { List, Theme, createStyles, makeStyles } from '@material-ui/core';
-import { PRINT_SIDE_TEXT, PrintSide } from '../../../const';
-import { getExtrusionDetail, getPackagingDetail, getPrintDetail, getProductSize, getPunchDetail } from 'utils/product';
+import {
+  getExtrusionDetail,
+  getPackagingDetail,
+  getPrintDetail,
+  getProductSize,
+  getPunchDetail,
+} from 'utils/product';
 
 import CustomListSubHeader from 'components/CustomListSubHeader';
-import DetailField from '../DetailField';
 import { ProductDto } from 'features/product/interface';
 import ProductImage from 'components/ProductImage/ProductImage';
 import ProductImageContainer from 'components/ProductImage/ProductImageContainer';
 import React from 'react';
 import { getPlateTitle } from 'utils/plate';
 import { useTranslation } from 'react-i18next';
+import DetailField from '../DetailField';
+import { PRINT_SIDE_TEXT, PrintSide } from '../../../const';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -19,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
     imageContainer: {
       padding: theme.spacing(1, 3),
     },
-  })
+  }),
 );
 
 export interface ProductDetailsProps {
@@ -28,7 +34,11 @@ export interface ProductDetailsProps {
   filesToUpload?: File[];
 }
 
-const ProductDetails = ({ product, hideBaseInfo = false, filesToUpload = [] }: ProductDetailsProps) => {
+function ProductDetails({
+  product,
+  hideBaseInfo = false,
+  filesToUpload = [],
+}: ProductDetailsProps) {
   const { t } = useTranslation('products');
   const classes = useStyles();
   const {
@@ -111,7 +121,9 @@ const ProductDetails = ({ product, hideBaseInfo = false, filesToUpload = [] }: P
       {printSide !== PrintSide.NONE && (
         <>
           <DetailField label={t('printFrontDetail')} value={printFrontDetail} />
-          {printSide === PrintSide.DOUBLE && <DetailField label={t('printBackDetail')} value={printBackDetail} />}
+          {printSide === PrintSide.DOUBLE && (
+            <DetailField label={t('printBackDetail')} value={printBackDetail} />
+          )}
           {hasPlates &&
             plates.map((plate, index) => (
               <DetailField
@@ -144,7 +156,11 @@ const ProductDetails = ({ product, hideBaseInfo = false, filesToUpload = [] }: P
           <CustomListSubHeader>{t('images')}</CustomListSubHeader>
           <ProductImageContainer className={classes.imageContainer}>
             {images.map(({ imageUrl }) => (
-              <ProductImage key={imageUrl} imageUrl={imageUrl} onClick={() => window.open(imageUrl)} />
+              <ProductImage
+                key={imageUrl}
+                imageUrl={imageUrl}
+                onClick={() => window.open(imageUrl)}
+              />
             ))}
             {filesToUpload.map((file) => (
               <ProductImage key={file.name} file={file} />
@@ -164,6 +180,6 @@ const ProductDetails = ({ product, hideBaseInfo = false, filesToUpload = [] }: P
       )}
     </List>
   );
-};
+}
 
 export default ProductDetails;

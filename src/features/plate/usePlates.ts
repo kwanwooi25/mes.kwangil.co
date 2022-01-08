@@ -11,12 +11,11 @@ export const useInfinitePlates = (filter: PlateFilter, limit: number = DEFAULT_L
     ['plates', JSON.stringify(filter)],
     async ({ queryKey, pageParam: offset = 0 }): Promise<GetListResponse<PlateDto>> => {
       const [, serializedFilter] = queryKey;
-      const filter = JSON.parse(serializedFilter);
-      return await plateApi.getPlates({ offset, limit, ...filter });
+      return plateApi.getPlates({ offset, limit, ...JSON.parse(serializedFilter) });
     },
     {
       getNextPageParam: (lastPage, pages) => lastPage.hasMore && pages.length * limit,
-    }
+    },
   );
 
   const { isFetching, fetchNextPage, hasNextPage } = plateInfiniteQuery;

@@ -1,11 +1,20 @@
+/* eslint-disable no-case-declarations */
 import {
-    DELIVERY_METHOD_TEXT, DeliveryMethod, ExcelVariant, PLATE_STATUS_TEXT, PlateStatus,
-    PRINT_SIDE_TEXT, PrintSide, WorkOrderStatus
+  DELIVERY_METHOD_TEXT,
+  DeliveryMethod,
+  ExcelVariant,
+  PLATE_STATUS_TEXT,
+  PlateStatus,
+  PRINT_SIDE_TEXT,
+  PrintSide,
+  WorkOrderStatus,
 } from 'const';
 import { AccountDto, CreateAccountDto, CreateContactDto } from 'features/account/interface';
 import { CreateProductDto, CreateProductsDto, ProductDto } from 'features/product/interface';
 import {
-    CreateWorkOrderDto, CreateWorkOrdersDto, WorkOrderDto
+  CreateWorkOrderDto,
+  CreateWorkOrdersDto,
+  WorkOrderDto,
 } from 'features/workOrder/interface';
 import { isEmpty } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
@@ -13,39 +22,6 @@ import XLSX from 'xlsx';
 
 import { formatDate } from './date';
 import { getFileNameFromUrl } from './string';
-
-export const getExcelFileReader = {
-  [ExcelVariant.ACCOUNT]: (stateSetter: Dispatch<SetStateAction<CreateAccountDto[]>>) =>
-    getFileReader(ExcelVariant.ACCOUNT, stateSetter),
-  [ExcelVariant.PRODUCT]: (stateSetter: Dispatch<SetStateAction<CreateProductsDto[]>>) =>
-    getFileReader(ExcelVariant.PRODUCT, stateSetter),
-  [ExcelVariant.WORK_ORDER]: (stateSetter: Dispatch<SetStateAction<CreateWorkOrdersDto[]>>) =>
-    getFileReader(ExcelVariant.WORK_ORDER, stateSetter),
-};
-
-export const downloadWorkbook = {
-  [ExcelVariant.ACCOUNT]: (
-    accounts: (AccountDto | (CreateAccountDto & { reason: string }))[],
-    workbookTitle: string
-  ) => {
-    const data = processAccountsForDownload(accounts);
-    return getWorkbook(data, workbookTitle);
-  },
-  [ExcelVariant.PRODUCT]: (
-    products: (ProductDto | ((CreateProductDto | CreateProductsDto) & { reason: string }))[],
-    workbookTitle: string
-  ) => {
-    const data = processProductsForDownload(products);
-    return getWorkbook(data, workbookTitle);
-  },
-  [ExcelVariant.WORK_ORDER]: (
-    workOrders: (WorkOrderDto | ((CreateWorkOrderDto | CreateWorkOrdersDto) & { reason: string }))[],
-    workbookTitle: string
-  ) => {
-    const data = processWorkOrdersForDownload(workOrders);
-    return getWorkbook(data, workbookTitle);
-  },
-};
 
 const ACCOUNT_LABEL_TO_KEY: { [key: string]: keyof CreateAccountDto } = {
   업체명: 'name',
@@ -180,22 +156,6 @@ const WORK_ORDER_KEY_TO_LABEL: { [key: string]: string } = {
   deliveryMemo: '납품메모',
 };
 
-function getFileReader<T>(variant: ExcelVariant, stateSetter: Dispatch<SetStateAction<T[]>>) {
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    if (!e.target?.result) {
-      return;
-    }
-    const data = new Uint8Array(e.target.result as ArrayBufferLike);
-    const workbook = XLSX.read(data, { type: 'array' });
-    const array = XLSX.utils.sheet_to_json(workbook.Sheets[variant]);
-    // @ts-ignore
-    const items: T[] = array.map((row) => generateItem[variant](row));
-    stateSetter && stateSetter(items);
-  };
-  return reader;
-}
-
 export function getWorkbook(data: any, workbookTitle: string = 'noTitle') {
   const sheet = XLSX.utils.json_to_sheet(data);
   const workbook = XLSX.utils.book_new();
@@ -206,31 +166,31 @@ export function getWorkbook(data: any, workbookTitle: string = 'noTitle') {
 }
 
 const generateItem = {
-  [ExcelVariant.ACCOUNT]: (row: any) => {
-    return Object.entries(row).reduce(
+  [ExcelVariant.ACCOUNT]: (row: any) =>
+    Object.entries(row).reduce(
       (account: CreateAccountDto, [key, value]) => {
         if (key.includes('연락처')) {
           const [contactTitle, contactKey] = key.split(' ');
           const contactIndex = +contactTitle.slice(-1) - 1;
-          const contacts: CreateContactDto[] = account.contacts || [{ title: '기본', isBase: true }];
+          const contacts: CreateContactDto[] = account.contacts || [
+            { title: '기본', isBase: true },
+          ];
           const newKey: keyof CreateContactDto = CONTACT_LABEL_TO_KEY[contactKey];
           if (!contacts[contactIndex] && newKey === 'title' && !!value) {
             contacts.push({ title: value as string });
-          } else if (!!contacts[contactIndex]) {
+          } else if (contacts[contactIndex]) {
             // @ts-ignore
             contacts[contactIndex][newKey] = value;
           }
           return { ...account, contacts };
-        } else {
-          const newKey: keyof CreateAccountDto = ACCOUNT_LABEL_TO_KEY[key];
-          return { ...account, [newKey]: value };
         }
+        const newKey: keyof CreateAccountDto = ACCOUNT_LABEL_TO_KEY[key];
+        return { ...account, [newKey]: value };
       },
-      { name: '' }
-    );
-  },
-  [ExcelVariant.PRODUCT]: (row: any) => {
-    return Object.entries(row).reduce(
+      { name: '' },
+    ),
+  [ExcelVariant.PRODUCT]: (row: any) =>
+    Object.entries(row).reduce(
       (product: CreateProductsDto, [key, value]) => {
         const newKey: keyof CreateProductsDto = PRODUCT_LABEL_TO_KEY[key];
         let newValue;
@@ -293,11 +253,10 @@ const generateItem = {
         packCanDeliverAll: false,
         packMemo: '',
         images: [],
-      }
-    );
-  },
-  [ExcelVariant.WORK_ORDER]: (row: any) => {
-    return Object.entries(row).reduce(
+      },
+    ),
+  [ExcelVariant.WORK_ORDER]: (row: any) =>
+    Object.entries(row).reduce(
       (workOrder: CreateWorkOrdersDto, [key, value]) => {
         const newKey: keyof CreateWorkOrdersDto = WORK_ORDER_LABEL_TO_KEY[key];
         let newValue;
@@ -321,6 +280,7 @@ const generateItem = {
             break;
           case 'completedAt':
             newValue = isEmpty(value) ? null : value;
+            // eslint-disable-next-line no-param-reassign
             workOrder.workOrderStatus = WorkOrderStatus.COMPLETED;
             break;
 
@@ -352,41 +312,64 @@ const generateItem = {
         thickness: 0.05,
         length: 0,
         width: 0,
-      }
-    );
-  },
+      },
+    ),
 };
 
-function processAccountsForDownload(accounts: (AccountDto | (CreateAccountDto & { reason: string }))[]) {
+function getFileReader<T>(variant: ExcelVariant, stateSetter: Dispatch<SetStateAction<T[]>>) {
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    if (!e.target?.result) {
+      return;
+    }
+    const data = new Uint8Array(e.target.result as ArrayBufferLike);
+    const workbook = XLSX.read(data, { type: 'array' });
+    const array = XLSX.utils.sheet_to_json(workbook.Sheets[variant]);
+    // @ts-ignore
+    const items: T[] = array.map((row) => generateItem[variant](row));
+    if (stateSetter) stateSetter(items);
+  };
+  return reader;
+}
+
+function processAccountsForDownload(
+  accounts: (AccountDto | (CreateAccountDto & { reason: string }))[],
+) {
   const accountDataKeys = Object.keys(ACCOUNT_KEY_TO_LABEL);
   const contactDataKeys = Object.keys(CONTACT_KEY_TO_LABEL);
 
-  return accounts.map((account) => {
-    return Object.entries(account).reduce((processedAccount, [key, value]) => {
+  return accounts.map((account) =>
+    Object.entries(account).reduce((processedAccount, [key, value]) => {
       if (accountDataKeys.includes(key)) {
         return {
           ...processedAccount,
           [ACCOUNT_KEY_TO_LABEL[key]]: value,
         };
-      } else if (key === 'contacts') {
+      }
+      if (key === 'contacts') {
         account.contacts?.slice(0, 2).forEach((contact, index) => {
           const prefix = `연락처${index + 1}`;
-          const processedContact = Object.entries(contact).reduce((processedContact, [key, value]) => {
-            if (contactDataKeys.includes(key)) {
-              return {
-                ...processedContact,
-                [`${prefix} ${CONTACT_KEY_TO_LABEL[key]}`]: value,
-              };
-            }
-            return processedContact;
-          }, {});
+          const processedContact = Object.entries(contact).reduce(
+            (c, [contactKey, contactValue]) => {
+              if (contactDataKeys.includes(key)) {
+                return {
+                  ...c,
+                  [`${prefix} ${CONTACT_KEY_TO_LABEL[contactKey]}`]: contactValue,
+                };
+              }
+              return c;
+            },
+            {},
+          );
+          // eslint-disable-next-line no-param-reassign
           processedAccount = {
             ...processedAccount,
             ...processedContact,
           };
         });
         return { ...processedAccount };
-      } else if (key === 'reason') {
+      }
+      if (key === 'reason') {
         return {
           ...processedAccount,
           실패사유: value,
@@ -394,17 +377,17 @@ function processAccountsForDownload(accounts: (AccountDto | (CreateAccountDto & 
       }
 
       return processedAccount;
-    }, {});
-  });
+    }, {}),
+  );
 }
 
 function processProductsForDownload(
-  products: (ProductDto | ((CreateProductDto | CreateProductsDto) & { reason: string }))[]
+  products: (ProductDto | ((CreateProductDto | CreateProductsDto) & { reason: string }))[],
 ) {
   const productDataKeys = Object.keys(PRODUCT_KEY_TO_LABEL);
 
-  return products.map((product) => {
-    return productDataKeys.reduce((processedProduct, key) => {
+  return products.map((product) =>
+    productDataKeys.reduce((processedProduct, key) => {
       const label = PRODUCT_KEY_TO_LABEL[key] || key;
       // @ts-ignore
       let value = product[key];
@@ -428,20 +411,22 @@ function processProductsForDownload(
             value = value[0].imageUrl;
           }
           break;
+        default:
+          break;
       }
 
       return { ...processedProduct, [label]: value };
-    }, {});
-  });
+    }, {}),
+  );
 }
 
 function processWorkOrdersForDownload(
-  workOrders: (WorkOrderDto | ((CreateWorkOrderDto | CreateWorkOrdersDto) & { reason: string }))[]
+  workOrders: (WorkOrderDto | ((CreateWorkOrderDto | CreateWorkOrdersDto) & { reason: string }))[],
 ) {
   const workOrderDataKeys = Object.keys(WORK_ORDER_KEY_TO_LABEL);
 
-  return workOrders.map((workOrder) => {
-    return workOrderDataKeys.reduce((processedWorkOrder, key) => {
+  return workOrders.map((workOrder) =>
+    workOrderDataKeys.reduce((processedWorkOrder, key) => {
       const label = WORK_ORDER_KEY_TO_LABEL[key] || key;
       // @ts-ignore
       let value = workOrder[key];
@@ -477,9 +462,47 @@ function processWorkOrdersForDownload(
         case 'deliveryMethod':
           value = DELIVERY_METHOD_TEXT[value];
           break;
+        default:
+          break;
       }
 
       return { ...processedWorkOrder, [label]: value };
-    }, {});
-  });
+    }, {}),
+  );
 }
+
+export const downloadWorkbook = {
+  [ExcelVariant.ACCOUNT]: (
+    accounts: (AccountDto | (CreateAccountDto & { reason: string }))[],
+    workbookTitle: string,
+  ) => {
+    const data = processAccountsForDownload(accounts);
+    return getWorkbook(data, workbookTitle);
+  },
+  [ExcelVariant.PRODUCT]: (
+    products: (ProductDto | ((CreateProductDto | CreateProductsDto) & { reason: string }))[],
+    workbookTitle: string,
+  ) => {
+    const data = processProductsForDownload(products);
+    return getWorkbook(data, workbookTitle);
+  },
+  [ExcelVariant.WORK_ORDER]: (
+    workOrders: (
+      | WorkOrderDto
+      | ((CreateWorkOrderDto | CreateWorkOrdersDto) & { reason: string })
+    )[],
+    workbookTitle: string,
+  ) => {
+    const data = processWorkOrdersForDownload(workOrders);
+    return getWorkbook(data, workbookTitle);
+  },
+};
+
+export const getExcelFileReader = {
+  [ExcelVariant.ACCOUNT]: (stateSetter: Dispatch<SetStateAction<CreateAccountDto[]>>) =>
+    getFileReader(ExcelVariant.ACCOUNT, stateSetter),
+  [ExcelVariant.PRODUCT]: (stateSetter: Dispatch<SetStateAction<CreateProductsDto[]>>) =>
+    getFileReader(ExcelVariant.PRODUCT, stateSetter),
+  [ExcelVariant.WORK_ORDER]: (stateSetter: Dispatch<SetStateAction<CreateWorkOrdersDto[]>>) =>
+    getFileReader(ExcelVariant.WORK_ORDER, stateSetter),
+};

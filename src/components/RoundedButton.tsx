@@ -10,7 +10,7 @@ const BORDER_RADIUS = {
   large: 21,
 };
 
-const RoundedButton = ({ children, ...props }: RoundedButtonProps) => {
+function RoundedButton({ children, ...props }: RoundedButtonProps) {
   const borderRadius = BORDER_RADIUS[props.size || 'medium'];
 
   return (
@@ -18,6 +18,6 @@ const RoundedButton = ({ children, ...props }: RoundedButtonProps) => {
       {children}
     </Button>
   );
-};
+}
 
 export default RoundedButton;

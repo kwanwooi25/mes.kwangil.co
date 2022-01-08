@@ -20,7 +20,7 @@ export interface WorkOrderHistoryDialogProps {
   onClose: () => void;
 }
 
-const WorkOrderHistoryDialog = ({ product, workOrders, onClose }: WorkOrderHistoryDialogProps) => {
+function WorkOrderHistoryDialog({ product, workOrders, onClose }: WorkOrderHistoryDialogProps) {
   const { t } = useTranslation('workOrders');
   const title = `${getProductTitle(product)} ${t('common:workOrderHistory')}`;
 
@@ -46,6 +46,6 @@ const WorkOrderHistoryDialog = ({ product, workOrders, onClose }: WorkOrderHisto
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default WorkOrderHistoryDialog;

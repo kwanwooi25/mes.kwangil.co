@@ -7,7 +7,7 @@ import { Notification, notificationActions } from './notificationSlice';
 
 let displayed: string[] = [];
 
-const Notifier = () => {
+function Notifier() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { notifications } = useAppSelector((state) => state.notification);
@@ -24,7 +24,8 @@ const Notifier = () => {
   useEffect(() => {
     notifications.forEach(({ key, message, options = {}, dismissed = false }: Notification) => {
       if (dismissed) {
-        return closeSnackbar();
+        closeSnackbar();
+        return;
       }
 
       if (displayed.includes(key)) {
@@ -40,7 +41,7 @@ const Notifier = () => {
         },
         ...options,
         onClose: (event, reason, myKey) => {
-          options.onClose && options.onClose(event, reason, myKey);
+          if (options.onClose) options.onClose(event, reason, myKey);
         },
         onExited: (event, myKey) => {
           dispatch(notificationActions.remove(`${myKey}`));
@@ -53,6 +54,6 @@ const Notifier = () => {
   }, [notifications, enqueueSnackbar, closeSnackbar, dispatch]);
 
   return null;
-};
+}
 
 export default Notifier;

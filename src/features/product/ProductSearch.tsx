@@ -9,8 +9,8 @@ import { useTranslation } from 'react-i18next';
 
 import { createStyles, Divider, makeStyles, Theme } from '@material-ui/core';
 
+import { DEFAULT_PRODUCT_FILTER } from 'const';
 import { ProductFilter } from './interface';
-import { DEFAULT_PRODUCT_FILTER } from './ProductPage';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -68,7 +68,7 @@ export interface ProductSearchProps {
   onChange: (filter: ProductFilter) => any;
 }
 
-const ProductSearch = ({ filter, onChange }: ProductSearchProps) => {
+function ProductSearch({ filter, onChange }: ProductSearchProps) {
   const { t } = useTranslation('products');
   const classes = useStyles();
 
@@ -83,8 +83,8 @@ const ProductSearch = ({ filter, onChange }: ProductSearchProps) => {
     onReset: () => {
       onChange({ ...DEFAULT_PRODUCT_FILTER });
     },
-    onSubmit: (values) => {
-      onChange({ ...values });
+    onSubmit: (submitValues) => {
+      onChange({ ...submitValues });
       dispatch(closeSearch());
     },
   });
@@ -158,6 +158,6 @@ const ProductSearch = ({ filter, onChange }: ProductSearchProps) => {
       </div>
     </form>
   );
-};
+}
 
 export default ProductSearch;

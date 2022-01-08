@@ -1,5 +1,5 @@
 import { Button, Theme, createStyles, makeStyles } from '@material-ui/core';
-import React, { ChangeEvent, createRef } from 'react';
+import React, { createRef } from 'react';
 
 import AddIcon from '@material-ui/icons/Add';
 
@@ -12,18 +12,18 @@ const useStyles = makeStyles((theme: Theme) =>
       borderRadius: theme.spacing(2),
       borderStyle: 'dashed',
     },
-  })
+  }),
 );
 
 export interface ProductImageInputProps {
   onChange: (file: File) => void;
 }
 
-const ProductImageInput = ({ onChange }: ProductImageInputProps) => {
+function ProductImageInput({ onChange }: ProductImageInputProps) {
   const classes = useStyles();
   const fileInputRef = createRef<HTMLInputElement>();
 
-  const handleChangeFile = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChangeFile = () => {
     if (fileInputRef.current && fileInputRef.current.files && fileInputRef.current.files.length) {
       const file = fileInputRef.current.files[0];
       if (file) {
@@ -46,6 +46,6 @@ const ProductImageInput = ({ onChange }: ProductImageInputProps) => {
       <input hidden ref={fileInputRef} type="file" accept="image/*" onChange={handleChangeFile} />
     </div>
   );
-};
+}
 
 export default ProductImageInput;

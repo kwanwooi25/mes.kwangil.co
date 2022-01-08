@@ -8,8 +8,17 @@ import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
 
 import {
-    Chip, createStyles, IconButton, ListItem, ListItemSecondaryAction, ListItemText, makeStyles,
-    Menu, MenuItem, Theme, Typography
+  Chip,
+  createStyles,
+  IconButton,
+  ListItem,
+  ListItemSecondaryAction,
+  ListItemText,
+  makeStyles,
+  Menu,
+  MenuItem,
+  Theme,
+  Typography,
 } from '@material-ui/core';
 import { MoreVert } from '@material-ui/icons';
 
@@ -52,7 +61,7 @@ const useStyles = makeStyles((theme: Theme) =>
       justifySelf: 'end',
       backgroundColor: theme.palette.error.main,
     },
-  })
+  }),
 );
 
 export interface UserListItemProps {
@@ -60,7 +69,7 @@ export interface UserListItemProps {
   itemHeight: number;
 }
 
-const UserListItem = ({ user, itemHeight }: UserListItemProps) => {
+function UserListItem({ user, itemHeight }: UserListItemProps) {
   const { t } = useTranslation('users');
   const classes = useStyles();
 
@@ -75,7 +84,10 @@ const UserListItem = ({ user, itemHeight }: UserListItemProps) => {
     messageOnFail: t(user.isActive ? 'inactivateUserFailed' : 'activateUserFailed'),
   });
 
-  const openMenu = useCallback((e: MouseEvent<HTMLButtonElement>) => setMenuAnchorEl(e.currentTarget), []);
+  const openMenu = useCallback(
+    (e: MouseEvent<HTMLButtonElement>) => setMenuAnchorEl(e.currentTarget),
+    [],
+  );
   const closeMenu = useCallback(() => setMenuAnchorEl(null), []);
 
   const handleClickMenuItem =
@@ -90,18 +102,22 @@ const UserListItem = ({ user, itemHeight }: UserListItemProps) => {
   // };
 
   const handleClickToggleActive = () => {
-    const title = `${t('common:user')} ${user.isActive ? t('common:inactivate') : t('common:activate')}`;
-    const message = t(user.isActive ? 'inactivateUserConfirm' : 'activateUserConfirm', { userName: user.name });
+    const title = `${t('common:user')} ${
+      user.isActive ? t('common:inactivate') : t('common:activate')
+    }`;
+    const message = t(user.isActive ? 'inactivateUserConfirm' : 'activateUserConfirm', {
+      userName: user.name,
+    });
 
     openDialog(
       <ConfirmDialog
         title={title}
         message={message}
         onClose={(isConfirmed: boolean) => {
-          isConfirmed && updateUser({ ...user, isActive: !user.isActive });
+          if (isConfirmed) updateUser({ ...user, isActive: !user.isActive });
           closeDialog();
         }}
-      />
+      />,
     );
   };
 
@@ -118,7 +134,7 @@ const UserListItem = ({ user, itemHeight }: UserListItemProps) => {
   //   );
   // };
 
-  let actionButtons: { label: string; onClick: () => any }[] = [];
+  const actionButtons: { label: string; onClick: () => any }[] = [];
 
   if (canUpdateUsers) {
     actionButtons.push({
@@ -157,6 +173,6 @@ const UserListItem = ({ user, itemHeight }: UserListItemProps) => {
       </ListItemSecondaryAction>
     </ListItem>
   );
-};
+}
 
 export default memo(UserListItem);

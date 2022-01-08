@@ -24,9 +24,7 @@ import { QuoteDto, QuoteFilter } from './interface';
 import QuoteListItem from './QuoteListItem';
 import { useInfiniteQuotes } from './useQuotes';
 
-export interface QuotePageProps {}
-
-const QuotePage = (props: QuotePageProps) => {
+function QuotePage() {
   const { t } = useTranslation('quotes');
   const [filter] = useState<QuoteFilter>({});
 
@@ -36,7 +34,7 @@ const QuotePage = (props: QuotePageProps) => {
   const { isFetching, data, loadMore } = useInfiniteQuotes(filter);
   const queryClient = useQueryClient();
 
-  const quotes = data?.pages.reduce((quotes: QuoteDto[], { rows }) => [...quotes, ...rows], []) || [];
+  const quotes = data?.pages.reduce((q: QuoteDto[], { rows }) => [...q, ...rows], []) || [];
   const quoteIds = quotes.map(({ id }) => id);
   const {
     selectedIds,
@@ -49,6 +47,7 @@ const QuotePage = (props: QuotePageProps) => {
   } = useSelection(quoteIds);
 
   const itemCount = quotes.length + 1;
+  // eslint-disable-next-line no-nested-ternary
   const itemHeight = isMobileLayout
     ? QuoteListItemHeight.MOBILE
     : isTabletLayout
@@ -67,12 +66,12 @@ const QuotePage = (props: QuotePageProps) => {
       <ConfirmDialog
         title={t('deleteQuote')}
         message={t('deleteQuotesConfirm', { count: selectedIds.length })}
-        onClose={(isConfirmed: boolean) => {
+        onClose={() => {
           // TODO: delete quotes
           // isConfirmed && deleteQuotes(selectedIds as number[]);
           closeDialog();
         }}
-      />
+      />,
     );
   };
 
@@ -80,7 +79,7 @@ const QuotePage = (props: QuotePageProps) => {
     openDialog(<QuoteDialog onClose={closeDialog} />);
   };
 
-  let selectModeButtons: JSX.Element[] = [];
+  const selectModeButtons: JSX.Element[] = [];
   if (canDeleteQuotes) {
     selectModeButtons.push(
       <Tooltip key="delete-all" title={t('common:deleteAll') as string} placement="top">
@@ -91,7 +90,7 @@ const QuotePage = (props: QuotePageProps) => {
           {/* {isDeleting && <Loading />} */}
           <DeleteOutline />
         </IconButton>
-      </Tooltip>
+      </Tooltip>,
     );
   }
 
@@ -125,7 +124,12 @@ const QuotePage = (props: QuotePageProps) => {
         toggleSelection={handleToggleSelection}
       />
     ) : (
-      <EndOfListItem key="end-of-list" height={itemHeight} isLoading={isFetching} message={searchResult} />
+      <EndOfListItem
+        key="end-of-list"
+        height={itemHeight}
+        isLoading={isFetching}
+        message={searchResult}
+      />
     );
   };
 
@@ -158,7 +162,11 @@ const QuotePage = (props: QuotePageProps) => {
       {isMobileLayout && (
         <>
           {canDeleteQuotes && (
-            <SelectionPanel isOpen={isSelectMode} selectedCount={selectedIds.length} onClose={resetSelection}>
+            <SelectionPanel
+              isOpen={isSelectMode}
+              selectedCount={selectedIds.length}
+              onClose={resetSelection}
+            >
               <IconButton onClick={handleClickDeleteAll}>
                 <DeleteOutline />
               </IconButton>
@@ -169,6 +177,6 @@ const QuotePage = (props: QuotePageProps) => {
       )}
     </Layout>
   );
-};
+}
 
 export default QuotePage;

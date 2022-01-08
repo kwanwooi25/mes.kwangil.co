@@ -3,12 +3,12 @@ import { Theme, createStyles, makeStyles } from '@material-ui/core';
 
 import CustomToggleButton from 'components/form/CustomToggleButton';
 import Input from 'components/form/Input';
-import { ProductFormValues } from '.';
 import React from 'react';
 import { capitalize } from 'lodash';
 import classnames from 'classnames';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { ProductFormValues } from 'features/product/interface';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -43,17 +43,18 @@ const useStyles = makeStyles((theme: Theme) =>
     printPosition: {
       gridArea: 'printPosition',
     },
-  })
+  }),
 );
 
-export interface PrintFormProps {}
-
-const PrintForm = (props: PrintFormProps) => {
+function PrintForm() {
   const { t } = useTranslation('products');
   const classes = useStyles();
   const { values, handleChange, setFieldValue } = useFormikContext<ProductFormValues>();
 
-  const printSideOptions = Object.values(PrintSide).map((value) => ({ value, label: t(`print${capitalize(value)}`) }));
+  const printSideOptions = Object.values(PrintSide).map((value) => ({
+    value,
+    label: t(`print${capitalize(value)}`),
+  }));
 
   const handleChangePrintSide = (value: PrintSide) => {
     setFieldValue('printSide', value);
@@ -75,7 +76,11 @@ const PrintForm = (props: PrintFormProps) => {
           label={t('printFrontColorCount')}
           value={values.printFrontColorCount}
           onChange={handleChange}
-          inputProps={{ step: PrintColorCount.STEP, min: PrintColorCount.MIN, max: PrintColorCount.MAX }}
+          inputProps={{
+            step: PrintColorCount.STEP,
+            min: PrintColorCount.MIN,
+            max: PrintColorCount.MAX,
+          }}
           disabled={values.printSide === PrintSide.NONE}
         />
         <Input
@@ -103,7 +108,11 @@ const PrintForm = (props: PrintFormProps) => {
           label={t('printBackColorCount')}
           value={values.printBackColorCount}
           onChange={handleChange}
-          inputProps={{ step: PrintColorCount.STEP, min: PrintColorCount.MIN, max: PrintColorCount.MAX }}
+          inputProps={{
+            step: PrintColorCount.STEP,
+            min: PrintColorCount.MIN,
+            max: PrintColorCount.MAX,
+          }}
           disabled={values.printSide !== PrintSide.DOUBLE}
         />
         <Input
@@ -134,6 +143,6 @@ const PrintForm = (props: PrintFormProps) => {
       />
     </div>
   );
-};
+}
 
 export default PrintForm;

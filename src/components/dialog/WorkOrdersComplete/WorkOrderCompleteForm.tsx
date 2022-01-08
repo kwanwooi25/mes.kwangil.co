@@ -10,7 +10,12 @@ import { getProductSize } from 'utils/product';
 import { formatDigit } from 'utils/string';
 
 import {
-    Checkbox, createStyles, FormControlLabel, makeStyles, Theme, Typography
+  Checkbox,
+  createStyles,
+  FormControlLabel,
+  makeStyles,
+  Theme,
+  Typography,
 } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -32,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) =>
       gridGap: theme.spacing(2),
       alignItems: 'center',
     },
-  })
+  }),
 );
 
 export interface WorkOrderCompleteFormProps {
@@ -40,14 +45,17 @@ export interface WorkOrderCompleteFormProps {
   onChangeError: (hasError: boolean) => void;
 }
 
-const WorkOrderCompleteForm = ({ index, onChangeError }: WorkOrderCompleteFormProps) => {
+function WorkOrderCompleteForm({ index, onChangeError }: WorkOrderCompleteFormProps) {
   const { t } = useTranslation('workOrders');
   const classes = useStyles();
   const { values, errors, setFieldValue, setFieldError } = useFormikContext<WorkOrderDto[]>();
 
   const handleChangeCompletedQuantity = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    setFieldError(`[${index}].completedQuantity`, !value ? t('completedQuantityRequired') : undefined);
+    setFieldError(
+      `[${index}].completedQuantity`,
+      !value ? t('completedQuantityRequired') : undefined,
+    );
     setFieldValue(`[${index}]`, { ...values[index], completedQuantity: e.target.value });
   };
 
@@ -61,11 +69,15 @@ const WorkOrderCompleteForm = ({ index, onChangeError }: WorkOrderCompleteFormPr
   const accountName = product.account.name;
   const productName = product.name;
   const productSize = getProductSize(product);
-  const productImageUrl = !!product.images && product.images.length ? product.images[0].imageUrl : undefined;
+  const productImageUrl =
+    !!product.images && product.images.length ? product.images[0].imageUrl : undefined;
   const orderQuantityText = t('common:sheetCount', { countString: formatDigit(orderQuantity) });
 
   useEffect(() => {
-    setFieldValue(`[${index}]`, { ...values[index], completedQuantity: completedQuantity || orderQuantity });
+    setFieldValue(`[${index}]`, {
+      ...values[index],
+      completedQuantity: completedQuantity || orderQuantity,
+    });
   }, []);
 
   useEffect(() => {
@@ -75,7 +87,9 @@ const WorkOrderCompleteForm = ({ index, onChangeError }: WorkOrderCompleteFormPr
   return (
     <>
       <div className={classes.productDetail}>
-        {productImageUrl && <img className={classes.productImage} src={productImageUrl} alt="product" />}
+        {productImageUrl && (
+          <img className={classes.productImage} src={productImageUrl} alt="product" />
+        )}
         <div className={classes.orderDetail}>
           <Typography variant="body1">{id}</Typography>
           <Typography variant="caption">{accountName}</Typography>
@@ -100,13 +114,18 @@ const WorkOrderCompleteForm = ({ index, onChangeError }: WorkOrderCompleteFormPr
         <Typography>/ {orderQuantityText}</Typography>
         <FormControlLabel
           control={
-            <Checkbox color="primary" name="isComplete" checked={!!completedAt} onChange={handleChangeIsComplete} />
+            <Checkbox
+              color="primary"
+              name="isComplete"
+              checked={!!completedAt}
+              onChange={handleChangeIsComplete}
+            />
           }
           label={t('common:done')}
         />
       </div>
     </>
   );
-};
+}
 
 export default WorkOrderCompleteForm;

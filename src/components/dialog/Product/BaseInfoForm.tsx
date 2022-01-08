@@ -7,8 +7,7 @@ import React, { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core';
-
-import { ProductFormValues } from './';
+import { ProductFormValues } from 'features/product/interface';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -44,15 +43,14 @@ const useStyles = makeStyles((theme: Theme) =>
     width: {
       gridArea: 'width',
     },
-  })
+  }),
 );
 
-export interface BaseInfoFormProps {}
-
-const BaseInfoForm = (props: BaseInfoFormProps) => {
+function BaseInfoForm() {
   const classes = useStyles();
   const { t } = useTranslation('products');
-  const { values, touched, errors, handleChange, handleBlur, setFieldValue } = useFormikContext<ProductFormValues>();
+  const { values, touched, errors, handleChange, handleBlur, setFieldValue } =
+    useFormikContext<ProductFormValues>();
 
   const handleChangeAccount = (e: ChangeEvent<{}>, value: AccountOption | null) => {
     setFieldValue('account', value);
@@ -87,7 +85,11 @@ const BaseInfoForm = (props: BaseInfoFormProps) => {
         onBlur={handleBlur}
         error={touched.thickness && Boolean(errors.thickness)}
         helperText={touched.thickness && errors.thickness}
-        inputProps={{ step: ProductThickness.STEP, min: ProductThickness.MIN, max: ProductThickness.MAX }}
+        inputProps={{
+          step: ProductThickness.STEP,
+          min: ProductThickness.MIN,
+          max: ProductThickness.MAX,
+        }}
       />
       <Input
         className={classes.length}
@@ -115,6 +117,6 @@ const BaseInfoForm = (props: BaseInfoFormProps) => {
       />
     </div>
   );
-};
+}
 
 export default BaseInfoForm;

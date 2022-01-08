@@ -6,12 +6,12 @@ import { useDialog } from 'features/dialog/dialogHook';
 import React, { memo } from 'react';
 import { hideText, highlight } from 'utils/string';
 
-import { createStyles, Link, makeStyles, Theme } from '@material-ui/core';
+import { createStyles, Link, makeStyles } from '@material-ui/core';
 
 import AccountDetailDialog from './dialog/AccountDetailDialog';
 import Loading from './Loading';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     accountNameLink: {
       maxWidth: '180px',
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     accountName: {},
-  })
+  }),
 );
 
 export interface AccountNameProps {
@@ -38,23 +38,33 @@ export interface AccountNameProps {
   searchText?: string;
 }
 
-const AccountName = ({ account, className, linkClassName, searchText = '' }: AccountNameProps) => {
+function AccountName({ account, className, linkClassName, searchText = '' }: AccountNameProps) {
   const classes = useStyles();
   const { openDialog, closeDialog } = useDialog();
   const { canViewAccounts } = useAuth();
   const { refetch, isFetching } = useAccount(account.id);
 
-  const accountNameHTML = canViewAccounts ? highlight(account.name, searchText) : hideText(account.name);
+  const accountNameHTML = canViewAccounts
+    ? highlight(account.name, searchText)
+    : hideText(account.name);
 
   const openAccountDetailDialog = async () => {
-    canViewAccounts &&
-      refetch().then((res) => openDialog(<AccountDetailDialog account={res.data} onClose={closeDialog} />));
+    if (canViewAccounts) {
+      refetch().then((res) =>
+        openDialog(<AccountDetailDialog account={res.data} onClose={closeDialog} />),
+      );
+    }
   };
 
   return (
     <div className={className}>
+      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
       <Link
-        className={classNames([classes.accountNameLink, linkClassName, !canViewAccounts && classes.linkDisabled])}
+        className={classNames([
+          classes.accountNameLink,
+          linkClassName,
+          !canViewAccounts && classes.linkDisabled,
+        ])}
         component="button"
         variant="h6"
         color="initial"
@@ -62,10 +72,13 @@ const AccountName = ({ account, className, linkClassName, searchText = '' }: Acc
         disabled={isFetching}
       >
         {isFetching && <Loading size="16px" />}
-        <span className={classes.accountName} dangerouslySetInnerHTML={{ __html: accountNameHTML }} />
+        <span
+          className={classes.accountName}
+          dangerouslySetInnerHTML={{ __html: accountNameHTML }}
+        />
       </Link>
     </div>
   );
-};
+}
 
 export default memo(AccountName);

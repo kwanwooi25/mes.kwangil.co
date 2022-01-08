@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
     value: {
       whiteSpace: 'pre-wrap',
     },
-  })
+  }),
 );
 
 export interface DetailFieldProps {
@@ -25,7 +25,7 @@ export interface DetailFieldProps {
   value?: string | number | boolean | ReactElement;
 }
 
-const DetailField = ({ label, value }: DetailFieldProps) => {
+function DetailField({ label, value }: DetailFieldProps) {
   const classes = useStyles();
 
   return (
@@ -42,6 +42,6 @@ const DetailField = ({ label, value }: DetailFieldProps) => {
       )}
     </ListItem>
   );
-};
+}
 
 export default DetailField;

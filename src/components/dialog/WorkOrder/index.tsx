@@ -3,9 +3,14 @@ import Loading from 'components/Loading';
 import { DeliveryMethod, PlateStatus, WorkOrderStatus } from 'const';
 import Dialog from 'features/dialog/Dialog';
 import { ProductDto } from 'features/product/interface';
-import { CreateWorkOrderDto, WorkOrderDto } from 'features/workOrder/interface';
 import {
-    useCreateWorkOrderMutation, useUpdateWorkOrderMutation
+  CreateWorkOrderDto,
+  WorkOrderDto,
+  WorkOrderFormValues,
+} from 'features/workOrder/interface';
+import {
+  useCreateWorkOrderMutation,
+  useUpdateWorkOrderMutation,
 } from 'features/workOrder/useWorkOrders';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,11 +27,7 @@ export interface WorkOrderDialogProps {
   onClose: () => void;
 }
 
-export interface WorkOrderFormValues extends Omit<CreateWorkOrderDto, 'accountId' | 'productId'> {
-  product?: ProductDto | null;
-}
-
-const WorkOrderDialog = ({ workOrder, product, onClose }: WorkOrderDialogProps) => {
+function WorkOrderDialog({ workOrder, product, onClose }: WorkOrderDialogProps) {
   const { t } = useTranslation('workOrders');
   const isEditMode = !!workOrder;
   const isProductSelected = !!workOrder || !!product;
@@ -45,7 +46,7 @@ const WorkOrderDialog = ({ workOrder, product, onClose }: WorkOrderDialogProps) 
 
   const initialValues: WorkOrderFormValues = getInitialWorkOrderFormValues(workOrder, product);
 
-  const validationSchema = {
+  const validationSchemas = {
     selectProduct: object({
       product: object().required(t('productRequired')),
     }),
@@ -57,13 +58,23 @@ const WorkOrderDialog = ({ workOrder, product, onClose }: WorkOrderDialogProps) 
         .min(1, t('minOrderQuantityError', { value: 0 })),
       plateStatus: string().oneOf(Object.values(PlateStatus)).default(PlateStatus.CONFIRM),
       deliveryMethod: string().oneOf(Object.values(DeliveryMethod)).default(DeliveryMethod.TBD),
-      workOrderStatus: string().oneOf(Object.values(WorkOrderStatus)).default(WorkOrderStatus.NOT_STARTED),
+      workOrderStatus: string()
+        .oneOf(Object.values(WorkOrderStatus))
+        .default(WorkOrderStatus.NOT_STARTED),
     }),
   };
 
   const forms = [
-    { label: t('selectProduct'), Component: SelectProductForm, validationSchema: validationSchema.selectProduct },
-    { label: t('orderInfo'), Component: OrderInfoForm, validationSchema: validationSchema.orderInfo },
+    {
+      label: t('selectProduct'),
+      Component: SelectProductForm,
+      validationSchema: validationSchemas.selectProduct,
+    },
+    {
+      label: t('orderInfo'),
+      Component: OrderInfoForm,
+      validationSchema: validationSchemas.orderInfo,
+    },
   ];
 
   const onSubmit = async (values: WorkOrderFormValues) => {
@@ -72,11 +83,11 @@ const WorkOrderDialog = ({ workOrder, product, onClose }: WorkOrderDialogProps) 
       const workOrderToUpdate = getWorkOrderToUpdate(values);
       updateWorkOrder({ id, ...workOrderToUpdate });
     } else {
-      const { product, ...restValues } = values;
+      const { product: workOrderProduct, ...restValues } = values;
       const workOrderToCreate = {
         ...restValues,
-        productId: product?.id,
-        accountId: product?.accountId,
+        productId: workOrderProduct?.id,
+        accountId: workOrderProduct?.accountId,
       };
       createWorkOrder(workOrderToCreate as CreateWorkOrderDto);
     }
@@ -85,7 +96,11 @@ const WorkOrderDialog = ({ workOrder, product, onClose }: WorkOrderDialogProps) 
   return (
     <Dialog open onClose={onClose} title={dialogTitle} fullHeight>
       {isSaving && <Loading />}
-      <FormikStepper initialValues={initialValues} onSubmit={onSubmit} initialStep={isProductSelected ? 1 : 0}>
+      <FormikStepper
+        initialValues={initialValues}
+        onSubmit={onSubmit}
+        initialStep={isProductSelected ? 1 : 0}
+      >
         {forms.map(({ label, Component, validationSchema }) => (
           <FormikStep key={label} label={label} validationSchema={validationSchema}>
             <Component disabled={isProductSelected} />
@@ -94,6 +109,6 @@ const WorkOrderDialog = ({ workOrder, product, onClose }: WorkOrderDialogProps) 
       </FormikStepper>
     </Dialog>
   );
-};
+}
 
 export default WorkOrderDialog;

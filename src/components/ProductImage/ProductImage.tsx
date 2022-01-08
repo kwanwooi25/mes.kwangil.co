@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme: Theme) =>
         color: theme.palette.grey[700],
       },
     },
-  })
+  }),
 );
 
 export interface ProductImageProps {
@@ -46,7 +46,7 @@ export interface ProductImageProps {
   onRemove?: () => void;
 }
 
-const ProductImage = ({ imageUrl, file, onClick, onRemove }: ProductImageProps) => {
+function ProductImage({ imageUrl, file, onClick, onRemove }: ProductImageProps) {
   const classes = useStyles();
   const [imageDataUrl, setImageDataUrl] = useState<string>();
 
@@ -75,6 +75,6 @@ const ProductImage = ({ imageUrl, file, onClick, onRemove }: ProductImageProps) 
       )}
     </div>
   );
-};
+}
 
 export default ProductImage;

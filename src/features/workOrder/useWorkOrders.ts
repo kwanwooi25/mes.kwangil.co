@@ -8,17 +8,19 @@ import { downloadWorkbook } from 'utils/excel';
 
 import { WorkOrderFilter } from './interface';
 
-export const useInfiniteWorkOrders = (filter: WorkOrderFilter, limit: number = DEFAULT_LIST_LIMIT) => {
+export const useInfiniteWorkOrders = (
+  filter: WorkOrderFilter,
+  limit: number = DEFAULT_LIST_LIMIT,
+) => {
   const workOrderInfiniteQuery = useInfiniteQuery(
     ['workOrders', JSON.stringify(filter)],
     async ({ queryKey, pageParam: offset = 0 }): Promise<GetListResponse<WorkOrderDto>> => {
       const [, serializedFilter] = queryKey;
-      const filter = JSON.parse(serializedFilter);
-      return await workOrderApi.getWorkOrders({ offset, limit, ...filter });
+      return workOrderApi.getWorkOrders({ offset, limit, ...JSON.parse(serializedFilter) });
     },
     {
       getNextPageParam: (lastPage, pages) => lastPage.hasMore && pages.length * limit,
-    }
+    },
   );
 
   const { isFetching, fetchNextPage, hasNextPage } = workOrderInfiniteQuery;
@@ -33,11 +35,10 @@ export const useDownloadWorkOrders = (filter: WorkOrderFilter) => {
     ['download-workOrders', JSON.stringify(filter)],
     async ({ queryKey }) => {
       const [, serializedFilter] = queryKey;
-      const filter = JSON.parse(serializedFilter);
-      const { rows } = await workOrderApi.getAllWorkOrders(filter);
+      const { rows } = await workOrderApi.getAllWorkOrders(JSON.parse(serializedFilter));
       return rows;
     },
-    { enabled: false }
+    { enabled: false },
   );
 
   const download = (fileName: string) => {
@@ -54,19 +55,19 @@ export const useWorkOrder = (id: string) =>
     ['workOrder', id],
     async ({ queryKey }) => {
       const [, workOrderId] = queryKey;
-      return await workOrderApi.getWorkOrder(workOrderId);
+      return workOrderApi.getWorkOrder(workOrderId);
     },
-    { enabled: false }
+    { enabled: false },
   );
 
 export const useWorkOrdersByProduct = (productId: number) =>
   useQuery(
     ['workOrdersByProductId', productId],
     async ({ queryKey }) => {
-      const [, productId] = queryKey;
-      return await workOrderApi.getWorkOrdersByProductId(+productId);
+      const [, id] = queryKey;
+      return workOrderApi.getWorkOrdersByProductId(+id);
     },
-    { enabled: false }
+    { enabled: false },
   );
 
 export const useCreateWorkOrderMutation = ({
@@ -79,34 +80,40 @@ export const useCreateWorkOrderMutation = ({
   onError?: () => any;
 }) => {
   const { notify } = useNotification();
-  const { mutateAsync: createWorkOrder, isLoading: isCreating } = useMutation(workOrderApi.createWorkOrder, {
-    onSuccess: () => {
-      notify({ variant: 'success', message: 'workOrders:createWorkOrderSuccess' });
-      queryClient.invalidateQueries('workOrders');
-      onSuccess();
+  const { mutateAsync: createWorkOrder, isLoading: isCreating } = useMutation(
+    workOrderApi.createWorkOrder,
+    {
+      onSuccess: () => {
+        notify({ variant: 'success', message: 'workOrders:createWorkOrderSuccess' });
+        queryClient.invalidateQueries('workOrders');
+        onSuccess();
+      },
+      onError: () => {
+        notify({ variant: 'error', message: 'workOrders:createWorkOrderFailed' });
+        onError();
+      },
     },
-    onError: () => {
-      notify({ variant: 'error', message: 'workOrders:createWorkOrderFailed' });
-      onError();
-    },
-  });
+  );
 
   return { createWorkOrder, isCreating };
 };
 
 export const useBulkCreateWorkOrderMutation = ({
   queryClient,
-  onSettled = (data: any) => {},
+  onSettled = () => {},
 }: {
   queryClient: QueryClient;
   onSettled?: (data: any) => any;
 }) => {
-  const { mutateAsync: createWorkOrders, isLoading: isCreating } = useMutation(workOrderApi.createWorkOrders, {
-    onSettled: (data) => {
-      queryClient.invalidateQueries('workOrders');
-      onSettled(data);
+  const { mutateAsync: createWorkOrders, isLoading: isCreating } = useMutation(
+    workOrderApi.createWorkOrders,
+    {
+      onSettled: (data) => {
+        queryClient.invalidateQueries('workOrders');
+        onSettled(data);
+      },
     },
-  });
+  );
 
   return { createWorkOrders, isCreating };
 };
@@ -121,17 +128,20 @@ export const useUpdateWorkOrderMutation = ({
   onError?: () => any;
 }) => {
   const { notify } = useNotification();
-  const { mutateAsync: updateWorkOrder, isLoading: isUpdating } = useMutation(workOrderApi.updateWorkOrder, {
-    onSuccess: () => {
-      notify({ variant: 'success', message: 'workOrders:updateWorkOrderSuccess' });
-      queryClient.invalidateQueries('workOrders');
-      onSuccess();
+  const { mutateAsync: updateWorkOrder, isLoading: isUpdating } = useMutation(
+    workOrderApi.updateWorkOrder,
+    {
+      onSuccess: () => {
+        notify({ variant: 'success', message: 'workOrders:updateWorkOrderSuccess' });
+        queryClient.invalidateQueries('workOrders');
+        onSuccess();
+      },
+      onError: () => {
+        notify({ variant: 'error', message: 'workOrders:updateWorkOrderFailed' });
+        onError();
+      },
     },
-    onError: () => {
-      notify({ variant: 'error', message: 'workOrders:updateWorkOrderFailed' });
-      onError();
-    },
-  });
+  );
 
   return { updateWorkOrder, isUpdating };
 };
@@ -146,18 +156,21 @@ export const useCompleteWorkOrdersMutation = ({
   onError?: () => any;
 }) => {
   const { notify } = useNotification();
-  const { mutateAsync: completeWorkOrders, isLoading: isUpdating } = useMutation(workOrderApi.completeWorkOrders, {
-    onSuccess: () => {
-      notify({ variant: 'success', message: 'workOrders:completeWorkOrdersSuccess' });
-      queryClient.invalidateQueries('workOrders');
-      queryClient.invalidateQueries('products');
-      onSuccess();
+  const { mutateAsync: completeWorkOrders, isLoading: isUpdating } = useMutation(
+    workOrderApi.completeWorkOrders,
+    {
+      onSuccess: () => {
+        notify({ variant: 'success', message: 'workOrders:completeWorkOrdersSuccess' });
+        queryClient.invalidateQueries('workOrders');
+        queryClient.invalidateQueries('products');
+        onSuccess();
+      },
+      onError: () => {
+        notify({ variant: 'error', message: 'workOrders:completeWorkOrdersFailed' });
+        onError();
+      },
     },
-    onError: () => {
-      notify({ variant: 'error', message: 'workOrders:completeWorkOrdersFailed' });
-      onError();
-    },
-  });
+  );
 
   return { completeWorkOrders, isUpdating };
 };
@@ -172,17 +185,20 @@ export const useDeleteWorkOrdersMutation = ({
   onError?: () => any;
 }) => {
   const { notify } = useNotification();
-  const { mutateAsync: deleteWorkOrders, isLoading: isDeleting } = useMutation(workOrderApi.deleteWorkOrders, {
-    onSuccess: () => {
-      notify({ variant: 'success', message: 'workOrders:deleteWorkOrderSuccess' });
-      queryClient.invalidateQueries('workOrders');
-      onSuccess();
+  const { mutateAsync: deleteWorkOrders, isLoading: isDeleting } = useMutation(
+    workOrderApi.deleteWorkOrders,
+    {
+      onSuccess: () => {
+        notify({ variant: 'success', message: 'workOrders:deleteWorkOrderSuccess' });
+        queryClient.invalidateQueries('workOrders');
+        onSuccess();
+      },
+      onError: () => {
+        notify({ variant: 'error', message: 'workOrders:deleteWorkOrderFailed' });
+        onError();
+      },
     },
-    onError: () => {
-      notify({ variant: 'error', message: 'workOrders:deleteWorkOrderFailed' });
-      onError();
-    },
-  });
+  );
 
   return { deleteWorkOrders, isDeleting };
 };

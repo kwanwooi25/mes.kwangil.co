@@ -1,8 +1,9 @@
-import { ReactElement, ReactNode, createContext, useContext } from 'react';
-import { dialogActions, dialogSelector } from './dialogSlice';
+import React, { ReactElement, ReactNode, createContext, useContext } from 'react';
+
 import { useAppDispatch, useAppSelector } from 'app/store';
 
 import { createPortal } from 'react-dom';
+import { dialogActions, dialogSelector } from './dialogSlice';
 
 interface DialogContext {
   isOpen: boolean;
@@ -18,18 +19,6 @@ export const dialogContext = createContext<DialogContext>({
   dialogs: [],
 });
 
-export const DialogProvider = ({ children }: { children: ReactNode }) => {
-  const dialog = useDialogProvider();
-  return (
-    <dialogContext.Provider value={dialog}>
-      {children}
-      {dialog.isOpen && createPortal(dialog.dialogs[0], document.querySelector('#dialog-root') as Element)}
-    </dialogContext.Provider>
-  );
-};
-
-export const useDialog = () => useContext(dialogContext);
-
 const useDialogProvider = (): DialogContext => {
   const { dialogs } = useAppSelector(dialogSelector);
   const dispatch = useAppDispatch();
@@ -44,3 +33,16 @@ const useDialogProvider = (): DialogContext => {
 
   return { isOpen: !!dialogs.length, openDialog, closeDialog, dialogs };
 };
+
+export function DialogProvider({ children }: { children: ReactNode }) {
+  const dialog = useDialogProvider();
+  return (
+    <dialogContext.Provider value={dialog}>
+      {children}
+      {dialog.isOpen &&
+        createPortal(dialog.dialogs[0], document.querySelector('#dialog-root') as Element)}
+    </dialogContext.Provider>
+  );
+}
+
+export const useDialog = () => useContext(dialogContext);

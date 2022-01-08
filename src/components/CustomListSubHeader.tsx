@@ -1,4 +1,11 @@
-import { ListSubheader, ListSubheaderProps, Theme, createStyles, lighten, makeStyles } from '@material-ui/core';
+import {
+  ListSubheader,
+  ListSubheaderProps,
+  Theme,
+  createStyles,
+  lighten,
+  makeStyles,
+} from '@material-ui/core';
 
 import React from 'react';
 import classnames from 'classnames';
@@ -13,12 +20,12 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       justifyContent: 'space-between',
     },
-  })
+  }),
 );
 
 export interface CustomListSubHeaderProps extends ListSubheaderProps {}
 
-const CustomListSubHeader = ({ className, children, ...props }: CustomListSubHeaderProps) => {
+function CustomListSubHeader({ className, children, ...props }: CustomListSubHeaderProps) {
   const classes = useStyles();
 
   return (
@@ -26,6 +33,6 @@ const CustomListSubHeader = ({ className, children, ...props }: CustomListSubHea
       {children}
     </ListSubheader>
   );
-};
+}
 
 export default CustomListSubHeader;

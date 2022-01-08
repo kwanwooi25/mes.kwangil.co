@@ -1,9 +1,12 @@
 import { DATE_FORMAT, DeliveryMethod, PlateStatus, WorkOrderStatus } from 'const';
-import { UpdateWorkOrderDto, WorkOrderDto } from 'features/workOrder/interface';
+import {
+  UpdateWorkOrderDto,
+  WorkOrderDto,
+  WorkOrderFormValues,
+} from 'features/workOrder/interface';
 import { add, format } from 'date-fns';
 
 import { ProductDto } from 'features/product/interface';
-import { WorkOrderFormValues } from 'components/dialog/WorkOrder';
 import { formatDigit } from './string';
 
 /**
@@ -43,7 +46,10 @@ export function getWeight({
  *
  * @param workOrder 수정하려는 작업지시
  */
-export function getInitialWorkOrderFormValues(workOrder?: WorkOrderDto, product?: ProductDto): WorkOrderFormValues {
+export function getInitialWorkOrderFormValues(
+  workOrder?: WorkOrderDto,
+  product?: ProductDto,
+): WorkOrderFormValues {
   if (!workOrder) {
     return {
       orderedAt: format(new Date(), DATE_FORMAT),
@@ -69,7 +75,9 @@ export function getInitialWorkOrderFormValues(workOrder?: WorkOrderDto, product?
  *
  * @param workOrder 수정하려는 작업지시
  */
-export function getWorkOrderToUpdate(workOrder: WorkOrderDto | WorkOrderFormValues): UpdateWorkOrderDto {
+export function getWorkOrderToUpdate(
+  workOrder: WorkOrderDto | WorkOrderFormValues,
+): UpdateWorkOrderDto {
   const {
     deliverBy,
     orderQuantity,

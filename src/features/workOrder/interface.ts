@@ -81,3 +81,7 @@ export interface WorkOrderCount {
   byStatus: { [key in WorkOrderStatus]: number };
   byPrintSide: { [key in PrintSide]: number };
 }
+
+export interface WorkOrderFormValues extends Omit<CreateWorkOrderDto, 'accountId' | 'productId'> {
+  product?: ProductDto | null;
+}

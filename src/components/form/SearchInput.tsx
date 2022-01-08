@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       justifyContent: 'center',
     },
-  })
+  }),
 );
 
 export interface SearchInputProps {
@@ -60,14 +60,14 @@ export interface SearchInputProps {
   autoFocus?: boolean;
 }
 
-const SearchInput = ({
+function SearchInput({
   className,
   placeholder = '',
   searchDelay = 300,
   onSearch,
   maxWidth,
   autoFocus = false,
-}: SearchInputProps) => {
+}: SearchInputProps) {
   const classes = useStyles();
   const [searchText, setSearchText] = useState<string>('');
   const debouncedSearchText = useDebounce(searchText, searchDelay);
@@ -103,6 +103,6 @@ const SearchInput = ({
       )}
     </div>
   );
-};
+}
 
 export default SearchInput;

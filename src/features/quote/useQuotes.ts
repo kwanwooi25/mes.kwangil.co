@@ -11,12 +11,11 @@ export const useInfiniteQuotes = (filter: QuoteFilter, limit: number = DEFAULT_L
     ['quotes', JSON.stringify(filter)],
     async ({ queryKey, pageParam: offset = 0 }): Promise<GetListResponse<QuoteDto>> => {
       const [, serializedFilter] = queryKey;
-      const filter = JSON.parse(serializedFilter);
-      return await quoteApi.getQuotes({ offset, limit, ...filter });
+      return quoteApi.getQuotes({ offset, limit, ...JSON.parse(serializedFilter) });
     },
     {
       getNextPageParam: (lastPage, pages) => lastPage.hasMore && pages.length * limit,
-    }
+    },
   );
 
   const { isFetching, fetchNextPage, hasNextPage } = quoteInfiniteQuery;

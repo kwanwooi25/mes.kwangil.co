@@ -9,8 +9,12 @@ import Loading from 'components/Loading';
 import SubToolbar from 'components/SubToolbar';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
 import WorkOrderPDF from 'components/WorkOrderPDF';
-import { DATE_FORMAT, ExcelVariant, WorkOrderListItemHeight, WorkOrderStatus } from 'const';
-import { format, subDays } from 'date-fns';
+import {
+  DEFAULT_WORK_ORDER_FILTER,
+  ExcelVariant,
+  WorkOrderListItemHeight,
+  WorkOrderStatus,
+} from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { useScreenSize } from 'hooks/useScreenSize';
@@ -39,17 +43,7 @@ import WorkOrderSearch from './WorkOrderSearch';
 
 export interface WorkOrderPageProps {}
 
-export const DEFAULT_WORK_ORDER_FILTER: WorkOrderFilter = {
-  orderedAt: [format(subDays(new Date(), 14), DATE_FORMAT), format(new Date(), DATE_FORMAT)],
-  accountName: '',
-  productName: '',
-  thickness: '',
-  length: '',
-  width: '',
-  includeCompleted: false,
-};
-
-const WorkOrderPage = (props: WorkOrderPageProps) => {
+function WorkOrderPage() {
   const { t } = useTranslation('workOrders');
   const [filter, setFilter] = useState<WorkOrderFilter>(DEFAULT_WORK_ORDER_FILTER);
 
@@ -58,6 +52,19 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
   const { canCreateWorkOrders, canUpdateWorkOrders, canDeleteWorkOrders } = useAuth();
   const { isFetching, data, loadMore } = useInfiniteWorkOrders(filter);
   const { isDownloading, download } = useDownloadWorkOrders(filter);
+
+  const workOrders =
+    data?.pages.reduce((wo: WorkOrderDto[], { rows }) => [...wo, ...rows], []) || [];
+  const workOrderIds = workOrders.map(({ id }) => id);
+  const {
+    selectedIds,
+    isSelectMode,
+    isSelectedAll,
+    isIndeterminate,
+    toggleSelection,
+    toggleSelectAll,
+    resetSelection,
+  } = useSelection(workOrderIds);
 
   const queryClient = useQueryClient();
   const { createWorkOrders } = useBulkCreateWorkOrderMutation({
@@ -83,21 +90,8 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
     onSuccess: () => resetSelection(),
   });
 
-  const workOrders =
-    data?.pages.reduce((workOrders: WorkOrderDto[], { rows }) => [...workOrders, ...rows], []) ||
-    [];
-  const workOrderIds = workOrders.map(({ id }) => id);
-  const {
-    selectedIds,
-    isSelectMode,
-    isSelectedAll,
-    isIndeterminate,
-    toggleSelection,
-    toggleSelectAll,
-    resetSelection,
-  } = useSelection(workOrderIds);
-
   const itemCount = workOrders.length + 1;
+  // eslint-disable-next-line no-nested-ternary
   const itemHeight = isDesktopLayout
     ? WorkOrderListItemHeight.DESKTOP
     : isTabletLayout
@@ -152,34 +146,11 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
         title={t('deleteWorkOrder')}
         message={t('deleteWorkOrdersConfirm', { count: selectedIds.length })}
         onClose={(isConfirmed: boolean) => {
-          isConfirmed && deleteWorkOrders(selectedIds as string[]);
+          if (isConfirmed) deleteWorkOrders(selectedIds as string[]);
           closeDialogAndResetSelection();
         }}
       />,
     );
-
-  const renderItem = (index: number) => {
-    const workOrder = workOrders[index];
-
-    return workOrder ? (
-      <WorkOrderListItem
-        key={workOrder.id}
-        workOrder={workOrder}
-        itemHeight={itemHeight}
-        isSelected={selectedIds.includes(workOrder.id)}
-        filter={filter}
-        toggleSelection={handleToggleSelection}
-        isSelectable={!!selectModeButtons.length}
-      />
-    ) : (
-      <EndOfListItem
-        key="end-of-list"
-        height={itemHeight}
-        isLoading={isFetching}
-        message={searchResult}
-      />
-    );
-  };
 
   let selectModeButtons: JSX.Element[] = [];
 
@@ -205,6 +176,29 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
       </Tooltip>,
     ];
   }
+
+  const renderItem = (index: number) => {
+    const workOrder = workOrders[index];
+
+    return workOrder ? (
+      <WorkOrderListItem
+        key={workOrder.id}
+        workOrder={workOrder}
+        itemHeight={itemHeight}
+        isSelected={selectedIds.includes(workOrder.id)}
+        filter={filter}
+        toggleSelection={handleToggleSelection}
+        isSelectable={!!selectModeButtons.length}
+      />
+    ) : (
+      <EndOfListItem
+        key="end-of-list"
+        height={itemHeight}
+        isLoading={isFetching}
+        message={searchResult}
+      />
+    );
+  };
 
   if (canDeleteWorkOrders) {
     selectModeButtons = [
@@ -255,7 +249,9 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
   ];
 
   useEffect(() => {
-    selectedWorkOrders.length && instance.url && window.open(instance.url);
+    if (selectedWorkOrders.length && instance.url) {
+      window.open(instance.url);
+    }
   }, [instance.url]);
 
   return (
@@ -289,6 +285,6 @@ const WorkOrderPage = (props: WorkOrderPageProps) => {
       </List>
     </Layout>
   );
-};
+}
 
 export default WorkOrderPage;

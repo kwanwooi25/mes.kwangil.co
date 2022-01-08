@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) =>
         marginLeft: theme.spacing(1),
       },
     },
-  })
+  }),
 );
 
 export interface PhoneNumberProps {
@@ -22,7 +22,7 @@ export interface PhoneNumberProps {
   number: string;
 }
 
-const PhoneNumber = ({ icon, number }: PhoneNumberProps) => {
+function PhoneNumber({ icon, number }: PhoneNumberProps) {
   const classes = useStyles();
 
   return (
@@ -31,6 +31,6 @@ const PhoneNumber = ({ icon, number }: PhoneNumberProps) => {
       <Link href={`tel:${number}`}>{number}</Link>
     </div>
   );
-};
+}
 
 export default PhoneNumber;

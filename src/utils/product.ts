@@ -1,7 +1,11 @@
 import { ProductFormValues } from 'components/dialog/Product';
 import { PrintSide } from 'const';
 import {
-    CreateImageDto, CreateProductDto, ImageDto, ProductDto, UpdateProductDto
+  CreateImageDto,
+  CreateProductDto,
+  ImageDto,
+  ProductDto,
+  UpdateProductDto,
 } from 'features/product/interface';
 import { TFunction } from 'i18next';
 import { capitalize } from 'lodash';
@@ -10,21 +14,6 @@ import { deleteImage, uploadImage } from './s3';
 import { formatDigit } from './string';
 
 // import { uploadImage } from './s3';
-
-/**
- * 제품명 조합
- *
- * @param product 제품 정보
- *
- * @example 가나다약국 (0.07 x 20 x 13)
- */
-export function getProductTitle(product: ProductDto) {
-  if (!product) {
-    return '';
-  }
-
-  return `${product.name} (${getProductSize(product)})`;
-}
 
 /**
  * 제품 규격 조합
@@ -42,6 +31,21 @@ export function getProductSize({ thickness, length, width }: ProductDto): string
 }
 
 /**
+ * 제품명 조합
+ *
+ * @param product 제품 정보
+ *
+ * @example 가나다약국 (0.07 x 20 x 13)
+ */
+export function getProductTitle(product: ProductDto) {
+  if (!product) {
+    return '';
+  }
+
+  return `${product.name} (${getProductSize(product)})`;
+}
+
+/**
  *
  * @param product 제품 정보
  * @param t i18n TFunction
@@ -51,7 +55,7 @@ export function getProductSize({ thickness, length, width }: ProductDto): string
  */
 export function getProductSummary(
   { extColor, printFrontColorCount, printBackColorCount }: ProductDto,
-  t: TFunction
+  t: TFunction,
 ): string {
   const colorCount = printFrontColorCount + printBackColorCount;
   if (!colorCount) {
@@ -150,13 +154,21 @@ export function getPrintDetail({
  *
  * @example 1개 (크기: 5mm, 위치: 우측상단 각 1cm 띄고)
  */
-export function getPunchDetail({ count, size, position }: { count: number; size: string; position: string }): string {
+export function getPunchDetail({
+  count,
+  size,
+  position,
+}: {
+  count: number;
+  size: string;
+  position: string;
+}): string {
   if (!count) {
     return '없음';
   }
 
   let punchDetail = `${count}개`;
-  let detailArray = [];
+  const detailArray = [];
 
   if (size) {
     detailArray.push(`크기: ${size}`);
@@ -268,65 +280,6 @@ export function getInitialProductToCopy(product: ProductDto): ProductFormValues 
 }
 
 /**
- * 제품 등록시 필요한 데이터로 변환\
- * (신규/복사)
- *
- * @param productFormValues 입력된 정보
- */
-export async function getCreateProductDto({ account, stock, ...values }: ProductFormValues): Promise<CreateProductDto> {
-  if (!account) {
-    throw new Error('account required');
-  }
-
-  const { images, filesToUpload = [], imagesToDelete, ...product } = values;
-  let imagesToCreate: CreateImageDto[] = [];
-
-  if (images.length) {
-    imagesToCreate = images.map(({ fileName, imageUrl }) => ({ fileName, imageUrl }));
-  }
-
-  if (filesToUpload.length) {
-    imagesToCreate = [
-      ...imagesToCreate,
-      ...(await Promise.all(filesToUpload.map(async (file) => await uploadImage(file)))),
-    ];
-  }
-
-  return calibratePrintDetail({ accountId: account.id, ...product, images: imagesToCreate });
-}
-
-/**
- * 제품 수정시 필요한 데이터로 변환
- *
- * @param product 기존 제품 정보
- * @param filesToUpload 새로 입력된 이미지 파일 목록
- * @param imagesToDelete 제거된 이미지 목록
- */
-export async function getUpdateProductDto(
-  { account, stock, ...product }: ProductDto,
-  filesToUpload: File[],
-  imagesToDelete: ImageDto[]
-): Promise<UpdateProductDto> {
-  if (!account) {
-    throw new Error('account required');
-  }
-
-  let imagesToCreate: CreateImageDto[] = [];
-  let imageIdsToDelete: number[] = [];
-
-  if (filesToUpload.length) {
-    imagesToCreate = await Promise.all(filesToUpload.map(async (file) => await uploadImage(file)));
-  }
-
-  if (imagesToDelete.length) {
-    imageIdsToDelete = await Promise.all(imagesToDelete.map(async (image) => await deleteImage(image)));
-    imageIdsToDelete = imagesToDelete.map(({ id }) => id);
-  }
-
-  return calibratePrintDetail({ ...product, imagesToCreate, imageIdsToDelete });
-}
-
-/**
  * 인쇄 면에 따라 인쇄 정보 조정
  *
  * @param product 생성 또는 수정할 제품
@@ -353,4 +306,67 @@ function calibratePrintDetail<T extends CreateProductDto | UpdateProductDto>(pro
     default:
       return product;
   }
+}
+
+/**
+ * 제품 등록시 필요한 데이터로 변환\
+ * (신규/복사)
+ *
+ * @param productFormValues 입력된 정보
+ */
+export async function getCreateProductDto({
+  account,
+  stock,
+  ...values
+}: ProductFormValues): Promise<CreateProductDto> {
+  if (!account) {
+    throw new Error('account required');
+  }
+
+  const { images, filesToUpload = [], imagesToDelete, ...product } = values;
+  let imagesToCreate: CreateImageDto[] = [];
+
+  if (images.length) {
+    imagesToCreate = images.map(({ fileName, imageUrl }) => ({ fileName, imageUrl }));
+  }
+
+  if (filesToUpload.length) {
+    imagesToCreate = [
+      ...imagesToCreate,
+      ...(await Promise.all(filesToUpload.map(async (file) => uploadImage(file)))),
+    ];
+  }
+
+  return calibratePrintDetail({ accountId: account.id, ...product, images: imagesToCreate });
+}
+
+/**
+ * 제품 수정시 필요한 데이터로 변환
+ *
+ * @param product 기존 제품 정보
+ * @param filesToUpload 새로 입력된 이미지 파일 목록
+ * @param imagesToDelete 제거된 이미지 목록
+ */
+export async function getUpdateProductDto(
+  { account, stock, ...product }: ProductDto,
+  filesToUpload: File[],
+  imagesToDelete: ImageDto[],
+): Promise<UpdateProductDto> {
+  if (!account) {
+    throw new Error('account required');
+  }
+
+  let imagesToCreate: CreateImageDto[] = [];
+  let imageIdsToDelete: number[] = [];
+
+  if (filesToUpload.length) {
+    imagesToCreate = await Promise.all(filesToUpload.map(async (file) => uploadImage(file)));
+  }
+
+  if (imagesToDelete.length) {
+    imageIdsToDelete = await Promise.all(imagesToDelete.map(async (image) => deleteImage(image)));
+    imageIdsToDelete = imagesToDelete.map(({ id }) => id);
+  }
+
+  return calibratePrintDetail({ ...product, imagesToCreate, imageIdsToDelete });
 }

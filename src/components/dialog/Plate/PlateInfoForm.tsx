@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 import { createStyles, Divider, List, makeStyles, Theme } from '@material-ui/core';
 
-import { PlateFormValues } from './';
+import { PlateFormValues } from 'features/plate/interface';
 import ProductListItem from './ProductListItem';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -59,17 +59,19 @@ const useStyles = makeStyles((theme: Theme) =>
     memo: {
       gridArea: 'memo',
     },
-  })
+  }),
 );
 
-export interface PlateInfoFormProps {}
-
-const PlateInfoForm = (props: PlateInfoFormProps) => {
+function PlateInfoForm() {
   const { t } = useTranslation('plates');
   const classes = useStyles();
-  const { values, touched, errors, setFieldValue, handleChange, handleBlur } = useFormikContext<PlateFormValues>();
+  const { values, touched, errors, setFieldValue, handleChange, handleBlur } =
+    useFormikContext<PlateFormValues>();
 
-  const materialOptions = Object.values(PlateMaterial).map((value) => ({ value, label: t(value.toLowerCase()) }));
+  const materialOptions = Object.values(PlateMaterial).map((value) => ({
+    value,
+    label: t(value.toLowerCase()),
+  }));
 
   const handleChangeMaterial = (value: PlateMaterial) => {
     setFieldValue('material', value);
@@ -161,6 +163,6 @@ const PlateInfoForm = (props: PlateInfoFormProps) => {
       />
     </div>
   );
-};
+}
 
 export default PlateInfoForm;

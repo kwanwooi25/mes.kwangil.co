@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme: Theme) =>
       bottom: theme.spacing(2),
       zIndex: theme.zIndex.speedDial,
     },
-  })
+  }),
 );
 
 export interface CreationFabProps {
@@ -19,7 +19,7 @@ export interface CreationFabProps {
   onClick: () => void;
 }
 
-const CreationFab = ({ show = true, onClick }: CreationFabProps) => {
+function CreationFab({ show = true, onClick }: CreationFabProps) {
   const classes = useStyles();
 
   return (
@@ -29,6 +29,6 @@ const CreationFab = ({ show = true, onClick }: CreationFabProps) => {
       </Fab>
     </Slide>
   );
-};
+}
 
 export default CreationFab;

@@ -2,7 +2,7 @@ import { useAppDispatch } from 'app/store';
 import Input from 'components/form/Input';
 import RangeSlider from 'components/form/RangeSlider';
 import RoundedButton from 'components/RoundedButton';
-import { PlateLength, PlateRound } from 'const';
+import { PlateLength, PlateRound, DEFAULT_PLATE_FILTER } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useUI } from 'features/ui/uiHook';
 import { useFormik } from 'formik';
@@ -13,7 +13,6 @@ import { useTranslation } from 'react-i18next';
 import { createStyles, Divider, makeStyles, Theme } from '@material-ui/core';
 
 import { PlateFilter } from './interface';
-import { DEFAULT_PLATE_FILTER } from './PlatePage';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -65,7 +64,7 @@ export interface PlateSearchProps {
   onChange: (filter: PlateFilter) => any;
 }
 
-const PlateSearch = ({ filter, onChange }: PlateSearchProps) => {
+function PlateSearch({ filter, onChange }: PlateSearchProps) {
   const { t } = useTranslation('plates');
   const classes = useStyles();
   const { isDesktopLayout } = useScreenSize();
@@ -82,8 +81,8 @@ const PlateSearch = ({ filter, onChange }: PlateSearchProps) => {
       onReset: () => {
         onChange({ ...DEFAULT_PLATE_FILTER });
       },
-      onSubmit: (values) => {
-        onChange({ ...values });
+      onSubmit: (submitValues) => {
+        onChange({ ...submitValues });
         dispatch(closeSearch());
       },
     });
@@ -155,6 +154,6 @@ const PlateSearch = ({ filter, onChange }: PlateSearchProps) => {
       </div>
     </form>
   );
-};
+}
 
 export default PlateSearch;

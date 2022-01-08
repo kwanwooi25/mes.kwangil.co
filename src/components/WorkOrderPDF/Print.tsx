@@ -72,7 +72,7 @@ export interface PrintProps {
   plateStatus?: PlateStatus;
 }
 
-const Print = ({ product, plateStatus }: PrintProps) => {
+function Print({ product, plateStatus }: PrintProps) {
   const { t } = useTranslation('products');
   const {
     printFrontColorCount,
@@ -135,8 +135,8 @@ const Print = ({ product, plateStatus }: PrintProps) => {
                 <Text>{plateStatusText}</Text>
               </View>
               <View style={styles.plateLocations}>
-                {plateLocations?.map((location, index) => (
-                  <Text key={`${location}_${index}`}>{location}</Text>
+                {plateLocations?.map((location) => (
+                  <Text key={location}>{location}</Text>
                 ))}
               </View>
             </View>
@@ -145,6 +145,6 @@ const Print = ({ product, plateStatus }: PrintProps) => {
       </View>
     </View>
   );
-};
+}
 
 export default Print;

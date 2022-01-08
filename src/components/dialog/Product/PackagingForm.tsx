@@ -3,10 +3,10 @@ import { Checkbox, FormControlLabel, Theme, createStyles, makeStyles } from '@ma
 import CustomNumberFormat from 'components/form/CustomNumberFormat';
 import Input from 'components/form/Input';
 import { PackUnit } from 'const';
-import { ProductFormValues } from '.';
 import React from 'react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { ProductFormValues } from 'features/product/interface';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -39,12 +39,10 @@ const useStyles = makeStyles((theme: Theme) =>
     packMemo: {
       gridArea: 'packMemo',
     },
-  })
+  }),
 );
 
-export interface PackagingFormProps {}
-
-const PackagingForm = (props: PackagingFormProps) => {
+function PackagingForm() {
   const { t } = useTranslation('products');
   const classes = useStyles();
   const { values, handleChange } = useFormikContext<ProductFormValues>();
@@ -70,6 +68,7 @@ const PackagingForm = (props: PackagingFormProps) => {
           min: PackUnit.MIN,
           max: PackUnit.MAX,
         }}
+        // eslint-disable-next-line react/jsx-no-duplicate-props
         InputProps={{
           inputComponent: CustomNumberFormat as any,
         }}
@@ -96,6 +95,6 @@ const PackagingForm = (props: PackagingFormProps) => {
       />
     </div>
   );
-};
+}
 
 export default PackagingForm;

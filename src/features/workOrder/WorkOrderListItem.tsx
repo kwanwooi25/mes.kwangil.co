@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import AccountName from 'components/AccountName';
 import ConfirmDialog from 'components/dialog/Confirm';
 import WorkOrderDialog from 'components/dialog/WorkOrder';
@@ -39,9 +40,9 @@ import DoneIcon from '@material-ui/icons/Done';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { BlobProvider } from '@react-pdf/renderer';
 
+import { highlight } from 'utils/string';
 import { WorkOrderDto, WorkOrderFilter } from './interface';
 import { useDeleteWorkOrdersMutation, useUpdateWorkOrderMutation } from './useWorkOrders';
-import { highlight } from 'utils/string';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -187,14 +188,14 @@ export interface WorkOrderListItemProps extends ListItemProps {
   isSelectable?: boolean;
 }
 
-const WorkOrderListItem = ({
+function WorkOrderListItem({
   workOrder,
   itemHeight,
   isSelected,
   filter,
-  toggleSelection = (workOrder: WorkOrderDto) => {},
+  toggleSelection = () => {},
   isSelectable = true,
-}: WorkOrderListItemProps) => {
+}: WorkOrderListItemProps) {
   const { t } = useTranslation('workOrders');
   const classes = useStyles();
   const { isMobileLayout, isTabletLayout, isDesktopLayout } = useScreenSize();
@@ -236,7 +237,7 @@ const WorkOrderListItem = ({
 
   const closeDialogAndUnselect = () => {
     closeDialog();
-    isSelected && toggleSelection(workOrder);
+    if (isSelected) toggleSelection(workOrder);
   };
 
   const handleClickComplete = () =>
@@ -253,7 +254,7 @@ const WorkOrderListItem = ({
         title={t('deleteWorkOrder')}
         message={t('deleteWorkOrderConfirm', { workOrderId: workOrder.id })}
         onClose={(isConfirmed: boolean) => {
-          isConfirmed && deleteWorkOrders([workOrder.id]);
+          if (isConfirmed) deleteWorkOrders([workOrder.id]);
           closeDialogAndUnselect();
         }}
       />,
@@ -295,7 +296,7 @@ const WorkOrderListItem = ({
     ? 480
     : undefined;
 
-  let actionButtons: { label: string; onClick: () => void }[] = [];
+  const actionButtons: { label: string; onClick: () => void }[] = [];
   if (workOrder.workOrderStatus === WorkOrderStatus.CUTTING && canUpdateWorkOrders) {
     actionButtons.push({ label: t('common:done'), onClick: handleClickComplete });
   }
@@ -434,6 +435,7 @@ const WorkOrderListItem = ({
             <MenuItem style={{ padding: 0 }}>
               <BlobProvider document={<WorkOrderPDF workOrders={[workOrder]} />}>
                 {({ url, loading }) => (
+                  // eslint-disable-next-line jsx-a11y/anchor-is-valid
                   <Link
                     component="button"
                     className={classes.printButton}
@@ -457,6 +459,6 @@ const WorkOrderListItem = ({
       )}
     </ListItem>
   );
-};
+}
 
 export default memo(WorkOrderListItem);

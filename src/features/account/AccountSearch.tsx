@@ -34,7 +34,7 @@ export interface AccountSearchProps {
   onChange: (filter: AccountFilter) => any;
 }
 
-const AccountSearch = ({ filter, onChange }: AccountSearchProps) => {
+function AccountSearch({ filter, onChange }: AccountSearchProps) {
   const { t } = useTranslation('accounts');
   const classes = useStyles();
 
@@ -78,6 +78,6 @@ const AccountSearch = ({ filter, onChange }: AccountSearchProps) => {
       </div>
     </form>
   );
-};
+}
 
 export default AccountSearch;

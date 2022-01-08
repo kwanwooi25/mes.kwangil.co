@@ -110,15 +110,15 @@ export interface ProductListItemProps extends ListItemProps {
   toggleSelection?: (product: ProductDto) => any;
 }
 
-const ProductListItem = ({
+function ProductListItem({
   isSelectable = true,
   product,
   itemHeight,
   isSelected,
   showDetails,
   filter,
-  toggleSelection = (product: ProductDto) => {},
-}: ProductListItemProps) => {
+  toggleSelection = () => {},
+}: ProductListItemProps) {
   const { t } = useTranslation('products');
   const classes = useStyles();
 
@@ -185,7 +185,7 @@ const ProductListItem = ({
         title={t('deleteProduct')}
         message={t('deleteProductConfirm', { productName: `${product.name}` })}
         onClose={(isConfirmed: boolean) => {
-          isConfirmed && deleteProducts([product.id]);
+          if (isConfirmed) deleteProducts([product.id]);
           closeDialog();
         }}
       />,
@@ -288,6 +288,6 @@ const ProductListItem = ({
       )}
     </ListItem>
   );
-};
+}
 
 export default memo(ProductListItem);

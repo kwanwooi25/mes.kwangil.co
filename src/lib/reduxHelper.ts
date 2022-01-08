@@ -2,8 +2,13 @@ import { DEFAULT_LIST_LIMIT } from 'const';
 import { BaseQuery, GetListResponse } from 'types/api';
 
 import {
-    createSlice, Draft, EntityAdapter, EntityState, PayloadAction, SliceCaseReducers,
-    ValidateSliceCaseReducers
+  createSlice,
+  Draft,
+  EntityAdapter,
+  EntityState,
+  PayloadAction,
+  SliceCaseReducers,
+  ValidateSliceCaseReducers,
 } from '@reduxjs/toolkit';
 
 export interface GenericState<Dto, QueryInterface> extends EntityState<Dto> {
@@ -23,7 +28,7 @@ export interface GenericState<Dto, QueryInterface> extends EntityState<Dto> {
 export const createGenericSlice = <
   Dto extends { id: number | string },
   QueryInterface extends BaseQuery,
-  Reducers extends SliceCaseReducers<GenericState<Dto, QueryInterface>>
+  Reducers extends SliceCaseReducers<GenericState<Dto, QueryInterface>>,
 >({
   name = '',
   initialState,
@@ -34,15 +39,18 @@ export const createGenericSlice = <
   initialState: GenericState<Dto, QueryInterface>;
   reducers: ValidateSliceCaseReducers<GenericState<Dto, QueryInterface>, Reducers>;
   entityAdapter: EntityAdapter<Dto>;
-}) => {
-  return createSlice({
+}) =>
+  createSlice({
     name,
     initialState,
     reducers: {
       getList: (state, { payload }: PayloadAction<QueryInterface>) => {
         state.query = { ...state.query, ...payload };
       },
-      setList: (state, { payload: { rows, hasMore, count } }: PayloadAction<GetListResponse<Dto>>) => {
+      setList: (
+        state,
+        { payload: { rows, hasMore, count } }: PayloadAction<GetListResponse<Dto>>,
+      ) => {
         const { limit = DEFAULT_LIST_LIMIT, offset = 0 } = state.query;
         state.totalCount = count;
         state.hasMore = hasMore;
@@ -67,12 +75,15 @@ export const createGenericSlice = <
         entityAdapter.removeAll(state as EntityState<Dto>);
       },
       updateSuccess: (state, { payload: { id, ...changes } }: PayloadAction<Dto>) => {
-        entityAdapter.updateOne(state as EntityState<Dto>, { id, changes: changes as Partial<Dto> });
+        entityAdapter.updateOne(state as EntityState<Dto>, {
+          id,
+          changes: changes as Partial<Dto>,
+        });
       },
       updateManySuccess: (state, { payload }: PayloadAction<Dto[]>) => {
         entityAdapter.updateMany(
           state as EntityState<Dto>,
-          payload.map(({ id, ...changes }) => ({ id, changes: changes as Partial<Dto> }))
+          payload.map(({ id, ...changes }) => ({ id, changes: changes as Partial<Dto> })),
         );
       },
 
@@ -100,4 +111,3 @@ export const createGenericSlice = <
       ...reducers,
     },
   });
-};

@@ -70,19 +70,19 @@ const useStyles = makeStyles((theme: Theme) =>
     loginButton: {
       marginTop: theme.spacing(2),
     },
-  })
+  }),
 );
 
-export interface RegisterPageProps {}
-
-const RegisterPage = (props: RegisterPageProps) => {
+function RegisterPage() {
   const { t } = useTranslation('auth');
   const classes = useStyles();
 
   const dispatch = useAppDispatch();
   const { registerUser, isLoading } = useRegisterUserMutation();
 
-  const { values, touched, errors, handleChange, handleSubmit } = useFormik<SignUpDto & { passwordConfirm: string }>({
+  const { values, touched, errors, handleChange, handleSubmit } = useFormik<
+    SignUpDto & { passwordConfirm: string }
+  >({
     initialValues: {
       email: '',
       password: '',
@@ -97,8 +97,8 @@ const RegisterPage = (props: RegisterPageProps) => {
         .oneOf([ref('password'), null], t('passwordsMustMatch')),
       name: string().required(t('nameRequired')),
     }),
-    onSubmit: ({ passwordConfirm, ...values }) => {
-      registerUser(values);
+    onSubmit: ({ passwordConfirm, ...submitValues }) => {
+      registerUser(submitValues);
     },
   });
 
@@ -107,7 +107,7 @@ const RegisterPage = (props: RegisterPageProps) => {
   return (
     <div className={classes.registerPage}>
       <div className={classes.registerHeader}>
-        <img className={classes.logo} src="/kwangil_logo_name_white.png" alt="kwangil logo"></img>
+        <img className={classes.logo} src="/kwangil_logo_name_white.png" alt="kwangil logo" />
         <Typography component="h2" variant="h5" align="center">
           {t('common:appName')}
         </Typography>
@@ -178,6 +178,6 @@ const RegisterPage = (props: RegisterPageProps) => {
       </form>
     </div>
   );
-};
+}
 
 export default RegisterPage;

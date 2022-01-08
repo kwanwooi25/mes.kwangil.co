@@ -1,4 +1,4 @@
-import { Style } from '@react-pdf/types';
+import type { Style } from '@react-pdf/types';
 
 export const baseStyles: { [key: string]: Style } = {
   detailSection: {

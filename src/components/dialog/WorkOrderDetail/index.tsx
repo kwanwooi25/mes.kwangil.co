@@ -4,16 +4,16 @@ import Dialog from 'features/dialog/Dialog';
 import DoneIcon from '@material-ui/icons/Done';
 import React from 'react';
 import RoundedButton from 'components/RoundedButton';
-import WorkOrderDetails from './WorkOrderDetails';
 import { WorkOrderDto } from 'features/workOrder/interface';
 import { useTranslation } from 'react-i18next';
+import WorkOrderDetails from './WorkOrderDetails';
 
 export interface WorkOrderDetailDialogProps {
   onClose: () => void;
   workOrder: WorkOrderDto;
 }
 
-const WorkOrderDetailDialog = ({ workOrder, onClose }: WorkOrderDetailDialogProps) => {
+function WorkOrderDetailDialog({ workOrder, onClose }: WorkOrderDetailDialogProps) {
   const { t } = useTranslation('workOrders');
 
   return (
@@ -26,6 +26,6 @@ const WorkOrderDetailDialog = ({ workOrder, onClose }: WorkOrderDetailDialogProp
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default WorkOrderDetailDialog;

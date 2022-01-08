@@ -10,8 +10,19 @@ import { getPlateProductsSummary, getPlateTitle } from 'utils/plate';
 import { highlight } from 'utils/string';
 
 import {
-    Checkbox, createStyles, IconButton, ListItem, ListItemIcon, ListItemProps,
-    ListItemSecondaryAction, ListItemText, makeStyles, Menu, MenuItem, Theme, Typography
+  Checkbox,
+  createStyles,
+  IconButton,
+  ListItem,
+  ListItemIcon,
+  ListItemProps,
+  ListItemSecondaryAction,
+  ListItemText,
+  makeStyles,
+  Menu,
+  MenuItem,
+  Theme,
+  Typography,
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 
@@ -49,7 +60,7 @@ const useStyles = makeStyles((theme: Theme) =>
         gridColumnGap: theme.spacing(1),
       },
     },
-  })
+  }),
 );
 
 export interface PlateListItemProps extends ListItemProps {
@@ -62,15 +73,15 @@ export interface PlateListItemProps extends ListItemProps {
   isSelectable?: boolean;
 }
 
-const PlateListItem = ({
+function PlateListItem({
   plate,
   itemHeight,
   isSelected = false,
   productCountToDisplay = 1,
   filter,
-  toggleSelection = (plate: PlateDto) => {},
+  toggleSelection = () => {},
   isSelectable = true,
-}: PlateListItemProps) => {
+}: PlateListItemProps) {
   const { t } = useTranslation('plates');
   const classes = useStyles();
 
@@ -86,7 +97,10 @@ const PlateListItem = ({
 
   const handleSelectionChange = () => toggleSelection(plate);
 
-  const openMenu = useCallback((e: MouseEvent<HTMLButtonElement>) => setMenuAnchorEl(e.currentTarget), []);
+  const openMenu = useCallback(
+    (e: MouseEvent<HTMLButtonElement>) => setMenuAnchorEl(e.currentTarget),
+    [],
+  );
   const closeMenu = useCallback(() => setMenuAnchorEl(null), []);
 
   const handleClickMenuItem =
@@ -104,13 +118,13 @@ const PlateListItem = ({
         title={t('deletePlate')}
         message={t('deletePlateConfirm', { plateTitle: getPlateTitle(plate) })}
         onClose={(isConfirmed: boolean) => {
-          isConfirmed && deletePlates([plate.id]);
+          if (isConfirmed) deletePlates([plate.id]);
           closeDialog();
         }}
-      />
+      />,
     );
 
-  let actionButtons = [];
+  const actionButtons = [];
 
   if (canUpdatePlates) {
     actionButtons.push({ label: t('common:edit'), onClick: handleClickEdit });
@@ -123,7 +137,12 @@ const PlateListItem = ({
     <ListItem divider style={{ height: itemHeight }} selected={isSelected}>
       {isSelectable && (
         <ListItemIcon>
-          <Checkbox edge="start" color="primary" checked={isSelected} onChange={handleSelectionChange} />
+          <Checkbox
+            edge="start"
+            color="primary"
+            checked={isSelected}
+            onChange={handleSelectionChange}
+          />
         </ListItemIcon>
       )}
       <ListItemText>
@@ -156,6 +175,6 @@ const PlateListItem = ({
       )}
     </ListItem>
   );
-};
+}
 
 export default memo(PlateListItem);

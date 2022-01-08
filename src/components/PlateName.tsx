@@ -6,11 +6,11 @@ import React, { memo } from 'react';
 import { getPlateTitle } from 'utils/plate';
 import { highlight } from 'utils/string';
 
-import { createStyles, Link, makeStyles, Theme } from '@material-ui/core';
+import { createStyles, Link, makeStyles } from '@material-ui/core';
 
 import PlateDetailDialog from './dialog/PlateDetail';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     plateNameLink: {
       maxWidth: '200px',
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '16px',
     },
     plateName: {},
-  })
+  }),
 );
 
 export interface PlateNameProps {
@@ -31,7 +31,7 @@ export interface PlateNameProps {
   searchText?: string;
 }
 
-const PlateName = ({ plate, className, linkClassName, searchText = '' }: PlateNameProps) => {
+function PlateName({ plate, className, linkClassName, searchText = '' }: PlateNameProps) {
   const classes = useStyles();
   const { openDialog, closeDialog } = useDialog();
 
@@ -42,6 +42,7 @@ const PlateName = ({ plate, className, linkClassName, searchText = '' }: PlateNa
 
   return (
     <div className={className}>
+      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
       <Link
         className={classnames(classes.plateNameLink, linkClassName)}
         component="button"
@@ -56,6 +57,6 @@ const PlateName = ({ plate, className, linkClassName, searchText = '' }: PlateNa
       </Link>
     </div>
   );
-};
+}
 
 export default memo(PlateName);

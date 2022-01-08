@@ -7,7 +7,14 @@ import { useTranslation } from 'react-i18next';
 import { getExcelFileReader } from 'utils/excel';
 
 import {
-    createStyles, DialogActions, DialogContent, IconButton, makeStyles, TextField, Theme, Tooltip
+  createStyles,
+  DialogActions,
+  DialogContent,
+  IconButton,
+  makeStyles,
+  TextField,
+  Theme,
+  Tooltip,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import DoneIcon from '@material-ui/icons/Done';
@@ -24,7 +31,7 @@ const useStyles = makeStyles((theme: Theme) =>
     buttons: {
       padding: theme.spacing(2, 3),
     },
-  })
+  }),
 );
 
 const templates = {
@@ -39,7 +46,7 @@ export interface ExcelUploadDialogProps {
   onClose: () => void;
 }
 
-const ExcelUploadDialog = ({ variant, onSave, onClose }: ExcelUploadDialogProps) => {
+function ExcelUploadDialog({ variant, onSave, onClose = () => {} }: ExcelUploadDialogProps) {
   const classes = useStyles();
   const { t } = useTranslation('common');
 
@@ -53,7 +60,8 @@ const ExcelUploadDialog = ({ variant, onSave, onClose }: ExcelUploadDialogProps)
 
   const handleChangeFile = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.length) {
-      return setFileName('');
+      setFileName('');
+      return;
     }
     const file = e.target.files[0];
     const reader = getExcelFileReader[variant](setDataToCreate);
@@ -72,7 +80,7 @@ const ExcelUploadDialog = ({ variant, onSave, onClose }: ExcelUploadDialogProps)
 
   const handleClose = () => {
     resetForm();
-    onClose && onClose();
+    onClose();
   };
 
   const handleSave = () => {
@@ -126,6 +134,6 @@ const ExcelUploadDialog = ({ variant, onSave, onClose }: ExcelUploadDialogProps)
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default ExcelUploadDialog;

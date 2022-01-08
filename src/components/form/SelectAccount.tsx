@@ -19,7 +19,7 @@ export interface SelectAccountProps {
   errorMessage?: string;
 }
 
-const SelectAccount = ({ className, value, onChange, onBlur, errorMessage }: SelectAccountProps) => {
+function SelectAccount({ className, value, onChange, onBlur, errorMessage }: SelectAccountProps) {
   const { t } = useTranslation('accounts');
   const [isAccountOptionsOpen, setIsAccountOptionsOpen] = useState<boolean>(false);
   const inputRef = createRef<HTMLInputElement>();
@@ -29,7 +29,9 @@ const SelectAccount = ({ className, value, onChange, onBlur, errorMessage }: Sel
   const closeAccountOptions = () => setIsAccountOptionsOpen(false);
 
   useEffect(() => {
-    !value && isFetched && inputRef.current && inputRef.current.click();
+    if (!value && isFetched && inputRef.current) {
+      inputRef.current.click();
+    }
   }, [isFetched]);
 
   return (
@@ -62,6 +64,6 @@ const SelectAccount = ({ className, value, onChange, onBlur, errorMessage }: Sel
       )}
     />
   );
-};
+}
 
 export default SelectAccount;

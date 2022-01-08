@@ -13,7 +13,7 @@ export interface WorkOrderDetailsProps {
   workOrder: WorkOrderDto;
 }
 
-const WorkOrderDetails = ({ workOrder }: WorkOrderDetailsProps) => {
+function WorkOrderDetails({ workOrder }: WorkOrderDetailsProps) {
   const { t } = useTranslation('workOrders');
   const { canViewAccounts, canViewProducts } = useAuth();
   const {
@@ -44,12 +44,15 @@ const WorkOrderDetails = ({ workOrder }: WorkOrderDetailsProps) => {
       <DetailField label={t('productSummary')} value={productSummary} />
       {isPrint && <DetailField label={t('plateStatus')} value={plateStatus} />}
       <DetailField label={t('orderQuantity')} value={`${orderQuantity} (${orderWeight})`} />
-      <DetailField label={t('completedQuantity')} value={`${completedQuantity} (${completedWeight})`} />
+      <DetailField
+        label={t('completedQuantity')}
+        value={`${completedQuantity} (${completedWeight})`}
+      />
       <DetailField label={t('workMemo')} value={workMemo} />
       <DetailField label={t('deliveryMethod')} value={deliveryMethod} />
       <DetailField label={t('deliveryMemo')} value={deliveryMemo} />
     </List>
   );
-};
+}
 
 export default WorkOrderDetails;

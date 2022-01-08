@@ -42,7 +42,7 @@ export interface MemosProps {
   deliveryMethod?: DeliveryMethod;
 }
 
-const Memos = ({ workMemo, deliveryMemo, deliveryMethod = DeliveryMethod.TBD }: MemosProps) => {
+function Memos({ workMemo, deliveryMemo, deliveryMethod = DeliveryMethod.TBD }: MemosProps) {
   const { t } = useTranslation('workOrders');
   const deliveryMethodText = t(`deliveryMethod${capitalize(deliveryMethod)}`);
 
@@ -72,6 +72,6 @@ const Memos = ({ workMemo, deliveryMemo, deliveryMethod = DeliveryMethod.TBD }: 
       </View>
     </View>
   );
-};
+}
 
 export default Memos;
