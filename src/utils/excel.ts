@@ -111,6 +111,7 @@ const PRODUCT_KEY_TO_LABEL: { [key: string]: string } = {
   packCanDeliverAll: '전량납품',
   packMemo: '포장메모',
   images: '이미지',
+  lastWorkOrder: '최종작업일',
 };
 
 const WORK_ORDER_LABEL_TO_KEY: { [key: string]: keyof CreateWorkOrdersDto } = {
@@ -318,7 +319,7 @@ const generateItem = {
 
 function getFileReader<T>(variant: ExcelVariant, stateSetter: Dispatch<SetStateAction<T[]>>) {
   const reader = new FileReader();
-  reader.onload = function (e) {
+  reader.onload = (e) => {
     if (!e.target?.result) {
       return;
     }
@@ -410,6 +411,13 @@ function processProductsForDownload(
           if (value && value.length) {
             value = value[0].imageUrl;
           }
+          break;
+        case 'lastWorkOrder':
+          if (!product.workOrders?.length) {
+            break;
+          }
+          const lastWorkOrder = product.workOrders[0];
+          value = formatDate(lastWorkOrder.orderedAt);
           break;
         default:
           break;

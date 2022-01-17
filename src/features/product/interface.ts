@@ -1,6 +1,7 @@
 import { PrintSide, StockHistoryType } from 'const';
 import { AccountDto, AccountOption } from 'features/account/interface';
 import { PlateDto } from 'features/plate/interface';
+import { WorkOrderDto } from 'features/workOrder/interface';
 import { BaseQuery } from 'types/api';
 
 export interface ProductFilter {
@@ -76,6 +77,7 @@ export interface ProductDto {
   account: AccountDto;
   images: ImageDto[];
   plates?: PlateDto[];
+  workOrders?: WorkOrderDto[];
   stock?: StockDto;
   createdAt: Date;
   updatedAt: Date;
