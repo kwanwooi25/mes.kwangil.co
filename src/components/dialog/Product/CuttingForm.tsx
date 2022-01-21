@@ -1,5 +1,4 @@
-import { Checkbox, FormControlLabel, Theme, createStyles, makeStyles } from '@material-ui/core';
-
+import { Checkbox, FormControlLabel } from '@mui/material';
 import Input from 'components/form/Input';
 import { PunchCount } from 'const';
 import React from 'react';
@@ -7,84 +6,20 @@ import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ProductFormValues } from 'features/product/interface';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    cutting: {
-      [theme.breakpoints.up('sm')]: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gridTemplateAreas: `
-          "cutPosition cutPosition cutIsUltrasonic cutIsForPowder"
-          "punchDetail punchDetail punchDetail punchDetail"
-          "cutMemo cutMemo cutMemo cutMemo"
-        `,
-        gridColumnGap: theme.spacing(2),
-      },
-    },
-    cutPosition: {
-      [theme.breakpoints.up('sm')]: {
-        gridArea: 'cutPosition',
-      },
-    },
-    cutIsUltrasonic: {
-      [theme.breakpoints.up('sm')]: {
-        gridArea: 'cutIsUltrasonic',
-      },
-    },
-    cutIsForPowder: {
-      [theme.breakpoints.up('sm')]: {
-        gridArea: 'cutIsForPowder',
-      },
-    },
-    punchDetail: {
-      display: 'grid',
-      gridTemplateColumns: '100px 1fr',
-      gridTemplateAreas: `
-        "cutPunchCount cutPunchSize"
-        "cutPunchPosition cutPunchPosition"
-      `,
-      gridColumnGap: theme.spacing(2),
-      [theme.breakpoints.up('sm')]: {
-        gridArea: 'punchDetail',
-        gridTemplateColumns: '80px 1fr 2fr',
-        gridTemplateAreas: `
-          "cutPunchCount cutPunchSize cutPunchPosition"
-        `,
-      },
-    },
-    cutPunchCount: {
-      gridArea: 'cutPunchCount',
-    },
-    cutPunchSize: {
-      gridArea: 'cutPunchSize',
-    },
-    cutPunchPosition: {
-      gridArea: 'cutPunchPosition',
-    },
-    cutMemo: {
-      [theme.breakpoints.up('sm')]: {
-        gridArea: 'cutMemo',
-      },
-    },
-  }),
-);
-
 function CuttingForm() {
   const { t } = useTranslation('products');
-  const classes = useStyles();
   const { values, handleChange } = useFormikContext<ProductFormValues>();
 
   return (
-    <div className={classes.cutting}>
+    <div className="tablet:grid tablet:grid-cols-4 tablet:gap-x-3">
       <Input
-        className={classes.cutPosition}
+        className="tablet:col-span-2"
         name="cutPosition"
         label={t('cutPosition')}
         value={values.cutPosition}
         onChange={handleChange}
       />
       <FormControlLabel
-        className={classes.cutIsUltrasonic}
         control={
           <Checkbox
             color="primary"
@@ -93,10 +28,9 @@ function CuttingForm() {
             onChange={handleChange}
           />
         }
-        label={t('cutIsUltrasonic')}
+        label={t('cutIsUltrasonic') as string}
       />
       <FormControlLabel
-        className={classes.cutIsForPowder}
         control={
           <Checkbox
             color="primary"
@@ -105,11 +39,10 @@ function CuttingForm() {
             onChange={handleChange}
           />
         }
-        label={t('cutIsForPowder')}
+        label={t('cutIsForPowder') as string}
       />
-      <div className={classes.punchDetail}>
+      <div className="grid grid-cols-[100px_1fr] gap-x-3 tablet:grid-cols-[80px_1fr_2fr] tablet:col-span-4">
         <Input
-          className={classes.cutPunchCount}
           type="number"
           name="cutPunchCount"
           label={t('cutPunchCount')}
@@ -118,14 +51,13 @@ function CuttingForm() {
           inputProps={{ step: PunchCount.STEP, min: PunchCount.MIN, max: PunchCount.MAX }}
         />
         <Input
-          className={classes.cutPunchSize}
           name="cutPunchSize"
           label={t('cutPunchSize')}
           value={values.cutPunchSize}
           onChange={handleChange}
         />
         <Input
-          className={classes.cutPunchPosition}
+          className="col-span-2 tablet:col-span-1"
           name="cutPunchPosition"
           label={t('cutPunchPosition')}
           value={values.cutPunchPosition}
@@ -133,7 +65,7 @@ function CuttingForm() {
         />
       </div>
       <Input
-        className={classes.cutMemo}
+        className="tablet:col-span-4"
         name="cutMemo"
         label={t('cutMemo')}
         value={values.cutMemo}

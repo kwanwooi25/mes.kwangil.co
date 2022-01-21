@@ -8,27 +8,8 @@ import React, { createRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
 import { array, number, object } from 'yup';
-
-import { createStyles, DialogActions, DialogContent, makeStyles, Theme } from '@material-ui/core';
-import { Close, Done } from '@material-ui/icons';
-
+import { Close, Done } from '@mui/icons-material';
 import StockForm from './StockForm';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    dialogContent: {
-      padding: theme.spacing(1, 3),
-    },
-    actionButtons: {
-      padding: theme.spacing(3),
-      display: 'flex',
-      justifyContent: 'space-between',
-      '& button': {
-        maxWidth: '120px',
-      },
-    },
-  }),
-);
 
 export interface StockDialogProps {
   products: ProductDto[];
@@ -37,7 +18,6 @@ export interface StockDialogProps {
 
 function StockDialog({ products, onClose }: StockDialogProps) {
   const { t } = useTranslation();
-  const classes = useStyles();
   const submitButtonRef = createRef<HTMLButtonElement>();
   const queryClient = useQueryClient();
   const { createOrUpdateStocks, isSaving } = useCreateOrUpdateStocksMutation({
@@ -70,7 +50,7 @@ function StockDialog({ products, onClose }: StockDialogProps) {
   return (
     <Dialog open onClose={onClose} title={dialogTitle}>
       {isSaving && <Loading />}
-      <DialogContent dividers className={classes.dialogContent}>
+      <Dialog.Content dividers>
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -84,13 +64,12 @@ function StockDialog({ products, onClose }: StockDialogProps) {
             <button ref={submitButtonRef} type="submit" style={{ display: 'none' }} />
           </Form>
         </Formik>
-      </DialogContent>
-      <DialogActions className={classes.actionButtons}>
+      </Dialog.Content>
+      <Dialog.Actions className="!justify-between">
         <RoundedButton
           color="primary"
           variant="outlined"
           size="large"
-          fullWidth
           startIcon={<Close />}
           onClick={onClose}
         >
@@ -99,14 +78,13 @@ function StockDialog({ products, onClose }: StockDialogProps) {
         <RoundedButton
           color="primary"
           size="large"
-          fullWidth
           startIcon={<Done />}
           onClick={handleClickSave}
           disabled={isSaving}
         >
           {t('common:save')}
         </RoundedButton>
-      </DialogActions>
+      </Dialog.Actions>
     </Dialog>
   );
 }

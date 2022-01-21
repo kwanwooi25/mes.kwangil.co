@@ -1,27 +1,7 @@
 import classNames from 'classnames';
 import { UserDto } from 'features/auth/interface';
 import React from 'react';
-
-import { createStyles, Link, makeStyles } from '@material-ui/core';
-
-const useStyles = makeStyles(() =>
-  createStyles({
-    userNameLink: {
-      maxWidth: '200px',
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      textAlign: 'left',
-    },
-    linkDisabled: {
-      cursor: 'default',
-      '&:hover': {
-        textDecoration: 'none',
-      },
-    },
-    userName: {},
-  }),
-);
+import { LoadingButton } from '@mui/lab';
 
 export interface UserNameProps {
   className?: string;
@@ -30,8 +10,6 @@ export interface UserNameProps {
 }
 
 function UserName({ user, className, linkClassName }: UserNameProps) {
-  const classes = useStyles();
-
   // const {refetch, isFetching} = useUser();
 
   const openUserDetailDialog = async () => {
@@ -40,20 +18,20 @@ function UserName({ user, className, linkClassName }: UserNameProps) {
   };
 
   return (
-    <div className={className}>
-      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-      <Link
-        className={classNames([classes.userNameLink, linkClassName])}
-        component="button"
-        variant="h6"
-        color="initial"
-        onClick={openUserDetailDialog}
-        // disabled={isFetching}
-      >
-        {/* {isFetching && <Loading />} */}
-        <span className={classes.userName} dangerouslySetInnerHTML={{ __html: user.name }} />
-      </Link>
-    </div>
+    <LoadingButton
+      className={classNames('!justify-start !min-w-0 max-w-max', className)}
+      onClick={openUserDetailDialog}
+      // disabled={isFetching}
+      // loading={isFetching}
+      loadingPosition="end"
+      endIcon={<span />}
+      color="inherit"
+    >
+      <p
+        className={classNames('truncate text-lg', linkClassName)}
+        dangerouslySetInnerHTML={{ __html: user.name }}
+      />
+    </LoadingButton>
   );
 }
 

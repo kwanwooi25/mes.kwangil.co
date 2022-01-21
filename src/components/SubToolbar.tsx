@@ -2,39 +2,16 @@ import React, { ChangeEvent, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import {
-  alpha,
   AppBar,
   Checkbox,
-  createStyles,
   Divider,
   FormControlLabel,
   IconButton,
-  makeStyles,
-  Theme,
   Toolbar,
   Tooltip,
-  Typography,
-} from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
-
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import IconButtonGroup from './IconButtonGroup';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    appBar: {
-      background: theme.palette.background.paper,
-      borderBottom: `0.5px solid ${alpha(theme.palette.primary.light, 0.15)}`,
-      zIndex: theme.zIndex.drawer,
-    },
-    selection: {
-      display: 'flex',
-      alignItems: 'center',
-    },
-    buttons: {
-      marginLeft: 'auto',
-    },
-  }),
-);
 
 export interface SubToolbarProps {
   isSelectAllDisabled?: boolean;
@@ -56,7 +33,6 @@ function SubToolbar({
   buttons,
 }: SubToolbarProps) {
   const { t } = useTranslation('common');
-  const classes = useStyles();
 
   const isSelectMode = selectedCount > 0;
 
@@ -65,9 +41,14 @@ function SubToolbar({
   };
 
   return (
-    <AppBar className={classes.appBar} color="inherit" position="relative" elevation={0}>
-      <Toolbar>
-        <div className={classes.selection}>
+    <AppBar
+      className="bg-gray-200 border-b border-b-gray-200"
+      color="transparent"
+      position="relative"
+      elevation={0}
+    >
+      <Toolbar className="!px-4" variant="dense">
+        <div className="flex items-center">
           <FormControlLabel
             control={
               <Checkbox
@@ -79,14 +60,14 @@ function SubToolbar({
                 disabled={isSelectAllDisabled}
               />
             }
-            label={t('selectAll')}
+            label={t('selectAll') as string}
           />
           {isSelectMode && (
             <>
-              <Divider orientation="vertical" style={{ height: 18 }} />
-              <Typography
+              <Divider className="!h-4" orientation="vertical" />
+              <span
+                className="mx-3"
                 dangerouslySetInnerHTML={{ __html: t('selectedCount', { count: selectedCount }) }}
-                style={{ margin: '0 12px' }}
               />
               <Tooltip title={t('unselectAll') as string} placement="top">
                 <IconButton onClick={onResetSelection}>
@@ -96,7 +77,7 @@ function SubToolbar({
             </>
           )}
         </div>
-        <IconButtonGroup className={classes.buttons}>{buttons}</IconButtonGroup>
+        <IconButtonGroup className="ml-auto">{buttons}</IconButtonGroup>
       </Toolbar>
     </AppBar>
   );

@@ -1,23 +1,5 @@
 import React, { ReactElement, memo, useEffect, useMemo } from 'react';
-import { createStyles, makeStyles } from '@material-ui/core';
-
 import { useVirtualInfiniteScroll } from 'hooks/useVirtualInfiniteScroll';
-
-const useStyles = makeStyles(() =>
-  createStyles({
-    virtualInfiniteScroll: {
-      overflow: 'auto',
-    },
-    contentTotal: {
-      overflow: 'hidden',
-      willChange: 'transform',
-      position: 'relative',
-    },
-    contentVisible: {
-      willChange: 'transform',
-    },
-  }),
-);
 
 export interface VirtualInfiniteScrollProps {
   itemCount: number;
@@ -34,8 +16,6 @@ function VirtualInfiniteScroll({
   threshold = 10,
   onLoadMore = () => {},
 }: VirtualInfiniteScrollProps) {
-  const classes = useStyles();
-
   const nodePositions = useMemo(() => {
     const positions = [0];
     for (let i = 1; i < itemCount; i += 1) {
@@ -77,13 +57,13 @@ function VirtualInfiniteScroll({
   }, [shouldLoadMore]);
 
   return (
-    <div
-      className={classes.virtualInfiniteScroll}
-      style={{ height: containerHeight }}
-      ref={containerRef}
-    >
-      <div ref={contentTotalRef} className={classes.contentTotal} style={{ height: totalHeight }}>
-        <div className={classes.contentVisible} style={{ transform: `translateY(${offsetY}px)` }}>
+    <div className="overflow-auto" style={{ height: containerHeight }} ref={containerRef}>
+      <div
+        className="overflow-hidden relative will-change-transform"
+        style={{ height: totalHeight }}
+        ref={contentTotalRef}
+      >
+        <div className="will-change-transform" style={{ transform: `translateY(${offsetY}px)` }}>
           {visibleNodes}
         </div>
       </div>

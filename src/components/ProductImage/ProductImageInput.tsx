@@ -1,27 +1,13 @@
-import { Button, Theme, createStyles, makeStyles } from '@material-ui/core';
-import React, { createRef } from 'react';
-
-import AddIcon from '@material-ui/icons/Add';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    imageUploadButton: {
-      position: 'absolute',
-      width: '100%',
-      height: '100%',
-      borderRadius: theme.spacing(2),
-      borderStyle: 'dashed',
-    },
-  }),
-);
+import { Button } from '@mui/material';
+import React, { useRef } from 'react';
+import AddIcon from '@mui/icons-material/Add';
 
 export interface ProductImageInputProps {
   onChange: (file: File) => void;
 }
 
 function ProductImageInput({ onChange }: ProductImageInputProps) {
-  const classes = useStyles();
-  const fileInputRef = createRef<HTMLInputElement>();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChangeFile = () => {
     if (fileInputRef.current && fileInputRef.current.files && fileInputRef.current.files.length) {
@@ -34,16 +20,16 @@ function ProductImageInput({ onChange }: ProductImageInputProps) {
   };
 
   return (
-    <div>
+    <div className="before:inline-block relative before:pb-[100%] before:content-['']">
       <Button
-        className={classes.imageUploadButton}
+        className="!absolute w-full h-full !rounded-xl !border-dashed"
         variant="outlined"
         color="primary"
         onClick={() => fileInputRef.current?.click()}
       >
         <AddIcon fontSize="large" />
       </Button>
-      <input hidden ref={fileInputRef} type="file" accept="image/*" onChange={handleChangeFile} />
+      <input hidden ref={fileInputRef} type="file" accept="image/jpg" onChange={handleChangeFile} />
     </div>
   );
 }

@@ -30,9 +30,9 @@ const setAuthHeaders = (token?: string) => {
     localStorage.removeItem('token');
   }
 
-  apiClient.defaults.headers = {
-    ...apiClient.defaults.headers,
-    authorization: !token ? undefined : `Bearer ${token}`,
+  apiClient.defaults.headers.common = {
+    ...apiClient.defaults.headers.common,
+    authorization: !token ? '' : `Bearer ${token}`,
   };
 };
 

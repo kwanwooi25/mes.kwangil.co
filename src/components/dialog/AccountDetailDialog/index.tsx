@@ -1,29 +1,14 @@
 import { AccountInputs, ContactInputs } from 'const';
-import {
-  DialogActions,
-  DialogContent,
-  List,
-  Theme,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core';
+import { List } from '@mui/material';
 import React, { Fragment } from 'react';
 
 import { AccountDto } from 'features/account/interface';
 import CustomListSubHeader from 'components/CustomListSubHeader';
 import Dialog from 'features/dialog/Dialog';
-import DoneIcon from '@material-ui/icons/Done';
+import DoneIcon from '@mui/icons-material/Done';
 import RoundedButton from 'components/RoundedButton';
 import { useTranslation } from 'react-i18next';
 import DetailField from '../DetailField';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    buttons: {
-      padding: theme.spacing(2, 3),
-    },
-  }),
-);
 
 export interface AccountDetailDialogProps {
   account: AccountDto;
@@ -32,7 +17,6 @@ export interface AccountDetailDialogProps {
 
 function AccountDetailDialog({ account, onClose = () => {} }: AccountDetailDialogProps) {
   const { t } = useTranslation('accounts');
-  const classes = useStyles();
   const accountDetailKeys = Object.values(AccountInputs).filter(
     (key) => key !== AccountInputs.name,
   );
@@ -42,7 +26,7 @@ function AccountDetailDialog({ account, onClose = () => {} }: AccountDetailDialo
 
   return (
     <Dialog open title={account.name} onClose={onClose} fullWidth>
-      <DialogContent>
+      <Dialog.Content>
         <List>
           {accountDetailKeys.map((key) => (
             <DetailField key={key} label={t(key)} value={account[key]} />
@@ -58,12 +42,12 @@ function AccountDetailDialog({ account, onClose = () => {} }: AccountDetailDialo
             </Fragment>
           ))}
         </List>
-      </DialogContent>
-      <DialogActions className={classes.buttons}>
+      </Dialog.Content>
+      <Dialog.Actions>
         <RoundedButton autoFocus onClick={onClose} color="primary" startIcon={<DoneIcon />}>
           {t('common:confirm')}
         </RoundedButton>
-      </DialogActions>
+      </Dialog.Actions>
     </Dialog>
   );
 }

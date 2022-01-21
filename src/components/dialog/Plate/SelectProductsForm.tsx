@@ -1,77 +1,27 @@
 import CustomListSubHeader from 'components/CustomListSubHeader';
-import SearchInput from 'components/form/SearchInput';
 import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
-import { ProductDto } from 'features/product/interface';
+import { ProductDto, ProductFilter } from 'features/product/interface';
 import { useProductOptions } from 'features/product/useProducts';
 import { useFormikContext } from 'formik';
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import { createStyles, List, makeStyles, Theme } from '@material-ui/core';
-
 import { PlateFormValues } from 'features/plate/interface';
+import Input from 'components/form/Input';
+import { DEFAULT_PRODUCT_FILTER } from 'const';
 import ProductListItem from './ProductListItem';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    selectProductsForm: {
-      height: `calc(100% - ${theme.spacing(2)}px)`,
-      [theme.breakpoints.up('sm')]: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(2, 1fr)',
-        gridTemplateRows: 'auto auto 1fr',
-        gridTemplateAreas: `
-        "productSearch productSearch"
-        "searchedListSubheader selectedListSubheader"
-        "searchedList selectedList"
-        `,
-        gridColumnGap: theme.spacing(2),
-      },
-    },
-    productSearch: {
-      margin: theme.spacing(0, 0, 2),
-      [theme.breakpoints.up('sm')]: {
-        gridArea: 'productSearch',
-      },
-    },
-    selectedList: {
-      height: '104px',
-      [theme.breakpoints.up('sm')]: {
-        gridArea: 'selectedList',
-        height: 'auto',
-      },
-    },
-    searchedList: {
-      height: '104px',
-      [theme.breakpoints.up('sm')]: {
-        gridArea: 'searchedList',
-        height: 'auto',
-      },
-    },
-    selectedListSubHeader: {
-      marginBottom: theme.spacing(1),
-      [theme.breakpoints.up('sm')]: {
-        gridArea: 'selectedListSubheader',
-      },
-    },
-    searchedListSubHeader: {
-      marginBottom: theme.spacing(1),
-      [theme.breakpoints.up('sm')]: {
-        gridArea: 'searchedListSubheader',
-      },
-    },
-  }),
-);
 
 function SelectProductsForm() {
   const { t } = useTranslation('plates');
-  const classes = useStyles();
 
-  const [searchText, setSearchText] = useState<string>('');
-  const { productOptions = [] } = useProductOptions(searchText);
+  const [filter, setFilter] = useState<ProductFilter>(DEFAULT_PRODUCT_FILTER);
+  const { productOptions = [] } = useProductOptions(filter);
 
   const { values, setFieldValue, setValues } = useFormikContext<PlateFormValues>();
   const selectedProductIds = values.products.map(({ id }) => id);
+
+  const handleChangeFilter = (key: keyof ProductFilter) => (e: ChangeEvent<HTMLInputElement>) => {
+    setFilter({ ...filter, [key]: e.target.value });
+  };
 
   const selectProduct = (product: ProductDto) => () => {
     setFieldValue('products', [...values.products, product]);
@@ -107,37 +57,66 @@ function SelectProductsForm() {
   };
 
   return (
-    <div className={classes.selectProductsForm}>
-      <SearchInput
-        className={classes.productSearch}
-        onSearch={setSearchText}
-        placeholder={t('products:searchPlaceholder')}
-        autoFocus
-      />
+    <div className="gap-2 h-full tablet:grid tablet:grid-cols-2 tablet:grid-rows-[auto_auto_1fr]">
+      <div className="grid grid-cols-3 gap-x-2 tablet:grid-cols-[2fr_2fr_1fr_1fr_1fr] tablet:col-span-2">
+        <Input
+          className="col-span-3 tablet:col-span-1"
+          name="accountName"
+          label={t('products:accountName')}
+          value={filter.accountName}
+          onChange={handleChangeFilter('accountName')}
+        />
+        <Input
+          className="col-span-3 tablet:col-span-1"
+          name="name"
+          label={t('products:name')}
+          value={filter.name}
+          onChange={handleChangeFilter('name')}
+          autoFocus
+        />
+        <Input
+          name="thickness"
+          label={t('products:thickness')}
+          value={filter.thickness}
+          onChange={handleChangeFilter('thickness')}
+        />
+        <Input
+          name="length"
+          label={t('products:length')}
+          value={filter.length}
+          onChange={handleChangeFilter('length')}
+        />
+        <Input
+          name="width"
+          label={t('products:width')}
+          value={filter.width}
+          onChange={handleChangeFilter('width')}
+        />
+      </div>
 
-      <CustomListSubHeader className={classes.selectedListSubHeader}>
+      <CustomListSubHeader className="tablet:col-start-2 tablet:row-start-2">
         <span>{t('selectedProducts')}</span>
         <span>{values.products.length}</span>
       </CustomListSubHeader>
-      <List disablePadding className={classes.selectedList}>
+      <ul className="h-[104px] tablet:col-start-2 tablet:row-start-3 tablet:h-full">
         <VirtualInfiniteScroll
           itemCount={values.products.length}
           itemHeight={98}
           renderItem={renderSelectedProduct}
         />
-      </List>
+      </ul>
 
-      <CustomListSubHeader className={classes.searchedListSubHeader}>
+      <CustomListSubHeader className="tablet:col-start-1 tablet:row-start-2">
         <span>{t('searchedProducts')}</span>
         <span>{productOptions.length}</span>
       </CustomListSubHeader>
-      <List disablePadding className={classes.searchedList}>
+      <ul className="h-[104px] tablet:col-start-1 tablet:row-start-3 tablet:h-full">
         <VirtualInfiniteScroll
           itemCount={productOptions.length}
           itemHeight={98}
           renderItem={renderProductOptions}
         />
-      </List>
+      </ul>
     </div>
   );
 }

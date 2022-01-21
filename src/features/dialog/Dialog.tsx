@@ -3,36 +3,17 @@ import {
   IconButton,
   Dialog as MuiDialog,
   DialogProps as MuiDialogProps,
-  Theme,
+  DialogContent,
+  DialogContentProps,
+  DialogActions,
+  DialogActionsProps,
   Typography,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core';
+} from '@mui/material';
 
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 import React from 'react';
-import classnames from 'classnames';
+import classNames from 'classnames';
 import { useScreenSize } from 'hooks/useScreenSize';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    dialogPaper: {
-      borderRadius: theme.spacing(2),
-    },
-    fullHeight: {
-      height: '100%',
-    },
-    dialogHeader: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    dialogTitle: {
-      display: 'flex',
-      flexDirection: 'column',
-    },
-  }),
-);
 
 export interface DialogProps extends MuiDialogProps {
   title: string;
@@ -50,7 +31,6 @@ function Dialog({
   fullHeight,
   ...props
 }: DialogProps) {
-  const classes = useStyles();
   const { isMobileLayout } = useScreenSize();
   const isFullscreen = !disableFullscreen && isMobileLayout;
 
@@ -62,11 +42,12 @@ function Dialog({
       fullScreen={isFullscreen}
       {...props}
       classes={{
-        paper: classnames([classes.dialogPaper, fullHeight ? classes.fullHeight : undefined]),
+        paper: classNames('!rounded-xl', fullHeight && 'h-full'),
       }}
+      onClose={handleClose}
     >
-      <DialogTitle disableTypography className={classes.dialogHeader}>
-        <div className={classes.dialogTitle}>
+      <DialogTitle className="flex justify-between items-center">
+        <div className="flex flex-col">
           <Typography variant="h6">{title}</Typography>
           {subTitle && <Typography variant="caption">{subTitle}</Typography>}
         </div>
@@ -78,5 +59,21 @@ function Dialog({
     </MuiDialog>
   );
 }
+
+Dialog.Content = function ({ children, className, ...props }: DialogContentProps) {
+  return (
+    <DialogContent className={classNames('!px-6 !py-4', className)} {...props}>
+      {children}
+    </DialogContent>
+  );
+};
+
+Dialog.Actions = function ({ children, className, ...props }: DialogActionsProps) {
+  return (
+    <DialogActions className={classNames('!px-6 !py-4', className)} {...props}>
+      {children}
+    </DialogActions>
+  );
+};
 
 export default Dialog;

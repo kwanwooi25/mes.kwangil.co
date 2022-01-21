@@ -2,24 +2,7 @@ import RoundedButton from 'components/RoundedButton';
 import Dialog from 'features/dialog/Dialog';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-
-import {
-  createStyles,
-  DialogActions,
-  DialogContent,
-  makeStyles,
-  Theme,
-  Typography,
-} from '@material-ui/core';
-import DoneIcon from '@material-ui/icons/Done';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    buttons: {
-      padding: theme.spacing(2, 3),
-    },
-  }),
-);
+import DoneIcon from '@mui/icons-material/Done';
 
 export interface AlertDialogProps {
   title: string;
@@ -29,18 +12,17 @@ export interface AlertDialogProps {
 
 function AlertDialog({ title, message, onClose }: AlertDialogProps) {
   const { t } = useTranslation('common');
-  const classes = useStyles();
 
   return (
     <Dialog open onClose={onClose} title={title} disableFullscreen>
-      <DialogContent>
-        <Typography dangerouslySetInnerHTML={{ __html: message }} />
-      </DialogContent>
-      <DialogActions className={classes.buttons}>
+      <Dialog.Content>
+        <p dangerouslySetInnerHTML={{ __html: message }} />
+      </Dialog.Content>
+      <Dialog.Actions>
         <RoundedButton onClick={onClose} color="primary" startIcon={<DoneIcon />}>
           {t('common:confirm')}
         </RoundedButton>
-      </DialogActions>
+      </Dialog.Actions>
     </Dialog>
   );
 }

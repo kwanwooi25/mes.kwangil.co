@@ -1,18 +1,7 @@
-import { Fab, Slide, Theme, createStyles, makeStyles } from '@material-ui/core';
+import { Fab, Slide } from '@mui/material';
 
-import AddIcon from '@material-ui/icons/Add';
+import AddIcon from '@mui/icons-material/Add';
 import React from 'react';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    fab: {
-      position: 'fixed',
-      right: theme.spacing(2),
-      bottom: theme.spacing(2),
-      zIndex: theme.zIndex.speedDial,
-    },
-  }),
-);
 
 export interface CreationFabProps {
   show?: boolean;
@@ -20,11 +9,9 @@ export interface CreationFabProps {
 }
 
 function CreationFab({ show = true, onClick }: CreationFabProps) {
-  const classes = useStyles();
-
   return (
     <Slide in={show} direction="up">
-      <Fab className={classes.fab} color="primary" onClick={onClick}>
+      <Fab className="!fixed right-10 bottom-10" color="primary" onClick={onClick}>
         <AddIcon />
       </Fab>
     </Slide>

@@ -1,32 +1,33 @@
 import NumberFormat, { NumberFormatProps } from 'react-number-format';
-
-import React from 'react';
+import React, { forwardRef } from 'react';
+import { OutlinedInputProps } from '@mui/material';
 
 interface CustomNumberFormatProps extends NumberFormatProps {
-  inputRef: (instance: NumberFormat<HTMLInputElement> | null) => void;
   onChange: (event: { target: { name: string; value: string } }) => void;
   name: string;
 }
 
-function CustomNumberFormat(props: CustomNumberFormatProps) {
-  const { inputRef, onChange, name, ...other } = props;
+const CustomNumberFormat = forwardRef<NumberFormat<OutlinedInputProps>, CustomNumberFormatProps>(
+  (props, ref) => {
+    const { onChange, name, ...other } = props;
 
-  return (
-    <NumberFormat
-      {...other}
-      name={name}
-      getInputRef={inputRef}
-      onValueChange={({ value }) => {
-        onChange({
-          target: {
-            name,
-            value,
-          },
-        });
-      }}
-      thousandSeparator
-    />
-  );
-}
+    return (
+      <NumberFormat
+        {...other}
+        name={name}
+        getInputRef={ref}
+        onValueChange={({ value }) => {
+          onChange({
+            target: {
+              name,
+              value,
+            },
+          });
+        }}
+        thousandSeparator
+      />
+    );
+  },
+);
 
 export default CustomNumberFormat;

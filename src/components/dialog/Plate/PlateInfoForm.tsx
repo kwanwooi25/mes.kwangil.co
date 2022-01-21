@@ -4,67 +4,12 @@ import { PlateLength, PlateMaterial, PlateRound } from 'const';
 import { useFormikContext } from 'formik';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-
-import { createStyles, Divider, List, makeStyles, Theme } from '@material-ui/core';
-
+import { Divider, List } from '@mui/material';
 import { PlateFormValues } from 'features/plate/interface';
 import ProductListItem from './ProductListItem';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    plateInfo: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(2, 1fr)',
-      gridColumnGap: theme.spacing(2),
-      gridTemplateAreas: `
-        "selectedProducts selectedProducts"
-        "material material"
-        "name name"
-        "round length"
-        "location location"
-        "memo memo"
-      `,
-      [theme.breakpoints.up('sm')]: {
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gridTemplateAreas: `
-          "selectedProducts selectedProducts selectedProducts selectedProducts"
-          "material material name name"
-          "round length location location"
-          "memo memo memo memo"
-        `,
-      },
-    },
-    selectedProducts: {
-      gridArea: 'selectedProducts',
-    },
-    material: {
-      gridArea: 'material',
-      padding: theme.spacing(1, 0),
-      [theme.breakpoints.up('sm')]: {
-        paddingTop: theme.spacing(2),
-      },
-    },
-    round: {
-      gridArea: 'round',
-    },
-    length: {
-      gridArea: 'length',
-    },
-    name: {
-      gridArea: 'name',
-    },
-    location: {
-      gridArea: 'location',
-    },
-    memo: {
-      gridArea: 'memo',
-    },
-  }),
-);
-
 function PlateInfoForm() {
   const { t } = useTranslation('plates');
-  const classes = useStyles();
   const { values, touched, errors, setFieldValue, handleChange, handleBlur } =
     useFormikContext<PlateFormValues>();
 
@@ -78,21 +23,21 @@ function PlateInfoForm() {
   };
 
   return (
-    <div className={classes.plateInfo}>
-      <List className={classes.selectedProducts}>
+    <div className="grid grid-cols-2 gap-x-3 items-center tablet:grid-cols-4">
+      <List className="col-span-2 tablet:col-span-4">
         {values.products.map((product) => (
           <ProductListItem key={product.id} product={product} />
         ))}
-        {!!values.products.length && <Divider />}
+        {!!values.products.length && <Divider className="!my-4" />}
       </List>
       <CustomToggleButton
-        className={classes.material}
+        className="col-span-2"
         value={values.material}
         onChange={handleChangeMaterial}
         options={materialOptions}
       />
       <Input
-        className={classes.name}
+        className="col-span-2"
         name="name"
         label={t('name')}
         value={values.name}
@@ -102,7 +47,6 @@ function PlateInfoForm() {
         helperText={touched.name && errors.name}
       />
       <Input
-        className={classes.round}
         type="number"
         name="round"
         label={t('round')}
@@ -122,7 +66,6 @@ function PlateInfoForm() {
         autoFocus
       />
       <Input
-        className={classes.length}
         type="number"
         name="length"
         label={t('length')}
@@ -141,7 +84,7 @@ function PlateInfoForm() {
         }}
       />
       <Input
-        className={classes.location}
+        className="col-span-2"
         name="location"
         label={t('location')}
         value={values.location}
@@ -151,7 +94,7 @@ function PlateInfoForm() {
         helperText={touched.location && errors.location}
       />
       <Input
-        className={classes.memo}
+        className="col-span-2 tablet:col-span-4"
         name="memo"
         label={t('memo')}
         value={values.memo}

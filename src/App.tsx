@@ -1,18 +1,17 @@
 import Loading from 'components/Loading';
 import { DEFAULT_PAGE, Path } from 'const';
-import AccountPage from 'features/account/AccountPage';
 import { useAuth, useRefreshLoginMutation } from 'features/auth/authHook';
-import LoginPage from 'features/auth/LoginPage';
-import RegisterPage from 'features/auth/RegisterPage';
-import DashboardPage from 'features/dashboard/DashboardPage';
-// import DeliveryPage from 'features/delivery/DeliveryPage';
 import Notifier from 'features/notification/Notifier';
-import PlatePage from 'features/plate/PlatePage';
-import ProductPage from 'features/product/ProductPage';
-import QuotePage from 'features/quote/QuotePage';
-import SettingsPage from 'features/settings/SettingsPage';
-import UsersPage from 'features/users/UsersPage';
-import WorkOrderPage from 'features/workOrder/WorkOrderPage';
+import AccountPage from 'ui/pages/account/AccountPage';
+import LoginPage from 'ui/pages/auth/LoginPage';
+import RegisterPage from 'ui/pages/auth/RegisterPage';
+import DashboardPage from 'ui/pages/dashboard/DashboardPage';
+import PlatePage from 'ui/pages/plate/PlatePage';
+import ProductPage from 'ui/pages/product/ProductPage';
+// import QuotePage from 'ui/pages/quote/QuotePage';
+import SettingsPage from 'ui/pages/settings/SettingsPage';
+import UsersPage from 'ui/pages/users/UsersPage';
+import WorkOrderPage from 'ui/pages/workOrder/WorkOrderPage';
 import React, { ComponentType, useEffect } from 'react';
 import { Redirect, Route, Switch } from 'react-router';
 
@@ -61,7 +60,7 @@ function App() {
         <PublicRoute path={Path.REGISTER} component={RegisterPage} />
         <PrivateRoute path={Path.DASHBOARD} component={DashboardPage} />
         <PrivateRoute path={Path.ACCOUNTS} component={AccountPage} />
-        <PrivateRoute path={Path.QUOTES} component={QuotePage} />
+        {/* <PrivateRoute path={Path.QUOTES} component={QuotePage} /> */}
         <PrivateRoute path={Path.PRODUCTS} component={ProductPage} />
         <PrivateRoute path={Path.PLATES} component={PlatePage} />
         <PrivateRoute path={Path.WORK_ORDERS} component={WorkOrderPage} />

@@ -1,33 +1,7 @@
 import classnames from 'classnames';
 import React, { ChangeEvent } from 'react';
-
-import {
-  createStyles,
-  makeStyles,
-  Slider,
-  SliderProps,
-  Theme,
-  Typography,
-} from '@material-ui/core';
-
+import { Slider, SliderProps } from '@mui/material';
 import Input from './Input';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    rangeSlider: {
-      padding: theme.spacing(1),
-    },
-    label: {
-      display: 'flex',
-      justifyContent: 'space-between',
-    },
-    numberInputs: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-    },
-  }),
-);
 
 export interface RangeSliderProps extends Omit<SliderProps, 'value' | 'onChange'> {
   className?: string;
@@ -49,8 +23,6 @@ function RangeSlider({
   showNumberInput = false,
   ...props
 }: RangeSliderProps) {
-  const classes = useStyles();
-
   const getValuesDisplay = () => {
     if (!values || !props.min || !props.max) {
       return '';
@@ -62,7 +34,7 @@ function RangeSlider({
     return `${min} ~ ${max}`;
   };
 
-  const handleChange = (e: ChangeEvent<{}>, newValue: number | number[]) => {
+  const handleChange = (e: Event, newValue: number | number[]) => {
     onChange(newValue as number[]);
   };
 
@@ -73,15 +45,15 @@ function RangeSlider({
   };
 
   return (
-    <div className={classnames([className, classes.rangeSlider])}>
+    <div className={classnames('p-2', className)}>
       {label && (
-        <div className={classes.label}>
-          <Typography variant="subtitle1">{label}</Typography>
-          {!hideValuesDisplay && <Typography variant="caption">{getValuesDisplay()}</Typography>}
+        <div className="flex justify-between">
+          <span>{label}</span>
+          {!hideValuesDisplay && <span className="text-xs">{getValuesDisplay()}</span>}
         </div>
       )}
       {showNumberInput && (
-        <div className={classes.numberInputs}>
+        <div className="flex justify-between items-center">
           <Input
             type="number"
             value={values[0]}

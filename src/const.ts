@@ -1,16 +1,15 @@
 import { ElementType } from 'react';
 
-import { grey, red, yellow } from '@material-ui/core/colors';
+import { grey, red, yellow } from '@mui/material/colors';
 import {
   Apartment,
   Build,
   CameraRoll,
   Dashboard,
-  MonetizationOn,
   Person,
   PhotoLibrary,
   Settings,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import { PlateFilter } from 'features/plate/interface';
 import { ProductFilter } from 'features/product/interface';
 import { format, subDays } from 'date-fns';
@@ -22,11 +21,9 @@ export enum Path {
   REGISTER = '/register',
   DASHBOARD = '/dashboard',
   ACCOUNTS = '/accounts',
-  QUOTES = '/quotes',
   PRODUCTS = '/products',
   PLATES = '/plates',
   WORK_ORDERS = '/workOrders',
-  // DELIVERY = '/delivery',
   USERS = '/users',
   SETTINGS = '/settings',
 }
@@ -70,7 +67,9 @@ export enum Permissions {
 
 export enum AccountListItemHeight {
   MOBILE = 72,
-  TABLET = 48,
+  TABLET = 72,
+  LAPTOP = 48,
+  DESKTOP = 48,
 }
 
 export enum QuoteListItemHeight {
@@ -80,21 +79,25 @@ export enum QuoteListItemHeight {
 }
 
 export enum ProductListItemHeight {
-  MOBILE = 71 + 16,
-  TABLET = 47 + 16,
-  DESKTOP = 48,
+  MOBILE = 84 + 16,
+  TABLET = 84 + 16,
+  LAPTOP = 56 + 16,
+  DESKTOP = 36 + 16,
 }
 
 export enum PlateListItemHeight {
-  MOBILE = 64,
-  TABLET = 73,
-  DESKTOP = 48,
+  MOBILE = 52 + 16,
+  TABLET = 52 + 16,
+  LAPTOP = 52 + 16,
+  DESKTOP = 52 + 16,
 }
 
 export enum WorkOrderListItemHeight {
-  MOBILE = 275 + 16,
-  TABLET = 129 + 16,
-  DESKTOP = 72 + 16,
+  MOBILE = 228 + 16,
+  TABLET = 200 + 16,
+  LAPTOP = 216 + 16,
+  DESKTOP = 136 + 16,
+  LARGER_DESKTOP = 68 + 16,
 }
 
 export enum DeliveryListItemHeight {
@@ -232,11 +235,9 @@ export const NAV_WIDTH = 240;
 export const NAV_ICONS: { [key: string]: ElementType } = {
   [Path.DASHBOARD]: Dashboard,
   [Path.ACCOUNTS]: Apartment,
-  [Path.QUOTES]: MonetizationOn,
   [Path.PRODUCTS]: PhotoLibrary,
   [Path.PLATES]: CameraRoll,
   [Path.WORK_ORDERS]: Build,
-  // [Path.DELIVERY]: LocalShipping,
   [Path.USERS]: Person,
   [Path.SETTINGS]: Settings,
 };
@@ -276,6 +277,14 @@ export const DELIVERY_METHOD_TEXT: { [key: string]: string } = {
   [DeliveryMethod.DIRECT]: '직납',
   [DeliveryMethod.COURIER]: '택배',
   [DeliveryMethod.EXPRESS]: '퀵/화물',
+};
+
+export const WORK_ORDER_STATUS_COLOR: { [key in WorkOrderStatus]: string } = {
+  [WorkOrderStatus.NOT_STARTED]: 'red',
+  [WorkOrderStatus.EXTRUDING]: 'orange',
+  [WorkOrderStatus.PRINTING]: 'yellow',
+  [WorkOrderStatus.CUTTING]: 'emerald',
+  [WorkOrderStatus.COMPLETED]: 'gray',
 };
 
 export const DEFAULT_PAGE = Path.DASHBOARD;

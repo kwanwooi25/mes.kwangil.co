@@ -1,8 +1,6 @@
-import { DialogActions, DialogContent, Theme, createStyles, makeStyles } from '@material-ui/core';
-
 import CustomListSubHeader from 'components/CustomListSubHeader';
 import Dialog from 'features/dialog/Dialog';
-import DoneIcon from '@material-ui/icons/Done';
+import DoneIcon from '@mui/icons-material/Done';
 import { PlateDto } from 'features/plate/interface';
 import ProductName from 'components/ProductName';
 import React from 'react';
@@ -14,20 +12,6 @@ import { format } from 'date-fns';
 import { DATE_FORMAT } from 'const';
 import DetailField from '../DetailField';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    plateDetailContent: {
-      padding: theme.spacing(0, 2),
-    },
-    buttons: {
-      padding: theme.spacing(2, 3),
-    },
-    productName: {
-      fontSize: theme.typography.body1.fontSize,
-    },
-  }),
-);
-
 export interface PlateDetailDialogProps {
   plate: PlateDto;
   onClose: () => void;
@@ -35,12 +19,11 @@ export interface PlateDetailDialogProps {
 
 function PlateDetailDialog({ plate, onClose }: PlateDetailDialogProps) {
   const { t } = useTranslation('plates');
-  const classes = useStyles();
   const { name, material, location, memo, products = [], createdAt, updatedAt } = plate;
 
   return (
     <Dialog fullWidth open onClose={onClose} title={getPlateSize(plate)} subTitle={name}>
-      <DialogContent className={classes.plateDetailContent}>
+      <Dialog.Content>
         <DetailField label={t('material')} value={`${t(material.toLowerCase())}`} />
         <DetailField label={t('location')} value={location} />
         <DetailField label={t('memo')} value={memo} />
@@ -64,7 +47,6 @@ function PlateDetailDialog({ plate, onClose }: PlateDetailDialogProps) {
                     key={product.id}
                     product={product}
                     productName={getProductTitle(product)}
-                    linkClassName={classes.productName}
                     maxWidth="100%"
                   />
                 }
@@ -72,12 +54,12 @@ function PlateDetailDialog({ plate, onClose }: PlateDetailDialogProps) {
             ))}
           </>
         )}
-      </DialogContent>
-      <DialogActions className={classes.buttons}>
+      </Dialog.Content>
+      <Dialog.Actions>
         <RoundedButton autoFocus onClick={onClose} color="primary" startIcon={<DoneIcon />}>
           {t('common:confirm')}
         </RoundedButton>
-      </DialogActions>
+      </Dialog.Actions>
     </Dialog>
   );
 }

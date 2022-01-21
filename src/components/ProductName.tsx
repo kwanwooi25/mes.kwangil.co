@@ -1,27 +1,11 @@
-import classnames from 'classnames';
+import classNames from 'classnames';
 import { useDialog } from 'features/dialog/dialogHook';
 import { ProductDto } from 'features/product/interface';
 import { useProduct } from 'features/product/useProducts';
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { highlight } from 'utils/string';
-
-import { createStyles, Link, makeStyles } from '@material-ui/core';
-
+import { LoadingButton } from '@mui/lab';
 import ProductDetailDialog from './dialog/ProductDetail';
-import Loading from './Loading';
-
-const useStyles = makeStyles(() =>
-  createStyles({
-    productNameLink: {
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      textAlign: 'left',
-      fontSize: '16px',
-    },
-    productName: {},
-  }),
-);
 
 export interface ProductNameProps {
   className?: string;
@@ -37,13 +21,15 @@ function ProductName({
   className,
   linkClassName,
   searchText = '',
-  maxWidth = 240,
   productName,
 }: ProductNameProps) {
-  const classes = useStyles();
   const { openDialog, closeDialog } = useDialog();
-
   const { refetch, isFetching } = useProduct(product.id);
+
+  const productNameHTML = useMemo(
+    () => highlight(productName || product.name, searchText),
+    [productName, product.name, searchText],
+  );
 
   const openDetailDialog = async () => {
     refetch().then((res) =>
@@ -52,24 +38,20 @@ function ProductName({
   };
 
   return (
-    <div className={className}>
-      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-      <Link
-        className={classnames(classes.productNameLink, linkClassName)}
-        component="button"
-        type="button"
-        variant="h6"
-        color="initial"
-        onClick={openDetailDialog}
-        style={{ maxWidth }}
-      >
-        {isFetching && <Loading size="16px" />}
-        <span
-          className={classes.productName}
-          dangerouslySetInnerHTML={{ __html: highlight(productName || product.name, searchText) }}
-        />
-      </Link>
-    </div>
+    <LoadingButton
+      className={classNames('!justify-start !min-w-0 max-w-max !text-base', className)}
+      onClick={openDetailDialog}
+      disabled={isFetching}
+      loading={isFetching}
+      loadingPosition="end"
+      endIcon={<span />}
+      color="inherit"
+    >
+      <p
+        className={classNames('truncate', linkClassName)}
+        dangerouslySetInnerHTML={{ __html: productNameHTML }}
+      />
+    </LoadingButton>
   );
 }
 

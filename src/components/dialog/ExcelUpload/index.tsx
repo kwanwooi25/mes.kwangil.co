@@ -6,33 +6,8 @@ import React, { ChangeEvent, createRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getExcelFileReader } from 'utils/excel';
 
-import {
-  createStyles,
-  DialogActions,
-  DialogContent,
-  IconButton,
-  makeStyles,
-  TextField,
-  Theme,
-  Tooltip,
-} from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
-import DoneIcon from '@material-ui/icons/Done';
-import GetAppIcon from '@material-ui/icons/GetApp';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    content: {
-      display: 'grid',
-      gridTemplateColumns: 'auto 1fr auto auto',
-      alignItems: 'center',
-      gridGap: theme.spacing(2),
-    },
-    buttons: {
-      padding: theme.spacing(2, 3),
-    },
-  }),
-);
+import { IconButton, TextField, Tooltip } from '@mui/material';
+import { Close, Done, GetApp } from '@mui/icons-material';
 
 const templates = {
   [ExcelVariant.ACCOUNT]: `${process.env.PUBLIC_URL}/업체대량등록.xlsx`,
@@ -47,7 +22,6 @@ export interface ExcelUploadDialogProps {
 }
 
 function ExcelUploadDialog({ variant, onSave, onClose = () => {} }: ExcelUploadDialogProps) {
-  const classes = useStyles();
   const { t } = useTranslation('common');
 
   const [fileName, setFileName] = useState<string>('');
@@ -91,7 +65,7 @@ function ExcelUploadDialog({ variant, onSave, onClose = () => {} }: ExcelUploadD
   return (
     <Dialog title={t('createBulk')} open onClose={handleClose}>
       {isUploading && <Loading />}
-      <DialogContent dividers className={classes.content}>
+      <Dialog.Content dividers className="grid grid-cols-[auto_1fr_auto_auto] gap-x-4">
         <div>
           <input
             ref={fileUploadRef}
@@ -105,33 +79,33 @@ function ExcelUploadDialog({ variant, onSave, onClose = () => {} }: ExcelUploadD
             {t('selectFile')}
           </RoundedButton>
         </div>
-        <TextField disabled value={fileName} />
+        <TextField disabled variant="standard" value={fileName} />
         <Tooltip title={t('downloadTemplate') as string}>
           <IconButton href={template} download>
-            <GetAppIcon />
+            <GetApp />
           </IconButton>
         </Tooltip>
         <Tooltip title={t('removeFile') as string}>
           <span>
             <IconButton onClick={resetForm} disabled={!fileName}>
-              <CloseIcon />
+              <Close />
             </IconButton>
           </span>
         </Tooltip>
-      </DialogContent>
-      <DialogActions className={classes.buttons}>
-        <RoundedButton onClick={handleClose} variant="outlined" startIcon={<CloseIcon />}>
+      </Dialog.Content>
+      <Dialog.Actions>
+        <RoundedButton onClick={handleClose} variant="outlined" startIcon={<Close />}>
           {t('cancel')}
         </RoundedButton>
         <RoundedButton
           onClick={handleSave}
           color="primary"
-          startIcon={<DoneIcon />}
+          startIcon={<Done />}
           disabled={!dataToCreate.length || isUploading}
         >
           {t('save')}
         </RoundedButton>
-      </DialogActions>
+      </Dialog.Actions>
     </Dialog>
   );
 }

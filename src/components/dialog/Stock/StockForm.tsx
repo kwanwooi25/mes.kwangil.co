@@ -6,7 +6,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { getProductSize } from 'utils/product';
 
-import { createStyles, Divider, makeStyles, Theme, Typography } from '@material-ui/core';
+import { Divider, Typography } from '@mui/material';
+import { Theme } from '@mui/material/styles';
+import { createStyles, makeStyles } from '@mui/styles';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

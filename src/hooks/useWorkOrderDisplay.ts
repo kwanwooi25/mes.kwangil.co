@@ -1,32 +1,13 @@
 /* eslint-disable no-nested-ternary */
+import classNames from 'classnames';
 import { DATE_FORMAT, PrintSide, WorkOrderStatus } from 'const';
 import { differenceInBusinessDays, format, parseISO } from 'date-fns';
 import { WorkOrderDto } from 'features/workOrder/interface';
 import { TFunction } from 'i18next';
-import { theme } from 'lib/muiTheme';
 import { capitalize } from 'lodash';
-import { CSSProperties } from 'react';
 import { getProductSize, getProductSummary, getProductTitle } from 'utils/product';
 import { formatDigit } from 'utils/string';
 import { getWeight } from 'utils/workOrder';
-
-import { orange, red, yellow } from '@material-ui/core/colors';
-
-const COLORS = {
-  [WorkOrderStatus.NOT_STARTED]: theme.palette.NOT_STARTED.light,
-  [WorkOrderStatus.EXTRUDING]: theme.palette.EXTRUDING.light,
-  [WorkOrderStatus.PRINTING]: theme.palette.PRINTING.light,
-  [WorkOrderStatus.CUTTING]: theme.palette.CUTTING.light,
-  [WorkOrderStatus.COMPLETED]: theme.palette.COMPLETED.light,
-};
-
-const BACKGROUND_COLORS = {
-  [WorkOrderStatus.NOT_STARTED]: theme.palette.NOT_STARTED.dark,
-  [WorkOrderStatus.EXTRUDING]: theme.palette.EXTRUDING.dark,
-  [WorkOrderStatus.PRINTING]: theme.palette.PRINTING.dark,
-  [WorkOrderStatus.CUTTING]: theme.palette.CUTTING.dark,
-  [WorkOrderStatus.COMPLETED]: theme.palette.COMPLETED.dark,
-};
 
 export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
   const { product } = workOrder;
@@ -62,24 +43,36 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
 
   const deliveryMethod = t(`workOrders:deliveryMethod${capitalize(workOrder.deliveryMethod)}`);
   const deliverByRemaining = differenceInBusinessDays(new Date(workOrder.deliverBy), new Date());
-  const deliverByStyle: CSSProperties = {
-    color: isCompleted
-      ? 'inherit'
+  const deliverByClassName = [
+    isCompleted
+      ? ''
       : deliverByRemaining <= 3
-      ? red[800]
+      ? 'text-red-700'
       : deliverByRemaining <= 5
-      ? orange[800]
+      ? 'text-orange-700'
       : deliverByRemaining <= 7
-      ? yellow[800]
-      : 'inherit',
-    fontWeight: !isCompleted && deliverByRemaining <= 7 ? 'bold' : 'normal',
-  };
+      ? 'text-yellow-700'
+      : '',
+    !isCompleted && deliverByRemaining <= 7 ? 'bold' : 'normal',
+  ].join(' ');
 
   const workOrderStatus = t(`workOrders:workOrderStatus:${workOrder.workOrderStatus}`);
-  const workOrderStatusStyle: CSSProperties = {
-    color: COLORS[workOrder.workOrderStatus],
-    backgroundColor: BACKGROUND_COLORS[workOrder.workOrderStatus],
-  };
+  const workOrderStatusClassName = classNames(
+    {
+      '!bg-red-300/20': workOrder.workOrderStatus === WorkOrderStatus.NOT_STARTED,
+      '!bg-orange-300/20': workOrder.workOrderStatus === WorkOrderStatus.EXTRUDING,
+      '!bg-yellow-300/20': workOrder.workOrderStatus === WorkOrderStatus.PRINTING,
+      '!bg-emerald-300/20': workOrder.workOrderStatus === WorkOrderStatus.CUTTING,
+      '!bg-gray-300/20': workOrder.workOrderStatus === WorkOrderStatus.COMPLETED,
+    },
+    {
+      '!text-red-700': workOrder.workOrderStatus === WorkOrderStatus.NOT_STARTED,
+      '!text-orange-700': workOrder.workOrderStatus === WorkOrderStatus.EXTRUDING,
+      '!text-yellow-700': workOrder.workOrderStatus === WorkOrderStatus.PRINTING,
+      '!text-emerald-700': workOrder.workOrderStatus === WorkOrderStatus.CUTTING,
+      '!text-gray-700': workOrder.workOrderStatus === WorkOrderStatus.COMPLETED,
+    },
+  );
 
   const isPrint = product.printSide !== PrintSide.NONE;
   const plateStatus = t(`workOrders:plateStatus${capitalize(workOrder.plateStatus)}`);
@@ -98,7 +91,7 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
     workOrderNumber,
     orderedAt,
     deliverBy,
-    deliverByStyle,
+    deliverByClassName,
     isCompleted,
     completedAt,
     orderQuantity,
@@ -110,7 +103,7 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
     isPrint,
     plateStatus,
     workOrderStatus,
-    workOrderStatusStyle,
+    workOrderStatusClassName,
 
     accountName,
     productName,

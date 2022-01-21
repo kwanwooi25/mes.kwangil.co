@@ -1,7 +1,5 @@
-import { DialogActions, DialogContent } from '@material-ui/core';
-
 import Dialog from 'features/dialog/Dialog';
-import DoneIcon from '@material-ui/icons/Done';
+import DoneIcon from '@mui/icons-material/Done';
 import React from 'react';
 import RoundedButton from 'components/RoundedButton';
 import { WorkOrderDto } from 'features/workOrder/interface';
@@ -18,12 +16,12 @@ function WorkOrderDetailDialog({ workOrder, onClose }: WorkOrderDetailDialogProp
 
   return (
     <Dialog fullWidth open onClose={onClose} title={workOrder.id}>
-      <DialogContent>{!!workOrder && <WorkOrderDetails workOrder={workOrder} />}</DialogContent>
-      <DialogActions>
+      <Dialog.Content>{!!workOrder && <WorkOrderDetails workOrder={workOrder} />}</Dialog.Content>
+      <Dialog.Actions>
         <RoundedButton autoFocus onClick={onClose} color="primary" startIcon={<DoneIcon />}>
           {t('common:confirm')}
         </RoundedButton>
-      </DialogActions>
+      </Dialog.Actions>
     </Dialog>
   );
 }

@@ -5,49 +5,9 @@ import { AccountOption } from 'features/account/interface';
 import { useFormikContext } from 'formik';
 import React, { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import { createStyles, makeStyles, Theme } from '@material-ui/core';
 import { ProductFormValues } from 'features/product/interface';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    baseInfo: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(3, 1fr)',
-      gridTemplateAreas: `
-      "account account account"
-      "name name name"
-      "thickness length width"
-      `,
-      gridColumnGap: theme.spacing(2),
-      [theme.breakpoints.up('sm')]: {
-        gridTemplateColumns: 'repeat(6, 1fr)',
-        gridTemplateAreas: `
-          "account account account name name name"
-          "thickness thickness length length width width"
-        `,
-      },
-    },
-    account: {
-      gridArea: 'account',
-    },
-    name: {
-      gridArea: 'name',
-    },
-    thickness: {
-      gridArea: 'thickness',
-    },
-    length: {
-      gridArea: 'length',
-    },
-    width: {
-      gridArea: 'width',
-    },
-  }),
-);
-
 function BaseInfoForm() {
-  const classes = useStyles();
   const { t } = useTranslation('products');
   const { values, touched, errors, handleChange, handleBlur, setFieldValue } =
     useFormikContext<ProductFormValues>();
@@ -57,16 +17,16 @@ function BaseInfoForm() {
   };
 
   return (
-    <div className={classes.baseInfo}>
+    <div className="grid grid-cols-6 gap-x-3">
       <SelectAccount
-        className={classes.account}
+        className="col-span-3"
         value={values.account}
         onChange={handleChangeAccount}
         onBlur={handleBlur}
         errorMessage={touched.account ? errors.account : ''}
       />
       <Input
-        className={classes.name}
+        className="col-span-3"
         name="name"
         label={t('name')}
         value={values.name}
@@ -76,7 +36,7 @@ function BaseInfoForm() {
         helperText={touched.name && errors.name}
       />
       <Input
-        className={classes.thickness}
+        className="col-span-2"
         type="number"
         name="thickness"
         label={t('thickness')}
@@ -92,7 +52,7 @@ function BaseInfoForm() {
         }}
       />
       <Input
-        className={classes.length}
+        className="col-span-2"
         type="number"
         name="length"
         label={t('length')}
@@ -104,7 +64,7 @@ function BaseInfoForm() {
         inputProps={{ step: ProductLength.STEP, min: ProductLength.MIN, max: ProductLength.MAX }}
       />
       <Input
-        className={classes.width}
+        className="col-span-2"
         type="number"
         name="width"
         label={t('width')}

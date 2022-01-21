@@ -8,10 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { formatDate } from 'utils/date';
 import { getProductTitle } from 'utils/product';
 import { formatDigit } from 'utils/string';
-
-import { DialogActions, DialogContent } from '@material-ui/core';
-import DoneIcon from '@material-ui/icons/Done';
-
+import { Done } from '@mui/icons-material';
 import DetailField from '../DetailField';
 
 export interface WorkOrderHistoryDialogProps {
@@ -26,24 +23,24 @@ function WorkOrderHistoryDialog({ product, workOrders, onClose }: WorkOrderHisto
 
   return (
     <Dialog fullWidth open onClose={onClose} title={title}>
-      <DialogContent>
+      <Dialog.Content>
         {workOrders.length ? (
           workOrders.map(({ id, orderedAt, orderQuantity }) => (
             <DetailField
               key={id}
               label={formatDate(orderedAt)}
-              value={`${formatDigit(orderQuantity)}${t('common:sheetCount')}`}
+              value={t('common:sheetCount', { countString: formatDigit(orderQuantity) }) as string}
             />
           ))
         ) : (
           <ListEmpty message={t('noHistory')} />
         )}
-      </DialogContent>
-      <DialogActions>
-        <RoundedButton autoFocus onClick={onClose} color="primary" startIcon={<DoneIcon />}>
+      </Dialog.Content>
+      <Dialog.Actions>
+        <RoundedButton autoFocus onClick={onClose} color="primary" startIcon={<Done />}>
           {t('common:confirm')}
         </RoundedButton>
-      </DialogActions>
+      </Dialog.Actions>
     </Dialog>
   );
 }

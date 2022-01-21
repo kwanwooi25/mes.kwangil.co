@@ -13,44 +13,14 @@ import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
 import { getInitialProductToUpdate, getUpdateProductDto } from 'utils/product';
 import { array, boolean, number, object, string } from 'yup';
-
-import {
-  createStyles,
-  DialogActions,
-  DialogContent,
-  makeStyles,
-  Tab,
-  Tabs,
-  Theme,
-} from '@material-ui/core';
-import { Close, Save } from '@material-ui/icons';
-
+import { Tab, Tabs } from '@mui/material';
+import { Close, Save } from '@mui/icons-material';
 import BaseInfoForm from './BaseInfoForm';
 import CuttingForm from './CuttingForm';
 import ExtrusionForm from './ExtrusionForm';
 import ImageForm from './ImageForm';
 import PackagingForm from './PackagingForm';
 import PrintForm from './PrintForm';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    tab: {
-      minWidth: '90px',
-    },
-    dialogContent: {
-      padding: theme.spacing(1, 3),
-      minHeight: '320px',
-    },
-    actionButtons: {
-      padding: theme.spacing(3),
-      display: 'flex',
-      justifyContent: 'space-between',
-      '& button': {
-        maxWidth: '120px',
-      },
-    },
-  }),
-);
 
 export interface EditProductDialogProps {
   product: ProductDto;
@@ -59,7 +29,6 @@ export interface EditProductDialogProps {
 
 function EditProductDialog({ product, onClose }: EditProductDialogProps) {
   const { t } = useTranslation('products');
-  const classes = useStyles();
   const [tabIndex, setTabIndex] = useState<number>(0);
   const { isMobileLayout } = useScreenSize();
   const submitButtonRef = createRef<HTMLButtonElement>();
@@ -192,10 +161,10 @@ function EditProductDialog({ product, onClose }: EditProductDialogProps) {
         centered
       >
         {forms.map(({ label }) => (
-          <Tab key={label} label={label} className={classes.tab} />
+          <Tab key={label} label={label} className="min-w-[90px]" />
         ))}
       </Tabs>
-      <DialogContent dividers className={classes.dialogContent}>
+      <Dialog.Content dividers className="min-h-[320px]">
         <Formik
           initialValues={initialValues}
           validationSchema={form.validationSchema}
@@ -207,13 +176,12 @@ function EditProductDialog({ product, onClose }: EditProductDialogProps) {
             <button ref={submitButtonRef} type="submit" style={{ display: 'none' }} />
           </Form>
         </Formik>
-      </DialogContent>
-      <DialogActions className={classes.actionButtons}>
+      </Dialog.Content>
+      <Dialog.Actions>
         <RoundedButton
           color="primary"
           variant="outlined"
           size="large"
-          fullWidth
           startIcon={<Close />}
           onClick={onClose}
         >
@@ -222,7 +190,6 @@ function EditProductDialog({ product, onClose }: EditProductDialogProps) {
         <RoundedButton
           color="primary"
           size="large"
-          fullWidth
           endIcon={<Save />}
           onClick={handleClickSave}
           disabled={isUpdating}
@@ -230,7 +197,7 @@ function EditProductDialog({ product, onClose }: EditProductDialogProps) {
           {isUpdating && <Loading />}
           {t('common:save')}
         </RoundedButton>
-      </DialogActions>
+      </Dialog.Actions>
     </Dialog>
   );
 }

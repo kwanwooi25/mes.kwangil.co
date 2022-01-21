@@ -3,40 +3,9 @@ import RoundedButton from 'components/RoundedButton';
 import { Form, Formik, FormikConfig, FormikHelpers, FormikValues } from 'formik';
 import React, { createRef, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import {
-  createStyles,
-  DialogActions,
-  DialogContent,
-  makeStyles,
-  Step,
-  StepLabel,
-  Stepper,
-  Theme,
-} from '@material-ui/core';
-import DoneIcon from '@material-ui/icons/Done';
-import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    counterStepper: {
-      padding: theme.spacing(0, 3, 2),
-    },
-    dialogContent: {
-      padding: theme.spacing(1, 3),
-      minHeight: '320px',
-    },
-    actionButtons: {
-      padding: theme.spacing(3),
-      display: 'flex',
-      justifyContent: 'space-between',
-      '& button': {
-        maxWidth: '120px',
-      },
-    },
-  }),
-);
+import { Step, StepLabel, Stepper } from '@mui/material';
+import { Done, NavigateBefore, NavigateNext } from '@mui/icons-material';
+import Dialog from 'features/dialog/Dialog';
 
 interface FormikStepProps<Values>
   extends Pick<FormikConfig<Values>, 'children' | 'validationSchema'> {
@@ -66,7 +35,6 @@ function FormikStepper<Values extends FormikValues>({
   children,
   ...props
 }: FormikStepperProps<Values>) {
-  const classes = useStyles();
   const { t } = useTranslation('common');
   const submitButtonRef = createRef<HTMLButtonElement>();
 
@@ -103,7 +71,7 @@ function FormikStepper<Values extends FormikValues>({
   return (
     <>
       {stepperType === StepperType.DEFAULT && (
-        <Stepper activeStep={step} alternativeLabel>
+        <Stepper className="mb-4" activeStep={step} alternativeLabel>
           {childrenArray.map(({ props: { label } }) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
@@ -112,11 +80,11 @@ function FormikStepper<Values extends FormikValues>({
         </Stepper>
       )}
       {stepperType === StepperType.COUNTER && (
-        <div className={classes.counterStepper}>
+        <div className="px-6 pb-4">
           {step + 1} / {lastStep + 1}
         </div>
       )}
-      <DialogContent dividers className={classes.dialogContent}>
+      <Dialog.Content dividers className="min-h-[320px]">
         <Formik
           {...props}
           validationSchema={currentForm?.props.validationSchema}
@@ -128,14 +96,13 @@ function FormikStepper<Values extends FormikValues>({
             <button ref={submitButtonRef} type="submit" style={{ display: 'none' }} />
           </Form>
         </Formik>
-      </DialogContent>
-      <DialogActions className={classes.actionButtons}>
+      </Dialog.Content>
+      <Dialog.Actions className="!justify-between">
         <RoundedButton
           color="primary"
           variant="outlined"
           size="large"
-          fullWidth
-          startIcon={<NavigateBeforeIcon />}
+          startIcon={<NavigateBefore />}
           onClick={moveToPrevStep}
           disabled={isFirstStep || currentForm?.props.isPrevButtonDisabled}
         >
@@ -144,14 +111,13 @@ function FormikStepper<Values extends FormikValues>({
         <RoundedButton
           color="primary"
           size="large"
-          fullWidth
-          startIcon={isLastStep && <DoneIcon />}
-          endIcon={!isLastStep && <NavigateNextIcon />}
+          startIcon={isLastStep && <Done />}
+          endIcon={!isLastStep && <NavigateNext />}
           onClick={handleClickNext}
         >
           {t(isLastStep ? 'save' : 'next')}
         </RoundedButton>
-      </DialogActions>
+      </Dialog.Actions>
     </>
   );
 }

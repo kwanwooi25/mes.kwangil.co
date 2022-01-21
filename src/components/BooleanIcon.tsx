@@ -1,28 +1,16 @@
-import { Theme, createStyles, makeStyles } from '@material-ui/core';
-
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import { CheckCircleOutline, HighlightOff } from '@mui/icons-material';
 import React from 'react';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    yes: {
-      color: theme.palette.success.main,
-    },
-  }),
-);
 
 export interface BooleanIconProps {
   value: boolean;
-  size?: 'default' | 'inherit' | 'large' | 'small';
+  size?: 'medium' | 'inherit' | 'large' | 'small';
 }
 
-function BooleanIcon({ value, size = 'default' }: BooleanIconProps) {
-  const classes = useStyles();
+function BooleanIcon({ value, size = 'medium' }: BooleanIconProps) {
   return value ? (
-    <CheckCircleOutlineIcon className={classes.yes} fontSize={size} />
+    <CheckCircleOutline color="success" fontSize={size} />
   ) : (
-    <HighlightOffIcon color="error" fontSize={size} />
+    <HighlightOff color="error" fontSize={size} />
   );
 }
 

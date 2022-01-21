@@ -4,7 +4,7 @@ import { useAccountOptions } from 'features/account/useAccounts';
 import React, { ChangeEvent, createRef, FocusEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete } from '@mui/material';
 
 import Input from './Input';
 
@@ -42,7 +42,7 @@ function SelectAccount({ className, value, onChange, onBlur, errorMessage }: Sel
       onClose={closeAccountOptions}
       options={accountOptions}
       getOptionLabel={(option) => option.name}
-      getOptionSelected={(option) => option.id === value?.id}
+      isOptionEqualToValue={(option) => option.id === value?.id}
       value={value}
       onChange={onChange}
       onBlur={onBlur}

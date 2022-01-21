@@ -9,36 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { getProductSize } from 'utils/product';
 import { formatDigit } from 'utils/string';
 
-import {
-  Checkbox,
-  createStyles,
-  FormControlLabel,
-  makeStyles,
-  Theme,
-  Typography,
-} from '@material-ui/core';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    productDetail: {
-      display: 'flex',
-    },
-    productImage: {
-      maxHeight: '110px',
-      marginRight: theme.spacing(1),
-    },
-    orderDetail: {
-      display: 'flex',
-      flexDirection: 'column',
-    },
-    completeForm: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(2, 1fr) auto',
-      gridGap: theme.spacing(2),
-      alignItems: 'center',
-    },
-  }),
-);
+import { Checkbox, FormControlLabel } from '@mui/material';
 
 export interface WorkOrderCompleteFormProps {
   index: number;
@@ -47,7 +18,6 @@ export interface WorkOrderCompleteFormProps {
 
 function WorkOrderCompleteForm({ index, onChangeError }: WorkOrderCompleteFormProps) {
   const { t } = useTranslation('workOrders');
-  const classes = useStyles();
   const { values, errors, setFieldValue, setFieldError } = useFormikContext<WorkOrderDto[]>();
 
   const handleChangeCompletedQuantity = (e: ChangeEvent<HTMLInputElement>) => {
@@ -86,18 +56,16 @@ function WorkOrderCompleteForm({ index, onChangeError }: WorkOrderCompleteFormPr
 
   return (
     <>
-      <div className={classes.productDetail}>
-        {productImageUrl && (
-          <img className={classes.productImage} src={productImageUrl} alt="product" />
-        )}
-        <div className={classes.orderDetail}>
-          <Typography variant="body1">{id}</Typography>
-          <Typography variant="caption">{accountName}</Typography>
-          <Typography variant="h6">{productName}</Typography>
-          <Typography variant="h6">{productSize}</Typography>
+      <div className="flex gap-4 pb-4">
+        {productImageUrl && <img className="h-[100px]" src={productImageUrl} alt="product" />}
+        <div className="flex flex-col">
+          <span className="text-base">{id}</span>
+          <span className="text-sm">{accountName}</span>
+          <span className="text-xl">{productName}</span>
+          <span className="text-xl">{productSize}</span>
         </div>
       </div>
-      <div className={classes.completeForm}>
+      <div className="grid grid-cols-[1fr_1fr_auto] gap-x-3 items-center">
         <Input
           type="number"
           name="completedQuantity"
@@ -111,7 +79,7 @@ function WorkOrderCompleteForm({ index, onChangeError }: WorkOrderCompleteFormPr
             setTimeout(() => e.target.select(), 0);
           }}
         />
-        <Typography>/ {orderQuantityText}</Typography>
+        <span>/ {orderQuantityText}</span>
         <FormControlLabel
           control={
             <Checkbox
@@ -121,7 +89,7 @@ function WorkOrderCompleteForm({ index, onChangeError }: WorkOrderCompleteFormPr
               onChange={handleChangeIsComplete}
             />
           }
-          label={t('common:done')}
+          label={t('common:done') as string}
         />
       </div>
     </>

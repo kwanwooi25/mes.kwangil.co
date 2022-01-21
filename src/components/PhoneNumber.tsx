@@ -1,21 +1,5 @@
-import { Link, Theme, createStyles, makeStyles } from '@material-ui/core';
+import { Link } from '@mui/material';
 import React, { ReactElement } from 'react';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    phoneNumber: {
-      display: 'flex',
-      alignItems: 'center',
-      '& a': {
-        color: theme.palette.text.primary,
-        fontSize: theme.typography.body1.fontSize,
-      },
-      '& svg + a': {
-        marginLeft: theme.spacing(1),
-      },
-    },
-  }),
-);
 
 export interface PhoneNumberProps {
   icon?: ReactElement;
@@ -23,12 +7,12 @@ export interface PhoneNumberProps {
 }
 
 function PhoneNumber({ icon, number }: PhoneNumberProps) {
-  const classes = useStyles();
-
   return (
-    <div className={classes.phoneNumber}>
+    <div className="flex items-center text-sm">
       {icon}
-      <Link href={`tel:${number}`}>{number}</Link>
+      <Link href={`tel:${number}`} underline="hover" color="inherit">
+        {number}
+      </Link>
     </div>
   );
 }

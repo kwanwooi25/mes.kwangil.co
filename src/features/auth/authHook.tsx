@@ -46,8 +46,6 @@ export const useAuth = () => {
         return true;
       case Path.ACCOUNTS:
         return permissions.includes(Permissions.ACCOUNT_READ);
-      case Path.QUOTES:
-        return permissions.includes(Permissions.QUOTE_READ);
       case Path.PRODUCTS:
         return permissions.includes(Permissions.PRODUCT_READ);
       case Path.PLATES:

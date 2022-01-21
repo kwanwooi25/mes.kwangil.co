@@ -1,46 +1,7 @@
-import { NAV_WIDTH, SEARCH_PANEL_WIDTH } from 'const';
 import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import {
-  createStyles,
-  Grid,
-  IconButton,
-  makeStyles,
-  Paper,
-  Slide,
-  Theme,
-  Typography,
-} from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    selectionPanel: {
-      position: 'fixed',
-      bottom: 0,
-      left: 0,
-      right: 0,
-      padding: theme.spacing(1),
-      zIndex: theme.zIndex.drawer - 1,
-      borderRadius: theme.spacing(1, 1, 0, 0),
-      [theme.breakpoints.up('md')]: {
-        left: NAV_WIDTH,
-      },
-      [theme.breakpoints.up('xl')]: {
-        right: SEARCH_PANEL_WIDTH,
-      },
-    },
-    panelContent: {
-      width: '100%',
-      margin: 'auto',
-      padding: 0,
-    },
-    panelActions: {
-      marginLeft: 'auto',
-    },
-  }),
-);
+import { IconButton, Paper, Slide } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 export interface SelectionPanelProps {
   isOpen: boolean;
@@ -51,26 +12,21 @@ export interface SelectionPanelProps {
 
 function SelectionPanel({ isOpen, onClose, selectedCount, children }: SelectionPanelProps) {
   const { t } = useTranslation('common');
-  const classes = useStyles();
 
   return (
     <Slide in={isOpen} direction="up">
-      <Paper className={classes.selectionPanel} elevation={4}>
-        <Grid className={classes.panelContent} container alignItems="center" spacing={1}>
-          <Grid item>
+      <Paper className="fixed inset-x-0 bottom-0 z-[1199] p-2 !rounded-t-lg" elevation={4}>
+        <div className="flex justify-between w-full">
+          <div>
             <IconButton aria-label="close" onClick={onClose}>
               <CloseIcon />
             </IconButton>
-          </Grid>
-          <Grid item>
-            <Typography
+            <span
               dangerouslySetInnerHTML={{ __html: t('selectedCount', { count: selectedCount }) }}
             />
-          </Grid>
-          <Grid item className={classes.panelActions}>
-            {children}
-          </Grid>
-        </Grid>
+          </div>
+          <div className="ml-auto">{children}</div>
+        </div>
       </Paper>
     </Slide>
   );

@@ -1,5 +1,4 @@
-import { Checkbox, FormControlLabel, Theme, createStyles, makeStyles } from '@material-ui/core';
-
+import { Checkbox, FormControlLabel } from '@mui/material';
 import CustomNumberFormat from 'components/form/CustomNumberFormat';
 import Input from 'components/form/Input';
 import { PackUnit } from 'const';
@@ -8,56 +7,20 @@ import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ProductFormValues } from 'features/product/interface';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    packaging: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(2, 1fr)',
-      gridTemplateAreas: `
-        "packMaterial packUnit"
-        "packCanDeliverAll packCanDeliverAll"
-        "packMemo packMemo"
-      `,
-      gridColumnGap: theme.spacing(2),
-      [theme.breakpoints.up('sm')]: {
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gridTemplateAreas: `
-          "packMaterial packUnit packCanDeliverAll"
-          "packMemo packMemo packMemo"
-        `,
-      },
-    },
-    packMaterial: {
-      gridArea: 'packMaterial',
-    },
-    packUnit: {
-      gridArea: 'packUnit',
-    },
-    packCanDeliverAll: {
-      gridArea: 'packCanDeliverAll',
-    },
-    packMemo: {
-      gridArea: 'packMemo',
-    },
-  }),
-);
-
 function PackagingForm() {
   const { t } = useTranslation('products');
-  const classes = useStyles();
   const { values, handleChange } = useFormikContext<ProductFormValues>();
 
   return (
-    <div className={classes.packaging}>
+    <div className="grid grid-cols-2 gap-x-3 tablet:grid-cols-4">
       <Input
-        className={classes.packMaterial}
+        className="col-span-2"
         name="packMaterial"
         label={t('packMaterial')}
         value={values.packMaterial}
         onChange={handleChange}
       />
       <Input
-        className={classes.packUnit}
         name="packUnit"
         label={t('packUnit')}
         value={values.packUnit}
@@ -74,7 +37,7 @@ function PackagingForm() {
         }}
       />
       <FormControlLabel
-        className={classes.packCanDeliverAll}
+        className="col-span-2 tablet:col-span-1"
         control={
           <Checkbox
             color="primary"
@@ -83,10 +46,10 @@ function PackagingForm() {
             onChange={handleChange}
           />
         }
-        label={t('packCanDeliverAll')}
+        label={t('packCanDeliverAll') as string}
       />
       <Input
-        className={classes.packMemo}
+        className="col-span-2 tablet:col-span-4"
         name="packMemo"
         label={t('packMemo')}
         value={values.packMemo}

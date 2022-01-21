@@ -1,45 +1,18 @@
-import { Checkbox, FormControlLabel, Theme, createStyles, makeStyles } from '@material-ui/core';
-
+import { Checkbox, FormControlLabel } from '@mui/material';
 import Input from 'components/form/Input';
 import React from 'react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ProductFormValues } from 'features/product/interface';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    extrusion: {
-      display: 'grid',
-      gridTemplateColumns: '1fr auto',
-      gridTemplateAreas: `
-        "extColor extIsAntistatic"
-        "extMemo extMemo"
-      `,
-      gridColumnGap: theme.spacing(2),
-    },
-    extColor: {
-      gridArea: 'extColor',
-    },
-    extIsAntistatic: {
-      gridArea: 'extIsAntistatic',
-      margin: 0,
-    },
-    extMemo: {
-      gridArea: 'extMemo',
-    },
-  }),
-);
-
 function ExtrusionForm() {
   const { t } = useTranslation('products');
-  const classes = useStyles();
   const { values, touched, errors, handleChange, handleBlur } =
     useFormikContext<ProductFormValues>();
 
   return (
-    <div className={classes.extrusion}>
+    <div className="grid grid-cols-[1fr_auto] gap-x-3">
       <Input
-        className={classes.extColor}
         name="extColor"
         label={t('extColor')}
         value={values.extColor}
@@ -49,7 +22,6 @@ function ExtrusionForm() {
         helperText={touched.extColor && errors.extColor}
       />
       <FormControlLabel
-        className={classes.extIsAntistatic}
         control={
           <Checkbox
             color="primary"
@@ -58,10 +30,10 @@ function ExtrusionForm() {
             onChange={handleChange}
           />
         }
-        label={t('extIsAntistatic')}
+        label={t('extIsAntistatic') as string}
       />
       <Input
-        className={classes.extMemo}
+        className="col-span-2"
         name="extMemo"
         label={t('extMemo')}
         value={values.extMemo}

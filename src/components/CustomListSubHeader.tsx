@@ -1,37 +1,21 @@
-import {
-  ListSubheader,
-  ListSubheaderProps,
-  Theme,
-  createStyles,
-  lighten,
-  makeStyles,
-} from '@material-ui/core';
-
-import React from 'react';
+import React, { ReactNode } from 'react';
 import classnames from 'classnames';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    listSubHeader: {
-      background: lighten(theme.palette.primary.light, 0.95),
-      borderRadius: '24px',
-      margin: theme.spacing(1, 0),
-      padding: theme.spacing(0, 3),
-      display: 'flex',
-      justifyContent: 'space-between',
-    },
-  }),
-);
+export interface CustomListSubHeaderProps {
+  className?: string;
+  children?: ReactNode | ReactNode[];
+}
 
-export interface CustomListSubHeaderProps extends ListSubheaderProps {}
-
-function CustomListSubHeader({ className, children, ...props }: CustomListSubHeaderProps) {
-  const classes = useStyles();
-
+function CustomListSubHeader({ className, children }: CustomListSubHeaderProps) {
   return (
-    <ListSubheader className={classnames([className, classes.listSubHeader])} {...props}>
+    <li
+      className={classnames(
+        'flex sticky justify-between p-3 my-2 bg-blue-200/10 rounded-md',
+        className,
+      )}
+    >
       {children}
-    </ListSubheader>
+    </li>
   );
 }
 

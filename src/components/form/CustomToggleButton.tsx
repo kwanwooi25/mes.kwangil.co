@@ -1,30 +1,7 @@
 import classnames from 'classnames';
 import React from 'react';
 
-import {
-  Button,
-  ButtonGroup,
-  createStyles,
-  makeStyles,
-  Theme,
-  Typography,
-} from '@material-ui/core';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    customToggleButton: {
-      display: 'flex',
-      flexDirection: 'column',
-    },
-    label: {
-      padding: theme.spacing(0, 1),
-    },
-    buttons: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))',
-    },
-  }),
-);
+import { Button, ButtonGroup, Typography } from '@mui/material';
 
 export interface ToggleButtonOption<T> {
   value: T;
@@ -38,7 +15,7 @@ export interface CustomToggleButtonProps<T> {
   options: ToggleButtonOption<T>[];
   className?: string;
   size?: 'small' | 'medium' | 'large';
-  color?: 'default' | 'inherit' | 'primary' | 'secondary';
+  color?: 'inherit' | 'primary' | 'secondary';
   disabled?: boolean;
 }
 
@@ -52,16 +29,14 @@ function CustomToggleButton<T extends string>({
   color = 'primary',
   disabled = false,
 }: CustomToggleButtonProps<T>) {
-  const classes = useStyles();
-
   return (
-    <div className={classnames([classes.customToggleButton, className])}>
+    <div className={classnames(['flex flex-col', className])}>
       {!!label && (
-        <Typography variant="overline" className={classes.label}>
+        <Typography variant="overline" className="px-2">
           {label}
         </Typography>
       )}
-      <ButtonGroup className={classes.buttons} size={size} color={color}>
+      <ButtonGroup size={size} color={color}>
         {options.map((option) => (
           <Button
             key={option.value}

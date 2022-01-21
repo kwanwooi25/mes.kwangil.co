@@ -1,4 +1,4 @@
-import { IconButton, Paper, Theme, Typography, createStyles, makeStyles } from '@material-ui/core';
+import { IconButton, Paper } from '@mui/material';
 import React, { Ref, forwardRef, useEffect, useRef, ReactNode } from 'react';
 import ReactDatePicker, { CalendarContainer } from 'react-datepicker';
 import {
@@ -12,65 +12,12 @@ import {
   isBefore,
   subMonths,
 } from 'date-fns';
-import { indigo, red } from '@material-ui/core/colors';
 
 import { DATE_FORMAT } from 'const';
-import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useTranslation } from 'react-i18next';
 import Input from '../Input';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      borderRadius: theme.spacing(2),
-      padding: theme.spacing(2),
-      position: 'relative',
-    },
-    calendarContainer: {
-      display: 'flex',
-      flexDirection: 'column',
-    },
-    calendarHeader: {
-      background: theme.palette.background.paper,
-    },
-    selectedDate: {
-      background: theme.palette.primary.main,
-      color: theme.palette.primary.contrastText,
-      padding: theme.spacing(1),
-      borderRadius: theme.spacing(2),
-      fontWeight: 'bold',
-    },
-    monthDisplay: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    divider: {
-      margin: theme.spacing(0, 0, 2),
-    },
-    buttonContainer: {
-      display: 'flex',
-      justifyContent: 'space-between',
-    },
-    sunday: {
-      color: red[500],
-      '&.react-datepicker__day--disabled': {
-        color: red[200],
-      },
-    },
-    saturday: {
-      color: indigo[500],
-      '&.react-datepicker__day--disabled': {
-        color: indigo[200],
-      },
-    },
-    notThisMonth: {
-      opacity: 0.2,
-    },
-  }),
-);
 
 export interface DatePickerProps {
   className?: string;
@@ -88,11 +35,9 @@ const CustomInput = forwardRef(({ label, value, onClick }: any, ref: Ref<HTMLInp
 ));
 
 function CustomCalendarContainer({ children }: { children: ReactNode[] }): ReactNode {
-  const classes = useStyles();
-
   return (
-    <Paper className={classes.root} elevation={2}>
-      <CalendarContainer className={classes.calendarContainer}>{children}</CalendarContainer>
+    <Paper className="rounded-lg" elevation={2}>
+      <CalendarContainer className="flex flex-col">{children}</CalendarContainer>
     </Paper>
   );
 }
@@ -108,7 +53,6 @@ function DatePicker({
   disableFuture,
 }: DatePickerProps) {
   const { t } = useTranslation('common');
-  const classes = useStyles();
   const { isMobileLayout } = useScreenSize();
   const calendarRef = useRef<ReactDatePicker>(null);
 
@@ -118,17 +62,17 @@ function DatePicker({
   const getDayClassName = (date: Date) => {
     const weekday = getDay(date);
     const classNames = {
-      0: classes.sunday,
+      0: 'text-red-500 [aria-disabled="true"]:text-red-200',
       1: '',
       2: '',
       3: '',
       4: '',
       5: '',
-      6: classes.saturday,
+      6: 'text-indigo-500 [aria-disabled="true"]:text-indigo-200',
     };
     let dayClassName = classNames[weekday];
     if (getMonth(date) !== getMonth(selectedDate)) {
-      dayClassName += ` ${classes.notThisMonth}`;
+      dayClassName += ` opacity-20`;
     }
     return dayClassName;
   };
@@ -184,20 +128,20 @@ function DatePicker({
         const nextMonthDisabled = maximumDate && isAfter(aMonthAfter, maximumDate);
 
         return (
-          <div className={classes.calendarHeader}>
-            <div className={classes.monthDisplay}>
+          <div className="bg-white">
+            <div className="flex justify-between items-center">
               <IconButton
                 onClick={handleClickPrevMonth(decreaseMonth)}
                 disabled={prevMonthDisabled}
               >
-                <KeyboardArrowLeftIcon />
+                <KeyboardArrowLeft />
               </IconButton>
-              <Typography variant="h6">{t('yearMonth', parsedDate)}</Typography>
+              <span className="text-xl">{t('yearMonth', parsedDate)}</span>
               <IconButton
                 onClick={handleClickNextMonth(increaseMonth)}
                 disabled={nextMonthDisabled}
               >
-                <KeyboardArrowRightIcon />
+                <KeyboardArrowRight />
               </IconButton>
             </div>
           </div>

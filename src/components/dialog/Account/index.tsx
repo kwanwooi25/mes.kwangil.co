@@ -11,56 +11,9 @@ import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
 import { formatCrn } from 'utils/string';
 import { array, boolean, object, string } from 'yup';
-
-import {
-  createStyles,
-  DialogActions,
-  DialogContent,
-  Divider,
-  makeStyles,
-  Theme,
-  Typography,
-} from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import DoneIcon from '@material-ui/icons/Done';
+import { Add, Done } from '@mui/icons-material';
 
 import ContactForm from './ContactForm';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    dialogContent: {
-      padding: `${theme.spacing(1)}px ${theme.spacing(3)}px`,
-    },
-    accountForm: {
-      display: 'grid',
-      gridTemplateColumns: '1fr',
-      gridTemplateAreas: `"name" "crn" "memo"`,
-      [theme.breakpoints.up('sm')]: {
-        gridTemplateColumns: '1fr auto',
-        gridTemplateAreas: `
-        "name crn"
-        "memo memo"
-      `,
-        gridColumnGap: theme.spacing(2),
-      },
-    },
-    name: {
-      gridArea: 'name',
-    },
-    crn: {
-      gridArea: 'crn',
-    },
-    memo: {
-      gridArea: 'memo',
-    },
-    addContactButton: {
-      margin: `${theme.spacing(2)}px 0`,
-    },
-    actionButtons: {
-      padding: theme.spacing(3),
-    },
-  }),
-);
 
 export interface AccountDialogProps {
   account?: AccountDto;
@@ -76,7 +29,6 @@ interface AccountFormValues {
 }
 
 function AccountDialog({ account, onClose }: AccountDialogProps) {
-  const classes = useStyles();
   const { t } = useTranslation('accounts');
 
   const isEditMode = !isEmpty(account);
@@ -188,13 +140,10 @@ function AccountDialog({ account, onClose }: AccountDialogProps) {
 
   return (
     <Dialog open onClose={onClose} title={dialogTitle}>
-      <DialogContent dividers className={classes.dialogContent}>
+      <Dialog.Content dividers>
         {isLoading && <Loading />}
-        <Typography component="h3" variant="subtitle2">
-          {t('accountDetail')}
-        </Typography>
+        <h3>{t('accountDetail')}</h3>
         <Input
-          className={classes.name}
           name="name"
           label={t('name')}
           value={values.name}
@@ -204,7 +153,6 @@ function AccountDialog({ account, onClose }: AccountDialogProps) {
           autoFocus
         />
         <Input
-          className={classes.crn}
           name="crn"
           label={t('crn')}
           value={values.crn}
@@ -213,7 +161,6 @@ function AccountDialog({ account, onClose }: AccountDialogProps) {
           helperText={touched.crn && errors.crn}
         />
         <Input
-          className={classes.memo}
           name="memo"
           label={t('memo')}
           value={values.memo}
@@ -233,29 +180,27 @@ function AccountDialog({ account, onClose }: AccountDialogProps) {
             onDelete={handleDeleteContact(index)}
           />
         ))}
-        <Divider />
         <RoundedButton
-          className={classes.addContactButton}
+          className="!my-2"
           color="primary"
           variant="outlined"
           onClick={addContact}
-          startIcon={<AddIcon />}
+          startIcon={<Add />}
         >
           {t('addContact')}
         </RoundedButton>
-      </DialogContent>
-      <DialogActions className={classes.actionButtons}>
+      </Dialog.Content>
+      <Dialog.Actions>
         <RoundedButton
           color="primary"
           size="large"
-          fullWidth
-          startIcon={<DoneIcon />}
+          startIcon={<Done />}
           onClick={submitForm}
           disabled={isLoading}
         >
           {t('common:save')}
         </RoundedButton>
-      </DialogActions>
+      </Dialog.Actions>
     </Dialog>
   );
 }

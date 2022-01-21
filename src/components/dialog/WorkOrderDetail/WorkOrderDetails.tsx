@@ -5,7 +5,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { hideText } from 'utils/string';
 
-import { List } from '@material-ui/core';
+import { List } from '@mui/material';
 
 import DetailField from '../DetailField';
 

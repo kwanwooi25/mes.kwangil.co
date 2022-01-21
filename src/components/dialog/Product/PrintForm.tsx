@@ -1,54 +1,14 @@
 import { PrintColorCount, PrintSide } from 'const';
-import { Theme, createStyles, makeStyles } from '@material-ui/core';
-
 import CustomToggleButton from 'components/form/CustomToggleButton';
 import Input from 'components/form/Input';
 import React from 'react';
 import { capitalize } from 'lodash';
-import classnames from 'classnames';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ProductFormValues } from 'features/product/interface';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    print: {},
-    printSide: {
-      padding: theme.spacing(1, 0),
-    },
-    printFront: {},
-    printBack: {},
-    printMemo: {},
-    printDetail: {
-      display: 'grid',
-      gridTemplateColumns: '100px 1fr',
-      gridTemplateAreas: `
-        "printColorCount printColor"
-        "printPosition printPosition"
-      `,
-      gridColumnGap: theme.spacing(2),
-      [theme.breakpoints.up('sm')]: {
-        gridTemplateColumns: '80px 1fr 2fr',
-        gridTemplateAreas: `
-          "printColorCount printColor printPosition"
-        `,
-      },
-    },
-    printColorCount: {
-      gridArea: 'printColorCount',
-    },
-    printColor: {
-      gridArea: 'printColor',
-    },
-    printPosition: {
-      gridArea: 'printPosition',
-    },
-  }),
-);
-
 function PrintForm() {
   const { t } = useTranslation('products');
-  const classes = useStyles();
   const { values, handleChange, setFieldValue } = useFormikContext<ProductFormValues>();
 
   const printSideOptions = Object.values(PrintSide).map((value) => ({
@@ -61,16 +21,15 @@ function PrintForm() {
   };
 
   return (
-    <div className={classes.print}>
+    <div className="flex flex-col">
       <CustomToggleButton
-        className={classes.printSide}
+        className="!py-2"
         value={values.printSide}
         onChange={handleChangePrintSide}
         options={printSideOptions}
       />
-      <div className={classnames([classes.printDetail, classes.printFront])}>
+      <div className="grid grid-cols-[100px_1fr] gap-x-3 tablet:grid-cols-[80px_1fr_2fr]">
         <Input
-          className={classes.printColorCount}
           type="number"
           name="printFrontColorCount"
           label={t('printFrontColorCount')}
@@ -84,7 +43,6 @@ function PrintForm() {
           disabled={values.printSide === PrintSide.NONE}
         />
         <Input
-          className={classes.printColor}
           name="printFrontColor"
           label={t('printFrontColor')}
           value={values.printFrontColor}
@@ -92,7 +50,7 @@ function PrintForm() {
           disabled={values.printSide === PrintSide.NONE}
         />
         <Input
-          className={classes.printPosition}
+          className="col-span-2 tablet:col-span-1"
           name="printFrontPosition"
           label={t('printFrontPosition')}
           value={values.printFrontPosition}
@@ -100,9 +58,8 @@ function PrintForm() {
           disabled={values.printSide === PrintSide.NONE}
         />
       </div>
-      <div className={classnames([classes.printDetail, classes.printBack])}>
+      <div className="grid grid-cols-[100px_1fr] gap-x-3 tablet:grid-cols-[80px_1fr_2fr]">
         <Input
-          className={classes.printColorCount}
           type="number"
           name="printBackColorCount"
           label={t('printBackColorCount')}
@@ -116,7 +73,6 @@ function PrintForm() {
           disabled={values.printSide !== PrintSide.DOUBLE}
         />
         <Input
-          className={classes.printColor}
           name="printBackColor"
           label={t('printBackColor')}
           value={values.printBackColor}
@@ -124,7 +80,7 @@ function PrintForm() {
           disabled={values.printSide !== PrintSide.DOUBLE}
         />
         <Input
-          className={classes.printPosition}
+          className="col-span-2 tablet:col-span-1"
           name="printBackPosition"
           label={t('printBackPosition')}
           value={values.printBackPosition}
@@ -133,7 +89,6 @@ function PrintForm() {
         />
       </div>
       <Input
-        className={classes.printMemo}
         name="printMemo"
         label={t('printMemo')}
         value={values.printMemo}

@@ -1,6 +1,6 @@
 import { DEFAULT_LIST_LIMIT, ExcelVariant } from 'const';
 import useNotification from 'features/notification/useNotification';
-import { GetProductsQuery, ProductDto, ProductFilter } from 'features/product/interface';
+import { ProductDto, ProductFilter } from 'features/product/interface';
 import { productApi } from 'features/product/productApi';
 import { QueryClient, useInfiniteQuery, useMutation, useQuery } from 'react-query';
 import { GetListResponse } from 'types/api';
@@ -25,14 +25,14 @@ export const useInfiniteProducts = (filter: ProductFilter, limit: number = DEFAU
   return { loadMore, ...productInfiniteQuery };
 };
 
-export const useProductOptions = (searchText: string) => {
+export const useProductOptions = (filter: ProductFilter) => {
   const {
     isFetching: isLoading,
     data: productOptions,
     isFetched,
-  } = useQuery(['products', searchText], async ({ queryKey }) => {
-    const [, name] = queryKey;
-    const { rows = [] } = await productApi.getAllProducts({ name } as GetProductsQuery);
+  } = useQuery(['products', JSON.stringify(filter)], async ({ queryKey }) => {
+    const [, serializedFilter] = queryKey;
+    const { rows = [] } = await productApi.getAllProducts(JSON.parse(serializedFilter));
     return rows as ProductDto[];
   });
 

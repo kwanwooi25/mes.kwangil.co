@@ -1,5 +1,12 @@
-import { FormControl, InputLabel, MenuItem, Select, SelectProps } from '@material-ui/core';
-import React, { ChangeEvent } from 'react';
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  SelectProps,
+} from '@mui/material';
+import React from 'react';
 
 import { WorkOrderStatus } from 'const';
 
@@ -23,7 +30,7 @@ function SelectWorkOrderStatus({
   onChange,
   ...props
 }: SelectWorkOrderStatusProps) {
-  const handleChange = (e: ChangeEvent<{ name?: string; value: unknown }>) => {
+  const handleChange = (e: SelectChangeEvent<unknown>) => {
     onChange(e.target.value as WorkOrderStatus);
   };
 

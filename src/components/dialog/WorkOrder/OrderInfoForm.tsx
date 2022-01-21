@@ -11,90 +11,12 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { getProductSize } from 'utils/product';
 import { getWeight } from 'utils/workOrder';
-
-import {
-  Checkbox,
-  createStyles,
-  Divider,
-  FormControlLabel,
-  makeStyles,
-  Theme,
-  Typography,
-} from '@material-ui/core';
-
+import { Checkbox, Divider, FormControlLabel } from '@mui/material';
 import { WorkOrderFormValues } from 'features/workOrder/interface';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    orderInfoForm: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(4, 1fr)',
-      gridTemplateAreas: `
-        "productTitle productTitle productTitle productTitle"
-        "deliverBy deliverBy deliverBy deliverBy"
-        "orderQuantity orderQuantity orderQuantity orderWeight"
-        "isUrgent isUrgent shouldBePunctual shouldBePunctual"
-        "plateStatus plateStatus plateStatus plateStatus"
-        "deliveryMethod deliveryMethod deliveryMethod deliveryMethod"
-        "workMemo workMemo workMemo workMemo"
-        "deliveryMemo deliveryMemo deliveryMemo deliveryMemo"
-      `,
-      gridColumnGap: theme.spacing(2),
-      alignItems: 'center',
-      [theme.breakpoints.up('sm')]: {
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gridTemplateAreas: `
-          "productTitle productTitle productTitle productTitle"
-          "deliverBy deliverBy orderQuantity orderWeight"
-          "isUrgent plateStatus plateStatus plateStatus"
-          "shouldBePunctual deliveryMethod deliveryMethod deliveryMethod"
-          "workMemo workMemo workMemo workMemo"
-          "deliveryMemo deliveryMemo deliveryMemo deliveryMemo"
-        `,
-      },
-    },
-    productTitle: {
-      gridArea: 'productTitle',
-    },
-    divider: {
-      margin: theme.spacing(2, 0, 1),
-    },
-    deliverBy: {
-      gridArea: 'deliverBy',
-    },
-    orderQuantity: {
-      gridArea: 'orderQuantity',
-    },
-    orderWeight: {
-      gridArea: 'orderWeight',
-      justifySelf: 'end',
-    },
-    isUrgent: {
-      gridArea: 'isUrgent',
-    },
-    shouldBePunctual: {
-      gridArea: 'shouldBePunctual',
-    },
-    plateStatus: {
-      gridArea: 'plateStatus',
-      padding: theme.spacing(0, 0, 1),
-    },
-    deliveryMethod: {
-      gridArea: 'deliveryMethod',
-      padding: theme.spacing(0, 0, 1),
-    },
-    workMemo: {
-      gridArea: 'workMemo',
-    },
-    deliveryMemo: {
-      gridArea: 'deliveryMemo',
-    },
-  }),
-);
+import AccountName from 'ui/elements/AccountName';
 
 function OrderInfoForm() {
   const { t } = useTranslation('workOrders');
-  const classes = useStyles();
 
   const { values, touched, errors, handleChange, handleBlur, setFieldValue } =
     useFormikContext<WorkOrderFormValues>();
@@ -123,22 +45,22 @@ function OrderInfoForm() {
   };
 
   return (
-    <div className={classes.orderInfoForm}>
-      <div className={classes.productTitle}>
-        <Typography variant="caption">{product.account.name}</Typography>
+    <div className="grid grid-cols-3 gap-x-3 items-center tablet:grid-cols-6">
+      <div className="flex flex-col col-span-3 w-full tablet:col-span-6">
+        <AccountName account={product.account} />
         <ProductName product={product} />
-        <Typography>{getProductSize(product)}</Typography>
-        <Divider className={classes.divider} />
+        <p className="px-2">{getProductSize(product)}</p>
+        <Divider className="!my-4" />
       </div>
       <DatePicker
-        className={classes.deliverBy}
+        className="tablet:col-span-3"
         selectedDate={new Date(values.deliverBy)}
         onChange={handleChangeDeliverBy}
         label={t('deliverBy')}
         disablePast
       />
       <Input
-        className={classes.orderQuantity}
+        className="tablet:col-span-2"
         type="number"
         name="orderQuantity"
         label={t('orderQuantity')}
@@ -149,11 +71,9 @@ function OrderInfoForm() {
         helperText={touched.orderQuantity && errors.orderQuantity}
         inputProps={{ min: 1, max: Infinity }}
       />
-      <Typography className={classes.orderWeight}>
-        ({getWeight({ product, quantity: values.orderQuantity })} kg)
-      </Typography>
+      <span>({getWeight({ product, quantity: values.orderQuantity })} kg)</span>
       <FormControlLabel
-        className={classes.isUrgent}
+        className="tablet:row-span-2"
         control={
           <Checkbox
             color="primary"
@@ -162,10 +82,10 @@ function OrderInfoForm() {
             onChange={handleChange}
           />
         }
-        label={t('isUrgent')}
+        label={t('isUrgent') as string}
       />
       <FormControlLabel
-        className={classes.shouldBePunctual}
+        className="col-span-2 tablet:row-span-2"
         control={
           <Checkbox
             color="primary"
@@ -174,10 +94,10 @@ function OrderInfoForm() {
             onChange={handleChange}
           />
         }
-        label={t('shouldBePunctual')}
+        label={t('shouldBePunctual') as string}
       />
       <CustomToggleButton
-        className={classes.plateStatus}
+        className="col-span-3"
         label={t('plateStatus')}
         value={values.plateStatus}
         onChange={handleChangePlateStatus}
@@ -185,14 +105,14 @@ function OrderInfoForm() {
         disabled={!isPrint}
       />
       <CustomToggleButton
-        className={classes.deliveryMethod}
+        className="col-span-3"
         label={t('deliveryMethod')}
         value={values.deliveryMethod}
         onChange={handleChangeDeliveryMethod}
         options={deliveryMethodOptions}
       />
       <Input
-        className={classes.workMemo}
+        className="col-span-3 tablet:col-span-6"
         name="workMemo"
         label={t('workMemo')}
         value={values.workMemo}
@@ -200,7 +120,7 @@ function OrderInfoForm() {
         multiline
       />
       <Input
-        className={classes.deliveryMemo}
+        className="col-span-3 tablet:col-span-6"
         name="deliveryMemo"
         label={t('deliveryMemo')}
         value={values.deliveryMemo}

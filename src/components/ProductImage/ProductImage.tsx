@@ -1,43 +1,5 @@
-import { IconButton, Theme, createStyles, makeStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-
-import CloseIcon from '@material-ui/icons/Close';
-import OpenInNewIcon from '@material-ui/icons/OpenInNew';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    productImage: {
-      '& > img': {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        maxWidth: '100%',
-        maxHeight: '100%',
-      },
-    },
-    removeButton: {
-      position: 'absolute',
-      top: '12px',
-      right: '12px',
-      transform: 'translate(50%, -50%)',
-      background: theme.palette.grey[100],
-    },
-    openInNewButton: {
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      width: '50%',
-      height: '50%',
-      color: 'transparent',
-      '&:hover': {
-        background: '#ffffffbf',
-        color: theme.palette.grey[700],
-      },
-    },
-  }),
-);
+import { Close, OpenInNew } from '@mui/icons-material';
 
 export interface ProductImageProps {
   imageUrl?: string;
@@ -47,13 +9,12 @@ export interface ProductImageProps {
 }
 
 function ProductImage({ imageUrl, file, onClick, onRemove }: ProductImageProps) {
-  const classes = useStyles();
   const [imageDataUrl, setImageDataUrl] = useState<string>();
 
   useEffect(() => {
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = function (e) {
+      reader.onloadend = (e) => {
         setImageDataUrl((e?.target?.result as ArrayBuffer).toString());
       };
       reader.readAsDataURL(file);
@@ -61,17 +22,29 @@ function ProductImage({ imageUrl, file, onClick, onRemove }: ProductImageProps) 
   }, [file]);
 
   return (
-    <div className={classes.productImage}>
-      <img src={imageUrl || imageDataUrl} alt="product" />
+    <div className="before:inline-block relative before:pb-[100%] before:content-['']">
+      <img
+        className="max-w-full max-h-full absolute-center"
+        src={imageUrl || imageDataUrl}
+        alt="product"
+      />
       {onClick && (
-        <IconButton className={classes.openInNewButton} onClick={onClick}>
-          <OpenInNewIcon />
-        </IconButton>
+        <button
+          className="w-[50%] h-[50%] text-transparent hover:text-gray-700 hover:bg-white/80 rounded-full transition-colors absolute-center"
+          type="button"
+          onClick={onClick}
+        >
+          <OpenInNew />
+        </button>
       )}
       {onRemove && (
-        <IconButton className={classes.removeButton} onClick={onRemove}>
-          <CloseIcon />
-        </IconButton>
+        <button
+          className="absolute top-3 right-3 w-12 h-12 bg-gray-100/70 hover:bg-gray-100/80 rounded-full transition-colors translate-x-[50%] translate-y-[-50%]"
+          type="button"
+          onClick={onRemove}
+        >
+          <Close />
+        </button>
       )}
     </div>
   );

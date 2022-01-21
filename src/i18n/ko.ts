@@ -83,7 +83,6 @@ export default {
   nav: {
     [Path.DASHBOARD]: '대시보드',
     [Path.ACCOUNTS]: '거래처',
-    [Path.QUOTES]: '견적',
     [Path.PRODUCTS]: '제품',
     [Path.PLATES]: '동판',
     [Path.WORK_ORDERS]: '작업지시',

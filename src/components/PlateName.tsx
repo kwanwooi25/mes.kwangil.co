@@ -1,28 +1,12 @@
-import classnames from 'classnames';
+import classNames from 'classnames';
 import { useDialog } from 'features/dialog/dialogHook';
 import { PlateDto } from 'features/plate/interface';
 import { plateApi } from 'features/plate/plateApi';
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { getPlateTitle } from 'utils/plate';
 import { highlight } from 'utils/string';
-
-import { createStyles, Link, makeStyles } from '@material-ui/core';
-
+import { LoadingButton } from '@mui/lab';
 import PlateDetailDialog from './dialog/PlateDetail';
-
-const useStyles = makeStyles(() =>
-  createStyles({
-    plateNameLink: {
-      maxWidth: '200px',
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      textAlign: 'left',
-      fontSize: '16px',
-    },
-    plateName: {},
-  }),
-);
 
 export interface PlateNameProps {
   className?: string;
@@ -32,8 +16,12 @@ export interface PlateNameProps {
 }
 
 function PlateName({ plate, className, linkClassName, searchText = '' }: PlateNameProps) {
-  const classes = useStyles();
   const { openDialog, closeDialog } = useDialog();
+
+  const plateNameHTML = useMemo(
+    () => highlight(getPlateTitle(plate), searchText),
+    [plate, searchText],
+  );
 
   const openDetailDialog = async () => {
     const plateDetail = await plateApi.getPlate(plate.id);
@@ -41,21 +29,18 @@ function PlateName({ plate, className, linkClassName, searchText = '' }: PlateNa
   };
 
   return (
-    <div className={className}>
-      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-      <Link
-        className={classnames(classes.plateNameLink, linkClassName)}
-        component="button"
-        variant="h6"
-        color="initial"
-        onClick={openDetailDialog}
-      >
-        <span
-          className={classes.plateName}
-          dangerouslySetInnerHTML={{ __html: highlight(getPlateTitle(plate), searchText) }}
-        />
-      </Link>
-    </div>
+    <LoadingButton
+      className={classNames('!justify-start !min-w-0 max-w-max', className)}
+      onClick={openDetailDialog}
+      loadingPosition="end"
+      endIcon={<span />}
+      color="inherit"
+    >
+      <p
+        className={classNames('truncate', linkClassName)}
+        dangerouslySetInnerHTML={{ __html: plateNameHTML }}
+      />
+    </LoadingButton>
   );
 }
 

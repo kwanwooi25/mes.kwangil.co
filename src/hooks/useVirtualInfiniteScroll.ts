@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useScreenSize } from './useScreenSize';
 
 function getFirstVisibleNode(
   nodePositions: number[],
@@ -60,6 +61,7 @@ export const useVirtualInfiniteScroll = ({
   const [scrollTop, setScrollTop] = useState<number>(0);
   const [containerHeight, setContainerHeight] = useState<number>(0);
   const [shouldLoadMore, setShouldLoadMore] = useState<boolean>(false);
+  const { windowHeight, windowWidth } = useScreenSize();
 
   const firstVisibleNode = useMemo(
     () => getFirstVisibleNode(nodePositions, itemCount, scrollTop),
@@ -98,7 +100,7 @@ export const useVirtualInfiniteScroll = ({
     setScrollTop(scrollContainer.scrollTop);
     scrollContainer.addEventListener('scroll', onScroll);
     return () => scrollContainer.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [windowHeight, windowWidth]);
 
   return {
     containerRef,
