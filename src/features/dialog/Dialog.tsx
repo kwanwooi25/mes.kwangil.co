@@ -1,19 +1,19 @@
-import {
-  DialogTitle,
-  IconButton,
-  Dialog as MuiDialog,
-  DialogProps as MuiDialogProps,
-  DialogContent,
-  DialogContentProps,
-  DialogActions,
-  DialogActionsProps,
-  Typography,
-} from '@mui/material';
-
-import CloseIcon from '@mui/icons-material/Close';
-import React from 'react';
 import classNames from 'classnames';
 import { useScreenSize } from 'hooks/useScreenSize';
+import React from 'react';
+
+import CloseIcon from '@mui/icons-material/Close';
+import {
+  Dialog as MuiDialog,
+  DialogActions as MuiDialogActions,
+  DialogActionsProps,
+  DialogContent as MuiDialogContent,
+  DialogContentProps,
+  DialogProps as MuiDialogProps,
+  DialogTitle,
+  IconButton,
+  Typography,
+} from '@mui/material';
 
 export interface DialogProps extends MuiDialogProps {
   title: string;
@@ -60,20 +60,23 @@ function Dialog({
   );
 }
 
-Dialog.Content = function ({ children, className, ...props }: DialogContentProps) {
+function DialogContent({ children, className, ...props }: DialogContentProps) {
   return (
-    <DialogContent className={classNames('!px-6 !py-4', className)} {...props}>
+    <MuiDialogContent className={classNames('!px-6 !py-4', className)} {...props}>
       {children}
-    </DialogContent>
+    </MuiDialogContent>
   );
-};
+}
 
-Dialog.Actions = function ({ children, className, ...props }: DialogActionsProps) {
+function DialogActions({ children, className, ...props }: DialogActionsProps) {
   return (
-    <DialogActions className={classNames('!px-6 !py-4', className)} {...props}>
+    <MuiDialogActions className={classNames('!px-6 !py-4', className)} {...props}>
       {children}
-    </DialogActions>
+    </MuiDialogActions>
   );
-};
+}
+
+Dialog.Content = DialogContent;
+Dialog.Actions = DialogActions;
 
 export default Dialog;

@@ -1,6 +1,6 @@
-import EndOfListItem from 'components/EndOfListItem';
-import ListEmpty from 'components/ListEmpty';
-import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
+import EndOfListItem from 'ui/elements/EndOfListItem';
+import ListEmpty from 'ui/elements/ListEmpty';
+import VirtualInfiniteScroll from 'ui/modules/VirtualInfiniteScroll/VirtualInfiniteScroll';
 import { UserListItemHeight } from 'const';
 import { UserDto } from 'features/auth/interface';
 import { useScreenSize } from 'hooks/useScreenSize';

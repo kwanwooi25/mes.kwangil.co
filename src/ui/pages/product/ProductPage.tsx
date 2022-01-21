@@ -1,15 +1,15 @@
 /* eslint-disable no-nested-ternary */
-import CreationFab from 'components/CreationFab';
-import AlertDialog from 'components/dialog/Alert';
-import ConfirmDialog from 'components/dialog/Confirm';
-import ExcelUploadDialog from 'components/dialog/ExcelUpload';
-import ProductDialog from 'components/dialog/Product';
-import EndOfListItem from 'components/EndOfListItem';
-import ListEmpty from 'components/ListEmpty';
-import Loading from 'components/Loading';
-import SelectionPanel from 'components/SelectionPanel';
-import SubToolbar from 'components/SubToolbar';
-import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
+import CreationFab from 'ui/elements/CreationFab';
+import AlertDialog from 'ui/dialog/Alert';
+import ConfirmDialog from 'ui/dialog/Confirm';
+import ExcelUploadDialog from 'ui/dialog/ExcelUpload';
+import ProductDialog from 'ui/dialog/Product';
+import EndOfListItem from 'ui/elements/EndOfListItem';
+import ListEmpty from 'ui/elements/ListEmpty';
+import Loading from 'ui/elements/Loading';
+import SelectionPanel from 'ui/elements/SelectionPanel';
+import SubToolbar from 'ui/layouts/SubToolbar';
+import VirtualInfiniteScroll from 'ui/modules/VirtualInfiniteScroll/VirtualInfiniteScroll';
 import {
   DEFAULT_PRODUCT_FILTER,
   ExcelVariant,

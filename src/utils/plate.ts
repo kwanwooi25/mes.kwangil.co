@@ -95,7 +95,6 @@ export function estimatePlateSize(products: ProductDto[]) {
     //   round += 10;
     // }
     length = Math.max(PlateLength.MIN, productLengths.reduce((total, l) => total + l, 0) + 50);
-    console.log(productLengths, length);
   }
 
   return { round, length };

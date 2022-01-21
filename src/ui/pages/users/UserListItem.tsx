@@ -1,5 +1,5 @@
-import ConfirmDialog from 'components/dialog/Confirm';
-import UserName from 'components/UserName';
+import ConfirmDialog from 'ui/dialog/Confirm';
+import UserName from 'ui/elements/UserName';
 import { useAuth } from 'features/auth/authHook';
 import { UserDto } from 'features/auth/interface';
 import { useDialog } from 'features/dialog/dialogHook';

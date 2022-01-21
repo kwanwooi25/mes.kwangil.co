@@ -1,7 +1,7 @@
 import AccountName from 'ui/elements/AccountName';
-import AccountDialog from 'components/dialog/Account';
-import ConfirmDialog from 'components/dialog/Confirm';
-import PhoneNumber from 'components/PhoneNumber';
+import AccountDialog from 'ui/dialog/Account';
+import ConfirmDialog from 'ui/dialog/Confirm';
+import PhoneNumber from 'ui/elements/PhoneNumber';
 import { AccountDto, AccountFilter } from 'features/account/interface';
 import { useDialog } from 'features/dialog/dialogHook';
 import React, { memo, MouseEvent, useCallback, useState } from 'react';

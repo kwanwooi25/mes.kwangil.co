@@ -1,11 +1,11 @@
 import AccountName from 'ui/elements/AccountName';
-import ConfirmDialog from 'components/dialog/Confirm';
-import ProductDialog from 'components/dialog/Product';
-import EditProductDialog from 'components/dialog/Product/EditProductDialog';
-import WorkOrderDialog from 'components/dialog/WorkOrder';
-import WorkOrderHistoryDialog from 'components/dialog/WorkOrderHistory';
-import Loading from 'components/Loading';
-import ProductName from 'components/ProductName';
+import ConfirmDialog from 'ui/dialog/Confirm';
+import ProductDialog from 'ui/dialog/Product';
+import EditProductDialog from 'ui/dialog/Product/EditProductDialog';
+import WorkOrderDialog from 'ui/dialog/WorkOrder';
+import WorkOrderHistoryDialog from 'ui/dialog/WorkOrderHistory';
+import Loading from 'ui/elements/Loading';
+import ProductName from 'ui/elements/ProductName';
 import { ProductDialogMode } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';

@@ -1,6 +1,6 @@
 import { useAppDispatch } from 'app/store';
-import Input from 'components/form/Input';
-import Loading from 'components/Loading';
+import Input from 'ui/elements/Input';
+import Loading from 'ui/elements/Loading';
 import { push } from 'connected-react-router';
 import { Path } from 'const';
 import { useFormik } from 'formik';

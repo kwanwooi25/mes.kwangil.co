@@ -1,15 +1,15 @@
 /* eslint-disable no-nested-ternary */
-import AlertDialog from 'components/dialog/Alert';
-import ConfirmDialog from 'components/dialog/Confirm';
-import ExcelUploadDialog from 'components/dialog/ExcelUpload';
-import WorkOrderDialog from 'components/dialog/WorkOrder';
-import WorkOrdersCompleteDialog from 'components/dialog/WorkOrdersComplete';
-import EndOfListItem from 'components/EndOfListItem';
-import ListEmpty from 'components/ListEmpty';
-import Loading from 'components/Loading';
-import SubToolbar from 'components/SubToolbar';
-import VirtualInfiniteScroll from 'components/VirtualInfiniteScroll';
-import WorkOrderPDF from 'components/WorkOrderPDF';
+import AlertDialog from 'ui/dialog/Alert';
+import ConfirmDialog from 'ui/dialog/Confirm';
+import ExcelUploadDialog from 'ui/dialog/ExcelUpload';
+import WorkOrderDialog from 'ui/dialog/WorkOrder';
+import WorkOrdersCompleteDialog from 'ui/dialog/WorkOrdersComplete';
+import EndOfListItem from 'ui/elements/EndOfListItem';
+import ListEmpty from 'ui/elements/ListEmpty';
+import Loading from 'ui/elements/Loading';
+import SubToolbar from 'ui/layouts/SubToolbar';
+import VirtualInfiniteScroll from 'ui/modules/VirtualInfiniteScroll/VirtualInfiniteScroll';
+import WorkOrderPDF from 'ui/pdf/WorkOrderPDF';
 import {
   DEFAULT_WORK_ORDER_FILTER,
   ExcelVariant,

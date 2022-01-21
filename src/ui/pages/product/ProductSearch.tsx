@@ -1,6 +1,6 @@
 import { useAppDispatch } from 'app/store';
-import Input from 'components/form/Input';
-import RoundedButton from 'components/RoundedButton';
+import Input from 'ui/elements/Input';
+import RoundedButton from 'ui/elements/RoundedButton';
 import { useAuth } from 'features/auth/authHook';
 import { useUI } from 'features/ui/uiHook';
 import { useFormik } from 'formik';

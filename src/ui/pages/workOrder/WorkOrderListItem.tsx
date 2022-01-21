@@ -1,12 +1,12 @@
 /* eslint-disable no-nested-ternary */
 import AccountName from 'ui/elements/AccountName';
-import ConfirmDialog from 'components/dialog/Confirm';
-import WorkOrderDialog from 'components/dialog/WorkOrder';
-import WorkOrdersCompleteDialog from 'components/dialog/WorkOrdersComplete';
-import ProductName from 'components/ProductName';
-import SelectWorkOrderStatus from 'components/SelectWorkOrderStatus';
-import WorkOrderId from 'components/WorkOrderId';
-import WorkOrderPDF from 'components/WorkOrderPDF';
+import ConfirmDialog from 'ui/dialog/Confirm';
+import WorkOrderDialog from 'ui/dialog/WorkOrder';
+import WorkOrdersCompleteDialog from 'ui/dialog/WorkOrdersComplete';
+import ProductName from 'ui/elements/ProductName';
+import SelectWorkOrderStatus from 'ui/elements/SelectWorkOrderStatus';
+import WorkOrderId from 'ui/elements/WorkOrderId';
+import WorkOrderPDF from 'ui/pdf/WorkOrderPDF';
 import { PLATE_STATUS_COLORS, PrintSide, WorkOrderStatus } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';

@@ -1,7 +1,7 @@
 import { useAppDispatch } from 'app/store';
-import Input from 'components/form/Input';
-import RangeSlider from 'components/form/RangeSlider';
-import RoundedButton from 'components/RoundedButton';
+import Input from 'ui/elements/Input';
+import RangeSlider from 'ui/elements/RangeSlider';
+import RoundedButton from 'ui/elements/RoundedButton';
 import { PlateLength, PlateRound, DEFAULT_PLATE_FILTER } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useUI } from 'features/ui/uiHook';

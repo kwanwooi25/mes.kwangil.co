@@ -6,7 +6,7 @@ import { useDialog } from 'features/dialog/dialogHook';
 import React, { memo } from 'react';
 import { hideText, highlight } from 'utils/string';
 
-import AccountDetailDialog from 'components/dialog/AccountDetailDialog';
+import AccountDetailDialog from 'ui/dialog/AccountDetailDialog';
 import { LoadingButton } from '@mui/lab';
 
 export interface AccountNameProps {

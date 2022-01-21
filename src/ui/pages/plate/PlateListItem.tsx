@@ -1,6 +1,6 @@
-import ConfirmDialog from 'components/dialog/Confirm';
-import PlateDialog from 'components/dialog/Plate';
-import PlateName from 'components/PlateName';
+import ConfirmDialog from 'ui/dialog/Confirm';
+import PlateDialog from 'ui/dialog/Plate';
+import PlateName from 'ui/elements/PlateName';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import React, { memo, MouseEvent, useCallback, useState } from 'react';

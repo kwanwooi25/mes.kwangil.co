@@ -1,4 +1,4 @@
-import Loading from 'components/Loading';
+import Loading from 'ui/elements/Loading';
 import { DEFAULT_PAGE, Path } from 'const';
 import { useAuth, useRefreshLoginMutation } from 'features/auth/authHook';
 import Notifier from 'features/notification/Notifier';
@@ -8,7 +8,6 @@ import RegisterPage from 'ui/pages/auth/RegisterPage';
 import DashboardPage from 'ui/pages/dashboard/DashboardPage';
 import PlatePage from 'ui/pages/plate/PlatePage';
 import ProductPage from 'ui/pages/product/ProductPage';
-// import QuotePage from 'ui/pages/quote/QuotePage';
 import SettingsPage from 'ui/pages/settings/SettingsPage';
 import UsersPage from 'ui/pages/users/UsersPage';
 import WorkOrderPage from 'ui/pages/workOrder/WorkOrderPage';
@@ -60,11 +59,9 @@ function App() {
         <PublicRoute path={Path.REGISTER} component={RegisterPage} />
         <PrivateRoute path={Path.DASHBOARD} component={DashboardPage} />
         <PrivateRoute path={Path.ACCOUNTS} component={AccountPage} />
-        {/* <PrivateRoute path={Path.QUOTES} component={QuotePage} /> */}
         <PrivateRoute path={Path.PRODUCTS} component={ProductPage} />
         <PrivateRoute path={Path.PLATES} component={PlatePage} />
         <PrivateRoute path={Path.WORK_ORDERS} component={WorkOrderPage} />
-        {/* <PrivateRoute path={Path.DELIVERY} component={DeliveryPage} /> */}
         <PrivateRoute path={Path.USERS} component={UsersPage} />
         <PrivateRoute path={Path.SETTINGS} component={SettingsPage} />
         <Redirect to={DEFAULT_PAGE} />

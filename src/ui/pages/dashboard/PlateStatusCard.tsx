@@ -1,10 +1,3 @@
-import DashboardCard from 'ui/elements/DashboardCard';
-import ConfirmDialog from 'components/dialog/Confirm';
-import PlateDialog from 'components/dialog/Plate';
-import Loading from 'components/Loading';
-import NeedPlatePDF from 'components/NeedPlatePDF';
-import ProductName from 'components/ProductName';
-import WorkOrderId from 'components/WorkOrderId';
 import { PLATE_STATUS_COLORS, PlateStatus } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
@@ -14,11 +7,18 @@ import { useWorkOrderDisplay } from 'hooks/useWorkOrderDisplay';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
+import ConfirmDialog from 'ui/dialog/Confirm';
+import PlateDialog from 'ui/dialog/Plate';
+import DashboardCard from 'ui/elements/DashboardCard';
+import Loading from 'ui/elements/Loading';
+import ProductName from 'ui/elements/ProductName';
+import WorkOrderId from 'ui/elements/WorkOrderId';
+import NeedPlatePDF from 'ui/pdf/NeedPlatePDF';
 import { getProductTitle } from 'utils/product';
 import { getWorkOrderToUpdate } from 'utils/workOrder';
 
-import { Chip, IconButton, List, ListItem, Tooltip, Pagination, Skeleton } from '@mui/material';
 import { Done, InsertEmoticon, Print } from '@mui/icons-material';
+import { Chip, IconButton, List, ListItem, Pagination, Skeleton, Tooltip } from '@mui/material';
 import { BlobProvider } from '@react-pdf/renderer';
 
 const LIST_ITEM_HEIGHT = 121;

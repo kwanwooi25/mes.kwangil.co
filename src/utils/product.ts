@@ -1,4 +1,4 @@
-import { ProductFormValues } from 'components/dialog/Product';
+import { ProductFormValues } from 'ui/dialog/Product';
 import { PrintSide } from 'const';
 import {
   CreateImageDto,
