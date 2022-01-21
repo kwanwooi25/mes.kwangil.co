@@ -1,15 +1,4 @@
 /* eslint-disable no-nested-ternary */
-import AlertDialog from 'ui/dialog/Alert';
-import ConfirmDialog from 'ui/dialog/Confirm';
-import ExcelUploadDialog from 'ui/dialog/ExcelUpload';
-import WorkOrderDialog from 'ui/dialog/WorkOrder';
-import WorkOrdersCompleteDialog from 'ui/dialog/WorkOrdersComplete';
-import EndOfListItem from 'ui/elements/EndOfListItem';
-import ListEmpty from 'ui/elements/ListEmpty';
-import Loading from 'ui/elements/Loading';
-import SubToolbar from 'ui/layouts/SubToolbar';
-import VirtualInfiniteScroll from 'ui/modules/VirtualInfiniteScroll/VirtualInfiniteScroll';
-import WorkOrderPDF from 'ui/pdf/WorkOrderPDF';
 import {
   DEFAULT_WORK_ORDER_FILTER,
   ExcelVariant,
@@ -18,20 +7,6 @@ import {
 } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
-import { useScreenSize } from 'hooks/useScreenSize';
-import { useSelection } from 'hooks/useSelection';
-import Layout from 'ui/layouts/Layout';
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useQueryClient } from 'react-query';
-import { BulkCreationResponse } from 'types/api';
-import { downloadWorkbook } from 'utils/excel';
-import { formatDigit } from 'utils/string';
-
-import { IconButton, List, Tooltip } from '@mui/material';
-import { Add, DeleteOutline, Done, GetApp, Print, Publish, Refresh } from '@mui/icons-material';
-import { usePDF } from '@react-pdf/renderer';
-
 import { CreateWorkOrdersDto, WorkOrderDto, WorkOrderFilter } from 'features/workOrder/interface';
 import {
   useBulkCreateWorkOrderMutation,
@@ -39,10 +14,33 @@ import {
   useDownloadWorkOrders,
   useInfiniteWorkOrders,
 } from 'features/workOrder/useWorkOrders';
+import { useScreenSize } from 'hooks/useScreenSize';
+import { useSelection } from 'hooks/useSelection';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useQueryClient } from 'react-query';
+import { BulkCreationResponse } from 'types/api';
+import AlertDialog from 'ui/dialog/Alert';
+import ConfirmDialog from 'ui/dialog/Confirm';
+import ExcelUploadDialog from 'ui/dialog/ExcelUpload';
+import WorkOrderDialog from 'ui/dialog/WorkOrder';
+import WorkOrdersCompleteDialog from 'ui/dialog/WorkOrdersComplete';
+import EndOfListItem from 'ui/elements/EndOfListItem';
+import ListEmpty from 'ui/elements/ListEmpty';
+import Loading from 'ui/elements/Loading';
+import Layout from 'ui/layouts/Layout';
+import SubToolbar from 'ui/layouts/SubToolbar';
+import VirtualInfiniteScroll from 'ui/modules/VirtualInfiniteScroll/VirtualInfiniteScroll';
+import WorkOrderPDF from 'ui/pdf/WorkOrderPDF';
+import { downloadWorkbook } from 'utils/excel';
+import { formatDigit } from 'utils/string';
+
+import { Add, DeleteOutline, Done, GetApp, Print, Publish, Refresh } from '@mui/icons-material';
+import { IconButton, List, Tooltip } from '@mui/material';
+import { BlobProvider } from '@react-pdf/renderer';
+
 import WorkOrderListItem from './WorkOrderListItem';
 import WorkOrderSearch from './WorkOrderSearch';
-
-export interface WorkOrderPageProps {}
 
 function WorkOrderPage() {
   const { t } = useTranslation('workOrders');
@@ -110,8 +108,6 @@ function WorkOrderPage() {
     ({ workOrderStatus }) => workOrderStatus === WorkOrderStatus.CUTTING,
   );
 
-  const [instance, update] = usePDF({ document: <WorkOrderPDF workOrders={selectedWorkOrders} /> });
-
   const handleClickRefresh = () => queryClient.invalidateQueries('workOrders');
 
   const handleToggleSelection = (workOrder: WorkOrderDto) => toggleSelection(workOrder.id);
@@ -142,7 +138,7 @@ function WorkOrderPage() {
       />,
     );
 
-  const openWorkOrderPDF = () => update();
+  const openWorkOrderPDF = (url: string) => () => window.open(url);
 
   const handleClickDeleteAll = () =>
     openDialog(
@@ -172,10 +168,14 @@ function WorkOrderPage() {
       ...selectModeButtons,
       <Tooltip key="print-all" title={t('common:print') as string} placement="top">
         <span>
-          <IconButton onClick={openWorkOrderPDF} disabled={instance.loading}>
-            {instance.loading && <Loading />}
-            <Print />
-          </IconButton>
+          <BlobProvider document={<WorkOrderPDF workOrders={selectedWorkOrders} />}>
+            {({ url, loading }) => (
+              <IconButton onClick={openWorkOrderPDF(url as string)} disabled={loading}>
+                {loading && <Loading />}
+                <Print />
+              </IconButton>
+            )}
+          </BlobProvider>
         </span>
       </Tooltip>,
     ];
@@ -252,12 +252,6 @@ function WorkOrderPage() {
     </Tooltip>,
   ];
 
-  useEffect(() => {
-    if (selectedWorkOrders.length && instance.url) {
-      window.open(instance.url);
-    }
-  }, [instance.url]);
-
   return (
     <Layout
       pageTitle={t('pageTitle')}
@@ -275,7 +269,7 @@ function WorkOrderPage() {
           buttons={isSelectMode ? selectModeButtons : toolBarButtons}
         />
       )}
-      <List style={{ height: isMobileLayout ? '100%' : 'calc(100% - 65px)' }} disablePadding>
+      <List style={{ height: isMobileLayout ? '100%' : 'calc(100% - 49px)' }} disablePadding>
         {!isFetching && !workOrders.length ? (
           <ListEmpty />
         ) : (

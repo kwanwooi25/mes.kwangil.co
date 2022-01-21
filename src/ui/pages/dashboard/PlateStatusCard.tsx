@@ -1,4 +1,5 @@
-import { PLATE_STATUS_COLORS, PlateStatus } from 'const';
+import classNames from 'classnames';
+import { PLATE_STATUS_CLASS, PlateStatus } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { WorkOrderDto } from 'features/workOrder/interface';
@@ -34,7 +35,7 @@ function WorkOrderListItem({
   const { productSize, plateStatus } = useWorkOrderDisplay(workOrder, t);
   const { openDialog, closeDialog } = useDialog();
   const { canUpdateWorkOrders } = useAuth();
-  const backgroundColor = PLATE_STATUS_COLORS[workOrder.plateStatus];
+  const plateStatusClassName = PLATE_STATUS_CLASS[workOrder.plateStatus];
 
   const updatePlateStatus = async (wo: WorkOrderDto) => {
     const { id } = wo;
@@ -84,7 +85,7 @@ function WorkOrderListItem({
   return (
     <ListItem className="!grid grid-cols-[1fr_auto_auto] gap-x-2 gap-y-1" divider>
       <WorkOrderId workOrder={workOrder} />
-      <Chip className="row-span-3" label={plateStatus} style={{ backgroundColor }} />
+      <Chip className={classNames('row-span-3', plateStatusClassName)} label={plateStatus} />
       <span className="row-span-3">
         {canUpdateWorkOrders && (
           <Tooltip title={t('common:complete') as string}>

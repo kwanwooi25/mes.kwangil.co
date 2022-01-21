@@ -1,6 +1,9 @@
+import { format, subDays } from 'date-fns';
+import { PlateFilter } from 'features/plate/interface';
+import { ProductFilter } from 'features/product/interface';
+import { WorkOrderFilter } from 'features/workOrder/interface';
 import { ElementType } from 'react';
 
-import { grey, red, yellow } from '@mui/material/colors';
 import {
   Apartment,
   Build,
@@ -10,10 +13,6 @@ import {
   PhotoLibrary,
   Settings,
 } from '@mui/icons-material';
-import { PlateFilter } from 'features/plate/interface';
-import { ProductFilter } from 'features/product/interface';
-import { format, subDays } from 'date-fns';
-import { WorkOrderFilter } from 'features/workOrder/interface';
 
 export enum Path {
   HOME = '/',
@@ -266,10 +265,10 @@ export const PLATE_STATUS_TEXT: { [key: string]: string } = {
   [PlateStatus.CONFIRM]: '확인',
 };
 
-export const PLATE_STATUS_COLORS: { [key in PlateStatus]: string } = {
-  [PlateStatus.NEW]: red[700],
-  [PlateStatus.UPDATE]: yellow[700],
-  [PlateStatus.CONFIRM]: grey[700],
+export const PLATE_STATUS_CLASS: { [key in PlateStatus]: string } = {
+  [PlateStatus.NEW]: '!text-white !bg-red-500',
+  [PlateStatus.UPDATE]: '!text-white !bg-yellow-500',
+  [PlateStatus.CONFIRM]: '!text-white !bg-gray-500',
 };
 
 export const DELIVERY_METHOD_TEXT: { [key: string]: string } = {

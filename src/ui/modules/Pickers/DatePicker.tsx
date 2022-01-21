@@ -1,6 +1,4 @@
-import { IconButton, Paper } from '@mui/material';
-import React, { Ref, forwardRef, useEffect, useRef, ReactNode } from 'react';
-import ReactDatePicker, { CalendarContainer } from 'react-datepicker';
+import { DATE_FORMAT } from 'const';
 import {
   addMonths,
   endOfMonth,
@@ -12,12 +10,14 @@ import {
   isBefore,
   subMonths,
 } from 'date-fns';
-
-import { DATE_FORMAT } from 'const';
-import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import { useScreenSize } from 'hooks/useScreenSize';
+import React, { forwardRef, ReactNode, Ref, useEffect, useRef } from 'react';
+import ReactDatePicker, { CalendarContainer } from 'react-datepicker';
 import { useTranslation } from 'react-i18next';
 import Input from 'ui/elements/Input';
+
+import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
+import { IconButton, Paper } from '@mui/material';
 
 export interface DatePickerProps {
   className?: string;
@@ -36,7 +36,7 @@ const CustomInput = forwardRef(({ label, value, onClick }: any, ref: Ref<HTMLInp
 
 function CustomCalendarContainer({ children }: { children: ReactNode[] }): ReactNode {
   return (
-    <Paper className="rounded-lg" elevation={2}>
+    <Paper className="p-3 !rounded-xl" elevation={4}>
       <CalendarContainer className="flex flex-col">{children}</CalendarContainer>
     </Paper>
   );

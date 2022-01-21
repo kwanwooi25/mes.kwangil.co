@@ -1,10 +1,10 @@
-import { ProductFormValues } from 'ui/dialog/Product';
 import { PrintSide } from 'const';
 import {
   CreateImageDto,
   CreateProductDto,
   ImageDto,
   ProductDto,
+  ProductFormValues,
   UpdateProductDto,
 } from 'features/product/interface';
 import { TFunction } from 'i18next';
@@ -12,8 +12,6 @@ import { capitalize } from 'lodash';
 
 import { deleteImage, uploadImage } from './s3';
 import { formatDigit } from './string';
-
-// import { uploadImage } from './s3';
 
 /**
  * 제품 규격 조합
@@ -238,6 +236,7 @@ export function getInitialProductToCreate(): ProductFormValues {
     packUnit: 0,
     packCanDeliverAll: false,
     packMemo: '',
+    productMemo: '',
     images: [],
     filesToUpload: [],
   };

@@ -74,6 +74,7 @@ export interface ProductDto {
   packUnit: number;
   packCanDeliverAll: boolean;
   packMemo: string;
+  productMemo: string;
   account: AccountDto;
   images: ImageDto[];
   plates?: PlateDto[];
@@ -130,6 +131,7 @@ export interface ProductFormValues {
   packUnit: number;
   packCanDeliverAll: boolean;
   packMemo: string;
+  productMemo: string;
   stock?: StockDto;
   images: ImageDto[];
   filesToUpload?: File[];

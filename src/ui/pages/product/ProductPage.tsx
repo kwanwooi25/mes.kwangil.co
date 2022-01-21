@@ -1,15 +1,4 @@
 /* eslint-disable no-nested-ternary */
-import CreationFab from 'ui/elements/CreationFab';
-import AlertDialog from 'ui/dialog/Alert';
-import ConfirmDialog from 'ui/dialog/Confirm';
-import ExcelUploadDialog from 'ui/dialog/ExcelUpload';
-import ProductDialog from 'ui/dialog/Product';
-import EndOfListItem from 'ui/elements/EndOfListItem';
-import ListEmpty from 'ui/elements/ListEmpty';
-import Loading from 'ui/elements/Loading';
-import SelectionPanel from 'ui/elements/SelectionPanel';
-import SubToolbar from 'ui/layouts/SubToolbar';
-import VirtualInfiniteScroll from 'ui/modules/VirtualInfiniteScroll/VirtualInfiniteScroll';
 import {
   DEFAULT_PRODUCT_FILTER,
   ExcelVariant,
@@ -18,19 +7,6 @@ import {
 } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
-import { useScreenSize } from 'hooks/useScreenSize';
-import { useSelection } from 'hooks/useSelection';
-import Layout from 'ui/layouts/Layout';
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useQueryClient } from 'react-query';
-import { BulkCreationResponse } from 'types/api';
-import { downloadWorkbook } from 'utils/excel';
-import { formatDigit } from 'utils/string';
-
-import { IconButton, List, Tooltip } from '@mui/material';
-import { Add, DeleteOutline, GetApp, Publish, Refresh } from '@mui/icons-material';
-
 import { CreateProductsDto, ProductDto, ProductFilter } from 'features/product/interface';
 import {
   useBulkCreateProductMutation,
@@ -38,6 +14,30 @@ import {
   useDownloadProducts,
   useInfiniteProducts,
 } from 'features/product/useProducts';
+import { useScreenSize } from 'hooks/useScreenSize';
+import { useSelection } from 'hooks/useSelection';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useQueryClient } from 'react-query';
+import { BulkCreationResponse } from 'types/api';
+import AlertDialog from 'ui/dialog/Alert';
+import ConfirmDialog from 'ui/dialog/Confirm';
+import ExcelUploadDialog from 'ui/dialog/ExcelUpload';
+import ProductDialog from 'ui/dialog/Product';
+import CreationFab from 'ui/elements/CreationFab';
+import EndOfListItem from 'ui/elements/EndOfListItem';
+import ListEmpty from 'ui/elements/ListEmpty';
+import Loading from 'ui/elements/Loading';
+import SelectionPanel from 'ui/elements/SelectionPanel';
+import Layout from 'ui/layouts/Layout';
+import SubToolbar from 'ui/layouts/SubToolbar';
+import VirtualInfiniteScroll from 'ui/modules/VirtualInfiniteScroll/VirtualInfiniteScroll';
+import { downloadWorkbook } from 'utils/excel';
+import { formatDigit } from 'utils/string';
+
+import { Add, DeleteOutline, GetApp, Publish, Refresh } from '@mui/icons-material';
+import { IconButton, List, Tooltip } from '@mui/material';
+
 import ProductListItem from './ProductListItem';
 import ProductSearch from './ProductSearch';
 
@@ -51,7 +51,7 @@ function ProductPage() {
   const { isFetching, data, loadMore } = useInfiniteProducts(filter);
   const { isDownloading, download } = useDownloadProducts(filter);
 
-  const products = data?.pages.reduce((p: ProductDto[], { rows }) => [...p, ...rows], []) || [];
+  const products = data?.pages?.reduce((p: ProductDto[], { rows }) => [...p, ...rows], []) || [];
   const productIds = products.map(({ id }) => id);
   const {
     selectedIds,

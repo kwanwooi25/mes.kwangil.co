@@ -1,13 +1,12 @@
-import FormikStepper, { FormikStep } from 'ui/modules/FormikStepper/FormikStepper';
-import Loading from 'ui/elements/Loading';
 import { PrintSide, ProductDialogMode, ProductLength, ProductThickness, ProductWidth } from 'const';
-import { AccountOption } from 'features/account/interface';
 import Dialog from 'features/dialog/Dialog';
-import { ImageDto, ProductDto, StockDto } from 'features/product/interface';
+import { ProductDto, ProductFormValues } from 'features/product/interface';
 import { useCreateProductMutation } from 'features/product/useProducts';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
+import Loading from 'ui/elements/Loading';
+import FormikStepper, { FormikStep } from 'ui/modules/FormikStepper/FormikStepper';
 import {
   getCreateProductDto,
   getInitialProductToCopy,
@@ -27,41 +26,6 @@ export interface ProductDialogProps {
   mode: ProductDialogMode;
   product?: ProductDto;
   onClose: () => void;
-}
-
-export interface ProductFormValues {
-  id?: number;
-  account: AccountOption | null;
-  name: string;
-  thickness: number;
-  length: number;
-  width: number;
-  extColor: string;
-  extIsAntistatic: boolean;
-  extMemo: string;
-  printSide: PrintSide;
-  printFrontColorCount: number;
-  printFrontColor: string;
-  printFrontPosition: string;
-  printBackColorCount: number;
-  printBackColor: string;
-  printBackPosition: string;
-  printMemo: string;
-  cutPosition: string;
-  cutIsUltrasonic: boolean;
-  cutIsForPowder: boolean;
-  cutPunchCount: number;
-  cutPunchSize: string;
-  cutPunchPosition: string;
-  cutMemo: string;
-  packMaterial: string;
-  packUnit: number;
-  packCanDeliverAll: boolean;
-  packMemo: string;
-  stock?: StockDto;
-  images: ImageDto[];
-  filesToUpload?: File[];
-  imagesToDelete?: ImageDto[];
 }
 
 function ProductDialog({ mode, product, onClose }: ProductDialogProps) {
@@ -110,6 +74,7 @@ function ProductDialog({ mode, product, onClose }: ProductDialogProps) {
         .required(t('widthRequired'))
         .min(ProductWidth.MIN, t('minWidthError', { value: ProductWidth.MIN }))
         .max(ProductWidth.MAX, t('maxWidthError', { value: ProductWidth.MAX })),
+      productMemo: yup.string(),
     }),
     extrusion: yup.object({
       extColor: yup.string().required(t('extColorRequired')),

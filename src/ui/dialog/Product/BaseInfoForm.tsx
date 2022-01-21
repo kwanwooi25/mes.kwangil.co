@@ -1,11 +1,11 @@
-import Input from 'ui/elements/Input';
-import SelectAccount from 'ui/elements/SelectAccount';
 import { ProductLength, ProductThickness, ProductWidth } from 'const';
 import { AccountOption } from 'features/account/interface';
+import { ProductFormValues } from 'features/product/interface';
 import { useFormikContext } from 'formik';
 import React, { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ProductFormValues } from 'features/product/interface';
+import Input from 'ui/elements/Input';
+import SelectAccount from 'ui/elements/SelectAccount';
 
 function BaseInfoForm() {
   const { t } = useTranslation('products');
@@ -74,6 +74,14 @@ function BaseInfoForm() {
         error={touched.width && Boolean(errors.width)}
         helperText={touched.width && errors.width}
         inputProps={{ step: ProductWidth.STEP, min: ProductWidth.MIN, max: ProductWidth.MAX }}
+      />
+      <Input
+        className="col-span-6"
+        name="productMemo"
+        label={t('productMemo')}
+        value={values.productMemo}
+        onChange={handleChange}
+        multiline
       />
     </div>
   );

@@ -1,21 +1,31 @@
 /* eslint-disable no-nested-ternary */
-import AccountName from 'ui/elements/AccountName';
-import ConfirmDialog from 'ui/dialog/Confirm';
-import WorkOrderDialog from 'ui/dialog/WorkOrder';
-import WorkOrdersCompleteDialog from 'ui/dialog/WorkOrdersComplete';
-import ProductName from 'ui/elements/ProductName';
-import SelectWorkOrderStatus from 'ui/elements/SelectWorkOrderStatus';
-import WorkOrderId from 'ui/elements/WorkOrderId';
-import WorkOrderPDF from 'ui/pdf/WorkOrderPDF';
-import { PLATE_STATUS_COLORS, PrintSide, WorkOrderStatus } from 'const';
+import classNames from 'classnames';
+import { PLATE_STATUS_CLASS, PrintSide, WorkOrderStatus } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
+import { WorkOrderDto, WorkOrderFilter } from 'features/workOrder/interface';
+import {
+  useDeleteWorkOrdersMutation,
+  useUpdateWorkOrderMutation,
+} from 'features/workOrder/useWorkOrders';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useWorkOrderDisplay } from 'hooks/useWorkOrderDisplay';
 import React, { memo, MouseEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
+import ConfirmDialog from 'ui/dialog/Confirm';
+import WorkOrderDialog from 'ui/dialog/WorkOrder';
+import WorkOrdersCompleteDialog from 'ui/dialog/WorkOrdersComplete';
+import AccountName from 'ui/elements/AccountName';
+import ProductName from 'ui/elements/ProductName';
+import SelectWorkOrderStatus from 'ui/elements/SelectWorkOrderStatus';
+import WorkOrderId from 'ui/elements/WorkOrderId';
+import WorkOrderPDF from 'ui/pdf/WorkOrderPDF';
+import { highlight } from 'utils/string';
 import { getWorkOrderToUpdate } from 'utils/workOrder';
+
+import DoneIcon from '@mui/icons-material/Done';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {
   Checkbox,
   Chip,
@@ -28,16 +38,7 @@ import {
   Menu,
   MenuItem,
 } from '@mui/material';
-import DoneIcon from '@mui/icons-material/Done';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { BlobProvider } from '@react-pdf/renderer';
-import { highlight } from 'utils/string';
-import { WorkOrderDto, WorkOrderFilter } from 'features/workOrder/interface';
-import {
-  useDeleteWorkOrdersMutation,
-  useUpdateWorkOrderMutation,
-} from 'features/workOrder/useWorkOrders';
-import classNames from 'classnames';
 
 export interface WorkOrderListItemProps extends ListItemProps {
   workOrder: WorkOrderDto;
@@ -133,7 +134,7 @@ function WorkOrderListItem({
     isPrint,
     plateStatus,
   } = useWorkOrderDisplay(workOrder, t);
-  const plateStatusColor = PLATE_STATUS_COLORS[workOrder.plateStatus];
+  const plateStatusClassName = PLATE_STATUS_CLASS[workOrder.plateStatus];
 
   const workOrderStatusOptions = Object.values(WorkOrderStatus)
     .filter((value) => {
@@ -257,13 +258,7 @@ function WorkOrderListItem({
           )}
 
           <span className="flex items-center px-2 laptop:col-span-2 laptop:justify-center desktop:col-span-1 desktop:col-start-5 desktop:row-span-2 desktop:row-start-1 larger-desktop:col-start-6">
-            {isPrint && (
-              <Chip
-                className="!text-white"
-                label={plateStatus}
-                style={{ backgroundColor: plateStatusColor }}
-              />
-            )}
+            {isPrint && <Chip className={plateStatusClassName} label={plateStatus} />}
           </span>
 
           <div className="flex justify-end px-2 laptop:col-span-2 desktop:col-span-1 desktop:col-start-6 desktop:row-span-2 desktop:row-start-1 larger-desktop:col-start-7">

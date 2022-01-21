@@ -1,5 +1,3 @@
-import FormikStepper, { FormikStep } from 'ui/modules/FormikStepper/FormikStepper';
-import Loading from 'ui/elements/Loading';
 import { PlateLength, PlateMaterial, PlateRound } from 'const';
 import Dialog from 'features/dialog/Dialog';
 import useNotification from 'features/notification/useNotification';
@@ -10,6 +8,8 @@ import { isEmpty, isEqual } from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
+import Loading from 'ui/elements/Loading';
+import FormikStepper, { FormikStep } from 'ui/modules/FormikStepper/FormikStepper';
 import { getInitialPlateFormValues } from 'utils/plate';
 import { array, number, object, string } from 'yup';
 

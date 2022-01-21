@@ -216,6 +216,7 @@ export default {
     thickness: '두께',
     length: '길이(압출폭)',
     width: '너비(가공폭)',
+    productMemo: '제품 메모',
     extrusion: '압출',
     extColor: '원단 색상',
     extIsAntistatic: '대전 방지 처리',

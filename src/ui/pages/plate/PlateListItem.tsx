@@ -1,13 +1,17 @@
-import ConfirmDialog from 'ui/dialog/Confirm';
-import PlateDialog from 'ui/dialog/Plate';
-import PlateName from 'ui/elements/PlateName';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
+import { PlateDto, PlateFilter } from 'features/plate/interface';
+import { useDeletePlatesMutation } from 'features/plate/usePlates';
 import React, { memo, MouseEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
+import ConfirmDialog from 'ui/dialog/Confirm';
+import PlateDialog from 'ui/dialog/Plate';
+import PlateName from 'ui/elements/PlateName';
 import { getPlateProductsSummary, getPlateTitle } from 'utils/plate';
 import { highlight } from 'utils/string';
+
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {
   Checkbox,
   IconButton,
@@ -19,10 +23,6 @@ import {
   Menu,
   MenuItem,
 } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-
-import { PlateDto, PlateFilter } from 'features/plate/interface';
-import { useDeletePlatesMutation } from 'features/plate/usePlates';
 
 export interface PlateListItemProps extends ListItemProps {
   plate: PlateDto;
@@ -70,7 +70,8 @@ function PlateListItem({
       onClick();
     };
 
-  const handleClickEdit = () => openDialog(<PlateDialog plate={plate} onClose={closeDialog} />);
+  const handleClickEdit = () =>
+    openDialog(<PlateDialog plate={plate} products={plate.products} onClose={closeDialog} />);
 
   const handleClickDelete = () =>
     openDialog(

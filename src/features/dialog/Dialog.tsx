@@ -12,7 +12,6 @@ import {
   DialogProps as MuiDialogProps,
   DialogTitle,
   IconButton,
-  Typography,
 } from '@mui/material';
 
 export interface DialogProps extends MuiDialogProps {
@@ -48,8 +47,8 @@ function Dialog({
     >
       <DialogTitle className="flex justify-between items-center">
         <div className="flex flex-col">
-          <Typography variant="h6">{title}</Typography>
-          {subTitle && <Typography variant="caption">{subTitle}</Typography>}
+          <h6 className="text-2xl">{title}</h6>
+          {subTitle && <span className="text-xs">{subTitle}</span>}
         </div>
         <IconButton aria-label="close" onClick={handleClose}>
           <CloseIcon />

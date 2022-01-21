@@ -1,5 +1,6 @@
 import 'lib/wdyr';
 import 'i18n';
+import './index.css';
 
 import store, { history } from 'app/store';
 import { ConnectedRouter } from 'connected-react-router';
@@ -13,8 +14,6 @@ import { Provider } from 'react-redux';
 
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-
-import './index.css';
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -1,8 +1,8 @@
-import React, { ReactElement } from 'react';
 import classNames from 'classnames';
+import React, { ReactElement } from 'react';
 
-import { IconButton, Typography } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { IconButton } from '@mui/material';
 
 export interface DashboardCardProps {
   className?: string;
@@ -21,11 +21,9 @@ function DashboardCard({
 }: DashboardCardProps) {
   return (
     <div className={classNames('border border-blue-800/10 rounded-md w-full', className)}>
-      <div className="flex justify-between items-center p-2 bg-blue-300/10 rounded-t-md border-b border-b-blue-200/10">
+      <div className="flex justify-between items-center py-2 px-4 bg-blue-300/10 rounded-t-md border-b border-b-blue-200/10">
         <div className="flex gap-1 items-center">
-          <Typography className="text-blue-900" component="h3" variant="h6">
-            {title}
-          </Typography>
+          <h3 className="text-xl text-blue-900">{title}</h3>
           {!!onRefresh && (
             <IconButton size="small" onClick={onRefresh}>
               <RefreshIcon />

@@ -79,6 +79,7 @@ const PRODUCT_LABEL_TO_KEY: { [key: string]: keyof CreateProductsDto } = {
   포장단위: 'packUnit',
   전량납품: 'packCanDeliverAll',
   포장메모: 'packMemo',
+  제품메모: 'productMemo',
   이미지: 'images',
 };
 
@@ -110,6 +111,7 @@ const PRODUCT_KEY_TO_LABEL: { [key: string]: string } = {
   packUnit: '포장단위',
   packCanDeliverAll: '전량납품',
   packMemo: '포장메모',
+  productMemo: '제품메모',
   images: '이미지',
   lastWorkOrder: '최종작업일',
 };
@@ -253,6 +255,7 @@ const generateItem = {
         packUnit: 0,
         packCanDeliverAll: false,
         packMemo: '',
+        productMemo: '',
         images: [],
       },
     ),
