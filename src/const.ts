@@ -93,10 +93,10 @@ export enum PlateListItemHeight {
 
 export enum WorkOrderListItemHeight {
   MOBILE = 228 + 16,
-  TABLET = 200 + 16,
-  LAPTOP = 216 + 16,
+  TABLET = 228 + 16,
+  LAPTOP = 220 + 16,
   DESKTOP = 136 + 16,
-  LARGER_DESKTOP = 68 + 16,
+  LARGER_DESKTOP = 80 + 16,
 }
 
 export enum DeliveryListItemHeight {

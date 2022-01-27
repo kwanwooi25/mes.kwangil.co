@@ -133,6 +133,7 @@ function WorkOrderListItem({
     completedWeight,
     isPrint,
     plateStatus,
+    productSummary,
   } = useWorkOrderDisplay(workOrder, t);
   const plateStatusClassName = PLATE_STATUS_CLASS[workOrder.plateStatus];
 
@@ -216,20 +217,20 @@ function WorkOrderListItem({
           )}
 
           <AccountName
-            className="col-span-2 laptop:col-span-6 larger-desktop:col-span-1 larger-desktop:col-start-3 larger-desktop:row-start-1"
+            className="col-span-2 laptop:col-span-3 desktop:col-span-2 larger-desktop:col-span-1 larger-desktop:col-start-3 larger-desktop:row-start-1"
             linkClassName="text-sm"
             account={product.account}
             searchText={filter.accountName}
           />
 
           <ProductName
-            className="col-span-2 laptop:col-span-6 desktop:col-span-2 larger-desktop:col-span-1 larger-desktop:col-start-3 larger-desktop:row-start-2"
+            className="col-span-2 laptop:col-span-3 desktop:col-span-2 desktop:row-start-4 larger-desktop:col-span-1 larger-desktop:col-start-3 larger-desktop:row-start-2"
             product={product}
             searchText={filter.productName}
           />
 
           <span
-            className="col-span-2 px-2 tablet:col-span-1 laptop:col-span-3 desktop:col-span-2 larger-desktop:col-span-1 larger-desktop:col-start-4 larger-desktop:row-start-1"
+            className="px-2 tablet:col-span-1 laptop:col-span-3 desktop:col-span-2 larger-desktop:col-span-1 larger-desktop:col-start-4 larger-desktop:row-start-1"
             dangerouslySetInnerHTML={{
               __html: `${highlight(String(product.thickness), filter.thickness)} x ${highlight(
                 String(product.length),
@@ -238,13 +239,17 @@ function WorkOrderListItem({
             }}
           />
 
-          <span className="col-span-2 px-2 tablet:col-span-1 tablet:justify-self-end laptop:col-span-3 desktop:col-span-2 larger-desktop:col-span-1 larger-desktop:col-start-4 larger-desktop:row-start-2 larger-desktop:justify-self-start">
+          <span className="px-2 laptop:col-span-3 desktop:col-span-2 larger-desktop:col-span-1 larger-desktop:col-start-4 larger-desktop:row-start-2 larger-desktop:justify-self-start">
             <span className="text-base">{orderQuantity}</span>
             <span className="text-xs"> ({orderWeight})</span>
           </span>
 
+          <span className="col-span-2 px-2 truncate laptop:col-span-3 larger-desktop:col-span-1 larger-desktop:col-start-5 larger-desktop:row-start-1">
+            {productSummary}
+          </span>
+
           {!(isMobileLayout || isTabletLayout) && (
-            <div className="px-2 laptop:col-span-2 desktop:col-start-3 desktop:row-span-2 desktop:row-start-1 larger-desktop:col-span-1 larger-desktop:col-start-5 larger-desktop:row-start-1">
+            <div className="px-2 laptop:col-span-3 laptop:col-start-4 laptop:row-span-2 laptop:row-start-3 desktop:col-start-3 desktop:row-span-2 desktop:row-start-1 larger-desktop:col-span-1 larger-desktop:col-start-5 larger-desktop:row-span-1 larger-desktop:row-start-2">
               <p>
                 <span className="text-xs">{t('completedAt')}: </span>
                 <span className="text-sm">{completedAt}</span>
@@ -257,11 +262,11 @@ function WorkOrderListItem({
             </div>
           )}
 
-          <span className="flex items-center px-2 laptop:col-span-2 laptop:justify-center desktop:col-span-1 desktop:col-start-5 desktop:row-span-2 desktop:row-start-1 larger-desktop:col-start-6">
+          <span className="flex items-center px-2 laptop:col-span-3 desktop:col-span-1 desktop:col-start-5 desktop:row-span-2 desktop:row-start-1 larger-desktop:col-start-6">
             {isPrint && <Chip className={plateStatusClassName} label={plateStatus} />}
           </span>
 
-          <div className="flex justify-end px-2 laptop:col-span-2 desktop:col-span-1 desktop:col-start-6 desktop:row-span-2 desktop:row-start-1 larger-desktop:col-start-7">
+          <div className="flex justify-end px-2 laptop:col-span-3 laptop:col-start-4 laptop:row-span-2 laptop:row-start-6 desktop:col-span-1 desktop:col-start-6 desktop:row-span-2 desktop:row-start-1 larger-desktop:col-start-7">
             {workOrder.workOrderStatus !== WorkOrderStatus.COMPLETED ? (
               <SelectWorkOrderStatus
                 value={workOrder.workOrderStatus}
