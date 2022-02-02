@@ -5,7 +5,9 @@ import { capitalize } from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { StyleSheet, Text, View } from '@react-pdf/renderer';
+import reactPDF from '@react-pdf/renderer';
+
+const { StyleSheet, Text, View } = reactPDF;
 
 const {
   detailSection,

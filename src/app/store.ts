@@ -29,7 +29,7 @@ const middleware = [
   routerMiddleware(history),
 ];
 
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = import.meta.env.NODE_ENV === 'production';
 
 const store = configureStore({
   reducer,

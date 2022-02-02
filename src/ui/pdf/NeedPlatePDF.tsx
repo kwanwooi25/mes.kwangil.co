@@ -1,10 +1,12 @@
-import React from 'react';
 import { PlateStatus } from 'const';
 import { WorkOrderDto } from 'features/workOrder/interface';
 import { useWorkOrderDisplay } from 'hooks/useWorkOrderDisplay';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Document, Font, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
+import reactPDF from '@react-pdf/renderer';
+
+const { Document, Font, Page, StyleSheet, Text, View } = reactPDF;
 
 Font.register({
   // family: 'Nanum Gothic',

@@ -1,33 +1,42 @@
 import { format } from 'date-fns';
 import { CreateImageDto, ImageDto } from 'features/product/interface';
-import ReactS3Client from 'react-aws-s3-typescript';
+
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 import { removeFileExtension } from './string';
 
-const s3 = new ReactS3Client({
-  bucketName: process.env.REACT_APP_S3_IMAGE_BUCKET_NAME as string,
-  region: process.env.REACT_APP_AWS_REGION as string,
-  accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID as string,
-  secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY as string,
-});
+const bucketName = import.meta.env.VITE_S3_IMAGE_BUCKET_NAME;
+const region = import.meta.env.VITE_AWS_REGION;
+const accessKeyId = import.meta.env.VITE_AWS_ACCESS_KEY_ID;
+const secretAccessKey = import.meta.env.VITE_AWS_SECRET_ACCESS_KEY;
+const client = new S3Client({ region, credentials: { accessKeyId, secretAccessKey } });
 
 export async function uploadImage(file: File): Promise<CreateImageDto> {
   try {
-    const fileName = `${removeFileExtension(file.name)}_${format(new Date(), 'yyyyMMddHHmmss')}`;
-    const { key, location } = await s3.uploadFile(file, fileName);
+    const fileName = removeFileExtension(file.name);
+    const timestamp = format(new Date(), 'yyyyMMddHHmmss');
+    const fileExtension = file.type.split('/')[1];
+    await client.send(
+      new PutObjectCommand({
+        Bucket: bucketName,
+        Key: `${fileName}_${timestamp}.${fileExtension}`,
+        Body: file,
+        ContentType: file.type,
+      }),
+    );
     return {
-      fileName: key,
-      imageUrl: location,
+      fileName,
+      imageUrl: `https://${bucketName}.s3-${region}.amazonaws.com/${fileName}`,
     };
   } catch (error) {
     throw new Error(`Upload Failed: ${error}`);
   }
 }
 
-export async function deleteImage(image: ImageDto): Promise<number> {
+export async function deleteImage({ id, fileName }: ImageDto): Promise<number> {
   try {
-    await s3.deleteFile(image.fileName);
-    return image.id;
+    await client.send(new DeleteObjectCommand({ Key: fileName, Bucket: bucketName }));
+    return id;
   } catch (error) {
     throw new Error(`Upload Failed: ${error}`);
   }

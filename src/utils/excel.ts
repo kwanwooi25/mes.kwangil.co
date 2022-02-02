@@ -200,7 +200,7 @@ const generateItem = {
 
         switch (newKey) {
           case 'images':
-            // const imageBucketUrl = `https://${process.env.REACT_APP_S3_IMAGE_BUCKET_NAME}.s3.amazonaws.com/`;
+            // const imageBucketUrl = `https://${import.meta.env.VITE_S3_IMAGE_BUCKET_NAME}.s3.amazonaws.com/`;
             const imageBucketUrl = `https://kwangilmes-product-images.s3.amazonaws.com/`;
             const fileName = getFileNameFromUrl(value as string);
             const imageUrl = `${imageBucketUrl}${fileName}`;
