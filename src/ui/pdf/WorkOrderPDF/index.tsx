@@ -3,13 +3,15 @@ import { baseStyles } from 'lib/pdfStyles';
 import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Document, Font, Image, Page, StyleSheet, View } from '@react-pdf/renderer';
+import reactPDF from '@react-pdf/renderer';
 
 import Cutting from './Cutting';
 import Extrusion from './Extrusion';
 import Memos from './Memos';
 import Print from './Print';
 import WorkOrderHeader from './WorkOrderHeader';
+
+const { Document, Font, Image, Page, StyleSheet, View } = reactPDF;
 
 Font.register({
   // family: 'Nanum Gothic',

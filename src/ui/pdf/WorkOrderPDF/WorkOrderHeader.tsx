@@ -1,9 +1,11 @@
-import { StyleSheet, Text, View } from '@react-pdf/renderer';
-
-import React from 'react';
 import { WorkOrderDto } from 'features/workOrder/interface';
-import { useTranslation } from 'react-i18next';
 import { useWorkOrderDisplay } from 'hooks/useWorkOrderDisplay';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+
+import reactPDF from '@react-pdf/renderer';
+
+const { StyleSheet, Text, View } = reactPDF;
 
 const styles = StyleSheet.create({
   section: {

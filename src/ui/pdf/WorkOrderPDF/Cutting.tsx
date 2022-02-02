@@ -1,10 +1,12 @@
-import { StyleSheet, Text, View } from '@react-pdf/renderer';
+import { ProductDto } from 'features/product/interface';
+import { baseStyles } from 'lib/pdfStyles';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { getPackagingDetail, getPunchDetail } from 'utils/product';
 
-import { ProductDto } from 'features/product/interface';
-import React from 'react';
-import { baseStyles } from 'lib/pdfStyles';
-import { useTranslation } from 'react-i18next';
+import reactPDF from '@react-pdf/renderer';
+
+const { StyleSheet, Text, View } = reactPDF;
 
 const { detailSection, detailSectionHeader, detailSectionContent, borderTop } = baseStyles;
 

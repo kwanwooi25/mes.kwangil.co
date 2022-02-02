@@ -1,10 +1,12 @@
-import { StyleSheet, Text, View } from '@react-pdf/renderer';
-
 import { DeliveryMethod } from 'const';
-import React from 'react';
 import { baseStyles } from 'lib/pdfStyles';
 import { capitalize } from 'lodash';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+
+import reactPDF from '@react-pdf/renderer';
+
+const { StyleSheet, Text, View } = reactPDF;
 
 const { border, borderLeft, lightBorderRight } = baseStyles;
 

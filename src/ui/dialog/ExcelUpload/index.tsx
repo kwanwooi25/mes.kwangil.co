@@ -1,18 +1,18 @@
-import Loading from 'ui/elements/Loading';
-import RoundedButton from 'ui/elements/RoundedButton';
 import { ExcelVariant } from 'const';
 import Dialog from 'features/dialog/Dialog';
 import React, { ChangeEvent, createRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import Loading from 'ui/elements/Loading';
+import RoundedButton from 'ui/elements/RoundedButton';
 import { getExcelFileReader } from 'utils/excel';
 
-import { IconButton, TextField, Tooltip } from '@mui/material';
 import { Close, Done, GetApp } from '@mui/icons-material';
+import { IconButton, TextField, Tooltip } from '@mui/material';
 
 const templates = {
-  [ExcelVariant.ACCOUNT]: `${process.env.PUBLIC_URL}/업체대량등록.xlsx`,
-  [ExcelVariant.PRODUCT]: `${process.env.PUBLIC_URL}/제품대량등록.xlsx`,
-  [ExcelVariant.WORK_ORDER]: `${process.env.PUBLIC_URL}/작업지시대량등록.xlsx`,
+  [ExcelVariant.ACCOUNT]: `${import.meta.env.PUBLIC_URL}/업체대량등록.xlsx`,
+  [ExcelVariant.PRODUCT]: `${import.meta.env.PUBLIC_URL}/제품대량등록.xlsx`,
+  [ExcelVariant.WORK_ORDER]: `${import.meta.env.PUBLIC_URL}/작업지시대량등록.xlsx`,
 };
 
 export interface ExcelUploadDialogProps {

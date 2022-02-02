@@ -6,7 +6,7 @@ import { notificationActions } from 'features/notification/notificationSlice';
 
 import store from './store';
 
-const baseURL = process.env.REACT_APP_API_URL || DEFAULT_API_URL;
+const baseURL = import.meta.env.VITE_API_URL || DEFAULT_API_URL;
 
 const apiClient = axios.create({ baseURL });
 
