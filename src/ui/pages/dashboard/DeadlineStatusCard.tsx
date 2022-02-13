@@ -6,6 +6,7 @@ import { useWorkOrderDisplay } from 'hooks/useWorkOrderDisplay';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
+import AccountName from 'ui/elements/AccountName';
 import CustomToggleButton, { ToggleButtonOption } from 'ui/elements/CustomToggleButton';
 import DashboardCard from 'ui/elements/DashboardCard';
 import ProductName from 'ui/elements/ProductName';
@@ -15,7 +16,7 @@ import { formatDate } from 'utils/date';
 import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
 import { Chip, List, ListItem, Pagination, Skeleton } from '@mui/material';
 
-const LIST_ITEM_HEIGHT = 121;
+const LIST_ITEM_HEIGHT = 141;
 
 function WorkOrderListItem({ workOrder }: { workOrder: WorkOrderDto }) {
   const { t } = useTranslation();
@@ -30,9 +31,12 @@ function WorkOrderListItem({ workOrder }: { workOrder: WorkOrderDto }) {
 
   return (
     <ListItem className="!grid grid-cols-[1fr_auto] gap-x-2 gap-y-1" divider>
-      <WorkOrderId workOrder={workOrder} />
+      <WorkOrderId linkClassName="text-xs" workOrder={workOrder} />
       <span className={classNames('justify-self-end', deliverByClassName)}>{deliverBy}</span>
-      <ProductName product={workOrder.product} />
+      <div className="flex flex-col">
+        <AccountName linkClassName="text-xs" account={workOrder.product.account} />
+        <ProductName product={workOrder.product} />
+      </div>
       <Chip
         className={classNames('justify-self-end', workOrderStatusClassName)}
         size="small"

@@ -23,7 +23,7 @@ import { Done, InsertEmoticon, Print } from '@mui/icons-material';
 import { Chip, IconButton, List, ListItem, Pagination, Skeleton, Tooltip } from '@mui/material';
 import { BlobProvider } from '@react-pdf/renderer';
 
-const LIST_ITEM_HEIGHT = 145;
+const LIST_ITEM_HEIGHT = 141;
 
 function WorkOrderListItem({
   workOrder,
@@ -86,8 +86,8 @@ function WorkOrderListItem({
   return (
     <ListItem className="!grid grid-cols-[1fr_auto_auto] gap-x-2 gap-y-1" divider>
       <WorkOrderId linkClassName="text-xs" workOrder={workOrder} />
-      <Chip className={classNames('row-span-4', plateStatusClassName)} label={plateStatus} />
-      <span className="row-span-4">
+      <Chip className={classNames('row-span-3', plateStatusClassName)} label={plateStatus} />
+      <span className="row-span-3">
         {canUpdateWorkOrders && (
           <Tooltip title={t('common:complete') as string}>
             <IconButton color="primary" onClick={handleClickComplete}>
@@ -96,8 +96,10 @@ function WorkOrderListItem({
           </Tooltip>
         )}
       </span>
-      <AccountName linkClassName="text-xs" account={workOrder.product.account} />
-      <ProductName product={workOrder.product} />
+      <div className="flex flex-col">
+        <AccountName linkClassName="text-xs" account={workOrder.product.account} />
+        <ProductName product={workOrder.product} />
+      </div>
       <span className="px-2">{productSize}</span>
     </ListItem>
   );
