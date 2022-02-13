@@ -16,17 +16,18 @@ export async function uploadImage(file: File): Promise<CreateImageDto> {
     const fileName = removeFileExtension(file.name);
     const timestamp = format(new Date(), 'yyyyMMddHHmmss');
     const fileExtension = file.type.split('/')[1];
+    const fileNameWithTimestamp = `${fileName}_${timestamp}.${fileExtension}`;
     await client.send(
       new PutObjectCommand({
         Bucket: bucketName,
-        Key: `${fileName}_${timestamp}.${fileExtension}`,
+        Key: fileNameWithTimestamp,
         Body: file,
         ContentType: file.type,
       }),
     );
     return {
-      fileName,
-      imageUrl: `https://${bucketName}.s3-${region}.amazonaws.com/${fileName}`,
+      fileName: fileNameWithTimestamp,
+      imageUrl: `https://${bucketName}.s3-${region}.amazonaws.com/${fileNameWithTimestamp}`,
     };
   } catch (error) {
     throw new Error(`Upload Failed: ${error}`);
