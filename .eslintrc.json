@@ -25,6 +25,7 @@
     "react/jsx-props-no-spreading": "off",
     "react/no-danger": "off",
     "react/require-default-props": "off",
+    "react/function-component-definition": "off",
     "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state"] }]
   }
 }
