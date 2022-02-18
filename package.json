@@ -37,7 +37,7 @@
     "react-redux": "^7.2.0",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
-    "xlsx": "^0.16.9",
+    "xlsx": "^0.17.0",
     "yup": "^0.32.9",
     "zustand": "^3.6.8"
   },
