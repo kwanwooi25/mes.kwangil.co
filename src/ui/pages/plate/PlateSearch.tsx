@@ -49,6 +49,7 @@ function PlateSearch({ filter, onChange }: PlateSearchProps) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col w-full" noValidate>
+      <Input name="id" label={t('id')} value={values.id} onChange={handleChange} />
       <Input
         name="accountName"
         label={t('accountName')}

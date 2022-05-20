@@ -297,6 +297,7 @@ export default {
     selectedProducts: '선택된 제품',
     searchedProducts: '검색된 제품',
     plateInfo: '동판 정보',
+    id: '동판 ID',
     round: '동판 둘레',
     length: '동판 기장',
     name: '동판명',

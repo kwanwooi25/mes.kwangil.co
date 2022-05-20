@@ -3,6 +3,7 @@ import { ProductDto } from 'features/product/interface';
 import { BaseQuery } from 'types/api';
 
 export interface PlateFilter {
+  id?: string;
   accountName?: string;
   productName?: string;
   name?: string;

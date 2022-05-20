@@ -13,6 +13,7 @@ import { getPlateTitle } from 'utils/plate';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {
   Checkbox,
+  Chip,
   IconButton,
   ListItem,
   ListItemIcon,
@@ -113,7 +114,10 @@ function PlateListItem({
         </ListItemIcon>
       )}
       <ListItemText>
-        <div className="flex flex-col desktop:grid desktop:grid-cols-[1fr_2fr] desktop:gap-1">
+        <div className="flex flex-col desktop:grid desktop:grid-cols-[60px_1fr_2fr] desktop:gap-1">
+          <span className="flex justify-start items-center">
+            <Chip label={plate.id} size="small" />
+          </span>
           <PlateName plate={plate} searchText={filter.name} />
           <ul className="flex flex-col gap-1 px-2 desktop:justify-center">
             {plate.products.slice(0, productCountToDisplay).map((product, index) => (

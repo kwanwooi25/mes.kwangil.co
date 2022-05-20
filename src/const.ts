@@ -85,9 +85,9 @@ export enum ProductListItemHeight {
 }
 
 export enum PlateListItemHeight {
-  MOBILE = 52.5 + 16,
-  TABLET = 52.5 + 16,
-  LAPTOP = 72.5 + 16,
+  MOBILE = 96.5 + 8 + 16,
+  TABLET = 96.5 + 8 + 16,
+  LAPTOP = 96.5 + 8 + 16,
   DESKTOP = 36.5 + 16,
 }
 
@@ -291,6 +291,7 @@ export const DEFAULT_API_URL = 'http://localhost:5000';
 export const DEFAULT_LIST_LIMIT = 50;
 
 export const DEFAULT_PLATE_FILTER: PlateFilter = {
+  id: '',
   accountName: '',
   productName: '',
   name: '',
