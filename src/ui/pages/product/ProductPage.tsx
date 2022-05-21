@@ -96,7 +96,7 @@ function ProductPage() {
     ? ProductListItemHeight.LAPTOP
     : ProductListItemHeight.DESKTOP;
   const searchResult = t('common:searchResult', {
-    count: formatDigit(data?.pages[data.pages.length - 1].count || 0),
+    count: data?.pages?.length ? formatDigit(data?.pages[data.pages.length - 1].count ?? 0) : 0,
   } as any);
 
   const handleClickRefresh = () => queryClient.invalidateQueries('products');

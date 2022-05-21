@@ -13,9 +13,10 @@ export interface PlateNameProps {
   linkClassName?: string;
   plate: PlateDto;
   searchText?: string;
+  withId?: boolean;
 }
 
-function PlateName({ plate, className, linkClassName, searchText = '' }: PlateNameProps) {
+function PlateName({ plate, className, linkClassName, searchText = '', withId }: PlateNameProps) {
   const { openDialog, closeDialog } = useDialog();
 
   const plateNameHTML = useMemo(
@@ -36,10 +37,15 @@ function PlateName({ plate, className, linkClassName, searchText = '' }: PlateNa
       endIcon={<span />}
       color="inherit"
     >
-      <p
-        className={classNames('truncate', linkClassName)}
-        dangerouslySetInnerHTML={{ __html: plateNameHTML }}
-      />
+      <p className={classNames('truncate', linkClassName)}>
+        {withId && (
+          <>
+            <span className="p-1 bg-slate-200 rounded-full">{plate.id}</span>
+            <span> | </span>
+          </>
+        )}
+        <span dangerouslySetInnerHTML={{ __html: plateNameHTML }} />
+      </p>
     </LoadingButton>
   );
 }

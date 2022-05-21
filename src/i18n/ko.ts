@@ -255,6 +255,7 @@ export default {
     dates: '생성/수정일',
     createdAt: '생성일',
     updatedAt: '최종수정일',
+    lastOrderedAt: '최종작업일',
     balance: '재고 수량',
 
     searchPlaceholder: '제품명으로 검색',

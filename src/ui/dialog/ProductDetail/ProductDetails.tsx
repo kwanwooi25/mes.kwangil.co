@@ -11,9 +11,10 @@ import CustomListSubHeader from 'ui/elements/CustomListSubHeader';
 import { ProductDto } from 'features/product/interface';
 import ProductImage from 'ui/modules/ProductImage/ProductImage';
 import React from 'react';
-import { getPlateTitle } from 'utils/plate';
 import { useTranslation } from 'react-i18next';
-import { PRINT_SIDE_TEXT, PrintSide } from 'const';
+import { PRINT_SIDE_TEXT, PrintSide, DATE_FORMAT_WITH_WEEKDAY, DATE_TIME_FORMAT } from 'const';
+import PlateName from 'ui/elements/PlateName';
+import { format } from 'date-fns';
 import DetailField from '../DetailField';
 
 export interface ProductDetailsProps {
@@ -60,6 +61,7 @@ function ProductDetails({
     plates = [],
     createdAt,
     updatedAt,
+    workOrders = [],
   } = product;
 
   const productSize = getProductSize({ thickness, length, width } as ProductDto);
@@ -83,7 +85,8 @@ function ProductDetails({
   const packagingDetail = getPackagingDetail({ material: packMaterial, unit: packUnit });
   const hasPlates = Boolean(plates.length);
   const hasImages = Boolean(images.length) || Boolean(filesToUpload.length);
-  const hasDates = Boolean(createdAt) && Boolean(updatedAt);
+  const lastOrderedAt = workOrders?.[0].orderedAt;
+  const hasDates = Boolean(createdAt) && Boolean(updatedAt) && Boolean(lastOrderedAt);
 
   return (
     <List disablePadding>
@@ -116,7 +119,7 @@ function ProductDetails({
               <DetailField
                 key={plate.id}
                 label={`${t('plates')} ${index + 1}`}
-                value={`${getPlateTitle(plate)} ${plate.location}`}
+                value={<PlateName plate={plate} withId />}
               />
             ))}
           <DetailField label={t('printMemo')} value={printMemo} />
@@ -160,8 +163,20 @@ function ProductDetails({
       {hasDates && (
         <>
           <CustomListSubHeader>{t('dates')}</CustomListSubHeader>
-          <DetailField label={t('createdAt')} value={new Date(createdAt).toLocaleString('ko')} />
-          <DetailField label={t('updatedAt')} value={new Date(updatedAt).toLocaleString('ko')} />
+          <DetailField
+            label={t('createdAt')}
+            value={format(new Date(createdAt), DATE_TIME_FORMAT)}
+          />
+          <DetailField
+            label={t('updatedAt')}
+            value={format(new Date(updatedAt), DATE_TIME_FORMAT)}
+          />
+          {lastOrderedAt && (
+            <DetailField
+              label={t('lastOrderedAt')}
+              value={format(new Date(lastOrderedAt), DATE_FORMAT_WITH_WEEKDAY)}
+            />
+          )}
           <div className="pb-3" />
         </>
       )}

@@ -258,6 +258,7 @@ export const PRINT_SIDE_TEXT: { [key: string]: string } = {
 
 export const DATE_FORMAT = 'yyyy-MM-dd';
 export const DATE_FORMAT_WITH_WEEKDAY = 'yyyy-MM-dd (eee)';
+export const DATE_TIME_FORMAT = 'yyyy-MM-dd HH:mm:ss';
 
 export const PLATE_STATUS_TEXT: { [key: string]: string } = {
   [PlateStatus.NEW]: '신규',
