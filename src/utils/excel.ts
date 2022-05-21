@@ -559,7 +559,7 @@ export const downloadWorkbook = {
   },
 };
 
-export const getExcelFileReader = {
+export const getExcelFileReader: { [key in ExcelVariant]?: Function } = {
   [ExcelVariant.ACCOUNT]: (stateSetter: Dispatch<SetStateAction<CreateAccountDto[]>>) =>
     getFileReader(ExcelVariant.ACCOUNT, stateSetter),
   [ExcelVariant.PRODUCT]: (stateSetter: Dispatch<SetStateAction<CreateProductsDto[]>>) =>

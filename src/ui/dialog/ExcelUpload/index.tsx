@@ -9,7 +9,7 @@ import { getExcelFileReader } from 'utils/excel';
 import { Close, Done, GetApp } from '@mui/icons-material';
 import { IconButton, TextField, Tooltip } from '@mui/material';
 
-const templates = {
+const templates: { [key in ExcelVariant]?: string } = {
   [ExcelVariant.ACCOUNT]: `${import.meta.env.PUBLIC_URL}/업체대량등록.xlsx`,
   [ExcelVariant.PRODUCT]: `${import.meta.env.PUBLIC_URL}/제품대량등록.xlsx`,
   [ExcelVariant.WORK_ORDER]: `${import.meta.env.PUBLIC_URL}/작업지시대량등록.xlsx`,
@@ -30,7 +30,7 @@ function ExcelUploadDialog({ variant, onSave, onClose = () => {} }: ExcelUploadD
 
   const fileUploadRef = createRef<HTMLInputElement>();
 
-  const template = templates[variant];
+  const template = templates[variant] ?? '';
 
   const handleChangeFile = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.length) {
@@ -38,7 +38,7 @@ function ExcelUploadDialog({ variant, onSave, onClose = () => {} }: ExcelUploadD
       return;
     }
     const file = e.target.files[0];
-    const reader = getExcelFileReader[variant](setDataToCreate);
+    const reader = getExcelFileReader?.[variant]?.(setDataToCreate);
     reader.readAsArrayBuffer(file);
     setFileName(file.name);
   };
