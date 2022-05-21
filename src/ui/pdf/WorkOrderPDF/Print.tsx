@@ -6,6 +6,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import reactPDF from '@react-pdf/renderer';
+import { getPlateTitle } from 'utils/plate';
 
 const { StyleSheet, Text, View } = reactPDF;
 
@@ -58,13 +59,15 @@ const styles = StyleSheet.create({
   },
   plateStatus: {
     ...lightBorderRight,
+    ...flexColumnCenter,
     flex: 2,
     textAlign: 'center',
     padding: 4,
+    height: '100%',
   },
-  plateLocations: {
-    flex: 3,
-    textAlign: 'center',
+  plates: {
+    flex: 4,
+    fontSize: 10,
     padding: 4,
   },
 });
@@ -84,12 +87,11 @@ function Print({ product, plateStatus }: PrintProps) {
     printBackColor,
     printBackPosition,
     printMemo,
-    plates,
+    plates = [],
   } = product;
 
   const isPrint = printFrontColorCount + printBackColorCount > 0;
   const plateStatusText = t(`workOrders:plateStatus${capitalize(plateStatus)}`);
-  const plateLocations = plates?.map(({ location }) => location);
 
   return (
     <View style={styles.root}>
@@ -136,9 +138,11 @@ function Print({ product, plateStatus }: PrintProps) {
               <View style={styles.plateStatus}>
                 <Text>{plateStatusText}</Text>
               </View>
-              <View style={styles.plateLocations}>
-                {plateLocations?.map((location) => (
-                  <Text key={location}>{location}</Text>
+              <View style={styles.plates}>
+                {plates?.map((plate) => (
+                  <Text key={plate.id}>
+                    [{plate.id}] {getPlateTitle(plate)}
+                  </Text>
                 ))}
               </View>
             </View>

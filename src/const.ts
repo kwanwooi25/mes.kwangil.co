@@ -30,6 +30,7 @@ export enum Path {
 export enum ExcelVariant {
   ACCOUNT = 'accounts',
   PRODUCT = 'products',
+  PLATE = 'plates',
   WORK_ORDER = 'workOrders',
 }
 
@@ -254,6 +255,11 @@ export const PRINT_SIDE_TEXT: { [key: string]: string } = {
   [PrintSide.NONE]: '없음 (무지)',
   [PrintSide.SINGLE]: '단면',
   [PrintSide.DOUBLE]: '양면',
+};
+
+export const PLATE_MATERIAL_TEXT: { [key in PlateMaterial]: string } = {
+  [PlateMaterial.BRASS]: '신주',
+  [PlateMaterial.STEEL]: '데스',
 };
 
 export const DATE_FORMAT = 'yyyy-MM-dd';

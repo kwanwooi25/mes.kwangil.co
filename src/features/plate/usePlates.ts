@@ -1,7 +1,8 @@
-import { DEFAULT_LIST_LIMIT } from 'const';
+import { DEFAULT_LIST_LIMIT, ExcelVariant } from 'const';
 import useNotification from 'features/notification/useNotification';
-import { QueryClient, useInfiniteQuery, useMutation } from 'react-query';
+import { QueryClient, useInfiniteQuery, useMutation, useQuery } from 'react-query';
 import { GetListResponse } from 'types/api';
+import { downloadWorkbook } from 'utils/excel';
 
 import { PlateDto, PlateFilter } from './interface';
 import { plateApi } from './plateApi';
@@ -23,6 +24,26 @@ export const useInfinitePlates = (filter: PlateFilter, limit: number = DEFAULT_L
   const loadMore = () => hasNextPage && !isFetching && fetchNextPage();
 
   return { loadMore, ...plateInfiniteQuery };
+};
+
+export const useDownloadPlates = (filter: PlateFilter) => {
+  const { isFetching: isDownloading, refetch } = useQuery(
+    ['download-products', JSON.stringify(filter)],
+    async ({ queryKey }) => {
+      const [, serializedFilter] = queryKey;
+      const { rows } = await plateApi.getAllPlates(JSON.parse(serializedFilter));
+      return rows;
+    },
+    { enabled: false },
+  );
+
+  const download = (fileName: string) => {
+    refetch().then((res) => {
+      downloadWorkbook[ExcelVariant.PLATE](res.data, fileName);
+    });
+  };
+
+  return { isDownloading, download };
 };
 
 export const useCreatePlateMutation = ({

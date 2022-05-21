@@ -8,8 +8,10 @@ import {
   PRINT_SIDE_TEXT,
   PrintSide,
   WorkOrderStatus,
+  PLATE_MATERIAL_TEXT,
 } from 'const';
 import { AccountDto, CreateAccountDto, CreateContactDto } from 'features/account/interface';
+import { PlateDto } from 'features/plate/interface';
 import { CreateProductDto, CreateProductsDto, ProductDto } from 'features/product/interface';
 import {
   CreateWorkOrderDto,
@@ -21,6 +23,7 @@ import { Dispatch, SetStateAction } from 'react';
 import XLSX from 'xlsx';
 
 import { formatDate } from './date';
+import { getProductTitle } from './product';
 import { getFileNameFromUrl } from './string';
 
 const ACCOUNT_LABEL_TO_KEY: { [key: string]: keyof CreateAccountDto } = {
@@ -114,6 +117,19 @@ const PRODUCT_KEY_TO_LABEL: { [key: string]: string } = {
   productMemo: '제품메모',
   images: '이미지',
   lastWorkOrder: '최종작업일',
+};
+
+const PLATE_KEY_TO_LABEL: { [key: string]: string } = {
+  id: '동판ID',
+  round: '둘레',
+  length: '기장',
+  name: '동판명',
+  material: '동판재질',
+  location: '동판위치',
+  memo: '동판메모',
+  createdAt: '생성일',
+  updatedAt: '수정일',
+  products: '사용제품',
 };
 
 const WORK_ORDER_LABEL_TO_KEY: { [key: string]: keyof CreateWorkOrdersDto } = {
@@ -431,6 +447,36 @@ function processProductsForDownload(
   );
 }
 
+function processPlatesForDownload(plates: PlateDto[]) {
+  const plateDataKeys = Object.keys(PLATE_KEY_TO_LABEL);
+
+  return plates.map((plate) =>
+    plateDataKeys.reduce((processedPlate, key) => {
+      const label = (PLATE_KEY_TO_LABEL[key] as string) || key;
+      // @ts-ignore
+      let value = plate[key];
+
+      switch (key) {
+        case 'material':
+          // @ts-ignore
+          value = PLATE_MATERIAL_TEXT[value];
+          break;
+        case 'products':
+          value = value.map((product: ProductDto) => getProductTitle(product)).join(',');
+          break;
+        case 'createdAt':
+        case 'updatedAt':
+          value = formatDate(value);
+          break;
+        default:
+          break;
+      }
+
+      return { ...processedPlate, [label]: value };
+    }, {}),
+  );
+}
+
 function processWorkOrdersForDownload(
   workOrders: (WorkOrderDto | ((CreateWorkOrderDto | CreateWorkOrdersDto) & { reason: string }))[],
 ) {
@@ -495,6 +541,10 @@ export const downloadWorkbook = {
     workbookTitle: string,
   ) => {
     const data = processProductsForDownload(products);
+    return getWorkbook(data, workbookTitle);
+  },
+  [ExcelVariant.PLATE]: (plates: PlateDto[], workbookTitle: string) => {
+    const data = processPlatesForDownload(plates);
     return getWorkbook(data, workbookTitle);
   },
   [ExcelVariant.WORK_ORDER]: (

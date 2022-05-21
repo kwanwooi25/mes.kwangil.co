@@ -294,6 +294,7 @@ export default {
     addPlate: '동판 등록',
     editPlate: '동판 수정',
     deletePlate: '동판 삭제',
+    plateList: '동판목록',
     selectProducts: '사용 제품 선택',
     selectedProducts: '선택된 제품',
     searchedProducts: '검색된 제품',

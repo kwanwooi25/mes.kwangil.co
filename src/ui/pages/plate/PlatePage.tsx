@@ -20,10 +20,14 @@ import { useQueryClient } from 'react-query';
 import { formatDigit } from 'utils/string';
 
 import { IconButton, List, Tooltip } from '@mui/material';
-import { Add, DeleteOutline, Refresh } from '@mui/icons-material';
+import { Add, DeleteOutline, GetApp, Refresh } from '@mui/icons-material';
 
 import { PlateDto, PlateFilter } from 'features/plate/interface';
-import { useDeletePlatesMutation, useInfinitePlates } from 'features/plate/usePlates';
+import {
+  useDeletePlatesMutation,
+  useDownloadPlates,
+  useInfinitePlates,
+} from 'features/plate/usePlates';
 import PlateListItem from './PlateListItem';
 import PlateSearch from './PlateSearch';
 
@@ -35,6 +39,7 @@ function PlatePage() {
   const { isMobileLayout, isTabletLayout, isLaptopLayout } = useScreenSize();
   const { canCreatePlates, canDeletePlates } = useAuth();
   const { isFetching, data, loadMore } = useInfinitePlates(filter);
+  const { isDownloading, download } = useDownloadPlates(filter);
 
   const plates = data?.pages.reduce((p: PlateDto[], { rows }) => [...p, ...rows], []) || [];
   const plateIds = plates.map(({ id }) => id);
@@ -84,6 +89,8 @@ function PlatePage() {
   const handleToggleSelection = (plate: PlateDto) => toggleSelection(plate.id);
 
   const openPlateDialog = () => openDialog(<PlateDialog onClose={closeDialog} />);
+
+  const downloadExcel = () => download(t('plateList'));
 
   const selectModeButtons: JSX.Element[] = [];
   if (canDeletePlates) {
@@ -138,6 +145,17 @@ function PlatePage() {
       </Tooltip>,
     ];
   }
+  toolBarButtons = [
+    ...toolBarButtons,
+    <Tooltip key="download-products" title={t('common:downloadExcel') as string} placement="top">
+      <span>
+        <IconButton onClick={downloadExcel} disabled={isDownloading}>
+          {isDownloading && <Loading />}
+          <GetApp />
+        </IconButton>
+      </span>
+    </Tooltip>,
+  ];
 
   useEffect(() => {
     resetSelection();
