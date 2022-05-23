@@ -85,7 +85,7 @@ function ProductDetails({
   const packagingDetail = getPackagingDetail({ material: packMaterial, unit: packUnit });
   const hasPlates = Boolean(plates.length);
   const hasImages = Boolean(images.length) || Boolean(filesToUpload.length);
-  const lastOrderedAt = workOrders?.[0].orderedAt;
+  const lastOrderedAt = workOrders?.[0]?.orderedAt;
   const hasDates = Boolean(createdAt) && Boolean(updatedAt) && Boolean(lastOrderedAt);
 
   return (
