@@ -141,7 +141,7 @@ function Print({ product, plateStatus }: PrintProps) {
               <View style={styles.plates}>
                 {plates?.map((plate) => (
                   <Text key={plate.id}>
-                    [{plate.id}] {getPlateTitle(plate)}
+                    [{plate.code}] {getPlateTitle(plate)}
                   </Text>
                 ))}
               </View>

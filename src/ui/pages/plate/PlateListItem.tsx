@@ -116,7 +116,7 @@ function PlateListItem({
       <ListItemText>
         <div className="flex flex-col desktop:grid desktop:grid-cols-[60px_1fr_2fr] desktop:gap-1">
           <span className="flex justify-start items-center">
-            <Chip label={plate.id} size="small" />
+            {plate.code && <Chip label={plate.code} size="small" />}
           </span>
           <PlateName plate={plate} searchText={filter.name} />
           <ul className="flex flex-col gap-1 px-2 desktop:justify-center">

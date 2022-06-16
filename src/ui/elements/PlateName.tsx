@@ -40,7 +40,7 @@ function PlateName({ plate, className, linkClassName, searchText = '', withId }:
       <p className={classNames('truncate', linkClassName)}>
         {withId && (
           <>
-            <span className="p-1 bg-slate-200 rounded-full">{plate.id}</span>
+            <span className="py-1 px-2 bg-slate-200 rounded-full">{plate.code}</span>
             <span> | </span>
           </>
         )}
