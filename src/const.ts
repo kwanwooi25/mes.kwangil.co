@@ -302,6 +302,7 @@ export const DEFAULT_PLATE_FILTER: PlateFilter = {
   accountName: '',
   productName: '',
   name: '',
+  code: '',
   round: [PlateRound.MIN, PlateRound.MAX],
   length: [PlateLength.MIN, PlateLength.MAX],
 };

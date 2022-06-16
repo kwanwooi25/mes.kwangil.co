@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode, createContext, useContext } from 'react';
+import React, { ReactElement, ReactNode, createContext, useContext, useCallback } from 'react';
 
 import { useAppDispatch, useAppSelector } from 'app/store';
 
@@ -24,12 +24,15 @@ const useDialogProvider = (): DialogContext => {
   const dispatch = useAppDispatch();
   const { open, close } = dialogActions;
 
-  const openDialog = (dialog: ReactElement) => {
-    dispatch(open(dialog));
-  };
-  const closeDialog = () => {
+  const openDialog = useCallback(
+    (dialog: ReactElement) => {
+      dispatch(open(dialog));
+    },
+    [dispatch, open],
+  );
+  const closeDialog = useCallback(() => {
     dispatch(close());
-  };
+  }, [dispatch, open]);
 
   return { isOpen: !!dialogs.length, openDialog, closeDialog, dialogs };
 };

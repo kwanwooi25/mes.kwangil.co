@@ -7,6 +7,7 @@ export interface PlateFilter {
   accountName?: string;
   productName?: string;
   name?: string;
+  code?: string;
   round?: [number, number];
   length?: [number, number];
 }
