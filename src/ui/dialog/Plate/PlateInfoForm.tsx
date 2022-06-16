@@ -31,10 +31,20 @@ function PlateInfoForm() {
         {!!values.products.length && <Divider className="!my-4" />}
       </List>
       <CustomToggleButton
-        className="col-span-2"
+        className="col-span-2 tablet:col-span-4"
         value={values.material}
         onChange={handleChangeMaterial}
         options={materialOptions}
+      />
+      <Input
+        className="col-span-2"
+        name="code"
+        label={t('code')}
+        value={values.code}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        error={touched.code && Boolean(errors.code)}
+        helperText={touched.code && errors.code}
       />
       <Input
         className="col-span-2"

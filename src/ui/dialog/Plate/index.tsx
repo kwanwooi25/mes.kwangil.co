@@ -45,6 +45,7 @@ function PlateDialog({ products = [], plate, onClose }: PlateDialogProps) {
 
   const validationSchemas = {
     plateInfo: object({
+      code: string(),
       round: number()
         .required(t('roundRequired'))
         .min(PlateRound.MIN, t('minRoundError', { value: PlateRound.MIN }))

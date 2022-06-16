@@ -71,36 +71,6 @@ export function getPlateProductsSummary(
 }
 
 /**
- * 사용되는 제품 규격으로 동판 규격을 유추하여 반환
- *
- * @param products 제품 목록
- *
- * @example { round: 300, length: 300 }
- */
-export function estimatePlateSize(products: ProductDto[]) {
-  const round = PlateRound.MIN;
-  let length = PlateLength.MIN;
-
-  if (products.length) {
-    // const productWidths = products.map((product) => product.width * 10);
-    const productLengths = products.map((product) => product.length * 10);
-    // for (round; round < 600; round += 10) {
-    //   // eslint-disable-next-line
-    //   if (productWidths.every((width) => round % width === 0)) {
-    //     break;
-    //   }
-    //   if (round >= PlateRound.MAX) {
-    //     break;
-    //   }
-    //   round += 10;
-    // }
-    length = Math.max(PlateLength.MIN, productLengths.reduce((total, l) => total + l, 0) + 50);
-  }
-
-  return { round, length };
-}
-
-/**
  * 동판 생성/수정 폼의 초기값 생성하여 반환
  *
  * @param plate 동판 정보
@@ -113,11 +83,10 @@ export function getInitialPlateFormValues({
   plate?: PlateDto;
   products: ProductDto[];
 }): PlateFormValues {
-  const { round, length } = estimatePlateSize(products);
-
   return {
-    round,
-    length,
+    code: '',
+    round: PlateRound.MIN,
+    length: PlateLength.MIN,
     name: '',
     material: PlateMaterial.STEEL,
     location: '',

@@ -15,6 +15,7 @@ export type GetPlatesQuery = BaseQuery & PlateFilter;
 
 export interface PlateDto {
   id: number;
+  code?: string;
   round: number;
   length: number;
   name?: string;
