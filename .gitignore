@@ -38,3 +38,6 @@ yarn-error.log*
 
 # eslint cache
 .eslintcache
+
+# build folder
+dist

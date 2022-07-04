@@ -2,17 +2,18 @@ import Loading from 'ui/elements/Loading';
 import { DEFAULT_PAGE, Path } from 'const';
 import { useAuth, useRefreshLoginMutation } from 'features/auth/authHook';
 import Notifier from 'features/notification/Notifier';
-import AccountPage from 'ui/pages/account/AccountPage';
-import LoginPage from 'ui/pages/auth/LoginPage';
-import RegisterPage from 'ui/pages/auth/RegisterPage';
-import DashboardPage from 'ui/pages/dashboard/DashboardPage';
-import PlatePage from 'ui/pages/plate/PlatePage';
-import ProductPage from 'ui/pages/product/ProductPage';
-import SettingsPage from 'ui/pages/settings/SettingsPage';
-import UsersPage from 'ui/pages/users/UsersPage';
-import WorkOrderPage from 'ui/pages/workOrder/WorkOrderPage';
-import React, { ComponentType, useEffect } from 'react';
+import React, { ComponentType, lazy, Suspense, useEffect } from 'react';
 import { Redirect, Route, Switch } from 'react-router';
+
+const AccountPage = lazy(() => import('ui/pages/account/AccountPage'));
+const LoginPage = lazy(() => import('ui/pages/auth/LoginPage'));
+const RegisterPage = lazy(() => import('ui/pages/auth/RegisterPage'));
+const DashboardPage = lazy(() => import('ui/pages/dashboard/DashboardPage'));
+const PlatePage = lazy(() => import('ui/pages/plate/PlatePage'));
+const ProductPage = lazy(() => import('ui/pages/product/ProductPage'));
+const SettingsPage = lazy(() => import('ui/pages/settings/SettingsPage'));
+const UsersPage = lazy(() => import('ui/pages/users/UsersPage'));
+const WorkOrderPage = lazy(() => import('ui/pages/workOrder/WorkOrderPage'));
 
 export interface RouteProps {
   path: string;
@@ -42,7 +43,7 @@ function PrivateRoute({ component: Component, ...rest }: RouteProps) {
 }
 
 function App() {
-  const { isTokenExists, refreshLogin, isRefreshing } = useRefreshLoginMutation();
+  const { isTokenExists, refreshLogin } = useRefreshLoginMutation();
 
   useEffect(() => {
     if (isTokenExists) {
@@ -50,22 +51,22 @@ function App() {
     }
   }, []);
 
-  return isRefreshing ? (
-    <Loading />
-  ) : (
+  return (
     <>
-      <Switch>
-        <PublicRoute path={Path.LOGIN} component={LoginPage} />
-        <PublicRoute path={Path.REGISTER} component={RegisterPage} />
-        <PrivateRoute path={Path.DASHBOARD} component={DashboardPage} />
-        <PrivateRoute path={Path.ACCOUNTS} component={AccountPage} />
-        <PrivateRoute path={Path.PRODUCTS} component={ProductPage} />
-        <PrivateRoute path={Path.PLATES} component={PlatePage} />
-        <PrivateRoute path={Path.WORK_ORDERS} component={WorkOrderPage} />
-        <PrivateRoute path={Path.USERS} component={UsersPage} />
-        <PrivateRoute path={Path.SETTINGS} component={SettingsPage} />
-        <Redirect to={DEFAULT_PAGE} />
-      </Switch>
+      <Suspense fallback={<Loading />}>
+        <Switch>
+          <PublicRoute path={Path.LOGIN} component={LoginPage} />
+          <PublicRoute path={Path.REGISTER} component={RegisterPage} />
+          <PrivateRoute path={Path.DASHBOARD} component={DashboardPage} />
+          <PrivateRoute path={Path.ACCOUNTS} component={AccountPage} />
+          <PrivateRoute path={Path.PRODUCTS} component={ProductPage} />
+          <PrivateRoute path={Path.PLATES} component={PlatePage} />
+          <PrivateRoute path={Path.WORK_ORDERS} component={WorkOrderPage} />
+          <PrivateRoute path={Path.USERS} component={UsersPage} />
+          <PrivateRoute path={Path.SETTINGS} component={SettingsPage} />
+          <Redirect to={DEFAULT_PAGE} />
+        </Switch>
+      </Suspense>
       <Notifier />
     </>
   );
