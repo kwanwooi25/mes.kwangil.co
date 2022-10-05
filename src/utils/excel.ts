@@ -121,6 +121,7 @@ const PRODUCT_KEY_TO_LABEL: { [key: string]: string } = {
 
 const PLATE_KEY_TO_LABEL: { [key: string]: string } = {
   id: '동판ID',
+  code: '동판코드',
   round: '둘레',
   length: '기장',
   name: '동판명',
