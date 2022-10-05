@@ -1,14 +1,14 @@
 /* eslint-disable no-case-declarations */
 import {
-  DELIVERY_METHOD_TEXT,
   DeliveryMethod,
+  DELIVERY_METHOD_TEXT,
   ExcelVariant,
-  PLATE_STATUS_TEXT,
   PlateStatus,
-  PRINT_SIDE_TEXT,
-  PrintSide,
-  WorkOrderStatus,
   PLATE_MATERIAL_TEXT,
+  PLATE_STATUS_TEXT,
+  PrintSide,
+  PRINT_SIDE_TEXT,
+  WorkOrderStatus,
 } from 'const';
 import { AccountDto, CreateAccountDto, CreateContactDto } from 'features/account/interface';
 import { PlateDto } from 'features/plate/interface';
