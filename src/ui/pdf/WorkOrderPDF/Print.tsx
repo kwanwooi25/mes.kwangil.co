@@ -41,14 +41,14 @@ const styles = StyleSheet.create({
   printSideTitle: {
     ...flexRowCenter,
     ...lightBorderRight,
-    flex: 1,
+    width: 24,
     height: '100%',
-    fontSize: 12,
-    padding: '4 4 4 8',
+    fontSize: 11,
+    padding: 2,
   },
   printSideDetail: {
     ...flexColumnCenter,
-    flex: 10,
+    flexGrow: 10,
     height: '100%',
     padding: 4,
   },
@@ -103,7 +103,7 @@ function Print({ product, plateStatus }: PrintProps) {
           <>
             <View style={styles.subContent}>
               <View style={styles.printSideTitle}>
-                <Text wrap>전 면</Text>
+                <Text wrap>전</Text>
               </View>
               <View style={styles.printSideDetail} wrap>
                 {!!printFrontColorCount && (
@@ -118,7 +118,7 @@ function Print({ product, plateStatus }: PrintProps) {
             </View>
             <View style={styles.subContent}>
               <View style={styles.printSideTitle}>
-                <Text wrap>후 면</Text>
+                <Text wrap>후</Text>
               </View>
               <View style={styles.printSideDetail} wrap>
                 {!!printBackColorCount && (

@@ -9,7 +9,7 @@ export const baseStyles: { [key: string]: Style } = {
     flexDirection: 'column',
   },
   detailSectionHeader: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: 'bold',
     textAlign: 'center',
     backgroundColor: '#f7f7f7',
@@ -23,7 +23,7 @@ export const baseStyles: { [key: string]: Style } = {
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    fontSize: 13,
+    fontSize: 12,
     lineHeight: 1.5,
     padding: 8,
   },

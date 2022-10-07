@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   },
   detailContainer: {
     padding: '8 0',
-    height: '35%',
+    height: '40%',
     width: '100%',
     flexDirection: 'column',
   },
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     ...flexRowCenter,
   },
   productImageContainer: {
-    height: '50%',
+    height: '45%',
     width: '100%',
     flexDirection: 'column',
     justifyContent: 'center',
