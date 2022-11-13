@@ -69,13 +69,13 @@ const styles = StyleSheet.create({
     borderRightWidth: 0.5,
   },
   productSize: {
-    width: '30%',
+    width: '28%',
     alignItems: 'center',
     justifyContent: 'center',
     borderLeftWidth: 1,
   },
   orderQuantity: {
-    width: '20%',
+    width: '22%',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -101,6 +101,10 @@ const styles = StyleSheet.create({
   },
   orderWeightText: {
     fontSize: 10,
+    marginBottom: 4,
+  },
+  orderLengthText: {
+    fontSize: 10,
   },
   productName: {
     fontSize: 14,
@@ -120,9 +124,9 @@ export interface WorkOrderHeaderProps {
 }
 
 function WorkOrderHeader({ workOrder }: WorkOrderHeaderProps) {
-  const { t } = useTranslation('workOrders');
+  const { t } = useTranslation();
 
-  const documentTitle = t('workOrder');
+  const documentTitle = t('workOrders:workOrder');
   const {
     workOrderMonth,
     workOrderNumber,
@@ -132,12 +136,13 @@ function WorkOrderHeader({ workOrder }: WorkOrderHeaderProps) {
     orderedAt,
     orderQuantity,
     orderWeight,
+    orderLength,
     productName,
     accountName,
     deliverBy,
   } = useWorkOrderDisplay(workOrder, t);
 
-  const orderDate = `${t('orderedAt')}: ${orderedAt}`;
+  const orderDate = `${t('workOrders:orderedAt')}: ${orderedAt}`;
   const deliveryDate = deliverBy.split('-').slice(1).join('/');
 
   return (
@@ -170,7 +175,12 @@ function WorkOrderHeader({ workOrder }: WorkOrderHeaderProps) {
         </View>
         <View style={[styles.infoSection, styles.orderQuantity]}>
           <Text style={styles.orderQuantityText}>{orderQuantity}</Text>
-          <Text style={styles.orderWeightText}>({orderWeight})</Text>
+          <Text style={styles.orderWeightText}>
+            ({t('common:weight')}: {orderWeight})
+          </Text>
+          <Text style={styles.orderLengthText}>
+            ({t('common:sheetLength')}: {orderLength})
+          </Text>
         </View>
         <View style={[styles.infoSection, styles.names]}>
           <Text style={styles.productName}>{productName}</Text>

@@ -7,7 +7,7 @@ import { TFunction } from 'i18next';
 import { capitalize } from 'lodash';
 import { getProductSize, getProductSummary, getProductTitle } from 'utils/product';
 import { formatDigit } from 'utils/string';
-import { getWeight } from 'utils/workOrder';
+import { getLength, getWeight } from 'utils/workOrder';
 
 export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
   const { product } = workOrder;
@@ -26,6 +26,9 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
   });
   const orderWeight = t('common:weightInKg', {
     weight: getWeight({ product, quantity: workOrder.orderQuantity }),
+  });
+  const orderLength = t('common:lengthInMeters', {
+    length: getLength({ product, quantity: workOrder.orderQuantity }),
   });
   const completedQuantity = t('common:sheetCount', {
     countString: formatDigit(workOrder.completedQuantity || 0),
@@ -96,6 +99,7 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
     completedAt,
     orderQuantity,
     orderWeight,
+    orderLength,
     completedQuantity,
     completedWeight,
     deliveryTags,

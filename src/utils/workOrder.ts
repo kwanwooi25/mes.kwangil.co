@@ -42,6 +42,38 @@ export function getWeight({
 }
 
 /**
+ * 작업지시 수량을 중량으로 환산하여 반환
+ *
+ * @param product 제품 정보
+ * @param quantity 수량
+ * @param formatted 천단위 콤마 적용 여부
+ *
+ * @example formatted = true: 1,654.00
+ * @example formatted = false: 1654.00
+ */
+export function getLength({
+  product,
+  quantity = 0,
+  formatted = true,
+}: {
+  product: ProductDto;
+  quantity?: number;
+  formatted?: boolean;
+}): string {
+  const { width } = product;
+
+  const sheetLength = ((+width / 100) * quantity).toFixed(1);
+
+  if (!formatted) {
+    return sheetLength;
+  }
+
+  const [int, decimal] = sheetLength.split('.');
+
+  return `${formatDigit(int)}.${decimal}`;
+}
+
+/**
  * 작업지시 생성/수정시 초기값 반환
  *
  * @param workOrder 수정하려는 작업지시
