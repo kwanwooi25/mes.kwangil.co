@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import classNames from 'classnames';
-import { DATE_FORMAT, PrintSide, WorkOrderStatus } from 'const';
+import { DATE_FORMAT, PlateStatus, PrintSide, WorkOrderStatus } from 'const';
 import { differenceInBusinessDays, format, parseISO } from 'date-fns';
 import { WorkOrderDto } from 'features/workOrder/interface';
 import { TFunction } from 'i18next';
@@ -79,6 +79,10 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
 
   const isPrint = product.printSide !== PrintSide.NONE;
   const plateStatus = t(`workOrders:plateStatus${capitalize(workOrder.plateStatus)}`);
+  const plateCodeList =
+    workOrder.plateStatus === PlateStatus.UPDATE && product.plates?.length
+      ? product.plates.map(({ code }) => code).join(', ')
+      : '';
 
   const accountName = product.account.name;
   const productName = product.name;
@@ -106,6 +110,8 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
     deliveryMethod,
     isPrint,
     plateStatus,
+    plateCodeList,
+
     workOrderStatus,
     workOrderStatusClassName,
 

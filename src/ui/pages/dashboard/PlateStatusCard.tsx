@@ -5,7 +5,7 @@ import { useDialog } from 'features/dialog/dialogHook';
 import { WorkOrderDto } from 'features/workOrder/interface';
 import { workOrderApi } from 'features/workOrder/workOrderApi';
 import { useWorkOrderDisplay } from 'hooks/useWorkOrderDisplay';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, MouseEvent, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import ConfirmDialog from 'ui/dialog/Confirm';
@@ -20,7 +20,16 @@ import { getProductTitle } from 'utils/product';
 import { getWorkOrderToUpdate } from 'utils/workOrder';
 
 import { Done, InsertEmoticon, Print } from '@mui/icons-material';
-import { Chip, IconButton, List, ListItem, Pagination, Skeleton, Tooltip } from '@mui/material';
+import {
+  Chip,
+  IconButton,
+  List,
+  ListItem,
+  Pagination,
+  Popover,
+  Skeleton,
+  Tooltip,
+} from '@mui/material';
 import { BlobProvider } from '@react-pdf/renderer';
 
 const LIST_ITEM_HEIGHT = 141;
@@ -33,10 +42,17 @@ function WorkOrderListItem({
   onComplete: () => void;
 }) {
   const { t } = useTranslation();
-  const { productSize, plateStatus } = useWorkOrderDisplay(workOrder, t);
+  const { productSize, plateStatus, plateCodeList } = useWorkOrderDisplay(workOrder, t);
   const { openDialog, closeDialog } = useDialog();
   const { canUpdateWorkOrders } = useAuth();
+  const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const plateStatusClassName = PLATE_STATUS_CLASS[workOrder.plateStatus];
+
+  const openMenu = useCallback(
+    (e: MouseEvent<HTMLButtonElement>) => setMenuAnchorEl(e.currentTarget),
+    [],
+  );
+  const closeMenu = useCallback(() => setMenuAnchorEl(null), []);
 
   const updatePlateStatus = async (wo: WorkOrderDto) => {
     const { id } = wo;
@@ -86,7 +102,34 @@ function WorkOrderListItem({
   return (
     <ListItem className="!grid grid-cols-[1fr_auto_auto] gap-x-2 gap-y-1" divider>
       <WorkOrderId linkClassName="text-xs" workOrder={workOrder} />
-      <Chip className={classNames('row-span-3', plateStatusClassName)} label={plateStatus} />
+      <div className="row-span-3">
+        {!plateCodeList && (
+          <Chip className={classNames(plateStatusClassName)} label={plateStatus} />
+        )}
+        {plateCodeList && (
+          <span className="cursor-help" onMouseEnter={openMenu} onMouseLeave={closeMenu}>
+            <Chip className={classNames(plateStatusClassName)} label={plateStatus} />
+            <Popover
+              classes={{ paper: 'p-2 mr-2' }}
+              sx={{ pointerEvents: 'none' }}
+              open={!!menuAnchorEl}
+              anchorEl={menuAnchorEl}
+              onClose={closeMenu}
+              anchorOrigin={{
+                vertical: 'center',
+                horizontal: 'left',
+              }}
+              transformOrigin={{
+                vertical: 'center',
+                horizontal: 'right',
+              }}
+              disableRestoreFocus
+            >
+              <p className="whitespace-pre-wrap">동판코드: {plateCodeList}</p>
+            </Popover>
+          </span>
+        )}
+      </div>
       <span className="row-span-3">
         {canUpdateWorkOrders && (
           <Tooltip title={t('common:complete') as string}>
@@ -199,7 +242,7 @@ function PlateStatusCard() {
       <List disablePadding style={{ height: LIST_ITEM_HEIGHT * workOrderCountToDisplay }}>
         {isLoading && renderSkeletons()}
         {!isLoading && !workOrders.length && <NoPlatesToProduce />}
-        {!isLoading && workOrders.length && renderWorkOrders()}
+        {!isLoading && !!workOrders.length && renderWorkOrders()}
       </List>
       <Pagination
         className="flex justify-center pt-4"
