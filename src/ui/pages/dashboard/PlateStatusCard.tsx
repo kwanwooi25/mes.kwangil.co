@@ -116,12 +116,12 @@ function WorkOrderListItem({
               anchorEl={menuAnchorEl}
               onClose={closeMenu}
               anchorOrigin={{
-                vertical: 'center',
-                horizontal: 'left',
+                vertical: 'top',
+                horizontal: 'center',
               }}
               transformOrigin={{
-                vertical: 'center',
-                horizontal: 'right',
+                vertical: 'bottom',
+                horizontal: 'center',
               }}
               disableRestoreFocus
             >

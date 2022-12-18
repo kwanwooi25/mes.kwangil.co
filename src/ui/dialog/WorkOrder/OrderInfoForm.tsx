@@ -45,20 +45,21 @@ function OrderInfoForm() {
   };
 
   return (
-    <div className="grid grid-cols-3 gap-x-3 items-center tablet:grid-cols-6">
+    <div className="flex flex-col gap-x-3 gap-y-2 items-start tablet:grid tablet:grid-cols-6 tablet:items-center">
       <div className="flex flex-col col-span-3 w-full tablet:col-span-6">
         <AccountName account={product.account} />
         <ProductName product={product} />
         <p className="px-2">{getProductSize(product)}</p>
         <Divider className="!my-4" />
       </div>
-      <DatePicker
-        className="tablet:col-span-3"
-        selectedDate={new Date(values.deliverBy)}
-        onChange={handleChangeDeliverBy}
-        label={t('deliverBy')}
-        disablePast
-      />
+      <div className="tablet:col-span-3">
+        <DatePicker
+          selectedDate={new Date(values.deliverBy)}
+          onChange={handleChangeDeliverBy}
+          label={t('deliverBy')}
+          disablePast
+        />
+      </div>
       <Input
         className="tablet:col-span-2"
         type="number"
@@ -73,7 +74,7 @@ function OrderInfoForm() {
       />
       <span>({getWeight({ product, quantity: values.orderQuantity })} kg)</span>
       <FormControlLabel
-        className="tablet:row-span-2"
+        className="tablet:col-span-2"
         control={
           <Checkbox
             color="primary"
@@ -85,7 +86,7 @@ function OrderInfoForm() {
         label={t('isUrgent') as string}
       />
       <FormControlLabel
-        className="col-span-2 tablet:row-span-2"
+        className="tablet:col-span-2"
         control={
           <Checkbox
             color="primary"
@@ -95,6 +96,18 @@ function OrderInfoForm() {
           />
         }
         label={t('shouldBePunctual') as string}
+      />
+      <FormControlLabel
+        className="tablet:col-span-2"
+        control={
+          <Checkbox
+            color="primary"
+            name="shouldKeepRemainder"
+            checked={values.shouldKeepRemainder}
+            onChange={handleChange}
+          />
+        }
+        label={t('shouldKeepRemainder') as string}
       />
       <CustomToggleButton
         className="col-span-3"

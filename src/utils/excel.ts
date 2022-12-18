@@ -145,6 +145,7 @@ const WORK_ORDER_LABEL_TO_KEY: { [key: string]: keyof CreateWorkOrdersDto } = {
   동판상태: 'plateStatus',
   납기일: 'deliverBy',
   납기엄수: 'shouldBePunctual',
+  자투리보관: 'shouldKeepRemainder',
   지급: 'isUrgent',
   작업메모: 'workMemo',
   납품메모: 'deliveryMemo',
@@ -166,6 +167,7 @@ const WORK_ORDER_KEY_TO_LABEL: { [key: string]: string } = {
   plateStatus: '동판상태',
   deliverBy: '납기일',
   shouldBePunctual: '납기엄수',
+  shouldKeepRemainder: '자투리보관',
   isUrgent: '지급',
   completedAt: '완료일',
   completedQuantity: '완료수량',
@@ -293,6 +295,7 @@ const generateItem = {
             }
             break;
           case 'shouldBePunctual':
+          case 'shouldKeepRemainder':
           case 'isUrgent':
             newValue = value === 'Y';
             break;
@@ -318,6 +321,7 @@ const generateItem = {
         orderQuantity: 0,
         isUrgent: false,
         shouldBePunctual: false,
+        shouldKeepRemainder: false,
         plateStatus: PlateStatus.CONFIRM,
         isPlateReady: true,
         deliveryMethod: DeliveryMethod.TBD,
@@ -514,6 +518,7 @@ function processWorkOrdersForDownload(
           value = PLATE_STATUS_TEXT[value];
           break;
         case 'shouldBePunctual':
+        case 'shouldKeepRemainder':
         case 'isUrgent':
           value = value ? 'Y' : '';
           break;

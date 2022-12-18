@@ -64,7 +64,6 @@ const styles = StyleSheet.create({
   },
   plateCodeList: {
     fontSize: 12,
-    textAlign: 'right',
     marginTop: 1.5,
   },
   plateNew: {
@@ -103,7 +102,7 @@ function Row({ workOrder }: { workOrder: WorkOrderDto }) {
         <Text style={styles.workOrderId}>{workOrder.id}</Text>
         <Text style={styles.accountName}>{accountName}</Text>
         <Text style={styles.productTitle}>{productTitle}</Text>
-        {plateCodeList && <Text style={styles.plateCodeList}>동판 번호: {plateCodeList}</Text>}
+        <Text style={styles.plateCodeList}>{plateCodeList && `동판 번호: ${plateCodeList}`}</Text>
       </View>
       <View style={styles.column}>
         <Text style={isNew ? styles.plateNew : styles.plateUpdate}>{plateStatus}</Text>

@@ -78,6 +78,9 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
   );
 
   const extrusionSpec = getExtrusionSpec({ product, quantity: workOrder.orderQuantity });
+  const shouldKeepRemainder = workOrder.shouldKeepRemainder
+    ? t('workOrders:shouldKeepRemainder')
+    : '';
 
   const isPrint = product.printSide !== PrintSide.NONE;
   const plateStatus = t(`workOrders:plateStatus${capitalize(workOrder.plateStatus)}`);
@@ -112,6 +115,7 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
     deliveryMethod,
 
     extrusionSpec,
+    shouldKeepRemainder,
 
     isPrint,
     plateStatus,
