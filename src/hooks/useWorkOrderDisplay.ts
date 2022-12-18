@@ -7,7 +7,7 @@ import { TFunction } from 'i18next';
 import { capitalize } from 'lodash';
 import { getProductSize, getProductSummary, getProductTitle } from 'utils/product';
 import { formatDigit } from 'utils/string';
-import { getLength, getWeight } from 'utils/workOrder';
+import { getExtrusionSpec, getLength, getWeight } from 'utils/workOrder';
 
 export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
   const { product } = workOrder;
@@ -77,6 +77,8 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
     },
   );
 
+  const extrusionSpec = getExtrusionSpec({ product, quantity: workOrder.orderQuantity });
+
   const isPrint = product.printSide !== PrintSide.NONE;
   const plateStatus = t(`workOrders:plateStatus${capitalize(workOrder.plateStatus)}`);
   const plateCodeList =
@@ -108,6 +110,9 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
     completedWeight,
     deliveryTags,
     deliveryMethod,
+
+    extrusionSpec,
+
     isPrint,
     plateStatus,
     plateCodeList,

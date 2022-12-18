@@ -56,6 +56,9 @@ function Cutting({ product }: CuttingProps) {
         {!!count && <Text>{punchDetail}</Text>}
         {!!cutMemo && <Text wrap>{cutMemo}</Text>}
       </View>
+      <View style={styles.content}>
+        <Text>재고 수량: {'                    '}매</Text>
+      </View>
       <View style={[styles.header, borderTop]}>
         <Text>{t('packaging')}</Text>
       </View>

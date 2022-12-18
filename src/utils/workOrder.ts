@@ -1,4 +1,4 @@
-import { DATE_FORMAT, DeliveryMethod, PlateStatus, WorkOrderStatus } from 'const';
+import { DATE_FORMAT, DeliveryMethod, PlateStatus, PrintSide, WorkOrderStatus } from 'const';
 import {
   UpdateWorkOrderDto,
   WorkOrderDto,
@@ -42,7 +42,7 @@ export function getWeight({
 }
 
 /**
- * 작업지시 수량을 중량으로 환산하여 반환
+ * 작업지시 수량을 길이로 환산하여 반환
  *
  * @param product 제품 정보
  * @param quantity 수량
@@ -71,6 +71,32 @@ export function getLength({
   const [int, decimal] = sheetLength.split('.');
 
   return `${formatDigit(int)}.${decimal}`;
+}
+
+/**
+ * 압출 수량 계산하여 반환
+ *
+ * @param product 제품 정보
+ * @param quantity 수량
+ * @param formatted 천단위 콤마 적용 여부
+ *
+ * @example formatted = true: 1,654.00
+ * @example formatted = false: 1654.00
+ */
+export function getExtrusionSpec({
+  product,
+  quantity = 0,
+}: {
+  product: ProductDto;
+  quantity?: number;
+}) {
+  const lossRate = product.printSide === PrintSide.NONE ? 0.06 : 0.1;
+  const weightWithLoss = +getWeight({ product, quantity, formatted: false }) * (1 + lossRate);
+  const lengthWithLoss = +getLength({ product, quantity, formatted: false }) * (1 + lossRate);
+  const rollCount = Math.ceil(weightWithLoss / 15);
+  const lengthPerRoll = Math.ceil(lengthWithLoss / rollCount / 10) * 10;
+
+  return { lengthPerRoll, rollCount };
 }
 
 /**

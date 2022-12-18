@@ -6,6 +6,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import reactPDF from '@react-pdf/renderer';
+import { useWorkOrderDisplay } from 'hooks/useWorkOrderDisplay';
+import { WorkOrderDto } from 'features/workOrder/interface';
 
 const { StyleSheet, Text, View } = reactPDF;
 
@@ -26,10 +28,14 @@ const styles = StyleSheet.create({
 
 export interface ExtrusionProps {
   product: ProductDto;
+  workOrder: WorkOrderDto;
 }
 
-function Extrusion({ product }: ExtrusionProps) {
+function Extrusion({ product, workOrder }: ExtrusionProps) {
   const { t } = useTranslation('products');
+  const {
+    extrusionSpec: { lengthPerRoll, rollCount },
+  } = useWorkOrderDisplay(workOrder, t);
   const { extColor, printSide, extMemo, extIsAntistatic } = product;
 
   const extColorText = `${extColor} ${t('common:sheet')}`;
@@ -48,6 +54,11 @@ function Extrusion({ product }: ExtrusionProps) {
         <Text>{printSideText}</Text>
         {extIsAntistatic && <Text>{t('extIsAntistatic')}</Text>}
         <Text wrap>{extMemo}</Text>
+      </View>
+      <View style={styles.content}>
+        <Text>
+          ({lengthPerRoll.toLocaleString()}m x {rollCount})
+        </Text>
       </View>
     </View>
   );

@@ -85,7 +85,7 @@ function WorkOrderPDF({ workOrders }: WorkOrderPDFProps) {
             </View>
             <View style={styles.detailContainer}>
               <View style={styles.productDetail}>
-                <Extrusion product={product} />
+                <Extrusion product={product} workOrder={workOrder} />
                 <Print product={product} plateStatus={plateStatus} />
                 <Cutting product={product} />
               </View>
