@@ -234,10 +234,22 @@ const generateItem = {
               newValue = PrintSide.NONE;
             }
             break;
+          case 'deliveryMethod':
+            if (value === '미정') {
+              newValue = DeliveryMethod.TBD;
+            } else if (value === '택배') {
+              newValue = DeliveryMethod.COURIER;
+            } else if (value === '직납') {
+              newValue = DeliveryMethod.DIRECT;
+            } else if (value === '퀵/화물') {
+              newValue = DeliveryMethod.EXPRESS;
+            }
+            break;
           case 'extIsAntistatic':
           case 'cutIsUltrasonic':
           case 'cutIsForPowder':
           case 'packCanDeliverAll':
+          case 'shouldKeepRemainder':
             newValue = value === 'Y';
             break;
           default:
@@ -273,6 +285,8 @@ const generateItem = {
         packMaterial: '',
         packUnit: 0,
         packCanDeliverAll: false,
+        shouldKeepRemainder: false,
+        deliveryMethod: DeliveryMethod.TBD,
         packMemo: '',
         productMemo: '',
         images: [],
@@ -426,10 +440,14 @@ function processProductsForDownload(
         case 'cutIsUltrasonic':
         case 'cutIsForPowder':
         case 'packCanDeliverAll':
+        case 'shouldKeepRemainder':
           value = value ? 'Y' : 'N';
           break;
         case 'printSide':
           value = PRINT_SIDE_TEXT[value];
+          break;
+        case 'deliveryMethod':
+          value = DELIVERY_METHOD_TEXT[value];
           break;
         case 'images':
           if (value && value.length) {
