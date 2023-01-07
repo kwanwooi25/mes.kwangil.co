@@ -1,3 +1,4 @@
+import { DeliveryMethod } from 'const';
 import { BaseQuery } from 'types/api';
 
 export interface AccountFilter {
@@ -10,6 +11,7 @@ export interface AccountDto {
   id: number;
   name: string;
   crn?: string;
+  deliveryMethod?: DeliveryMethod;
   memo?: string;
   contacts?: ContactDto[];
 }

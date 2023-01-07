@@ -140,6 +140,7 @@ export default {
     accountDetail: '거래처 정보',
     name: '거래처명',
     crn: '사업자등록번호',
+    deliveryMethod: '납품 방법',
     memo: '메모',
     accountList: '거래처목록',
 
@@ -277,6 +278,8 @@ export default {
     bulkCreateProductFailed: '제품 대량 등록 실패!',
     updateProductSuccess: '제품 정보 수정 성공!',
     updateProductFailed: '제품 정보 수정 실패!',
+    updateProductsDeliveryMethodSuccess: '제품의 납품 방법 수정 성공!',
+    updateProductsDeliveryMethodFailed: '제품의 납품 방법 수정 실패!',
     deleteProductConfirm: '<strong>{{productName}}</strong>을(를) 정말 삭제하시겠습니까?',
     deleteProductsConfirm: '선택하신 <strong>{{count}}개</strong> 제품을 모두 삭제하시겠습니까?',
     deleteProductSuccess: '제품 삭제 성공!',

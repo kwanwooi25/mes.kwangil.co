@@ -13,7 +13,12 @@ import { formatCrn } from 'utils/string';
 import { array, boolean, object, string } from 'yup';
 import { Add, Done } from '@mui/icons-material';
 
+import { DeliveryMethod } from 'const';
+import CustomToggleButton from 'ui/elements/CustomToggleButton';
+import { useDialog } from 'features/dialog/dialogHook';
+import { useUpdateProductsDeliveryMethodByAccountIdMutation } from 'features/product/useProducts';
 import ContactForm from './ContactForm';
+import ConfirmDialog from '../Confirm';
 
 export interface AccountDialogProps {
   account?: AccountDto;
@@ -23,6 +28,7 @@ export interface AccountDialogProps {
 interface AccountFormValues {
   name: string;
   crn: string;
+  deliveryMethod: DeliveryMethod;
   memo: string;
   contacts?: CreateContactDto[];
   contactIdsToDelete?: number[];
@@ -30,6 +36,8 @@ interface AccountFormValues {
 
 function AccountDialog({ account, onClose }: AccountDialogProps) {
   const { t } = useTranslation('accounts');
+  const { t: deliveryMethodT } = useTranslation('deliveryMethod');
+  const { openDialog, closeDialog } = useDialog();
 
   const isEditMode = !isEmpty(account);
   const dialogTitle = t(isEditMode ? 'updateAccount' : 'addAccount');
@@ -42,6 +50,8 @@ function AccountDialog({ account, onClose }: AccountDialogProps) {
   };
 
   const { updateAccount, isUpdating } = useUpdateAccountMutation({ queryClient, onSuccess });
+  const { updateProductsDeliveryMethodByAccountId } =
+    useUpdateProductsDeliveryMethodByAccountIdMutation({ queryClient });
   const { createAccount, isCreating } = useCreateAccountMutation({ queryClient, onSuccess });
   const isLoading = isCreating || isUpdating;
 
@@ -50,6 +60,7 @@ function AccountDialog({ account, onClose }: AccountDialogProps) {
       initialValues: {
         name: '',
         crn: '',
+        deliveryMethod: DeliveryMethod.TBD,
         memo: '',
         contacts: [],
         contactIdsToDelete: [],
@@ -78,7 +89,34 @@ function AccountDialog({ account, onClose }: AccountDialogProps) {
             contacts: submitValues?.contacts?.filter(({ id }) => id),
             contactsToCreate: submitValues?.contacts?.filter(({ id }) => !id),
           };
-          updateAccount(accountToUpdate as UpdateAccountDto);
+          if (account?.deliveryMethod === accountToUpdate.deliveryMethod) {
+            await updateAccount(accountToUpdate as UpdateAccountDto);
+            onClose();
+            return;
+          }
+          openDialog(
+            <ConfirmDialog
+              title="납품 방법을 변경하셨습니다."
+              message={
+                <>
+                  <b>{account?.name}</b>의 모든 제품의 납품 방법을{' '}
+                  <b>{deliveryMethodT(accountToUpdate.deliveryMethod)}</b>으로 변경하시겠습니까?
+                </>
+              }
+              onClose={async (isConfirmed: boolean) => {
+                closeDialog();
+                await updateAccount(accountToUpdate as UpdateAccountDto);
+                onClose();
+
+                if (isConfirmed) {
+                  updateProductsDeliveryMethodByAccountId({
+                    accountId: account?.id,
+                    deliveryMethod: accountToUpdate.deliveryMethod,
+                  });
+                }
+              }}
+            />,
+          );
         } else {
           const { contactIdsToDelete, ...accountToCreate } = submitValues;
           createAccount(accountToCreate);
@@ -130,6 +168,15 @@ function AccountDialog({ account, onClose }: AccountDialogProps) {
     setValues({ ...values, ...rest, contacts: [...contacts] });
   };
 
+  const deliveryMethodOptions = Object.values(DeliveryMethod).map((value) => ({
+    value,
+    label: deliveryMethodT(value),
+  }));
+
+  const handleChangeDeliveryMethod = (value: DeliveryMethod) => {
+    setFieldValue('deliveryMethod', value);
+  };
+
   useEffect(() => {
     if (isEditMode) {
       setInitialValues(account as AccountDto);
@@ -159,6 +206,13 @@ function AccountDialog({ account, onClose }: AccountDialogProps) {
           onChange={handleChangeCrn}
           error={touched.crn && Boolean(errors.crn)}
           helperText={touched.crn && errors.crn}
+        />
+        <CustomToggleButton
+          className="!py-2"
+          label={t('deliveryMethod')}
+          value={values.deliveryMethod}
+          onChange={handleChangeDeliveryMethod}
+          options={deliveryMethodOptions}
         />
         <Input
           name="memo"

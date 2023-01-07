@@ -146,6 +146,32 @@ export const useUpdateProductMutation = ({
   return { updateProduct, isUpdating };
 };
 
+export const useUpdateProductsDeliveryMethodByAccountIdMutation = ({
+  queryClient,
+  onSuccess = () => {},
+  onError = () => {},
+}: {
+  queryClient: QueryClient;
+  onSuccess?: () => any;
+  onError?: () => any;
+}) => {
+  const { notify } = useNotification();
+  const { mutateAsync: updateProductsDeliveryMethodByAccountId, isLoading: isUpdating } =
+    useMutation(productApi.updateProductsDeliveryMethodByAccountId, {
+      onSuccess: () => {
+        notify({ variant: 'success', message: 'products:updateProductsDeliveryMethodSuccess' });
+        queryClient.invalidateQueries('products');
+        onSuccess();
+      },
+      onError: () => {
+        notify({ variant: 'error', message: 'products:updateProductsDeliveryMethodFailed' });
+        onError();
+      },
+    });
+
+  return { updateProductsDeliveryMethodByAccountId, isUpdating };
+};
+
 export const useDeleteProductsMutation = ({
   queryClient,
   onSuccess = () => {},

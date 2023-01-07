@@ -115,6 +115,7 @@ export enum UserListItemHeight {
 export enum AccountInputs {
   name = 'name',
   crn = 'crn',
+  deliveryMethod = 'deliveryMethod',
   memo = 'memo',
 }
 
