@@ -21,15 +21,19 @@ function SelectProductForm({ disabled = false }: SelectProductFormProps) {
   const [filter, setFilter] = useState<ProductFilter>(DEFAULT_PRODUCT_FILTER);
   const { productOptions = [] } = useProductOptions(filter);
 
-  const { values, setFieldValue } = useFormikContext<WorkOrderFormValues>();
+  const { values, setFieldValue, setValues } = useFormikContext<WorkOrderFormValues>();
 
   const handleChangeFilter = (key: keyof ProductFilter) => (e: ChangeEvent<HTMLInputElement>) => {
     setFilter({ ...filter, [key]: e.target.value });
   };
 
   const selectProduct = (product: ProductDto) => () => {
-    setFieldValue('product', product);
-    setFieldValue('deliveryMethod', product.deliveryMethod);
+    setValues((prev) => ({
+      ...prev,
+      product,
+      deliveryMethod: product.deliveryMethod,
+      shouldKeepRemainder: product.shouldKeepRemainder,
+    }));
   };
 
   const removeProduct = () => {

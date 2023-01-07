@@ -115,7 +115,7 @@ export function getInitialWorkOrderFormValues(
       orderQuantity: 10000,
       isUrgent: false,
       shouldBePunctual: false,
-      shouldKeepRemainder: false,
+      shouldKeepRemainder: product?.shouldKeepRemainder ?? false,
       plateStatus: PlateStatus.CONFIRM,
       isPlateReady: true,
       deliveryMethod: product?.deliveryMethod ?? DeliveryMethod.TBD,
