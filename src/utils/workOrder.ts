@@ -118,7 +118,7 @@ export function getInitialWorkOrderFormValues(
       shouldKeepRemainder: false,
       plateStatus: PlateStatus.CONFIRM,
       isPlateReady: true,
-      deliveryMethod: DeliveryMethod.TBD,
+      deliveryMethod: product?.deliveryMethod ?? DeliveryMethod.TBD,
       workMemo: '',
       deliveryMemo: '',
       workOrderStatus: WorkOrderStatus.NOT_STARTED,

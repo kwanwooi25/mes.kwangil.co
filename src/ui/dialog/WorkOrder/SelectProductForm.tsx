@@ -29,6 +29,7 @@ function SelectProductForm({ disabled = false }: SelectProductFormProps) {
 
   const selectProduct = (product: ProductDto) => () => {
     setFieldValue('product', product);
+    setFieldValue('deliveryMethod', product.deliveryMethod);
   };
 
   const removeProduct = () => {

@@ -1,4 +1,5 @@
 import { ProductLength, ProductThickness, ProductWidth } from 'const';
+import { accountApi } from 'features/account/accountApi';
 import { AccountOption } from 'features/account/interface';
 import { ProductFormValues } from 'features/product/interface';
 import { useFormikContext } from 'formik';
@@ -12,8 +13,12 @@ function BaseInfoForm() {
   const { values, touched, errors, handleChange, handleBlur, setFieldValue } =
     useFormikContext<ProductFormValues>();
 
-  const handleChangeAccount = (e: ChangeEvent<{}>, value: AccountOption | null) => {
+  const handleChangeAccount = async (e: ChangeEvent<{}>, value: AccountOption | null) => {
     setFieldValue('account', value);
+    if (value) {
+      const selectedAccount = await accountApi.getAccount(value.id);
+      setFieldValue('deliveryMethod', selectedAccount.deliveryMethod);
+    }
   };
 
   return (
