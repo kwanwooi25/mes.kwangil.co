@@ -17,7 +17,7 @@ import Loading from 'ui/elements/Loading';
 import ProductName from 'ui/elements/ProductName';
 import { highlight } from 'utils/string';
 
-import { MoreVert, SpeakerNotes } from '@mui/icons-material';
+import { MoreVert, SpeakerNotes, Warehouse } from '@mui/icons-material';
 import {
   Checkbox,
   IconButton,
@@ -30,6 +30,7 @@ import {
   MenuItem,
   Popover,
 } from '@mui/material';
+import StockDialog from 'ui/dialog/Stock';
 
 export interface ProductListItemProps extends ListItemProps {
   isSelectable?: boolean;
@@ -89,6 +90,9 @@ function ProductListItem({
   const handleClickWorkOrder = async () =>
     openDialog(<WorkOrderDialog product={product} onClose={closeDialog} />);
 
+  const handleClickUpdateStockBalance = async () =>
+    openDialog(<StockDialog product={product} onClose={closeDialog} />);
+
   const handleClickWorkOrderHistory = async () => {
     await refetch().then((res) => {
       openDialog(
@@ -136,7 +140,11 @@ function ProductListItem({
   }
 
   if (canUpdateProducts) {
-    actionButtons = [...actionButtons, { label: t('common:edit'), onClick: handleClickEdit }];
+    actionButtons = [
+      ...actionButtons,
+      { label: t('common:edit'), onClick: handleClickEdit },
+      { label: '재고 수량 변경', onClick: handleClickUpdateStockBalance },
+    ];
   }
 
   if (canDeleteProducts) {
@@ -156,7 +164,7 @@ function ProductListItem({
         </ListItemIcon>
       )}
       <ListItemText>
-        <div className="grid grid-cols-[1fr_40px] laptop:grid laptop:grid-cols-[1fr_2fr_40px] laptop:gap-x-2 laptop:items-center desktop:grid-cols-[1fr_2fr_1fr_40px]">
+        <div className="grid grid-cols-[1fr_120px_40px] laptop:grid laptop:grid-cols-[1fr_2fr_120px_40px] laptop:gap-x-2 laptop:items-center desktop:grid-cols-[1fr_2fr_1fr_120px_40px]">
           <AccountName
             className="col-start-1 row-start-1 laptop:row-span-2 desktop:row-span-1"
             linkClassName="text-xs"
@@ -177,6 +185,13 @@ function ProductListItem({
               )} x ${highlight(String(product.width), filter.width)}`,
             }}
           />
+          <span className="flex row-span-3 gap-2 justify-end items-center whitespace-pre-wrap laptop:row-span-2">
+            {product.stock?.balance && (
+              <>
+                <Warehouse fontSize="small" /> {product.stock.balance.toLocaleString()}매
+              </>
+            )}
+          </span>
           {product.productMemo && (
             <span
               className="row-span-3 self-center p-2 bg-blue-200/20 hover:bg-blue-200/50 rounded-full transition-colors cursor-help laptop:row-span-2 desktop:row-span-1"

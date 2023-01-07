@@ -54,7 +54,6 @@ function Cutting({ product, workOrder }: CuttingProps) {
         <Text>{t('products:cutting')}</Text>
       </View>
       <View style={styles.content}>
-        <Text>재고 수량: {'                    '}매</Text>
         {cutIsForPowder && <Text>{t('products:cutIsForPowder')}</Text>}
         {cutIsUltrasonic && <Text>{t('products:cutIsUltrasonic')}</Text>}
         {!!cutPosition && <Text>{cutPosition}</Text>}

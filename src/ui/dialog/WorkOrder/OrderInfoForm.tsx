@@ -49,7 +49,10 @@ function OrderInfoForm() {
       <div className="flex flex-col col-span-3 w-full tablet:col-span-6">
         <AccountName account={product.account} />
         <ProductName product={product} />
-        <p className="px-2">{getProductSize(product)}</p>
+        <p className="py-1 px-2">{getProductSize(product)}</p>
+        {product?.stock?.balance && (
+          <p className="py-1 px-2">재고 수량: {product.stock.balance.toLocaleString()}매</p>
+        )}
         <Divider className="!my-4" />
       </div>
       <div className="tablet:col-span-3">

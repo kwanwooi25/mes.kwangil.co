@@ -89,9 +89,9 @@ function AccountDialog({ account, onClose }: AccountDialogProps) {
             contacts: submitValues?.contacts?.filter(({ id }) => id),
             contactsToCreate: submitValues?.contacts?.filter(({ id }) => !id),
           };
+          onClose();
           if (account?.deliveryMethod === accountToUpdate.deliveryMethod) {
             await updateAccount(accountToUpdate as UpdateAccountDto);
-            onClose();
             return;
           }
           openDialog(
@@ -106,7 +106,6 @@ function AccountDialog({ account, onClose }: AccountDialogProps) {
               onClose={async (isConfirmed: boolean) => {
                 closeDialog();
                 await updateAccount(accountToUpdate as UpdateAccountDto);
-                onClose();
 
                 if (isConfirmed) {
                   updateProductsDeliveryMethodByAccountId({
