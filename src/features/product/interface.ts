@@ -1,4 +1,4 @@
-import { PrintSide, StockHistoryType } from 'const';
+import { DeliveryMethod, PrintSide, StockHistoryType } from 'const';
 import { AccountDto, AccountOption } from 'features/account/interface';
 import { PlateDto } from 'features/plate/interface';
 import { WorkOrderDto } from 'features/workOrder/interface';
@@ -74,6 +74,8 @@ export interface ProductDto {
   packUnit: number;
   packCanDeliverAll: boolean;
   packMemo: string;
+  shouldKeepRemainder: boolean;
+  deliveryMethod: DeliveryMethod;
   productMemo: string;
   account: AccountDto;
   images: ImageDto[];
@@ -131,6 +133,8 @@ export interface ProductFormValues {
   packUnit: number;
   packCanDeliverAll: boolean;
   packMemo: string;
+  shouldKeepRemainder: boolean;
+  deliveryMethod: DeliveryMethod;
   productMemo: string;
   stock?: StockDto;
   images: ImageDto[];

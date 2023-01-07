@@ -1,4 +1,4 @@
-import { DeadlineStatus, Path, WorkOrderStatus } from 'const';
+import { DeadlineStatus, DeliveryMethod, Path, WorkOrderStatus } from 'const';
 
 /* eslint-disable import/no-anonymous-default-export */
 export default {
@@ -82,6 +82,12 @@ export default {
 
     bulkCreateSuccess: '대량 등록 성공!',
     bulkCreateFailed: '대량 등록 실패!',
+  },
+  deliveryMethod: {
+    [DeliveryMethod.TBD]: '미정',
+    [DeliveryMethod.COURIER]: '택배',
+    [DeliveryMethod.DIRECT]: '직납',
+    [DeliveryMethod.EXPRESS]: '퀵/화물',
   },
   nav: {
     [Path.DASHBOARD]: '대시보드',
@@ -251,6 +257,8 @@ export default {
     packMaterial: '포장 방법',
     packUnit: '포장 단위',
     packCanDeliverAll: '전량 납품',
+    shouldKeepRemainder: '자투리 보관',
+    deliveryMethod: '납품 방법',
     packMemo: '포장 메모',
     images: '이미지',
     plates: '동판',

@@ -31,7 +31,7 @@ function CustomToggleButton<T extends string>({
 }: CustomToggleButtonProps<T>) {
   return (
     <div className={classnames(['flex flex-col', className])}>
-      {!!label && <span className="px-2 text-sm">{label}</span>}
+      {!!label && <span className="px-2 pb-1 text-sm">{label}</span>}
       <ButtonGroup size={size} color={color}>
         {options.map((option) => (
           <Button

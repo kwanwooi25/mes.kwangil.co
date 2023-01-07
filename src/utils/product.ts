@@ -1,4 +1,4 @@
-import { PrintSide } from 'const';
+import { DeliveryMethod, PrintSide } from 'const';
 import {
   CreateImageDto,
   CreateProductDto,
@@ -236,6 +236,8 @@ export function getInitialProductToCreate(): ProductFormValues {
     packUnit: 0,
     packCanDeliverAll: false,
     packMemo: '',
+    shouldKeepRemainder: false,
+    deliveryMethod: DeliveryMethod.TBD,
     productMemo: '',
     images: [],
     filesToUpload: [],

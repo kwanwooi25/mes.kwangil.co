@@ -1,15 +1,26 @@
 import { Checkbox, FormControlLabel } from '@mui/material';
 import CustomNumberFormat from 'ui/elements/CustomNumberFormat';
 import Input from 'ui/elements/Input';
-import { PackUnit } from 'const';
+import { DeliveryMethod, PackUnit } from 'const';
 import React from 'react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ProductFormValues } from 'features/product/interface';
+import CustomToggleButton from 'ui/elements/CustomToggleButton';
 
 function PackagingForm() {
   const { t } = useTranslation('products');
-  const { values, handleChange } = useFormikContext<ProductFormValues>();
+  const { t: deliveryMethodT } = useTranslation('deliveryMethod');
+  const { values, handleChange, setFieldValue } = useFormikContext<ProductFormValues>();
+
+  const deliveryMethodOptions = Object.values(DeliveryMethod).map((value) => ({
+    value,
+    label: deliveryMethodT(value),
+  }));
+
+  const handleChangeDeliveryMethod = (value: DeliveryMethod) => {
+    setFieldValue('deliveryMethod', value);
+  };
 
   return (
     <div className="grid grid-cols-2 gap-x-3 tablet:grid-cols-4">
@@ -21,6 +32,7 @@ function PackagingForm() {
         onChange={handleChange}
       />
       <Input
+        className="col-span-2"
         name="packUnit"
         label={t('packUnit')}
         value={values.packUnit}
@@ -36,6 +48,13 @@ function PackagingForm() {
           inputComponent: CustomNumberFormat as any,
         }}
       />
+      <CustomToggleButton
+        className="col-span-2 !py-2"
+        label={t('deliveryMethod')}
+        value={values.deliveryMethod}
+        onChange={handleChangeDeliveryMethod}
+        options={deliveryMethodOptions}
+      />
       <FormControlLabel
         className="col-span-2 tablet:col-span-1"
         control={
@@ -47,6 +66,18 @@ function PackagingForm() {
           />
         }
         label={t('packCanDeliverAll') as string}
+      />
+      <FormControlLabel
+        className="col-span-2 tablet:col-span-1"
+        control={
+          <Checkbox
+            color="primary"
+            name="shouldKeepRemainder"
+            checked={values.shouldKeepRemainder}
+            onChange={handleChange}
+          />
+        }
+        label={t('shouldKeepRemainder') as string}
       />
       <Input
         className="col-span-2 tablet:col-span-4"

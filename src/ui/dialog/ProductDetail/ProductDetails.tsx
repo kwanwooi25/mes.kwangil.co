@@ -29,6 +29,7 @@ function ProductDetails({
   filesToUpload = [],
 }: ProductDetailsProps) {
   const { t } = useTranslation('products');
+  const { t: deliveryMethodT } = useTranslation('deliveryMethod');
   const {
     account,
     name,
@@ -57,6 +58,8 @@ function ProductDetails({
     packUnit,
     packCanDeliverAll,
     packMemo,
+    shouldKeepRemainder,
+    deliveryMethod,
     images,
     plates = [],
     createdAt,
@@ -138,6 +141,8 @@ function ProductDetails({
       <CustomListSubHeader>{t('packaging')}</CustomListSubHeader>
       <DetailField label={t('packaging')} value={packagingDetail} />
       <DetailField label={t('packCanDeliverAll')} value={packCanDeliverAll} />
+      <DetailField label={t('shouldKeepRemainder')} value={shouldKeepRemainder} />
+      <DetailField label={t('deliveryMethod')} value={deliveryMethodT(deliveryMethod) as string} />
       <DetailField label={t('packMemo')} value={packMemo} />
       <div className="pb-3" />
 
