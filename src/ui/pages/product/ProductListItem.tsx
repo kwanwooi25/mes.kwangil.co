@@ -186,7 +186,7 @@ function ProductListItem({
             }}
           />
           <span className="flex row-span-3 gap-2 justify-end items-center whitespace-pre-wrap laptop:row-span-2">
-            {product.stock?.balance && (
+            {!!product.stock?.balance && (
               <>
                 <Warehouse fontSize="small" /> {product.stock.balance.toLocaleString()}매
               </>

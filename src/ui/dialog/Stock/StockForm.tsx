@@ -19,7 +19,7 @@ function StockForm() {
         onBlur={handleBlur}
         error={touched.balance && Boolean(errors.balance)}
         helperText={touched.balance && errors.balance}
-        inputProps={{ min: 1, max: Infinity, autoFocus: true }}
+        inputProps={{ min: 0, max: Infinity, autoFocus: true }}
       />
     </div>
   );
