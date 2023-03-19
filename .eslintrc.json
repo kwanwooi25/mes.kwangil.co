@@ -19,13 +19,26 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
-  "plugins": ["react", "@typescript-eslint", "tailwindcss"],
+  "plugins": [
+    "react",
+    "@typescript-eslint",
+    "tailwindcss"
+  ],
   "rules": {
     "import/prefer-default-export": "off",
     "react/jsx-props-no-spreading": "off",
     "react/no-danger": "off",
     "react/require-default-props": "off",
     "react/function-component-definition": "off",
-    "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state"] }]
+    "react/react-in-jsx-scope": "off",
+    "no-param-reassign": [
+      "error",
+      {
+        "props": true,
+        "ignorePropertyModificationsFor": [
+          "state"
+        ]
+      }
+    ]
   }
 }

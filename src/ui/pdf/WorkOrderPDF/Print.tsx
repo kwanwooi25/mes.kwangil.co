@@ -1,8 +1,7 @@
 import { PlateStatus } from 'const';
 import { ProductDto } from 'features/product/interface';
 import { baseStyles } from 'lib/pdfStyles';
-import { capitalize } from 'lodash';
-import React from 'react';
+import capitalize from 'lodash/capitalize';
 import { useTranslation } from 'react-i18next';
 
 import reactPDF from '@react-pdf/renderer';
@@ -139,11 +138,12 @@ function Print({ product, plateStatus }: PrintProps) {
                 <Text>{plateStatusText}</Text>
               </View>
               <View style={styles.plates}>
-                {plates?.map((plate) => (
-                  <Text key={plate.id}>
-                    [{plate.code}] {getPlateTitle(plate)}
-                  </Text>
-                ))}
+                {plateStatus === PlateStatus.CONFIRM &&
+                  plates?.map((plate) => (
+                    <Text key={plate.id}>
+                      [{plate.code}] {getPlateTitle(plate)}
+                    </Text>
+                  ))}
               </View>
             </View>
           </>
