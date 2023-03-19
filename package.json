@@ -59,6 +59,7 @@
     "@vitejs/plugin-react": "^1.1.4",
     "@welldone-software/why-did-you-render": "^6.2.3",
     "autoprefixer": "^10.4.2",
+    "buffer": "^6.0.3",
     "eslint": "^8.8.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^16.1.0",
