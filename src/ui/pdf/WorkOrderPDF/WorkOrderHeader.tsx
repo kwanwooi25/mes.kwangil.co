@@ -179,7 +179,7 @@ function WorkOrderHeader({ workOrder }: WorkOrderHeaderProps) {
             ({t('common:weight')}: {orderWeight})
           </Text>
           <Text style={styles.orderLengthText}>
-            ({t('common:sheetLength')}: {lengthPerRoll * rollCount})
+            ({t('common:sheetLength')}: {(lengthPerRoll * rollCount).toLocaleString()})
           </Text>
         </View>
         <View style={[styles.infoSection, styles.names]}>
