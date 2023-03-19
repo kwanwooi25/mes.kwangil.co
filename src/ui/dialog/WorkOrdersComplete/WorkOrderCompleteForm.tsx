@@ -26,7 +26,12 @@ function WorkOrderCompleteForm({ index, onChangeError }: WorkOrderCompleteFormPr
       `[${index}].completedQuantity`,
       !value ? t('completedQuantityRequired') : undefined,
     );
-    setFieldValue(`[${index}]`, { ...values[index], completedQuantity: e.target.value });
+    setFieldValue(`[${index}]`, { ...values[index], completedQuantity: value });
+  };
+
+  const handleChangeCuttingMachine = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setFieldValue(`[${index}]`, { ...values[index], cuttingMachine: value });
   };
 
   const handleChangeIsComplete = (e: ChangeEvent<HTMLInputElement>, checked: boolean) => {
@@ -35,7 +40,9 @@ function WorkOrderCompleteForm({ index, onChangeError }: WorkOrderCompleteFormPr
     setFieldValue(`[${index}]`, { ...values[index], completedAt, workOrderStatus });
   };
 
-  const { id, product, orderQuantity, completedAt, completedQuantity } = { ...values[index] };
+  const { id, product, orderQuantity, completedAt, completedQuantity, cuttingMachine } = {
+    ...values[index],
+  };
   const accountName = product.account.name;
   const productName = product.name;
   const productSize = getProductSize(product);
@@ -65,7 +72,7 @@ function WorkOrderCompleteForm({ index, onChangeError }: WorkOrderCompleteFormPr
           <span className="text-xl">{productSize}</span>
         </div>
       </div>
-      <div className="grid grid-cols-[1fr_1fr_auto] gap-x-3 items-center">
+      <div className="grid grid-cols-[2fr_2fr_1fr_auto] items-center gap-x-3">
         <Input
           type="number"
           name="completedQuantity"
@@ -80,6 +87,12 @@ function WorkOrderCompleteForm({ index, onChangeError }: WorkOrderCompleteFormPr
           }}
         />
         <span>/ {orderQuantityText}</span>
+        <Input
+          name="cuttingMachine"
+          label="가공기기"
+          value={cuttingMachine}
+          onChange={handleChangeCuttingMachine}
+        />
         <FormControlLabel
           control={
             <Checkbox

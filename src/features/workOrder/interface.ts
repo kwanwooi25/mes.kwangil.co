@@ -32,6 +32,7 @@ export interface WorkOrderDto {
   workOrderStatus: WorkOrderStatus;
   completedAt?: Date | string | null;
   completedQuantity?: number;
+  cuttingMachine?: string;
   deliveredAt?: Date | string | null;
   deliveredQuantity?: number;
   account: AccountDto;
