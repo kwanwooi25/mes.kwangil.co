@@ -29,7 +29,7 @@ function WorkOrderDetails({ workOrder }: WorkOrderDetailsProps) {
     isPrint,
     plateStatus,
   } = useWorkOrderDisplay(workOrder, t);
-  const { product, workMemo, deliveryMemo } = workOrder;
+  const { product, workMemo, deliveryMemo, cuttingMachine } = workOrder;
 
   const accountName = canViewAccounts ? product?.account?.name : hideText(product?.account?.name);
   const productName = canViewProducts ? product?.name : hideText(product?.name);
@@ -48,6 +48,7 @@ function WorkOrderDetails({ workOrder }: WorkOrderDetailsProps) {
         label={t('completedQuantity')}
         value={`${completedQuantity} (${completedWeight})`}
       />
+      <DetailField label="가공기기" value={cuttingMachine} />
       <DetailField label={t('workMemo')} value={workMemo} />
       <DetailField label={t('deliveryMethod')} value={deliveryMethod} />
       <DetailField label={t('deliveryMemo')} value={deliveryMemo} />
