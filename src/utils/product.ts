@@ -232,7 +232,7 @@ export function getInitialProductToCreate(): ProductFormValues {
     cutPunchSize: '',
     cutPunchPosition: '',
     cutMemo: '',
-    packMaterial: '',
+    packMaterial: '마대',
     packUnit: 0,
     packCanDeliverAll: false,
     packMemo: '',
