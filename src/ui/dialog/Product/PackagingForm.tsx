@@ -11,7 +11,7 @@ import CustomToggleButton from 'ui/elements/CustomToggleButton';
 function PackagingForm() {
   const { t } = useTranslation('products');
   const { t: deliveryMethodT } = useTranslation('deliveryMethod');
-  const { values, handleChange, setFieldValue } = useFormikContext<ProductFormValues>();
+  const { values, handleChange, setValues } = useFormikContext<ProductFormValues>();
 
   const deliveryMethodOptions = Object.values(DeliveryMethod).map((value) => ({
     value,
@@ -19,7 +19,11 @@ function PackagingForm() {
   }));
 
   const handleChangeDeliveryMethod = (value: DeliveryMethod) => {
-    setFieldValue('deliveryMethod', value);
+    setValues((prev) => ({
+      ...prev,
+      deliveryMethod: value,
+      packMemo: value === DeliveryMethod.DIRECT ? '* 스티커 부착 *' : '',
+    }));
   };
 
   return (
