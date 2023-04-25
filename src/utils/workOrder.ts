@@ -96,7 +96,7 @@ export function getExtrusionSpec({
   const rollCount = Math.ceil(weightWithLoss / 15);
   const lengthPerRoll = Math.ceil(lengthWithLoss / rollCount / 10) * 10;
 
-  return { lengthPerRoll, rollCount };
+  return { lengthWithLoss, lengthPerRoll, rollCount };
 }
 
 /**

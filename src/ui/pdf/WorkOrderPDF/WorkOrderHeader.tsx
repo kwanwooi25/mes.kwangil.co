@@ -136,7 +136,7 @@ function WorkOrderHeader({ workOrder }: WorkOrderHeaderProps) {
     orderedAt,
     orderQuantity,
     orderWeight,
-    extrusionSpec: { lengthPerRoll, rollCount },
+    extrusionSpec: { lengthWithLoss },
     productName,
     accountName,
     deliverBy,
@@ -179,7 +179,7 @@ function WorkOrderHeader({ workOrder }: WorkOrderHeaderProps) {
             ({t('common:weight')}: {orderWeight})
           </Text>
           <Text style={styles.orderLengthText}>
-            ({t('common:sheetLength')}: {(lengthPerRoll * rollCount).toLocaleString()})
+            ({t('common:sheetLength')}: {lengthWithLoss.toLocaleString()})
           </Text>
         </View>
         <View style={[styles.infoSection, styles.names]}>
