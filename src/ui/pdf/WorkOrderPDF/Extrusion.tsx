@@ -8,7 +8,7 @@ import reactPDF from '@react-pdf/renderer';
 
 const { StyleSheet, Text, View } = reactPDF;
 
-const { detailSection, detailSectionHeader, detailSectionContent, borderTop } = baseStyles;
+const { detailSection, detailSectionHeader, detailSectionContent } = baseStyles;
 
 const styles = StyleSheet.create({
   root: {
@@ -48,10 +48,6 @@ function Extrusion({ product }: ExtrusionProps) {
         {extIsAntistatic && <Text>{t('extIsAntistatic')}</Text>}
         <Text wrap>{extMemo}</Text>
       </View>
-      <View style={[styles.header, borderTop]}>
-        <Text>원단 작업</Text>
-      </View>
-      <View style={styles.content} />
     </View>
   );
 }
