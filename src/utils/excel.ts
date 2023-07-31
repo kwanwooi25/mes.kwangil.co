@@ -116,6 +116,7 @@ const PRODUCT_KEY_TO_LABEL: { [key: string]: string } = {
   packMemo: '포장메모',
   productMemo: '제품메모',
   images: '이미지',
+  plates: '동판',
   lastWorkOrder: '최종작업일',
 };
 
@@ -452,6 +453,13 @@ function processProductsForDownload(
         case 'images':
           if (value && value.length) {
             value = value[0].imageUrl;
+          }
+          break;
+        case 'plates':
+          if (value && value.length) {
+            value = value.map((plate: PlateDto) => plate.code).join(', ');
+          } else {
+            value = '';
           }
           break;
         case 'lastWorkOrder':
