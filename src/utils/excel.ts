@@ -466,7 +466,10 @@ function processProductsForDownload(
           if (!product.workOrders?.length) {
             break;
           }
-          const lastWorkOrder = product.workOrders[0];
+          const sortedWorkOrders = product.workOrders.sort((a, b) =>
+            (b.orderedAt as string).localeCompare(a.orderedAt as string),
+          );
+          const lastWorkOrder = sortedWorkOrders[0];
           value = formatDate(lastWorkOrder.orderedAt);
           break;
         default:

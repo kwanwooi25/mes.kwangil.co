@@ -7,14 +7,13 @@ import {
   getPunchDetail,
 } from 'utils/product';
 
-import CustomListSubHeader from 'ui/elements/CustomListSubHeader';
-import { ProductDto } from 'features/product/interface';
-import ProductImage from 'ui/modules/ProductImage/ProductImage';
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { PRINT_SIDE_TEXT, PrintSide, DATE_FORMAT_WITH_WEEKDAY, DATE_TIME_FORMAT } from 'const';
-import PlateName from 'ui/elements/PlateName';
+import { DATE_FORMAT_WITH_WEEKDAY, DATE_TIME_FORMAT, PRINT_SIDE_TEXT, PrintSide } from 'const';
 import { format } from 'date-fns';
+import { ProductDto } from 'features/product/interface';
+import { useTranslation } from 'react-i18next';
+import CustomListSubHeader from 'ui/elements/CustomListSubHeader';
+import PlateName from 'ui/elements/PlateName';
+import ProductImage from 'ui/modules/ProductImage/ProductImage';
 import DetailField from '../DetailField';
 
 export interface ProductDetailsProps {
@@ -88,7 +87,9 @@ function ProductDetails({
   const packagingDetail = getPackagingDetail({ material: packMaterial, unit: packUnit });
   const hasPlates = Boolean(plates.length);
   const hasImages = Boolean(images.length) || Boolean(filesToUpload.length);
-  const lastOrderedAt = workOrders?.[0]?.orderedAt;
+  const lastOrderedAt = workOrders.sort((a, b) =>
+    (b.orderedAt as string).localeCompare(a.orderedAt as string),
+  )[0]?.orderedAt;
   const hasDates = Boolean(createdAt) && Boolean(updatedAt) && Boolean(lastOrderedAt);
 
   return (
