@@ -137,7 +137,7 @@ export enum PrintSide {
 export enum ProductThickness {
   STEP = 0.005,
   MIN = 0.05,
-  MAX = 0.13,
+  MAX = 0.15,
 }
 
 export enum ProductLength {
