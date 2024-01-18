@@ -1,17 +1,20 @@
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 
-import BooleanIcon from 'ui/elements/BooleanIcon';
 import { isBoolean } from 'lodash';
+import BooleanIcon from 'ui/elements/BooleanIcon';
 
 export interface DetailFieldProps {
   label: string;
   value?: string | number | boolean | ReactElement;
+  labelWidth?: number;
 }
 
-function DetailField({ label, value }: DetailFieldProps) {
+function DetailField({ label, value, labelWidth = 120 }: DetailFieldProps) {
   return (
-    <li className="grid grid-cols-[120px_1fr] gap-2 items-center py-1 px-3 w-full min-h-[52px]">
-      <span className="text-sm">{label}</span>
+    <li className="grid grid-cols-[auto_1fr] gap-2 items-center py-1 px-3 w-full min-h-[52px]">
+      <span className="text-sm whitespace-pre-wrap" style={{ width: `${labelWidth}px` }}>
+        {label}
+      </span>
       {isBoolean(value) ? (
         <BooleanIcon value={value} />
       ) : (
