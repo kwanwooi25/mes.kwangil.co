@@ -18,6 +18,9 @@ const styles = StyleSheet.create({
   },
   header: {
     ...detailSectionHeader,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   content: {
     ...detailSectionContent,
@@ -51,12 +54,13 @@ function Cutting({ product, workOrder }: CuttingProps) {
   return (
     <View style={styles.root}>
       <View style={styles.header}>
+        <Text>
+          {'     '}/{'     '}
+        </Text>
         <Text>{t('products:cutting')}</Text>
+        <Text>___ 호기</Text>
       </View>
       <View style={styles.content}>
-        <Text>
-          가공일:{'     '}/{'     '}, 가공기기: ___ 호기
-        </Text>
         {cutIsForPowder && <Text>{t('products:cutIsForPowder')}</Text>}
         {cutIsUltrasonic && <Text>{t('products:cutIsUltrasonic')}</Text>}
         {!!cutPosition && <Text>{cutPosition}</Text>}
