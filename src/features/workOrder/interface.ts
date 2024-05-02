@@ -24,6 +24,7 @@ export interface WorkOrderDto {
   isUrgent: boolean;
   shouldBePunctual: boolean;
   shouldKeepRemainder: boolean;
+  shouldDeliverAll: boolean;
   plateStatus: PlateStatus;
   isPlateReady: boolean;
   deliveryMethod: DeliveryMethod;

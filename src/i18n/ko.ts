@@ -365,6 +365,7 @@ export default {
     isUrgent: '지급',
     shouldBePunctual: '납기엄수',
     shouldKeepRemainder: '자투리 보관',
+    shouldDeliverAll: '전량납품',
     plateStatus: '동판 상태',
     plateStatusNew: '동판 신규',
     plateStatusUpdate: '동판 수정',

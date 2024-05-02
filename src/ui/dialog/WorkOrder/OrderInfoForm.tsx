@@ -105,12 +105,12 @@ function OrderInfoForm() {
         control={
           <Checkbox
             color="primary"
-            name="shouldKeepRemainder"
-            checked={values.shouldKeepRemainder}
+            name="shouldDeliverAll"
+            checked={values.shouldDeliverAll}
             onChange={handleChange}
           />
         }
-        label={t('shouldKeepRemainder') as string}
+        label={t('shouldDeliverAll') as string}
       />
       <CustomToggleButton
         className="col-span-3"

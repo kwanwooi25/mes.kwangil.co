@@ -47,7 +47,7 @@ function Cutting({ product, workOrder }: CuttingProps) {
     packCanDeliverAll,
     packMemo,
   } = product;
-  const { shouldKeepRemainder } = useWorkOrderDisplay(workOrder, t);
+  const { shouldDeliverAll, shouldKeepRemainder } = useWorkOrderDisplay(workOrder, t);
   const punchDetail = `${t('products:punchDetail')}: ${getPunchDetail({ count, size, position })}`;
   const packDetail = getPackagingDetail({ material, unit });
 
@@ -71,6 +71,7 @@ function Cutting({ product, workOrder }: CuttingProps) {
         <Text>{t('products:packaging')}</Text>
       </View>
       <View style={styles.content}>
+        {!!shouldDeliverAll && <Text>{shouldDeliverAll}</Text>}
         {!!shouldKeepRemainder && <Text>{shouldKeepRemainder}</Text>}
         {!!packDetail && <Text>{packDetail}</Text>}
         {packCanDeliverAll && <Text>{t('products:packCanDeliverAll')}</Text>}
