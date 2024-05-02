@@ -143,6 +143,7 @@ const WORK_ORDER_LABEL_TO_KEY: { [key: string]: keyof CreateWorkOrdersDto } = {
   길이: 'length',
   너비: 'width',
   주문수량: 'orderQuantity',
+  납품수량: 'deliveryQuantity',
   동판상태: 'plateStatus',
   납기일: 'deliverBy',
   납기엄수: 'shouldBePunctual',
@@ -154,7 +155,7 @@ const WORK_ORDER_LABEL_TO_KEY: { [key: string]: keyof CreateWorkOrdersDto } = {
   완료일: 'completedAt',
   완료수량: 'completedQuantity',
   납품일: 'deliveredAt',
-  납품수량: 'deliveredQuantity',
+  납품완료수량: 'deliveredQuantity',
 };
 
 const WORK_ORDER_KEY_TO_LABEL: { [key: string]: string } = {
@@ -166,6 +167,7 @@ const WORK_ORDER_KEY_TO_LABEL: { [key: string]: string } = {
   length: '길이',
   width: '너비',
   orderQuantity: '주문수량',
+  deliveryQuantity: '납품수량',
   plateStatus: '동판상태',
   deliverBy: '납기일',
   shouldBePunctual: '납기엄수',
@@ -175,7 +177,7 @@ const WORK_ORDER_KEY_TO_LABEL: { [key: string]: string } = {
   completedAt: '완료일',
   completedQuantity: '완료수량',
   deliveredAt: '납품일',
-  deliveredQuantity: '납품수량',
+  deliveredQuantity: '납품완료수량',
   deliveryMethod: '납품방법',
   workMemo: '작업메모',
   deliveryMemo: '납품메모',
@@ -337,6 +339,7 @@ const generateItem = {
         orderedAt: '',
         deliverBy: '',
         orderQuantity: 0,
+        deliveryQuantity: 0,
         isUrgent: false,
         shouldBePunctual: false,
         shouldKeepRemainder: false,

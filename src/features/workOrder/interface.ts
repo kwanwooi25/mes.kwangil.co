@@ -21,6 +21,7 @@ export interface WorkOrderDto {
   orderUpdatedAt: Date | string;
   deliverBy: Date | string;
   orderQuantity: number;
+  deliveryQuantity: number;
   isUrgent: boolean;
   shouldBePunctual: boolean;
   shouldKeepRemainder: boolean;

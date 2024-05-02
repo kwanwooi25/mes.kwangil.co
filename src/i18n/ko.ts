@@ -362,6 +362,7 @@ export default {
     orderedAt: '주문일',
     deliverBy: '납기일',
     orderQuantity: '주문수량',
+    deliveryQuantity: '납품수량',
     isUrgent: '지급',
     shouldBePunctual: '납기엄수',
     shouldKeepRemainder: '자투리 보관',
@@ -380,7 +381,7 @@ export default {
     completedAt: '완료일',
     completedQuantity: '완료수량',
     deliveredAt: '납품일',
-    deliveredQuantity: '납품수량',
+    deliveredQuantity: '납품완료수량',
     workOrderStatus: {
       [WorkOrderStatus.NOT_STARTED]: '시작전',
       [WorkOrderStatus.EXTRUDING]: '압출중',

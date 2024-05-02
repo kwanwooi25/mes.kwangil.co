@@ -129,6 +129,7 @@ function WorkOrderListItem({
     completedAt,
     orderQuantity,
     orderWeight,
+    deliveryQuantity,
     completedQuantity,
     completedWeight,
     isPrint,
@@ -242,6 +243,12 @@ function WorkOrderListItem({
           <span className="px-2 laptop:col-span-3 desktop:col-span-2 larger-desktop:col-span-1 larger-desktop:col-start-4 larger-desktop:row-start-2 larger-desktop:justify-self-start">
             <span className="text-base">{orderQuantity}</span>
             <span className="text-xs"> ({orderWeight})</span>
+            {!!deliveryQuantity && deliveryQuantity !== orderQuantity && (
+              <>
+                <br />
+                <span className="text-base"> (납품: {deliveryQuantity})</span>
+              </>
+            )}
           </span>
 
           <span className="col-span-2 px-2 truncate laptop:col-span-3 larger-desktop:col-span-1 larger-desktop:col-start-5 larger-desktop:row-start-1">

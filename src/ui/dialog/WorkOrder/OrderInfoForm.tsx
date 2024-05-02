@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 import { ProductDto } from 'features/product/interface';
 import { useFormikContext } from 'formik';
 import { capitalize } from 'lodash';
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getProductSize } from 'utils/product';
 import { getWeight } from 'utils/workOrder';
@@ -36,6 +36,10 @@ function OrderInfoForm() {
     const deliverBy = format(date, DATE_FORMAT);
     setFieldValue('deliverBy', deliverBy);
   };
+  const handleChangeOrderQuantity = (e: ChangeEvent<HTMLInputElement>) => {
+    setFieldValue('orderQuantity', e.target.value);
+    setFieldValue('deliveryQuantity', e.target.value);
+  };
   const handleChangePlateStatus = (value: PlateStatus) => {
     setFieldValue('plateStatus', value);
     setFieldValue('isPlateReady', value === PlateStatus.CONFIRM);
@@ -55,7 +59,7 @@ function OrderInfoForm() {
         )}
         <Divider className="!my-4" />
       </div>
-      <div className="tablet:col-span-3">
+      <div className="tablet:col-span-2 tablet:self-start">
         <DatePicker
           selectedDate={new Date(values.deliverBy)}
           onChange={handleChangeDeliverBy}
@@ -63,19 +67,31 @@ function OrderInfoForm() {
           disablePast
         />
       </div>
+      <div className="flex items-center w-full tablet:flex-col tablet:col-span-2 tablet:items-start">
+        <Input
+          type="number"
+          name="orderQuantity"
+          label={t('orderQuantity')}
+          value={values.orderQuantity}
+          onChange={handleChangeOrderQuantity}
+          onBlur={handleBlur}
+          error={touched.orderQuantity && Boolean(errors.orderQuantity)}
+          helperText={touched.orderQuantity && errors.orderQuantity}
+          inputProps={{ min: 1, max: Infinity }}
+        />
+        <span className="shrink-0 ml-3">
+          ({getWeight({ product, quantity: values.orderQuantity })} kg)
+        </span>
+      </div>
       <Input
-        className="tablet:col-span-2"
+        className="tablet:col-span-2 tablet:self-start"
         type="number"
-        name="orderQuantity"
-        label={t('orderQuantity')}
-        value={values.orderQuantity}
+        name="deliveryQuantity"
+        label={t('deliveryQuantity')}
+        value={values.deliveryQuantity}
         onChange={handleChange}
-        onBlur={handleBlur}
-        error={touched.orderQuantity && Boolean(errors.orderQuantity)}
-        helperText={touched.orderQuantity && errors.orderQuantity}
-        inputProps={{ min: 1, max: Infinity }}
+        inputProps={{ min: 1, max: values.orderQuantity }}
       />
-      <span>({getWeight({ product, quantity: values.orderQuantity })} kg)</span>
       <FormControlLabel
         className="tablet:col-span-2"
         control={

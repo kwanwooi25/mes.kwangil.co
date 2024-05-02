@@ -30,6 +30,12 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
   const orderLength = t('common:lengthInMeters', {
     length: getLength({ product, quantity: workOrder.orderQuantity }),
   });
+  const deliveryQuantity =
+    workOrder.deliveryQuantity > 0
+      ? t('common:sheetCount', {
+          countString: formatDigit(workOrder.deliveryQuantity),
+        })
+      : '';
   const completedQuantity = t('common:sheetCount', {
     countString: formatDigit(workOrder.completedQuantity || 0),
   });
@@ -110,6 +116,7 @@ export const useWorkOrderDisplay = (workOrder: WorkOrderDto, t: TFunction) => {
     orderQuantity,
     orderWeight,
     orderLength,
+    deliveryQuantity,
     completedQuantity,
     completedWeight,
     deliveryTags,

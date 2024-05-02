@@ -113,6 +113,7 @@ export function getInitialWorkOrderFormValues(
       orderedAt: format(new Date(), DATE_FORMAT),
       deliverBy: format(add(new Date(), { days: 10 }), DATE_FORMAT),
       orderQuantity: 10000,
+      deliveryQuantity: 10000,
       isUrgent: false,
       shouldBePunctual: false,
       shouldKeepRemainder: product?.shouldKeepRemainder ?? false,
@@ -141,6 +142,7 @@ export function getWorkOrderToUpdate(
   const {
     deliverBy,
     orderQuantity,
+    deliveryQuantity,
     isUrgent,
     shouldBePunctual,
     shouldKeepRemainder,
@@ -158,6 +160,7 @@ export function getWorkOrderToUpdate(
   return {
     deliverBy,
     orderQuantity,
+    deliveryQuantity,
     isUrgent,
     shouldBePunctual,
     shouldKeepRemainder,
