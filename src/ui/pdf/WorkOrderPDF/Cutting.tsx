@@ -1,6 +1,5 @@
 import { ProductDto } from 'features/product/interface';
 import { baseStyles } from 'lib/pdfStyles';
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { getPackagingDetail, getPunchDetail } from 'utils/product';
 
@@ -44,7 +43,6 @@ function Cutting({ product, workOrder }: CuttingProps) {
     cutMemo,
     packMaterial: material,
     packUnit: unit,
-    packCanDeliverAll,
     packMemo,
   } = product;
   const { shouldDeliverAll, shouldKeepRemainder } = useWorkOrderDisplay(workOrder, t);
@@ -74,7 +72,6 @@ function Cutting({ product, workOrder }: CuttingProps) {
         {!!shouldDeliverAll && <Text>{shouldDeliverAll}</Text>}
         {!!shouldKeepRemainder && <Text>{shouldKeepRemainder}</Text>}
         {!!packDetail && <Text>{packDetail}</Text>}
-        {packCanDeliverAll && <Text>{t('products:packCanDeliverAll')}</Text>}
         {!!packMemo && <Text wrap>{packMemo}</Text>}
       </View>
     </View>
