@@ -1,19 +1,20 @@
-import CustomToggleButton from 'ui/elements/CustomToggleButton';
-import Input from 'ui/elements/Input';
-import { DatePicker } from 'ui/modules/Pickers';
-import ProductName from 'ui/elements/ProductName';
+import { Checkbox, Divider, FormControlLabel } from '@mui/material';
 import { DATE_FORMAT, DeliveryMethod, PlateStatus, PrintSide } from 'const';
 import { format } from 'date-fns';
 import { ProductDto } from 'features/product/interface';
+import { WorkOrderFormValues } from 'features/workOrder/interface';
 import { useFormikContext } from 'formik';
 import { capitalize } from 'lodash';
-import React, { ChangeEvent } from 'react';
+import { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getProductSize } from 'utils/product';
-import { getWeight } from 'utils/workOrder';
-import { Checkbox, Divider, FormControlLabel } from '@mui/material';
-import { WorkOrderFormValues } from 'features/workOrder/interface';
 import AccountName from 'ui/elements/AccountName';
+import CustomToggleButton from 'ui/elements/CustomToggleButton';
+import Input from 'ui/elements/Input';
+import ProductName from 'ui/elements/ProductName';
+import { DatePicker } from 'ui/modules/Pickers';
+import { getProductSize } from 'utils/product';
+import { formatDigit } from 'utils/string';
+import { getWeight } from 'utils/workOrder';
 
 function OrderInfoForm() {
   const { t } = useTranslation('workOrders');
@@ -23,6 +24,7 @@ function OrderInfoForm() {
 
   const product: ProductDto = values.product as ProductDto;
   const isPrint = product.printSide !== PrintSide.NONE;
+  const lossRatio = isPrint ? 0.1 : 0.05;
   const plateStatusOptions = Object.values(PlateStatus).map((value) => ({
     value,
     label: t(`plateStatus${capitalize(value)}`),
@@ -79,9 +81,16 @@ function OrderInfoForm() {
           helperText={touched.orderQuantity && errors.orderQuantity}
           inputProps={{ min: 1, max: Infinity }}
         />
-        <span className="shrink-0 ml-3">
-          ({getWeight({ product, quantity: values.orderQuantity })} kg)
-        </span>
+        <div className="flex flex-col shrink-0 gap-1 pl-3">
+          <span>({getWeight({ product, quantity: values.orderQuantity })} kg)</span>
+          <span className="text-xs">
+            (예상 작업수량:{' '}
+            {t('common:sheetCount', {
+              countString: formatDigit(values.orderQuantity * (1 + lossRatio)),
+            })}
+            )
+          </span>
+        </div>
       </div>
       <Input
         className="tablet:col-span-2 tablet:self-start"
@@ -90,7 +99,7 @@ function OrderInfoForm() {
         label={t('deliveryQuantity')}
         value={values.deliveryQuantity}
         onChange={handleChange}
-        inputProps={{ min: 1, max: values.orderQuantity }}
+        inputProps={{ min: 1, max: Infinity }}
       />
       <FormControlLabel
         className="tablet:col-span-2"
