@@ -35,7 +35,7 @@ export function formatDigit(input: string | number): string {
 export function formatPhoneNumber(input: string): string {
   return filterDigits(input, PHONE_NUMBER_MAX_LENGTH).replace(
     /(^02.{0}|^01.{1}|[0-9]{3})([0-9]+)([0-9]{4})/,
-    '$1-$2-$3'
+    '$1-$2-$3',
   );
 }
 

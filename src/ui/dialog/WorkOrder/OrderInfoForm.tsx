@@ -86,7 +86,7 @@ function OrderInfoForm() {
           <span className="text-xs">
             (예상 작업수량:{' '}
             {t('common:sheetCount', {
-              countString: formatDigit(values.orderQuantity * (1 + lossRatio)),
+              countString: formatDigit((values.orderQuantity * (1 + lossRatio)).toFixed(0)),
             })}
             )
           </span>
