@@ -9,7 +9,13 @@ import { useWorkOrderDisplay } from 'hooks/useWorkOrderDisplay';
 
 const { StyleSheet, Text, View } = reactPDF;
 
-const { detailSection, detailSectionHeader, detailSectionContent, borderTop } = baseStyles;
+const {
+  detailSection,
+  detailSectionHeader,
+  detailSectionContent,
+  lightBorderTop,
+  lightBorderRight,
+} = baseStyles;
 
 const styles = StyleSheet.create({
   root: {
@@ -45,7 +51,8 @@ function Cutting({ product, workOrder }: CuttingProps) {
     packUnit: unit,
     packMemo,
   } = product;
-  const { shouldDeliverAll, shouldKeepRemainder } = useWorkOrderDisplay(workOrder, t);
+  const { shouldDeliverAll, shouldKeepRemainder, orderQuantity, deliveryQuantity } =
+    useWorkOrderDisplay(workOrder, t);
   const punchDetail = `${t('products:punchDetail')}: ${getPunchDetail({ count, size, position })}`;
   const packDetail = getPackagingDetail({ material, unit });
 
@@ -65,8 +72,13 @@ function Cutting({ product, workOrder }: CuttingProps) {
         {!!count && <Text>{punchDetail}</Text>}
         {!!cutMemo && <Text wrap>{cutMemo}</Text>}
       </View>
-      <View style={[styles.header, borderTop]}>
-        <Text>{t('products:packaging')}</Text>
+      <View style={[styles.header, lightBorderTop, { padding: 0 }]}>
+        <View style={[lightBorderRight, { padding: 8 }]}>
+          <Text>{t('workOrders:deliveryQuantity')}</Text>
+        </View>
+        <View style={{ padding: 8 }}>
+          <Text>{deliveryQuantity || orderQuantity}</Text>
+        </View>
       </View>
       <View style={styles.content}>
         {!!shouldDeliverAll && <Text>{shouldDeliverAll}</Text>}
