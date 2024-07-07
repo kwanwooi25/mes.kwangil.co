@@ -1,10 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import {
-  DEFAULT_WORK_ORDER_FILTER,
-  ExcelVariant,
-  WorkOrderListItemHeight,
-  WorkOrderStatus,
-} from 'const';
+import { DEFAULT_WORK_ORDER_FILTER, ExcelVariant, WorkOrderListItemHeight } from 'const';
 import { useAuth } from 'features/auth/authHook';
 import { useDialog } from 'features/dialog/dialogHook';
 import { CreateWorkOrdersDto, WorkOrderDto, WorkOrderFilter } from 'features/workOrder/interface';
@@ -16,7 +11,7 @@ import {
 } from 'features/workOrder/useWorkOrders';
 import { useScreenSize } from 'hooks/useScreenSize';
 import { useSelection } from 'hooks/useSelection';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
 import { BulkCreationResponse } from 'types/api';
@@ -104,9 +99,6 @@ function WorkOrderPage() {
   } as any);
 
   const selectedWorkOrders = workOrders.filter(({ id }) => selectedIds.includes(id));
-  const isAllCutting = selectedWorkOrders.every(
-    ({ workOrderStatus }) => workOrderStatus === WorkOrderStatus.CUTTING,
-  );
 
   const handleClickRefresh = () => queryClient.invalidateQueries('workOrders');
 
@@ -155,7 +147,7 @@ function WorkOrderPage() {
   let selectModeButtons: JSX.Element[] = [];
 
   if (!isMobileLayout) {
-    if (isAllCutting && canUpdateWorkOrders) {
+    if (canUpdateWorkOrders) {
       selectModeButtons.push(
         <Tooltip key="complete-all" title={t('common:complete') as string} placement="top">
           <IconButton onClick={openWorkOrdersCompleteDialog}>

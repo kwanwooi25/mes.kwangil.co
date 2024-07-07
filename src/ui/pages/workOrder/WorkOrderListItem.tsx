@@ -151,7 +151,7 @@ function WorkOrderListItem({
     }));
 
   const actionButtons: { label: string; onClick: () => void }[] = [];
-  if (workOrder.workOrderStatus === WorkOrderStatus.CUTTING && canUpdateWorkOrders) {
+  if (canUpdateWorkOrders) {
     actionButtons.push({ label: t('common:done'), onClick: handleClickComplete });
   }
   if (!isCompleted) {
