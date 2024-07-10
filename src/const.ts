@@ -183,13 +183,13 @@ export enum PlateMaterial {
 export enum PlateRound {
   STEP = 0.5,
   MIN = 295,
-  MAX = 600,
+  MAX = 1000,
 }
 
 export enum PlateLength {
   STEP = 50,
   MIN = 250,
-  MAX = 800,
+  MAX = 1000,
 }
 
 export enum VariableRate {
